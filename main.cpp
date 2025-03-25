@@ -1,25 +1,56 @@
+#include <cstdint>
 #include <iostream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <vector>
+#include <string>
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+namespace py = pybind11;
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
-        // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
-        // breakpoint for you, but you can always add more by pressing
-        // <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
-    }
+struct OrderBookEntry {
+    int64_t TimestampOfReceive;
+    std::string Stream;
+    std::string EventType;
+    int64_t EventTime;
+    std::string Symbol;
+    int64_t FirstUpdateId;
+    int64_t FinalUpdateId;
+    bool IsAsk;
+    double Price;
+    double Quantity;
+};
 
-    return 0;
+std::vector<OrderBookEntry> get_sample_data() {
+    return {
+        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, false, 0.2311, 804627.7},
+        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, true,  0.2313, 260867.4},
+        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, true,  0.2314, 557393.7},
+        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, true,  0.2332, 15137.1},
+        {1741046400163097, "trxusdt@depth@100ms", "depthUpdate", 1741046400162664, "TRXUSDT", 5434434567, 5434434567, true,  0.2314, 556957.2}
+    };
 }
 
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.
+std::string get_first_symbol() {
+    std::vector<OrderBookEntry> data = get_sample_data();
+    if (!data.empty()) {
+        return data[0].Symbol;
+    }
+    return "";
+}
+
+PYBIND11_MODULE(orderbook, m) {
+    py::class_<OrderBookEntry>(m, "OrderBookEntry")
+        .def_readonly("TimestampOfReceive", &OrderBookEntry::TimestampOfReceive)
+        .def_readonly("Stream", &OrderBookEntry::Stream)
+        .def_readonly("EventType", &OrderBookEntry::EventType)
+        .def_readonly("EventTime", &OrderBookEntry::EventTime)
+        .def_readonly("Symbol", &OrderBookEntry::Symbol)
+        .def_readonly("FirstUpdateId", &OrderBookEntry::FirstUpdateId)
+        .def_readonly("FinalUpdateId", &OrderBookEntry::FinalUpdateId)
+        .def_readonly("IsAsk", &OrderBookEntry::IsAsk)
+        .def_readonly("Price", &OrderBookEntry::Price)
+        .def_readonly("Quantity", &OrderBookEntry::Quantity);
+
+    m.def("get_sample_data", &get_sample_data, "Returns sample order book data");
+    m.def("get_first_symbol", &get_first_symbol, "Returns the symbol of the first order book entry");
+}

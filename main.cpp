@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-// namespace py = pybind11;
+namespace py = pybind11;
 
 struct OrderBookEntry {
     int64_t TimestampOfReceive;

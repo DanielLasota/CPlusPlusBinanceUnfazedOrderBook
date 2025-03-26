@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-namespace py = pybind11;
+// namespace py = pybind11;
 
 struct OrderBookEntry {
     int64_t TimestampOfReceive;
@@ -53,4 +53,19 @@ PYBIND11_MODULE(orderbook, m) {
 
     m.def("get_sample_data", &get_sample_data, "Returns sample order book data");
     m.def("get_first_symbol", &get_first_symbol, "Returns the symbol of the first order book entry");
+}
+
+int main() {
+    std::string firstSymbol = get_first_symbol();
+    std::cout << "Pierwszy symbol: " << firstSymbol << std::endl;
+
+    auto data = get_sample_data();
+    for (const auto& entry : data) {
+        std::cout << "Timestamp: " << entry.TimestampOfReceive
+                  << ", Symbol: " << entry.Symbol
+                  << ", Price: " << entry.Price
+                  << ", Quantity: " << entry.Quantity << std::endl;
+    }
+
+    return 0;
 }

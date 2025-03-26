@@ -52,7 +52,7 @@ build cmake_object_order_depends_target_orderbook: phony || .
 build CMakeFiles/orderbook.dir/main.cpp.obj: CXX_COMPILER__orderbook_unscanned_Debug C$:/Users/daniel/CLionProjects/orderbook_prototype/main.cpp || cmake_object_order_depends_target_orderbook
   DEFINES = -Dorderbook_EXPORTS
   DEP_FILE = CMakeFiles\orderbook.dir\main.cpp.obj.d
-  FLAGS = -g -fvisibility=hidden -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++23 -fvisibility=hidden -fdiagnostics-color=always
   INCLUDES = -isystem C:/Users/daniel/AppData/Local/Programs/Python/Python311/include -isystem C:/Users/daniel/CLionProjects/orderbook_prototype/pybind11/include
   OBJECT_DIR = CMakeFiles\orderbook.dir
   OBJECT_FILE_DIR = CMakeFiles\orderbook.dir
@@ -74,6 +74,39 @@ build orderbook.pyd: CXX_MODULE_LIBRARY_LINKER__orderbook_Debug CMakeFiles/order
   TARGET_FILE = orderbook.pyd
   TARGET_IMPLIB = liborderbook.dll.a
   TARGET_PDB = orderbook.pyd.dbg
+
+# =============================================================================
+# Object build statements for EXECUTABLE target testest
+
+
+#############################################
+# Order-only phony target for testest
+
+build cmake_object_order_depends_target_testest: phony || .
+
+build CMakeFiles/testest.dir/main.cpp.obj: CXX_COMPILER__testest_unscanned_Debug C$:/Users/daniel/CLionProjects/orderbook_prototype/main.cpp || cmake_object_order_depends_target_testest
+  DEP_FILE = CMakeFiles\testest.dir\main.cpp.obj.d
+  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\testest.dir
+  OBJECT_FILE_DIR = CMakeFiles\testest.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target testest
+
+
+#############################################
+# Link the executable testest.exe
+
+build testest.exe: CXX_EXECUTABLE_LINKER__testest_Debug CMakeFiles/testest.dir/main.cpp.obj
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\testest.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = testest.exe
+  TARGET_IMPLIB = libtestest.dll.a
+  TARGET_PDB = testest.exe.dbg
 
 
 #############################################
@@ -131,6 +164,8 @@ build pybind11/rebuild_cache: phony pybind11/CMakeFiles/rebuild_cache.util
 
 build orderbook: phony orderbook.pyd
 
+build testest: phony testest.exe
+
 # =============================================================================
 # Folder targets.
 
@@ -139,7 +174,7 @@ build orderbook: phony orderbook.pyd
 #############################################
 # Folder: C:/Users/daniel/CLionProjects/orderbook_prototype/cmake-build-debug
 
-build all: phony orderbook.pyd pybind11/all
+build all: phony orderbook.pyd testest.exe pybind11/all
 
 # =============================================================================
 

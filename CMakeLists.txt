@@ -6,8 +6,13 @@ set(CMAKE_CXX_STANDARD 26)
 
 add_subdirectory(pybind11)
 
-pybind11_add_module(orderbook main.cpp)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
-#add_executable(testest main.cpp)
+set(SOURCES
+        src/main.cpp
+        src/CSVParser.cpp
+)
+
+pybind11_add_module(orderbook ${SOURCES})
 
 set_target_properties(orderbook PROPERTIES SUFFIX ".pyd")

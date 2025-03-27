@@ -8,6 +8,6 @@ add_subdirectory(pybind11)
 
 pybind11_add_module(orderbook main.cpp)
 
-add_executable(testest main.cpp)
+#add_executable(testest main.cpp)
 
 set_target_properties(orderbook PROPERTIES SUFFIX ".pyd")

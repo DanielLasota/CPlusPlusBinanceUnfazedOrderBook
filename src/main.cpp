@@ -3,16 +3,24 @@
 #include <chrono>
 #include <vector>
 #include "OrderBookEntry.h"
+#include "OrderBook.h"
 #include "CSVParser.h"
 
-void mainOrderbookEntryLoop();
+void mainOrderbookEntryLoop(OrderBook &orderbook);
+
+void processOrderbook();
 
 int main() {
-    mainOrderbookEntryLoop();
+    processOrderbook();
     return 0;
 }
 
-void mainOrderbookEntryLoop() {
+void processOrderbook(){
+    OrderBook orderbook = OrderBook();
+    mainOrderbookEntryLoop(orderbook);
+}
+
+void mainOrderbookEntryLoop(OrderBook &orderbook) {
     try {
         std::string directory = "C:/Users/daniel/Documents/binance_archival_data/"
                                 "binance_difference_depth_stream_usd_m_futures_trxusdt_25-03-2025.csv";
@@ -30,14 +38,20 @@ void mainOrderbookEntryLoop() {
 
         auto start = std::chrono::steady_clock::now();
 
-        for (size_t i = 0; i < count; ++i) {
-            OrderBookEntry* entry = data[i];
+        //for (size_t i = 0; i < count; ++i) {
+        //    OrderBookEntry* entry = data[i];
+
             // Przykładowe przetwarzanie (tu odkomentować, jeśli chcesz wypisywać dane)
             // std::cout << entry->TimestampOfReceive << std::endl;
             // std::cout << "Timestamp: " << entry->TimestampOfReceive
             //           << ", Symbol: " << entry->Symbol
             //           << ", Price: " << entry->Price
             //           << ", Quantity: " << entry->Quantity << std::endl;
+        //}
+
+		for (auto &entry : entries) {
+            orderbook.addOrder(entry);
+            orderbook.printOrderBook();
         }
 
         auto finish = std::chrono::steady_clock::now();

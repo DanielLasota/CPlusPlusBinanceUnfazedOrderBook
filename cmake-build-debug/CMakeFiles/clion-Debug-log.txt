@@ -1,8 +1,27 @@
 "C:\Program Files\JetBrains\CLion 2024.3.4\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2024.3.4/bin/ninja/win/x64/ninja.exe" -G Ninja -DPython_EXECUTABLE=C:/Users/daniel/AppData/Local/Programs/Python/Python311/python.exe -DPython3_EXECUTABLE=C:/Users/daniel/AppData/Local/Programs/Python/Python311/python.exe -S C:\Users\daniel\CLionProjects\orderbook_prototype -B C:\Users\daniel\CLionProjects\orderbook_prototype\cmake-build-debug
+-- The C compiler identification is GNU 13.1.0
+-- The CXX compiler identification is GNU 13.1.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/JetBrains/CLion 2024.3.4/bin/mingw/bin/gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/JetBrains/CLion 2024.3.4/bin/mingw/bin/g++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
 -- pybind11 v3.0.0 dev1
+-- Found Python: C:/Users/daniel/AppData/Local/Programs/Python/Python311/python.exe (found suitable version "3.11.4", minimum required is "3.8") found components: Interpreter Development.Module Development.Embed
 Using compatibility mode for Python, set PYBIND11_FINDPYTHON to NEW/OLD to silence this message
 -- pybind11::lto disabled (problems with undefined symbols for MinGW for now)
 -- pybind11::thin_lto disabled (problems with undefined symbols for MinGW for now)
--- Configuring done (0.2s)
--- Generating done (0.0s)
+-- Configuring done (3.2s)
+-- Generating done (0.1s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    Python3_EXECUTABLE
+
+
 -- Build files have been written to: C:/Users/daniel/CLionProjects/orderbook_prototype/cmake-build-debug

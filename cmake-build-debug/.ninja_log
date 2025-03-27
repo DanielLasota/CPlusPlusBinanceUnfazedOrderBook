@@ -1,9 +1,6 @@
 # ninja log v6
-0	174	7647820086734187	build.ninja	fadcc95937c67616
-2716	4692	7647700211407023	orderbook.pyd	8ac8d3c4dc80586d
-3	404	7647831889407431	CMakeFiles/orderbook.dir/src/CSVParser.cpp.obj	5876188f577fcd86
-2	690	7647831889387151	CMakeFiles/orderbook.dir/src/main.cpp.obj	35185976e92c9b13
-690	753	7647831896271414	orderbook.pyd	2d90e0a217666efc
+0	174	7647843182291133	build.ninja	fadcc95937c67616
+623	675	7647834562016702	orderbook.pyd	2d90e0a217666efc
 4	353	7647834555832296	CMakeFiles/orderbook.dir/src/CSVParser.cpp.obj	5876188f577fcd86
 2	622	7647834555812293	CMakeFiles/orderbook.dir/src/main.cpp.obj	35185976e92c9b13
-623	675	7647834562016702	orderbook.pyd	2d90e0a217666efc
+4	379	7647842713444596	CMakeFiles/orderbook.dir/src/OrderBook.cpp.obj	e398b1d594060fb5

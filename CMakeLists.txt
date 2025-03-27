@@ -11,6 +11,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 set(SOURCES
         src/main.cpp
         src/CSVParser.cpp
+        src/OrderBook.cpp
 )
 
 pybind11_add_module(orderbook ${SOURCES})

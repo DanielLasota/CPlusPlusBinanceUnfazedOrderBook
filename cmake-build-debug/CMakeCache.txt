@@ -583,14 +583,14 @@ _Python_Development_REASON_FAILURE:INTERNAL=
 _Python_EXECUTABLE:INTERNAL=C:/Users/daniel/AppData/Local/Programs/Python/Python311/python.exe
 //Path to a program.
 _Python_EXECUTABLE_DEBUG:INTERNAL=C:/Users/daniel/AppData/Local/Programs/Python/Python311/python_d.exe
-//Path to a file.
 _Python_INCLUDE_DIR:INTERNAL=C:/Users/daniel/AppData/Local/Programs/Python/Python311/include
 //Python Properties
 _Python_INTERPRETER_PROPERTIES:INTERNAL=Python;3;11;4;64;<none>;cp311-win_amd64;;C:\Users\daniel\AppData\Local\Programs\Python\Python311\Lib;C:\Users\daniel\AppData\Local\Programs\Python\Python311\Lib;C:\Users\daniel\AppData\Local\Programs\Python\Python311\Lib\site-packages;C:\Users\daniel\AppData\Local\Programs\Python\Python311\Lib\site-packages
 _Python_INTERPRETER_SIGNATURE:INTERNAL=94d5b75600d82879c49abc37b8f7eca9
+//Interpreter reason failure
+_Python_Interpreter_REASON_FAILURE:INTERNAL=
 //Path to a library.
 _Python_LIBRARY_DEBUG:INTERNAL=C:/Users/daniel/AppData/Local/Programs/Python/Python311/libs/python311_d.lib
-//Path to a library.
 _Python_LIBRARY_RELEASE:INTERNAL=C:/Users/daniel/AppData/Local/Programs/Python/Python311/libs/python311.lib
 //NumPy reason failure
 _Python_NumPy_REASON_FAILURE:INTERNAL=

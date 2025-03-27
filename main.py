@@ -25,5 +25,8 @@ import orderbook
 
 if __name__ == '__main__':
     print(f'VVVVV')
-    print(orderbook.get_first_symbol())
+    print(dir(orderbook))
+    for attribute in dir(orderbook):
+        print(attribute)
+    print(orderbook.load_csv('C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_25-03-2025.csv'))
     print(f'^^^^^')

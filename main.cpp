@@ -1,16 +1,18 @@
 #include <cstdint>
 #include <iostream>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
+#include <stdexcept>
+
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
 struct OrderBookEntry {
     int64_t TimestampOfReceive;
-    std::string Stream;
-    std::string EventType;
     int64_t EventTime;
     std::string Symbol;
     int64_t FirstUpdateId;
@@ -20,29 +22,73 @@ struct OrderBookEntry {
     double Quantity;
 };
 
-std::vector<OrderBookEntry> get_sample_data() {
-    return {
-        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, false, 0.2311, 804627.7},
-        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, true,  0.2313, 260867.4},
-        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, true,  0.2314, 557393.7},
-        {1741046400062959, "trxusdt@depth@100ms", "depthUpdate", 1741046400062507, "TRXUSDT", 5434434562, 5434434566, true,  0.2332, 15137.1},
-        {1741046400163097, "trxusdt@depth@100ms", "depthUpdate", 1741046400162664, "TRXUSDT", 5434434567, 5434434567, true,  0.2314, 556957.2}
-    };
-}
-
-std::string get_first_symbol() {
-    std::vector<OrderBookEntry> data = get_sample_data();
-    if (!data.empty()) {
-        return data[0].Symbol;
+// Funkcja pomocnicza do dzielenia stringa według separatora
+std::vector<std::string> split(const std::string &line, char delimiter) {
+    std::vector<std::string> tokens;
+    std::istringstream tokenStream(line);
+    std::string token;
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
     }
-    return "";
+    return tokens;
 }
 
+// Funkcja pomija linie zaczynające się od '#' oraz zakłada, że pierwszy niezakomentowany wiersz to nagłówek.
+std::vector<OrderBookEntry> loadCSV(const std::string &directory) {
+    std::vector<OrderBookEntry> entries;
+    std::ifstream file(directory);
+    if (!file.is_open()) {
+        throw std::runtime_error("Nie można otworzyć pliku: " + directory);
+    }
+
+    std::string line;
+    bool headerSkipped = false;
+    while (std::getline(file, line)) {
+        // Pomijamy puste linie lub linie zaczynające się od '#'
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+        // Pomijamy pierwszy niezakomentowany wiersz (nagłówek)
+        if (!headerSkipped) {
+            headerSkipped = true;
+            continue;
+        }
+
+        auto tokens = split(line, ',');
+        // Zakładamy, że CSV zawiera 12 kolumn wg wzorca:
+        // TimestampOfReceive,Stream,EventType,EventTime,TransactionTime,Symbol,FirstUpdateId,FinalUpdateId,FinalUpdateIdInLastStream,IsAsk,Price,Quantity
+        if (tokens.size() < 12) {
+            std::cerr << "Niepoprawny format linii: " << line << std::endl;
+            continue;
+        }
+
+        try {
+            OrderBookEntry entry;
+            entry.TimestampOfReceive = std::stoll(tokens[0]);
+
+            entry.EventTime          = std::stoll(tokens[3]);
+
+            entry.Symbol             = tokens[5];
+            entry.FirstUpdateId      = std::stoll(tokens[6]);
+            entry.FinalUpdateId      = std::stoll(tokens[7]);
+
+            entry.IsAsk              = (std::stoi(tokens[9]) != 0);
+            entry.Price              = std::stod(tokens[10]);
+            entry.Quantity           = std::stod(tokens[11]);
+
+            entries.push_back(entry);
+        } catch (const std::exception &e) {
+            std::cerr << "Błąd przetwarzania linii: " << line << " - " << e.what() << std::endl;
+        }
+    }
+    file.close();
+    return entries;
+}
+
+// Definicja modułu pybind11
 PYBIND11_MODULE(orderbook, m) {
     py::class_<OrderBookEntry>(m, "OrderBookEntry")
         .def_readonly("TimestampOfReceive", &OrderBookEntry::TimestampOfReceive)
-        .def_readonly("Stream", &OrderBookEntry::Stream)
-        .def_readonly("EventType", &OrderBookEntry::EventType)
         .def_readonly("EventTime", &OrderBookEntry::EventTime)
         .def_readonly("Symbol", &OrderBookEntry::Symbol)
         .def_readonly("FirstUpdateId", &OrderBookEntry::FirstUpdateId)
@@ -51,21 +97,51 @@ PYBIND11_MODULE(orderbook, m) {
         .def_readonly("Price", &OrderBookEntry::Price)
         .def_readonly("Quantity", &OrderBookEntry::Quantity);
 
-    m.def("get_sample_data", &get_sample_data, "Returns sample order book data");
-    m.def("get_first_symbol", &get_first_symbol, "Returns the symbol of the first order book entry");
+    m.def("loadCSV", &loadCSV, "Wczytuje plik CSV i zwraca listę wpisów OrderBookEntry", py::arg("directory"));
 }
 
+// #ifdef MODULE_TEST
+// Funkcja main do testów, kompilowana tylko przy definicji MODULE_TEST
 int main() {
-    std::string firstSymbol = get_first_symbol();
-    std::cout << "Pierwszy symbol: " << firstSymbol << std::endl;
+    try {
+        auto entries = loadCSV("C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_25-03-2025.csv");
 
-    auto data = get_sample_data();
-    for (const auto& entry : data) {
-        std::cout << "Timestamp: " << entry.TimestampOfReceive
-                  << ", Symbol: " << entry.Symbol
-                  << ", Price: " << entry.Price
-                  << ", Quantity: " << entry.Quantity << std::endl;
+        std::vector<OrderBookEntry*> ptr_entries;
+        ptr_entries.reserve(entries.size());
+        for (auto &entry : entries) {
+            ptr_entries.push_back(&entry);
+        }
+
+        OrderBookEntry** data = ptr_entries.data();
+        size_t count = ptr_entries.size();
+
+        auto start = std::chrono::steady_clock::now();
+
+        for (size_t i = 0; i < count; ++i) {
+            OrderBookEntry* entry = data[i];
+            // Przykładowe przetwarzanie (tu odkomentować, jeśli chcesz wypisywać dane)
+            // std::cout << entry->TimestampOfReceive << std::endl;
+            // std::cout << "Timestamp: " << entry->TimestampOfReceive
+            //           << ", Symbol: " << entry->Symbol
+            //           << ", Price: " << entry->Price
+            //           << ", Quantity: " << entry->Quantity << std::endl;
+        }
+
+        // Pomiar czasu zakończenia iteracji
+        auto finish = std::chrono::steady_clock::now();
+
+        // Obliczenie timestampów start i finish oraz czasu trwania iteracji
+        auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
+        auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
+        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
+
+        // Wypisanie wyników
+        std::cout << "Start timestamp (ms): " << start_ms << std::endl;
+        std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;
+        std::cout << "Czas iteracji: " << elapsed_ms << " ms" << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << "Wyjątek: " << e.what() << std::endl;
     }
-
     return 0;
 }
+// #endif

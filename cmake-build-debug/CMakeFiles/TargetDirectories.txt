@@ -1,5 +1,0 @@
-C:/Users/daniel/CLionProjects/orderbook_prototype/cmake-build-debug/CMakeFiles/orderbook.dir
-C:/Users/daniel/CLionProjects/orderbook_prototype/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/daniel/CLionProjects/orderbook_prototype/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-C:/Users/daniel/CLionProjects/orderbook_prototype/cmake-build-debug/pybind11/CMakeFiles/edit_cache.dir
-C:/Users/daniel/CLionProjects/orderbook_prototype/cmake-build-debug/pybind11/CMakeFiles/rebuild_cache.dir

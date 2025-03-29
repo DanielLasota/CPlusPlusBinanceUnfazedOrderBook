@@ -12,6 +12,7 @@ set(SOURCES
         src/CSVParser.cpp
         src/OrderBook.cpp
         bindings/orderbook_module.cpp
+        src/OrderBookSessionSimulator.cpp
 )
 
 pybind11_add_module(orderbook ${SOURCES})

@@ -2,10 +2,12 @@
 /cmake-build-debug/*
 /cmake-build-release/*
 /build/
+/dist/
 
 *.exe
 *.dll
 *.so
 *.out
+*.egg-info
 
 *~

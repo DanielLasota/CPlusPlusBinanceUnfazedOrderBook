@@ -62,8 +62,8 @@ void mainOrderbookEntryLoop(OrderBook &orderbook) {
 
         std::cout << "Start timestamp (ms): " << start_ms << std::endl;
         std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;
-        std::cout << "Czas iteracji: " << elapsed_ms << " ms" << std::endl;
+        std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
     } catch (const std::exception &e) {
-        std::cerr << "Wyjątek: " << e.what() << std::endl;
+        std::cerr << "Exception: " << e.what() << std::endl;
     }
 }

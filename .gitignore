@@ -1,0 +1,10 @@
+.idea/
+/cmake-build-debug/
+/build/
+
+*.exe
+*.dll
+*.so
+*.out
+
+*~

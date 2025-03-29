@@ -35,14 +35,14 @@ void OrderBook::printOrderBook() const {
     std::cout << "\033[31m" << "Asks:" << "\033[0m" << std::endl;
     for (const auto &ask : asks) {
         std::cout << "\033[31m"
-                  << "Price: " << ask.Price << " Quantity: " << ask.Quantity << "IsAsk:" << ask.IsAsk
+                  << "SYMBOL: " << ask.Symbol << " Price: " << ask.Price << " Quantity: " << ask.Quantity << " IsAsk:" << ask.IsAsk
                   << "\033[0m" << std::endl;
     }
 
     std::cout << "\033[32m" << "Bids:" << "\033[0m" << std::endl;
     for (const auto &bid : bids) {
         std::cout << "\033[32m"
-                  << "Price: " << bid.Price << " Quantity: " << bid.Quantity << " IsAsk:" << bid.IsAsk
+                  << "SYMBOL: " << bid.Symbol << " Price: " << bid.Price << " Quantity: " << bid.Quantity << " IsAsk:" << bid.IsAsk
                   << "\033[0m" << std::endl;
     }
 

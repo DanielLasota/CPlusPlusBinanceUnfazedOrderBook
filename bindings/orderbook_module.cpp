@@ -18,6 +18,7 @@ void processOrderbook(const std::string &csvPath) {
 
         for (auto &entry : entries) {
             orderbook.addOrder(entry);
+            orderbook.printOrderBook();
         }
 
         auto finish = std::chrono::steady_clock::now();

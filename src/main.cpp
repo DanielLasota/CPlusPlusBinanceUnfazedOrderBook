@@ -51,7 +51,7 @@ void mainOrderbookEntryLoop(OrderBook &orderbook) {
 
 		for (auto &entry : entries) {
             orderbook.addOrder(entry);
-            // orderbook.printOrderBook();
+            orderbook.printOrderBook();
         }
 
         auto finish = std::chrono::steady_clock::now();

@@ -2,39 +2,9 @@
 #include <pybind11/stl.h>
 #include "OrderBookEntry.h"
 #include "OrderBook.h"
-#include "CSVParser.h"
-#include <chrono>
-#include <string>
-#include <iostream>
+#include "OrderBookSessionSimulator.h"
 
 namespace py = pybind11;
-
-void processOrderbook(const std::string &csvPath) {
-    OrderBook orderbook;
-    try {
-        auto entries = getOrderbookEntriesFromCSV(csvPath);
-
-        auto start = std::chrono::steady_clock::now();
-
-        for (auto &entry : entries) {
-            orderbook.addOrder(entry);
-            orderbook.printOrderBook();
-        }
-
-        auto finish = std::chrono::steady_clock::now();
-
-        auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
-        auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
-        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-
-        std::cout << "Start timestamp (ms): " << start_ms << std::endl;
-        std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;
-        std::cout << "Elapsed: " << elapsed_ms << " ms" << std::endl;
-
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-    }
-}
 
 PYBIND11_MODULE(orderbook, m) {
     py::class_<OrderBookEntry>(m, "OrderBookEntry")
@@ -55,7 +25,10 @@ PYBIND11_MODULE(orderbook, m) {
         .def_readonly("asks", &OrderBook::asks)
         .def_readonly("bids", &OrderBook::bids);
 
-    m.def("loadCSV", &getOrderbookEntriesFromCSV, "Load CSV into OrderBookEntry list", py::arg("csvPath"));
-
-    m.def("processOrderbook", &processOrderbook, "Process entire orderbook from CSV", py::arg("csvPath"));
+    py::class_<OrderbookSessionSimulator>(m, "OrderbookSessionSimulator")
+        .def(py::init<>())
+        .def("processOrderbook", &OrderbookSessionSimulator::processOrderbook,
+             py::arg("csvPath"), py::arg("python_callback") = py::none(),
+             "Przetwarza orderbook z pliku CSV, podobnie jak w funkcji main() w C++");
+    // m.def("processOrderbook", &processOrderbook, "Process entire orderbook from CSV", py::arg("csvPath"));
 }

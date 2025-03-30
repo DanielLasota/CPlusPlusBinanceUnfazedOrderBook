@@ -2,11 +2,14 @@
 #include "CSVParser.h"
 #include <chrono>
 #include <iostream>
+#include <pybind11/pybind11.h>
 
 OrderbookSessionSimulator::OrderbookSessionSimulator()
     : orderbook() {}
 
-void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath) {
+namespace py = pybind11;
+
+void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, const py::object &python_callback) {
     try {
         std::vector<OrderBookEntry> entries = getOrderbookEntriesFromCSV(csvPath);
         std::vector<OrderBookEntry*> ptr_entries;
@@ -33,7 +36,12 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath) {
 
         for (auto &entry : entries) {
             orderbook.addOrder(entry);
-            orderbook.printOrderBook();
+            // orderbook.printOrderBook();
+            if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
+                if (!python_callback.is_none()) {
+                    python_callback(2, 1, 3, 7);
+                }
+            }
         }
 
         auto finish = std::chrono::steady_clock::now();

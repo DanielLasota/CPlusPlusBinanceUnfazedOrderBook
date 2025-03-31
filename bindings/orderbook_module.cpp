@@ -30,5 +30,4 @@ PYBIND11_MODULE(orderbook, m) {
         .def("processOrderbook", &OrderbookSessionSimulator::processOrderbook,
              py::arg("csvPath"), py::arg("python_callback") = py::none(),
              "Przetwarza orderbook z pliku CSV, podobnie jak w funkcji main() w C++");
-    // m.def("processOrderbook", &processOrderbook, "Process entire orderbook from CSV", py::arg("csvPath"));
 }

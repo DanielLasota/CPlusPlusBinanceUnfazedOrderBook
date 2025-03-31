@@ -34,14 +34,16 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
         //           << ", Quantity: " << entry->Quantity << std::endl;
         //}
 
-        for (auto &entry : entries) {
+        for (auto* entry : ptr_entries) {
             orderbook.addOrder(entry);
+
             // orderbook.printOrderBook();
-            if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
-                if (!python_callback.is_none()) {
-                    python_callback(2, 1, 3, 7);
-                }
-            }
+
+            // if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
+            //     if (!python_callback.is_none()) {
+            //         // python_callback(2, 1, 3, 7);
+            //     }
+            // }
         }
 
         auto finish = std::chrono::steady_clock::now();

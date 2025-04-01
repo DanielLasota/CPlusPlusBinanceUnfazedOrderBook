@@ -19,7 +19,7 @@ ext_modules = [
 ]
 
 setup(
-    name='BinanceCPPOrderbookPrototype',
+    name='c_plus_plus_binance_unfazed_orderbook',
     version='0.0.1',
     author='Daniel Lasota',
     author_email='grossmann.root@gmail.com',

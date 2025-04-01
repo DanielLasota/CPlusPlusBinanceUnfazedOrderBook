@@ -2,6 +2,7 @@
 #include "CSVParser.h"
 #include <chrono>
 #include <iostream>
+#include <VariablesCounter.h>
 #include <pybind11/pybind11.h>
 
 OrderbookSessionSimulator::OrderbookSessionSimulator()
@@ -22,6 +23,8 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
         OrderBookEntry** data = ptr_entries.data();
         size_t count = ptr_entries.size();
 
+        VariablesCounter variablesCounter(count);
+
         auto start = std::chrono::steady_clock::now();
 
         // for (size_t i = 0; i < count; ++i) {
@@ -36,8 +39,8 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
 
         for (auto* entry : ptr_entries) {
             orderbook.addOrder(entry);
-
             // orderbook.printOrderBook();
+            variablesCounter.update(orderbook);
 
             // if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
             //     if (!python_callback.is_none()) {
@@ -51,6 +54,8 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
         auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
         auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
         auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
+
+        variablesCounter.saveVariablesListToCSV("C:/Users/daniel/Documents/OrderBookVariables/x.csv");
 
         std::cout << "Start timestamp (ms): " << start_ms << std::endl;
         std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;

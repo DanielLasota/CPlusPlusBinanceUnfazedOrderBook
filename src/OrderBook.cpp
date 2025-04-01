@@ -1,12 +1,13 @@
 #include "OrderBook.h"
 #include <algorithm>
 #include <iostream>
+#include <ranges>
 
 void OrderBook::addOrder(OrderBookEntry* order) {
     if (order->IsAsk) {
         auto it = std::lower_bound(asks.begin(), asks.end(), order,
             [](const OrderBookEntry* lhs, const OrderBookEntry* rhs) {
-                return lhs->Price > rhs->Price;
+                return lhs->Price < rhs->Price;
             }
         );
         if (it != asks.end() && (*it)->Price == order->Price) {
@@ -31,10 +32,11 @@ void OrderBook::addOrder(OrderBookEntry* order) {
 void OrderBook::printOrderBook() const {
     std::cout << "ORDERBOOK:" << std::endl;
 
-    std::cout << "\033[31m" << "Asks:" << "\033[0m" << std::endl;
-    for (const auto* ask : asks) {
+    std::cout << "\033[31m" << "Asks (odwrotnie):" << "\033[0m" << std::endl;
+    for (const auto* ask : std::ranges::reverse_view(asks)) {
         std::cout << "\033[31m"
-                  << "SYMBOL: " << ask->Symbol << " Price: " << ask->Price << " Quantity: " << ask->Quantity << " IsAsk:" << ask->IsAsk
+                  << "SYMBOL: " << ask->Symbol << " Price: " << ask->Price
+                  << " Quantity: " << ask->Quantity << " IsAsk: " << ask->IsAsk
                   << "\033[0m" << std::endl;
     }
 

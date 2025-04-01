@@ -8,11 +8,14 @@ add_subdirectory(pybind11)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 set(SOURCES
+        bindings/orderbook_module.cpp
         src/main.cpp
         src/CSVParser.cpp
         src/OrderBook.cpp
-        bindings/orderbook_module.cpp
         src/OrderBookSessionSimulator.cpp
+        src/VariablesCounter.cpp
+        src/SingleVariableCounter.cpp
+        test/TestSingleVariableCounter.cpp
 )
 
 pybind11_add_module(orderbook ${SOURCES})

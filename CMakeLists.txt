@@ -18,6 +18,7 @@ set(SOURCES
         src/SingleVariableCounter.cpp
         src/DataVectorLoader.cpp
         src/AssetParameters.cpp
+        src/EntryDecoder.cpp
         test/TestSingleVariableCounter.cpp
 )
 

@@ -1,16 +1,17 @@
 #ifndef DATAVECTORLOADER_H
 #define DATAVECTORLOADER_H
 
+#include <EntryDecoder.h>
 #include <enums/AssetParameters.h>
 #include <vector>
 #include <string>
-#include "OrderBookEntry.h"
+#include "enums/OrderBookEntry.h"
 
 class DataVectorLoader {
 public:
     DataVectorLoader() = default;
     
-    static std::vector<OrderBookEntry> getOrderbookEntriesFromCSV(const std::string &csvPath);
+    static std::vector<OrderBookEntry> getEntriesFromCSV(const std::string &csvPath);
 
 private:
     static std::vector<std::string> split(const std::string &line, char delimiter);

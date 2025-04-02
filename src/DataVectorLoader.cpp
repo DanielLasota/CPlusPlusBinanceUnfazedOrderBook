@@ -1,4 +1,7 @@
 #include "DataVectorLoader.h"
+
+#include <EntryDecoder.h>
+
 #include "enums/AssetParameters.h"
 
 #include <fstream>
@@ -8,7 +11,7 @@
 #include <filesystem>
 
 
-std::vector<OrderBookEntry> DataVectorLoader::getOrderbookEntriesFromCSV(const std::string &csvPath) {
+std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromCSV(const std::string &csvPath) {
 
     AssetParameters assetParameters = decodeAssetParametersFromCSVName(csvPath);
     std::cout << "Found Asset Parameters: " << assetParameters << std::endl;
@@ -31,23 +34,11 @@ std::vector<OrderBookEntry> DataVectorLoader::getOrderbookEntriesFromCSV(const s
         }
 
         auto tokens = split(line, ',');
-        if (tokens.size() < 12) {
-            std::cerr << "Niepoprawny format linii: " << line << std::endl;
-            continue;
-        }
 
         try {
-            OrderBookEntry entry;
-            entry.TimestampOfReceive = std::stoll(tokens[0]);
-            entry.EventTime          = std::stoll(tokens[3]);
-            entry.Symbol             = tokens[5];
-            entry.FirstUpdateId      = std::stoll(tokens[6]);
-            entry.FinalUpdateId      = std::stoll(tokens[7]);
-            entry.IsAsk              = (std::stoi(tokens[9]) != 0);
-            entry.Price              = std::stod(tokens[10]);
-            entry.Quantity           = std::stod(tokens[11]);
-
+            OrderBookEntry entry = EntryDecoder::decodeEntry(assetParameters, line);
             entries.push_back(entry);
+
         } catch (const std::exception &e) {
             std::cerr << "Błąd przetwarzania linii: " << line << " - " << e.what() << std::endl;
         }

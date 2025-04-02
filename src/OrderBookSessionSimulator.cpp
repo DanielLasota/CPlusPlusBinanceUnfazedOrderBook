@@ -13,7 +13,7 @@ namespace py = pybind11;
 void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, const py::object &python_callback) {
 
     try {
-        std::vector<OrderBookEntry> entries = DataVectorLoader::getOrderbookEntriesFromCSV(csvPath);
+        std::vector<OrderBookEntry> entries = DataVectorLoader::getEntriesFromCSV(csvPath);
         std::vector<OrderBookEntry*> ptr_entries;
 
         ptr_entries.reserve(entries.size());

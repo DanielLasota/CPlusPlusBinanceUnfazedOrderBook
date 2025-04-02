@@ -1,5 +1,5 @@
 #include "OrderbookSessionSimulator.h"
-#include "CSVParser.h"
+#include "DataVectorLoader.h"
 #include <chrono>
 #include <iostream>
 #include <VariablesCounter.h>
@@ -11,8 +11,9 @@ OrderbookSessionSimulator::OrderbookSessionSimulator()
 namespace py = pybind11;
 
 void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, const py::object &python_callback) {
+
     try {
-        std::vector<OrderBookEntry> entries = getOrderbookEntriesFromCSV(csvPath);
+        std::vector<OrderBookEntry> entries = DataVectorLoader::getOrderbookEntriesFromCSV(csvPath);
         std::vector<OrderBookEntry*> ptr_entries;
 
         ptr_entries.reserve(entries.size());
@@ -40,7 +41,7 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
         for (auto* entry : ptr_entries) {
             orderbook.addOrder(entry);
             // orderbook.printOrderBook();
-            variablesCounter.update(orderbook);
+            // variablesCounter.update(orderbook);
 
             // if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
             //     if (!python_callback.is_none()) {

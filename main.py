@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     orderbook_session_simulator = orderbook.OrderbookSessionSimulator()
 
-    csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_25-03-2025.csv"
-    # csv_path = "C:/Users/daniel/Documents/binance_archival_data/short.csv"
+    csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_01-04-2025.csv"
 
+    # orderbook_session_simulator.processOrderbook(csv_path, orderbook_callback)
     orderbook_session_simulator.processOrderbook(csv_path, orderbook_callback)

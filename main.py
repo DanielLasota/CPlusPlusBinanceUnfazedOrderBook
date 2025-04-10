@@ -27,14 +27,6 @@ def orderbook_callback(best_bid, best_ask, mid_price, orderbook_imbalance):
     # ...
     a, b, c, d = best_bid, best_ask, mid_price, orderbook_imbalance
 
-    # print(best_bid, best_ask, mid_price, orderbook_imbalance)
-    # print(x_)
-    # orderbook.printOrderBook()
-    # if orderbook.bids and orderbook.asks:
-    #     best_bid = orderbook.bids[0]
-    #     best_ask = orderbook.asks[0]
-    #     mid_price = (best_bid.Price + best_ask.Price) / 2.0
-
 
 if __name__ == '__main__':
 
@@ -43,4 +35,7 @@ if __name__ == '__main__':
     csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_01-04-2025.csv"
 
     # orderbook_session_simulator.processOrderbook(csv_path, orderbook_callback)
-    orderbook_session_simulator.processOrderbook(csv_path, orderbook_callback)
+    orderbook_snapshot = orderbook_session_simulator.getFinalOrderBookSnapshot(csv_path)
+
+    for bid in orderbook_snapshot.bids:
+        print(bid)

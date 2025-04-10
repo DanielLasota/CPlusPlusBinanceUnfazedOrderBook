@@ -19,7 +19,7 @@ public:
     static OrderBookEntry decodeEntry(const AssetParameters &params, const std::string &line);
 
 private:
-    static std::vector<std::string> split(const std::string &line, char delimiter);
+    static std::vector<std::string> splitLine(const std::string &line, char delimiter);
 };
 
 #endif // ENTRYDECODER_H

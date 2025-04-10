@@ -45,6 +45,8 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
 
         auto finish = std::chrono::steady_clock::now();
 
+        // orderBook.printOrderBook();
+
         auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
         auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
         auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();

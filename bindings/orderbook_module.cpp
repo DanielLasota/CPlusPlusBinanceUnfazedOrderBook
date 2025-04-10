@@ -7,7 +7,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(orderbook, m) {
+PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<OrderBookEntry>(m, "OrderBookEntry")
         .def(py::init<>())
         .def_readwrite("TimestampOfReceive", &OrderBookEntry::TimestampOfReceive)

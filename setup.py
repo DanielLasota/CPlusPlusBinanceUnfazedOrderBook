@@ -5,21 +5,26 @@ from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 this_dir = Path(__file__).parent.resolve()
 
+src_files = [
+    str(file) for file in (this_dir / "src").glob("*.cpp")
+    if file.name != "main.cpp"
+]
+sources = ["bindings/orderbook_module.cpp"] + src_files
+
 ext_modules = [
     Pybind11Extension(
-        'orderbook',
-        [
-            'bindings/orderbook_module.cpp',
-            'src/CSVParser.cpp',
-            'src/OrderBook.cpp'
-         ],
-        include_dirs=[str(this_dir / 'include')],
+        'cpp_binance_orderbook',
+        sources,
+        include_dirs=[
+            str(this_dir / 'include'),
+            str(this_dir / 'include' / 'enums')
+        ],
         language='c++',
     ),
 ]
 
 setup(
-    name='c_plus_plus_binance_unfazed_orderbook',
+    name='cpp_binance_orderbook',
     version='0.0.1',
     author='Daniel Lasota',
     author_email='grossmann.root@gmail.com',

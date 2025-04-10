@@ -4,7 +4,7 @@
 
 
 OrderBookEntry EntryDecoder::decodeEntry(const AssetParameters &params, const std::string &line) {
-    auto tokens = split(line, ',');
+    auto tokens = splitLine(line, ',');
 
     if (params.stream_type == StreamType::TRADE_STREAM) {
 
@@ -110,7 +110,7 @@ OrderBookEntry EntryDecoder::decodeEntry(const AssetParameters &params, const st
     }
 }
 
-std::vector<std::string> EntryDecoder::split(const std::string &line, char delimiter) {
+std::vector<std::string> EntryDecoder::splitLine(const std::string &line, char delimiter) {
     std::vector<std::string> tokens;
     std::istringstream tokenStream(line);
     std::string token;

@@ -1,9 +1,6 @@
-#include "DataVectorLoader.h"
-
+#include <DataVectorLoader.h>
+#include <enums/AssetParameters.h>
 #include <EntryDecoder.h>
-
-#include "enums/AssetParameters.h"
-
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -11,7 +8,7 @@
 #include <filesystem>
 
 
-std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromCSV(const std::string &csvPath) {
+std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const std::string &csvPath) {
 
     AssetParameters assetParameters = decodeAssetParametersFromCSVName(csvPath);
     std::cout << "Found Asset Parameters: " << assetParameters << std::endl;
@@ -33,7 +30,7 @@ std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromCSV(const std::strin
             continue;
         }
 
-        auto tokens = split(line, ',');
+        auto tokens = splitLine(line, ',');
 
         try {
             OrderBookEntry entry = EntryDecoder::decodeEntry(assetParameters, line);
@@ -46,7 +43,6 @@ std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromCSV(const std::strin
     file.close();
     return entries;
 }
-
 
 AssetParameters DataVectorLoader::decodeAssetParametersFromCSVName(const std::string& csvPath) {
     std::string csvName = std::filesystem::path(csvPath).filename().string();
@@ -80,7 +76,7 @@ AssetParameters DataVectorLoader::decodeAssetParametersFromCSVName(const std::st
         throw std::invalid_argument("Unknown stream type in CSV name: " + base);
     }
 
-    std::vector<std::string> parts = split(base, '_');
+    std::vector<std::string> parts = splitLine(base, '_');
     if (parts.size() < 3) {
         throw std::invalid_argument("CSV name format is incorrect: " + base);
     }
@@ -100,7 +96,7 @@ AssetParameters DataVectorLoader::decodeAssetParametersFromCSVName(const std::st
     return AssetParameters { market, stream_type, pair, date };
 }
 
-std::vector<std::string> DataVectorLoader::split(const std::string &line, char delimiter) {
+std::vector<std::string> DataVectorLoader::splitLine(const std::string &line, char delimiter) {
     std::vector<std::string> tokens;
     std::istringstream tokenStream(line);
     std::string token;

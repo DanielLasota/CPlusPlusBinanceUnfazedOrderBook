@@ -3,18 +3,18 @@
 
 #include <EntryDecoder.h>
 #include <enums/AssetParameters.h>
+#include <enums/OrderBookEntry.h>
 #include <vector>
 #include <string>
-#include "enums/OrderBookEntry.h"
 
 class DataVectorLoader {
 public:
     DataVectorLoader() = default;
     
-    static std::vector<OrderBookEntry> getEntriesFromCSV(const std::string &csvPath);
+    static std::vector<OrderBookEntry> getEntriesFromSingleAssetCSV(const std::string &csvPath);
 
 private:
-    static std::vector<std::string> split(const std::string &line, char delimiter);
+    static std::vector<std::string> splitLine(const std::string &line, char delimiter);
 
     static AssetParameters decodeAssetParametersFromCSVName(const std::string &csvName);
 };

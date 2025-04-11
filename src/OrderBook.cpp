@@ -10,10 +10,16 @@ void OrderBook::addOrder(OrderBookEntry* order) {
                 return lhs->Price < rhs->Price;
             }
         );
-        if (it != asks.end() && (*it)->Price == order->Price) {
-            *it = order;
+        if (order->Quantity == 0) {
+            if (it != asks.end() && (*it)->Price == order->Price) {
+                asks.erase(it);
+            }
         } else {
-            asks.insert(it, order);
+            if (it != asks.end() && (*it)->Price == order->Price) {
+                *it = order;
+            } else {
+                asks.insert(it, order);
+            }
         }
     } else {
         auto it = std::lower_bound(bids.begin(), bids.end(), order,
@@ -21,10 +27,16 @@ void OrderBook::addOrder(OrderBookEntry* order) {
                 return lhs->Price > rhs->Price;
             }
         );
-        if (it != bids.end() && (*it)->Price == order->Price) {
-            *it = order;
+        if (order->Quantity == 0) {
+            if (it != bids.end() && (*it)->Price == order->Price) {
+                bids.erase(it);
+            }
         } else {
-            bids.insert(it, order);
+            if (it != bids.end() && (*it)->Price == order->Price) {
+                *it = order;
+            } else {
+                bids.insert(it, order);
+            }
         }
     }
 }

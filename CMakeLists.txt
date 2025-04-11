@@ -21,9 +21,11 @@ set(SOURCES
         src/DataVectorLoader.cpp
         src/AssetParameters.cpp
         src/EntryDecoder.cpp
+        src/FinalOrderBookSnapshot.cpp
 #        test/TestSingleVariableCounter.cpp
+#        test/TestOrderBook.cpp
 )
 
-pybind11_add_module(orderbook ${SOURCES})
+pybind11_add_module(cpp_binance_orderbook ${SOURCES})
 
-set_target_properties(orderbook PROPERTIES SUFFIX ".pyd")
+set_target_properties(cpp_binance_orderbook PROPERTIES SUFFIX ".pyd")

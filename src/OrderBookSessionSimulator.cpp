@@ -45,7 +45,7 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
 
         auto finish = std::chrono::steady_clock::now();
 
-        // orderBook.printOrderBook();
+        orderBook.printOrderBook();
 
         auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
         auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
@@ -71,23 +71,9 @@ FinalOrderBookSnapshot OrderbookSessionSimulator::getFinalOrderBookSnapshot(cons
             ptr_entries.push_back(&entry);
         }
 
-        size_t count = ptr_entries.size();
-        VariablesCounter variablesCounter(count);
-
-        auto start = std::chrono::steady_clock::now();
-
         for (auto* entry : ptr_entries) {
             orderBook.addOrder(entry);
         }
-
-        auto finish = std::chrono::steady_clock::now();
-        auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
-        auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
-        auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-
-        std::cout << "Start timestamp (ms): " << start_ms << std::endl;
-        std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;
-        std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
 
         FinalOrderBookSnapshot snapshot;
         for (auto* bid : orderBook.bids) {

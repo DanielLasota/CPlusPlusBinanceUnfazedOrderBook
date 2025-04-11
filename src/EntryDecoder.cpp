@@ -9,7 +9,7 @@ OrderBookEntry EntryDecoder::decodeEntry(const AssetParameters &params, const st
     if (params.stream_type == StreamType::TRADE_STREAM) {
 
         // if (tokens.size() < 11) {
-        //     throw std::runtime_error("Niewystarczająca liczba tokenów do dekodowania TradeEntry: " + line);
+        //     throw std::runtime_error("Error decoding TradeEntry: " + line);
         // }
         //
         // TradeEntry trade;
@@ -42,17 +42,70 @@ OrderBookEntry EntryDecoder::decodeEntry(const AssetParameters &params, const st
         //     }
         //
         // } catch (const std::exception &e) {
-        //     throw std::runtime_error("Błąd dekodowania TradeEntry: " + std::string(e.what()));
+        //     throw std::runtime_error("Error decoding TradeEntry: " + std::string(e.what()));
         // }
         // return trade;
     }
-    else {
+    else if (params.stream_type == StreamType::DEPTH_SNAPSHOT) {
+        OrderBookEntry entry;
+        try {
+            if (params.market == Market::SPOT) {
+                if (tokens.size() == 6) {
+                    entry.TimestampOfReceive = std::stoll(tokens[0]);
+                    // entry.TimestampOfRequest = std::stoll(tokens[1]);
+                    // entry.LastUpdateId      = std::stoll(tokens[2]);  // LastUpdateId
+                    entry.IsAsk              = (std::stoi(tokens[3]) != 0);
+                    entry.Price              = std::stod(tokens[4]);
+                    entry.Quantity           = std::stod(tokens[5]);
+                } else {
+                    throw std::runtime_error("Invalid number of tokens for SPOT snapshot: " + line);
+                }
+            }
+            else if (params.market == Market::USD_M_FUTURES) {
+                if (tokens.size() == 8) {
+                    entry.TimestampOfReceive = std::stoll(tokens[0]);
+                    // entry.TimestampOfRequest = std::stoll(tokens[1]);
+                    // entry.MessageOutputTime  = std::stoll(tokens[2]);
+                    entry.TransactionTime    = std::stoll(tokens[3]);
+                    // entry.LastUpdateId      = std::stoll(tokens[4]);  // LastUpdateId
+                    entry.IsAsk              = (std::stoi(tokens[5]) != 0);
+                    entry.Price              = std::stod(tokens[6]);
+                    entry.Quantity           = std::stod(tokens[7]);
+                } else {
+                    throw std::runtime_error("Invalid number of tokens for USD_M_FUTURES snapshot: " + line);
+                }
+            }
+            else if (params.market == Market::COIN_M_FUTURES) {
+                if (tokens.size() == 10) {
+                    entry.TimestampOfReceive = std::stoll(tokens[0]);
+                    // entry.TimestampOfRequest = std::stoll(tokens[1]);
+                    // entry.MessageOutputTime  = std::stoll(tokens[2]);
+                    entry.TransactionTime    = std::stoll(tokens[3]);
+                    // entry.LastUpdateId      = std::stoll(tokens[4]);  // LastUpdateId
+                    entry.Symbol             = tokens[5];
+                    // entry.Pair               = tokens[6];
+                    entry.IsAsk              = (std::stoi(tokens[7]) != 0);
+                    entry.Price              = std::stod(tokens[8]);
+                    entry.Quantity           = std::stod(tokens[9]);
+                } else {
+                    throw std::runtime_error("Invalid number of tokens for COIN_M_FUTURES snapshot: " + line);
+                }
+            }
+            else {
+                throw std::runtime_error("Unknown market for snapshot decoding");
+            }
+        } catch (const std::exception &e) {
+            throw std::runtime_error("Error decoding snapshot OrderBookEntry: " + std::string(e.what()));
+        }
+        return entry;
+    }
+    else if (params.stream_type == StreamType::DIFFERENCE_DEPTH_STREAM) {
         OrderBookEntry entry;
         try {
 
             if (params.market == Market::SPOT) {
                 if (tokens.size() < 10) {
-                    throw std::runtime_error("Niewystarczająca liczba tokenów do dekodowania OrderBookEntry (SPOT): " + line);
+                    throw std::runtime_error("Not enough tokens to decode: OrderBookEntry (SPOT): " + line);
                 }
                 entry.TimestampOfReceive = std::stoll(tokens[0]);
                 entry.Stream             = tokens[1];
@@ -67,7 +120,7 @@ OrderBookEntry EntryDecoder::decodeEntry(const AssetParameters &params, const st
             }
             else if (params.market == Market::USD_M_FUTURES) {
                 if (tokens.size() < 11) {
-                    throw std::runtime_error("Niewystarczająca liczba tokenów do dekodowania OrderBookEntry (FUTURES): " + line);
+                    throw std::runtime_error("Not enough tokens to decode: OrderBookEntry (FUTURES): " + line);
                 }
                 entry.TimestampOfReceive        = std::stoll(tokens[0]);
                 entry.Stream                    = tokens[1];
@@ -84,7 +137,7 @@ OrderBookEntry EntryDecoder::decodeEntry(const AssetParameters &params, const st
             }
             else if (params.market == Market::COIN_M_FUTURES) {
                 if (tokens.size() < 12) {
-                    throw std::runtime_error("Niewystarczająca liczba tokenów do dekodowania OrderBookEntry (FUTURES): " + line);
+                    throw std::runtime_error("Not enough tokens to decode: OrderBookEntry (FUTURES): " + line);
                 }
                 entry.TimestampOfReceive        = std::stoll(tokens[0]);
                 entry.Stream                    = tokens[1];
@@ -101,10 +154,10 @@ OrderBookEntry EntryDecoder::decodeEntry(const AssetParameters &params, const st
                 entry.PSUnknownField            = tokens[12];
             }
             else {
-                throw std::runtime_error("Nieznany rynek podczas dekodowania OrderBookEntry");
+                throw std::runtime_error("Unknown Market during decoding OrderBookEntry");
             }
         } catch (const std::exception &e) {
-            throw std::runtime_error("Błąd dekodowania OrderBookEntry: " + std::string(e.what()));
+            throw std::runtime_error("Error decoding OrderBookEntry: " + std::string(e.what()));
         }
         return entry;
     }

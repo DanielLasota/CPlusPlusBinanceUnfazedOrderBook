@@ -16,11 +16,11 @@ dll_list = ["libwinpthread-1.dll", "python311.dll", "msvcrt.dll", "kernel32.dll"
 for dll in dll_list:
     check_dll(dll)
 
-import orderbook
-print(orderbook.__file__)
+import cpp_binance_orderbook
+print(cpp_binance_orderbook.__file__)
 print(f'VVVVV')
-print(dir(orderbook))
-for attribute in dir(orderbook):
+print(dir(cpp_binance_orderbook))
+for attribute in dir(cpp_binance_orderbook):
     print(attribute)
 
 def orderbook_callback(best_bid, best_ask, mid_price, orderbook_imbalance):
@@ -30,9 +30,9 @@ def orderbook_callback(best_bid, best_ask, mid_price, orderbook_imbalance):
 
 if __name__ == '__main__':
 
-    orderbook_session_simulator = orderbook.OrderbookSessionSimulator()
+    orderbook_session_simulator = cpp_binance_orderbook.OrderbookSessionSimulator()
 
-    csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_01-04-2025.csv"
+    csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_10-04-2025.csv"
 
     # orderbook_session_simulator.processOrderbook(csv_path, orderbook_callback)
     orderbook_snapshot = orderbook_session_simulator.getFinalOrderBookSnapshot(csv_path)

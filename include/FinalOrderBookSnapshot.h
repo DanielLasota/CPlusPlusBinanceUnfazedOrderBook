@@ -8,6 +8,8 @@
 struct FinalOrderBookSnapshot {
     std::vector<OrderBookEntry> bids;
     std::vector<OrderBookEntry> asks;
+
+    void printFinalOrderBookSnapshot() const;
 };
 
 #endif // FINALORDERBOOKSNAPSHOT_H

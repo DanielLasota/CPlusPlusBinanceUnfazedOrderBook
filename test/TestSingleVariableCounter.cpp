@@ -1,9 +1,9 @@
 #include "SingleVariableCounter.h"
 #include "OrderBook.h"
-#include "OrderBookEntry.h"
+#include "enums/OrderBookEntry.h"
 #include <cassert>
-#include <cmath>
 #include <iostream>
+#include <cmath>
 
 void test_calculateBestAskPrice() {
     OrderBook orderbook;

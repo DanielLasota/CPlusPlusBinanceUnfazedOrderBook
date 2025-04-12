@@ -11,27 +11,52 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<OrderBookEntry>(m, "OrderBookEntry")
         .def(py::init<>())
         .def_readwrite("TimestampOfReceive", &OrderBookEntry::TimestampOfReceive)
+        .def_readwrite("Stream", &OrderBookEntry::Stream)
+        .def_readwrite("EventType", &OrderBookEntry::EventType)
         .def_readwrite("EventTime", &OrderBookEntry::EventTime)
+        .def_readwrite("TransactionTime", &OrderBookEntry::TransactionTime)
         .def_readwrite("Symbol", &OrderBookEntry::Symbol)
         .def_readwrite("FirstUpdateId", &OrderBookEntry::FirstUpdateId)
         .def_readwrite("FinalUpdateId", &OrderBookEntry::FinalUpdateId)
+        .def_readwrite("FinalUpdateIdInLastStream", &OrderBookEntry::FinalUpdateIdInLastStream)
         .def_readwrite("IsAsk", &OrderBookEntry::IsAsk)
         .def_readwrite("Price", &OrderBookEntry::Price)
         .def_readwrite("Quantity", &OrderBookEntry::Quantity)
+        .def_readwrite("PSUnknownField", &OrderBookEntry::PSUnknownField)
         .def("__repr__", [](const OrderBookEntry &entry) {
             std::ostringstream oss;
-            oss << "OrderBookEntry(";
-            oss << "TimestampOfReceive: " << entry.TimestampOfReceive << ", ";
-            oss << "EventTime: " << entry.EventTime << ", ";
-            oss << "Symbol: '" << entry.Symbol << "', ";
-            oss << "FirstUpdateId: " << entry.FirstUpdateId << ", ";
-            oss << "FinalUpdateId: " << entry.FinalUpdateId << ", ";
-            oss << "IsAsk: " << (entry.IsAsk ? "true" : "false") << ", ";
-            oss << "Price: " << entry.Price << ", ";
-            oss << "Quantity: " << entry.Quantity;
-            oss << ")";
+            oss << "TimestampOfReceive: " << entry.TimestampOfReceive << " ";
+            oss << "Stream: " << entry.Stream << " ";
+            oss << "EventType: " << entry.EventType << " ";
+            oss << "EventTime: " << entry.EventTime << " ";
+            oss << "TransactionTime: " << entry.TransactionTime << " ";
+            oss << "Symbol: '" << entry.Symbol << "' ";
+            oss << "FirstUpdateId: " << entry.FirstUpdateId << " ";
+            oss << "FinalUpdateId: " << entry.FinalUpdateId << " ";
+            oss << "FinalUpdateIdInLastStream: " << entry.FinalUpdateIdInLastStream << " ";
+            oss << "IsAsk: " << (entry.IsAsk ? "true" : "false") << " ";
+            oss << "Price: " << entry.Price << " ";
+            oss << "Quantity: " << entry.Quantity << " ";
+            oss << "PSUnknownField: " << entry.PSUnknownField;
             return oss.str();
-    });
+    })
+        .def_property_readonly("field_names", [](const OrderBookEntry &) {
+            return std::vector<std::string>{
+                "TimestampOfReceive",
+                "Stream",
+                "EventType",
+                "EventTime",
+                "TransactionTime",
+                "Symbol",
+                "FirstUpdateId",
+                "FinalUpdateId",
+                "FinalUpdateIdInLastStream",
+                "IsAsk",
+                "Price",
+                "Quantity",
+                "PSUnknownField"
+            };
+        });
 
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<>())

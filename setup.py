@@ -25,7 +25,7 @@ ext_modules = [
 
 setup(
     name='cpp_binance_orderbook',
-    version='0.0.1',
+    version='0.0.2',
     author='Daniel Lasota',
     author_email='grossmann.root@gmail.com',
     description='Orderbook implementation using Pybind11 and C++',

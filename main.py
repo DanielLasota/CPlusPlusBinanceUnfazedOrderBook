@@ -32,10 +32,11 @@ if __name__ == '__main__':
 
     orderbook_session_simulator = cpp_binance_orderbook.OrderbookSessionSimulator()
 
-    csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_10-04-2025.csv"
+    csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_spot_trxusdt_09-04-2025.csv"
 
     # orderbook_session_simulator.processOrderbook(csv_path, orderbook_callback)
     orderbook_snapshot = orderbook_session_simulator.getFinalOrderBookSnapshot(csv_path)
 
-    for bid in orderbook_snapshot.bids:
-        print(bid)
+    for side in [orderbook_snapshot.asks, orderbook_snapshot.bids]:
+        for entry in side:
+            print(entry.to_list())

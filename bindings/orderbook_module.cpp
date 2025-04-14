@@ -40,6 +40,23 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             oss << "PSUnknownField: " << entry.PSUnknownField;
             return oss.str();
     })
+        .def("to_list", [](const OrderBookEntry &entry) {
+            py::list values;
+            values.append(entry.TimestampOfReceive);
+            values.append(entry.Stream);
+            values.append(entry.EventType);
+            values.append(entry.EventTime);
+            values.append(entry.TransactionTime);
+            values.append(entry.Symbol);
+            values.append(entry.FirstUpdateId);
+            values.append(entry.FinalUpdateId);
+            values.append(entry.FinalUpdateIdInLastStream);
+            values.append(entry.IsAsk ? 1 : 0);
+            values.append(entry.Price);
+            values.append(entry.Quantity);
+            values.append(entry.PSUnknownField);
+            return values;
+        })
         .def_property_readonly("field_names", [](const OrderBookEntry &) {
             return std::vector<std::string>{
                 "TimestampOfReceive",

@@ -11,7 +11,7 @@
 std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const std::string &csvPath) {
 
     AssetParameters assetParameters = decodeAssetParametersFromCSVName(csvPath);
-    std::cout << "Found Asset Parameters: " << assetParameters << std::endl;
+    // std::cout << "Found Asset Parameters: " << assetParameters << std::endl;
 
     std::vector<OrderBookEntry> entries;
     std::ifstream file(csvPath);

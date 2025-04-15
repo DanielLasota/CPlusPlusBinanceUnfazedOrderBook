@@ -13,15 +13,15 @@ namespace py = pybind11;
 void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, const py::object &python_callback) {
 
     try {
-        std::vector<OrderBookEntry> entries = DataVectorLoader::getEntriesFromSingleAssetCSV(csvPath);
-        std::vector<OrderBookEntry*> ptr_entries;
+        std::vector<BinanceEntry> entries = DataVectorLoader::getEntriesFromSingleAssetCSV(csvPath, false);
+        std::vector<BinanceEntry*> ptr_entries;
 
         ptr_entries.reserve(entries.size());
         for (auto &entry : entries) {
             ptr_entries.push_back(&entry);
         }
 
-        OrderBookEntry** data = ptr_entries.data();
+        BinanceEntry** data = ptr_entries.data();
         size_t count = ptr_entries.size();
 
         VariablesCounter variablesCounter(count);
@@ -32,9 +32,12 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
         //     OrderBookEntry* entry = data[i];
 
         for (auto* entry : ptr_entries) {
-            orderBook.addOrder(entry);
+            if (auto* diffEntry = std::get_if<DifferenceDepthEntry>(entry)) {
+                orderBook.addOrder(diffEntry);
+            }
+
             // orderbook.printOrderBook();
-            // variablesCounter.update(orderbook);
+            // variablesCounter.update(orderBook);
 
             // if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
             //     if (!python_callback.is_none()) {
@@ -64,15 +67,17 @@ void OrderbookSessionSimulator::processOrderbook(const std::string& csvPath, con
 
 FinalOrderBookSnapshot OrderbookSessionSimulator::getFinalOrderBookSnapshot(const std::string &csvPath) {
     try {
-        std::vector<OrderBookEntry> entries = DataVectorLoader::getEntriesFromSingleAssetCSV(csvPath);
-        std::vector<OrderBookEntry*> ptr_entries;
+        std::vector<BinanceEntry> entries = DataVectorLoader::getEntriesFromSingleAssetCSV(csvPath, false);
+        std::vector<BinanceEntry*> ptr_entries;
         ptr_entries.reserve(entries.size());
         for (auto &entry : entries) {
             ptr_entries.push_back(&entry);
         }
 
         for (auto* entry : ptr_entries) {
-            orderBook.addOrder(entry);
+            if (auto* diffEntry = std::get_if<DifferenceDepthEntry>(entry)) {
+                orderBook.addOrder(diffEntry);
+            }
         }
 
         FinalOrderBookSnapshot snapshot;

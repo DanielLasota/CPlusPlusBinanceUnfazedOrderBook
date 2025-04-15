@@ -7,16 +7,16 @@
 
 #include <string>
 #include <vector>
-#include <variant>
-#include "enums/AssetParameters.h"
-#include "enums/OrderBookEntry.h"
-#include "enums/TradeEntry.h"
 
-using DecodedEntry = std::variant<OrderBookEntry, TradeEntry>;
+#include <enums/AssetParameters.h>
+#include <enums/BinanceEntry.h>
+
 
 class EntryDecoder {
 public:
-    static OrderBookEntry decodeEntry(const AssetParameters &params, const std::string &line);
+    static BinanceEntry decodeSingleCSVEntry(const AssetParameters &params, const std::string &line);
+
+    static BinanceEntry decodeMergedCSVEntry(const AssetParameters &params, const std::string &line);
 
 private:
     static std::vector<std::string> splitLine(const std::string &line, char delimiter);

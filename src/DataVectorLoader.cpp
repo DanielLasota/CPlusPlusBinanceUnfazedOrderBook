@@ -1,19 +1,21 @@
-#include <DataVectorLoader.h>
-#include <enums/AssetParameters.h>
-#include <EntryDecoder.h>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
 #include <filesystem>
 
+#include <DataVectorLoader.h>
+#include <enums/AssetParameters.h>
+#include <EntryDecoder.h>
+#include "enums/BinanceEntry.h"
 
-std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const std::string &csvPath) {
+
+std::vector<BinanceEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const std::string &csvPath, const bool merged) {
 
     AssetParameters assetParameters = decodeAssetParametersFromCSVName(csvPath);
     // std::cout << "Found Asset Parameters: " << assetParameters << std::endl;
 
-    std::vector<OrderBookEntry> entries;
+    std::vector<BinanceEntry> entries;
     std::ifstream file(csvPath);
     if (!file.is_open()) {
         throw std::runtime_error("Nie można otworzyć pliku: " + csvPath);
@@ -33,8 +35,17 @@ std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const
         auto tokens = splitLine(line, ',');
 
         try {
-            OrderBookEntry entry = EntryDecoder::decodeEntry(assetParameters, line);
-            entries.push_back(entry);
+            if (merged == true){
+                if (tokens[13] == "DIFFERENCE_DEPTH_STREAM") {
+                    BinanceEntry entry = EntryDecoder::decodeMergedCSVEntry(assetParameters, line);
+                    entries.push_back(entry);
+                }
+
+            }
+            else {
+                BinanceEntry entry = EntryDecoder::decodeSingleCSVEntry(assetParameters, line);
+                entries.push_back(entry);
+            }
 
         } catch (const std::exception &e) {
             std::cerr << "Błąd przetwarzania linii: " << line << " - " << e.what() << std::endl;

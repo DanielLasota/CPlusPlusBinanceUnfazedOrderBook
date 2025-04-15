@@ -3,11 +3,11 @@
 #define FINALORDERBOOKSNAPSHOT_H
 
 #include <vector>
-#include "enums/OrderBookEntry.h"
+#include "enums/DifferenceDepthEntry.h"
 
 struct FinalOrderBookSnapshot {
-    std::vector<OrderBookEntry> bids;
-    std::vector<OrderBookEntry> asks;
+    std::vector<DifferenceDepthEntry> bids;
+    std::vector<DifferenceDepthEntry> asks;
 
     void printFinalOrderBookSnapshot() const;
 };

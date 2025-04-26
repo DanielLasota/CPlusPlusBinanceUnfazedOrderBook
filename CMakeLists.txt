@@ -16,7 +16,7 @@ set(SOURCES
         src/main.cpp
         src/OrderBook.cpp
         src/OrderBookSessionSimulator.cpp
-        src/VariablesCounter.cpp
+        src/MarketState.cpp
         src/SingleVariableCounter.cpp
         src/DataVectorLoader.cpp
         src/AssetParameters.cpp

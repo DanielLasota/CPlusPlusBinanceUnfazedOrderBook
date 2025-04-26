@@ -1,6 +1,6 @@
 // ===== ./src/VariablesCounter.cpp =====
 #include "VariablesCounter.h"
-#include "OrderBook.h"
+#include <enums/TradeEntry.h>
 #include <SingleVariableCounter.h>
 
 #include <fstream>
@@ -18,58 +18,53 @@ void VariablesCounter::reserveMemory(size_t size) {
     queueImbalance.reserve(size);
     volumeImbalance.reserve(size);
     gap.reserve(size);
+    isAgressorAsk.reserve(size);
 }
 
-void VariablesCounter::update(const OrderBook& orderbook) {
-    if (orderbook.asks.size() < 2 || orderbook.bids.size() < 2) {
+void VariablesCounter::update(const OrderBook& orderbook, const TradeEntry* trade) {
+
+    if (trade) {
+        lastTrade = *trade;
+        hasLastTrade = true;
+        // std::cout << "received trade: " << trade->Price << std::endl;
+    }
+
+    if ((orderbook.asks.size() < 2 || orderbook.bids.size() < 2) || (!trade && !hasLastTrade)) {
         return;
+    }
+
+    if (!trade) {
+        trade = &lastTrade;
     }
 
     double bestAskPrice = SingleVariableCounter::calculateBestAskPrice(orderbook);
     double bestBidPrice = SingleVariableCounter::calculateBestBidPrice(orderbook);
     double midPriceValue = SingleVariableCounter::calculateMidPrice(orderbook);
-
     double bestVolumeImbalanceValue = SingleVariableCounter::calculateBestVolumeImbalance(orderbook);
     double queueImbalanceValue = SingleVariableCounter::calculateQueueImbalance(orderbook);
-    double volumeImbalanceValue = SingleVariableCounter::calculateVolumeImbalance(orderbook);
-
+    // double volumeImbalanceValue = SingleVariableCounter::calculateVolumeImbalance(orderbook);
     double gapValue = SingleVariableCounter::calculateGap(orderbook);
+    bool isAggressorAskValue = SingleVariableCounter::calculateIsAggressorAsk(trade);
 
     bestAsk.push_back(bestAskPrice);
     bestBid.push_back(bestBidPrice);
     midPrice.push_back(midPriceValue);
     bestVolumeImbalance.push_back(bestVolumeImbalanceValue);
     queueImbalance.push_back(queueImbalanceValue);
-    volumeImbalance.push_back(volumeImbalanceValue);
+    // volumeImbalance.push_back(volumeImbalanceValue);
     gap.push_back(gapValue);
+    isAgressorAsk.push_back(isAggressorAskValue);
 
-    // std::cout
-    // << "bestAskPrice " << bestAskPrice
-    // << "\nbestBidPrice " << bestBidPrice
-    // << "\nmidPriceValue " << midPriceValue
-    // << "\nbestVolumeImbalanceValue " << bestVolumeImbalanceValue
-    // << "\nqueueImbalanceValue " << queueImbalanceValue
-    // << "\nvolumeImbalanceValue " << volumeImbalanceValue
-    // << "\ngapValue " << gapValue
-    //
-    // << std::endl;
 }
 
 void VariablesCounter::saveVariablesListToCSV(const std::string& filename) const {
     std::ofstream file(filename);
-
-    if (!file.is_open()) {
-        std::cerr << "Nie można otworzyć pliku do zapisu: " << filename << std::endl;
-        return;
-    }
-
-    file << "BestAsk,BestBid,MidPrice,BestVolumeImbalance,QueueImbalance,VolumeImbalance,Gap\n";
-
+    file << "BestAsk,BestBid,MidPrice,BestVolumeImbalance,QueueImbalance,VolumeImbalance,Gap,IsAggressorAsk\n";
     for (size_t i = 0; i < bestAsk.size(); ++i) {
-        file << bestAsk[i] << "," << bestBid[i] << "," << midPrice[i] << ","
-             << bestVolumeImbalance[i] << "," << queueImbalance[i] << ","
-             << volumeImbalance[i] << "," << gap[i] << "\n";
+        file
+          << bestAsk[i] << ',' << bestBid[i] << ',' << midPrice[i] << ','
+          << bestVolumeImbalance[i] << ',' << queueImbalance[i] << ','
+          << volumeImbalance[i] << ',' << gap[i] << ','
+          << isAgressorAsk[i] << '\n';
     }
-
-    file.close();
 }

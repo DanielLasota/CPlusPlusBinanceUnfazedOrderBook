@@ -8,22 +8,22 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
-    py::class_<OrderBookEntry>(m, "OrderBookEntry")
+    py::class_<DifferenceDepthEntry>(m, "OrderBookEntry")
         .def(py::init<>())
-        .def_readwrite("TimestampOfReceive", &OrderBookEntry::TimestampOfReceive)
-        .def_readwrite("Stream", &OrderBookEntry::Stream)
-        .def_readwrite("EventType", &OrderBookEntry::EventType)
-        .def_readwrite("EventTime", &OrderBookEntry::EventTime)
-        .def_readwrite("TransactionTime", &OrderBookEntry::TransactionTime)
-        .def_readwrite("Symbol", &OrderBookEntry::Symbol)
-        .def_readwrite("FirstUpdateId", &OrderBookEntry::FirstUpdateId)
-        .def_readwrite("FinalUpdateId", &OrderBookEntry::FinalUpdateId)
-        .def_readwrite("FinalUpdateIdInLastStream", &OrderBookEntry::FinalUpdateIdInLastStream)
-        .def_readwrite("IsAsk", &OrderBookEntry::IsAsk)
-        .def_readwrite("Price", &OrderBookEntry::Price)
-        .def_readwrite("Quantity", &OrderBookEntry::Quantity)
-        .def_readwrite("PSUnknownField", &OrderBookEntry::PSUnknownField)
-        .def("__repr__", [](const OrderBookEntry &entry) {
+        .def_readwrite("TimestampOfReceive", &DifferenceDepthEntry::TimestampOfReceive)
+        .def_readwrite("Stream", &DifferenceDepthEntry::Stream)
+        .def_readwrite("EventType", &DifferenceDepthEntry::EventType)
+        .def_readwrite("EventTime", &DifferenceDepthEntry::EventTime)
+        .def_readwrite("TransactionTime", &DifferenceDepthEntry::TransactionTime)
+        .def_readwrite("Symbol", &DifferenceDepthEntry::Symbol)
+        .def_readwrite("FirstUpdateId", &DifferenceDepthEntry::FirstUpdateId)
+        .def_readwrite("FinalUpdateId", &DifferenceDepthEntry::FinalUpdateId)
+        .def_readwrite("FinalUpdateIdInLastStream", &DifferenceDepthEntry::FinalUpdateIdInLastStream)
+        .def_readwrite("IsAsk", &DifferenceDepthEntry::IsAsk)
+        .def_readwrite("Price", &DifferenceDepthEntry::Price)
+        .def_readwrite("Quantity", &DifferenceDepthEntry::Quantity)
+        .def_readwrite("PSUnknownField", &DifferenceDepthEntry::PSUnknownField)
+        .def("__repr__", [](const DifferenceDepthEntry &entry) {
             std::ostringstream oss;
             oss << "TimestampOfReceive: " << entry.TimestampOfReceive << " ";
             oss << "Stream: " << entry.Stream << " ";
@@ -40,7 +40,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             oss << "PSUnknownField: " << entry.PSUnknownField;
             return oss.str();
     })
-        .def("to_list", [](const OrderBookEntry &entry) {
+        .def("to_list", [](const DifferenceDepthEntry &entry) {
             py::list values;
             values.append(entry.TimestampOfReceive);
             values.append(entry.Stream);
@@ -57,7 +57,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             values.append(entry.PSUnknownField);
             return values;
         })
-        .def_property_readonly("field_names", [](const OrderBookEntry &) {
+        .def_property_readonly("field_names", [](const DifferenceDepthEntry &) {
             return std::vector<std::string>{
                 "TimestampOfReceive",
                 "Stream",
@@ -95,10 +95,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     py::class_<OrderbookSessionSimulator>(m, "OrderbookSessionSimulator")
         .def(py::init<>())
-        .def("processOrderbook", &OrderbookSessionSimulator::processOrderbook,
+        .def("processOrderbook", &OrderbookSessionSimulator::computeBacktest,
              py::arg("csvPath"), py::arg("python_callback") = py::none(),
              "Przetwarza orderbook z pliku CSV, podobnie jak w funkcji main() w C++")
-        .def("getFinalOrderBookSnapshot", &OrderbookSessionSimulator::getFinalOrderBookSnapshot,
+        .def("getFinalOrderBookSnapshot", &OrderbookSessionSimulator::computeFinalDepthSnapshot,
              py::arg("csvPath"),
              "Returns orderbook snapshot after whole utc z day")
     ;

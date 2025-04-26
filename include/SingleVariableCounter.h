@@ -1,7 +1,8 @@
 #ifndef SINGLEVARIABLECOUNTER_H
 #define SINGLEVARIABLECOUNTER_H
 
-#include "OrderBook.h"
+#include <enums/TradeEntry.h>
+#include <OrderBook.h>
 
 namespace SingleVariableCounter {
 
@@ -12,6 +13,7 @@ namespace SingleVariableCounter {
     double calculateQueueImbalance(const OrderBook& orderbook);
     double calculateVolumeImbalance(const OrderBook& orderbook);
     double calculateGap(const OrderBook& orderbook);
+    bool calculateIsAggressorAsk(const TradeEntry *trade_entry);
 
 }
 

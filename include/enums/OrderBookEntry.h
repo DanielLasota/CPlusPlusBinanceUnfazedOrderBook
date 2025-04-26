@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-struct OrderBookEntry {
+struct DifferenceDepthEntry {
     int64_t TimestampOfReceive;
     std::string Stream;
     std::string EventType;

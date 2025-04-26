@@ -6,10 +6,10 @@
 
 class OrderBook {
 public:
-    std::vector<OrderBookEntry*> asks;
-    std::vector<OrderBookEntry*> bids;
+    std::vector<DifferenceDepthEntry*> asks;
+    std::vector<DifferenceDepthEntry*> bids;
 
-    void addOrder(OrderBookEntry* order);
+    void addOrder(DifferenceDepthEntry* order);
     void printOrderBook() const;
 };
 

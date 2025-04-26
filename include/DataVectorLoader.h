@@ -10,8 +10,10 @@
 class DataVectorLoader {
 public:
     DataVectorLoader() = default;
-    
-    static std::vector<OrderBookEntry> getEntriesFromSingleAssetCSV(const std::string &csvPath);
+
+    static std::vector<DecodedEntry> getEntriesFromSingleAssetParametersCSV(const std::string &csvPath);
+
+    static std::vector<DecodedEntry> getEntriesFromMultiAssetParametersCSV(const std::string &csvPath);
 
 private:
     static std::vector<std::string> splitLine(const std::string &line, char delimiter);

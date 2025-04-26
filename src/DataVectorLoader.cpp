@@ -1,3 +1,4 @@
+#include <CSVHeader.h>
 #include <DataVectorLoader.h>
 #include <enums/AssetParameters.h>
 #include <EntryDecoder.h>
@@ -8,12 +9,12 @@
 #include <filesystem>
 
 
-std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const std::string &csvPath) {
+std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersCSV(const std::string &csvPath) {
 
     AssetParameters assetParameters = decodeAssetParametersFromCSVName(csvPath);
     // std::cout << "Found Asset Parameters: " << assetParameters << std::endl;
 
-    std::vector<OrderBookEntry> entries;
+    std::vector<DecodedEntry> entries;
     std::ifstream file(csvPath);
     if (!file.is_open()) {
         throw std::runtime_error("Nie można otworzyć pliku: " + csvPath);
@@ -21,6 +22,7 @@ std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const
 
     std::string line;
     bool headerSkipped = false;
+
     while (std::getline(file, line)) {
         if (line.empty() || line[0] == '#') {
             continue;
@@ -30,10 +32,8 @@ std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const
             continue;
         }
 
-        auto tokens = splitLine(line, ',');
-
         try {
-            OrderBookEntry entry = EntryDecoder::decodeEntry(assetParameters, line);
+            DecodedEntry entry = EntryDecoder::decodeSingleAssetParameterEntry(assetParameters, line);
             entries.push_back(entry);
 
         } catch (const std::exception &e) {
@@ -41,6 +41,40 @@ std::vector<OrderBookEntry> DataVectorLoader::getEntriesFromSingleAssetCSV(const
         }
     }
     file.close();
+    return entries;
+}
+
+std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCSV(const std::string &csvPath) {
+
+    std::ifstream file(csvPath);
+    if (!file.is_open()) {
+        throw std::runtime_error("Nie można otworzyć pliku: " + csvPath);
+    }
+
+    std::string headerLine;
+    while (std::getline(file, headerLine)) {
+        if (headerLine.empty() || headerLine[0] == '#')
+            continue;
+        break;
+    }
+    CSVHeader header(headerLine);
+
+    std::vector<DecodedEntry> entries;
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty() || line[0] == '#')
+            continue;
+
+        try {
+            DecodedEntry entry = EntryDecoder::decodeMultiAssetParameterEntry(line, header);
+            entries.push_back(std::move(entry));
+        }
+        catch (const std::exception &e) {
+            std::cerr << "Błąd przetwarzania linii: " << line
+                      << " - " << e.what() << std::endl;
+        }
+    }
+
     return entries;
 }
 

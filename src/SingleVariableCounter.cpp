@@ -70,4 +70,8 @@ namespace SingleVariableCounter {
         return (secondBestBid + secondBestAsk) - (bestBid + bestAsk);
     }
 
+    bool calculateIsAggressorAsk(const TradeEntry *trade_entry) {
+        return trade_entry->IsBuyerMarketMaker;
+    }
+
 } // namespace SingleVariableCounter

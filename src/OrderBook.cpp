@@ -3,10 +3,10 @@
 #include <iostream>
 #include <ranges>
 
-void OrderBook::addOrder(OrderBookEntry* order) {
+void OrderBook::addOrder(DifferenceDepthEntry* order) {
     if (order->IsAsk) {
         auto it = std::lower_bound(asks.begin(), asks.end(), order,
-            [](const OrderBookEntry* lhs, const OrderBookEntry* rhs) {
+            [](const DifferenceDepthEntry* lhs, const DifferenceDepthEntry* rhs) {
                 return lhs->Price < rhs->Price;
             }
         );
@@ -23,7 +23,7 @@ void OrderBook::addOrder(OrderBookEntry* order) {
         }
     } else {
         auto it = std::lower_bound(bids.begin(), bids.end(), order,
-            [](const OrderBookEntry* lhs, const OrderBookEntry* rhs) {
+            [](const DifferenceDepthEntry* lhs, const DifferenceDepthEntry* rhs) {
                 return lhs->Price > rhs->Price;
             }
         );

@@ -14,7 +14,7 @@ struct TradeEntry {
     int64_t TradeId;
     double Price;
     double Quantity;
-    int IsBuyerMarketMaker;
+    bool IsBuyerMarketMaker;
     std::string MUnknownParameter;
     std::string XUnknownParameter;
 };

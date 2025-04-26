@@ -12,9 +12,11 @@ class OrderbookSessionSimulator {
 public:
     OrderbookSessionSimulator();
 
-    void processOrderbook(const std::string& csvPath, const py::object &python_callback = py::none());
+    void computeBacktest(const std::string& csvPath, const py::object &python_callback = py::none());
 
-    FinalOrderBookSnapshot getFinalOrderBookSnapshot(const std::string &csvPath);
+    void computeVariables(const std::string &csvPath, std::vector<std::string> &variables);
+
+    FinalOrderBookSnapshot computeFinalDepthSnapshot(const std::string &csvPath);
 
 private:
     OrderBook orderBook;

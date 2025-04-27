@@ -13,7 +13,7 @@ class OrderbookSessionSimulator {
 public:
     OrderbookSessionSimulator();
 
-    std::vector<OrderBookMetrics> computeVariables(const std::string &csvPath, std::vector<std::string> &variables);
+    OrderBookMetrics computeVariables(const std::string &csvPath, std::vector<std::string> &variables);
 
     void computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const py::object &python_callback = py::none());
 

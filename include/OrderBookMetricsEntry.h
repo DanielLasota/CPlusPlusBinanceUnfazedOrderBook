@@ -1,8 +1,6 @@
-#ifndef ORDERBOOKMETRICS_H
-#define ORDERBOOKMETRICS_H
 #pragma once
 
-struct OrderBookMetrics {
+struct OrderBookMetricsEntry {
     double bestAsk;
     double bestBid;
     double midPrice;
@@ -12,4 +10,3 @@ struct OrderBookMetrics {
     double gap;
     bool isAggressorAsk;
 };
-#endif //ORDERBOOKMETRICS_H

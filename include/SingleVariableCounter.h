@@ -1,8 +1,8 @@
 #ifndef SINGLEVARIABLECOUNTER_H
 #define SINGLEVARIABLECOUNTER_H
 
-#include <enums/TradeEntry.h>
-#include <OrderBook.h>
+#include "enums/TradeEntry.h"
+#include "OrderBook.h"
 
 namespace SingleVariableCounter {
 

@@ -30,7 +30,7 @@ OrderBookMetrics OrderbookSessionSimulator::computeVariables(const std::string &
 
     MarketState marketState;
     MetricMask mask = parseMask(variables);
-    OrderBookMetrics orderBookMetrics;
+    OrderBookMetrics orderBookMetrics(variables);
     orderBookMetrics.reserve(ptr_entries.size());
 
     auto start = std::chrono::steady_clock::now();

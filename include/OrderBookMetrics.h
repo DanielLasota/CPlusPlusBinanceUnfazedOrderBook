@@ -6,7 +6,8 @@
 
 class OrderBookMetrics {
 public:
-    OrderBookMetrics() = default;
+    explicit OrderBookMetrics(const std::vector<std::string>& variables)
+        : variables_(variables) {}
 
     void reserve(size_t n) {
         entries_.reserve(n);
@@ -24,4 +25,5 @@ public:
 
 private:
     std::vector<OrderBookMetricsEntry> entries_;
+    std::vector<std::string> variables_;
 };

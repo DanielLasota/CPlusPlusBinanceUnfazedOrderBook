@@ -1,37 +1,46 @@
-#include "MarketState.h"
-#include <enums/TradeEntry.h>
-#include <SingleVariableCounter.h>
-
+#include <iostream>
 #include <optional>
-#include <OrderBookMetrics.h>
 
-MarketState::MarketState() {}
+#include "MarketState.h"
+#include "enums/TradeEntry.h"
+#include "OrderBookMetrics.h"
+#include "SingleVariableCounter.h"
 
-std::optional<OrderBookMetrics> MarketState::update(const OrderBook& orderbook, const TradeEntry* trade) {
+MarketState::MarketState()
+    : lastTradePtr(nullptr)
+    , hasLastTrade(false)
+    , orderBook()
+{}
 
-    if (trade) {
-        lastTrade = *trade;
-        hasLastTrade = true;
-        // std::cout << "received trade: " << trade->Price << std::endl;
+void MarketState::update(DecodedEntry* entry) {
+    if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
+        orderBook.addOrder(differenceDepthEntry);
+        // std::cout << "received order: "<< differenceDepthEntry->Price << std::endl;
     }
 
-    if ((orderbook.asks.size() < 2 || orderbook.bids.size() < 2) || (!trade && !hasLastTrade)) {
+    if (auto* tradeEntry = std::get_if<TradeEntry>(entry)) {
+        lastTradePtr = tradeEntry;
+        hasLastTrade = true;
+        // std::cout << "received trade: "<< tradeEntry->Price << std::endl;
+    }
+}
+
+std::optional<OrderBookMetrics> MarketState::countOrderBookMetrics() const {
+    if (orderBook.asks.size() < 2
+     || orderBook.bids.size() < 2
+     || !hasLastTrade)
+    {
         return std::nullopt;
     }
 
-    if (!trade) {
-        trade = &lastTrade;
-    }
-
     OrderBookMetrics obm{};
+    obm.bestAsk             = SingleVariableCounter::calculateBestAskPrice(orderBook);
+    obm.bestBid             = SingleVariableCounter::calculateBestBidPrice(orderBook);
+    obm.midPrice            = SingleVariableCounter::calculateMidPrice(orderBook);
+    obm.bestVolumeImbalance = SingleVariableCounter::calculateBestVolumeImbalance(orderBook);
+    obm.queueImbalance      = SingleVariableCounter::calculateQueueImbalance(orderBook);
+    obm.gap                 = SingleVariableCounter::calculateGap(orderBook);
+    obm.isAggressorAsk      = SingleVariableCounter::calculateIsAggressorAsk(lastTradePtr);
 
-    obm.bestAsk = SingleVariableCounter::calculateBestAskPrice(orderbook);
-    obm.bestBid = SingleVariableCounter::calculateBestBidPrice(orderbook);
-    obm.midPrice = SingleVariableCounter::calculateMidPrice(orderbook);
-    obm.bestVolumeImbalance = SingleVariableCounter::calculateBestVolumeImbalance(orderbook);
-    obm.queueImbalance = SingleVariableCounter::calculateQueueImbalance(orderbook);
-    // obm.volumeImbalance = SingleVariableCounter::calculateVolumeImbalance(orderbook);
-    obm.gap = SingleVariableCounter::calculateGap(orderbook);
-    obm.isAggressorAsk = SingleVariableCounter::calculateIsAggressorAsk(trade);
     return obm;
 }

@@ -1,6 +1,6 @@
 #include "EntryDecoder.h"
+#include "CSVHeader.h"
 
-#include <CSVHeader.h>
 #include <sstream>
 #include <stdexcept>
 

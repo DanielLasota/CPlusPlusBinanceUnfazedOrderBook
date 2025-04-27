@@ -1,14 +1,11 @@
-//
-// Created by daniel on 2.04.2025.
-//
-
 #ifndef ENTRYDECODER_H
 #define ENTRYDECODER_H
 
-#include <CSVHeader.h>
 #include <string>
 #include <vector>
 #include <variant>
+
+#include "CSVHeader.h"
 #include "enums/AssetParameters.h"
 #include "enums/OrderBookEntry.h"
 #include "enums/TradeEntry.h"

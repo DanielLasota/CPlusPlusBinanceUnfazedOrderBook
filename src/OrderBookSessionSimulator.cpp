@@ -11,7 +11,7 @@ OrderbookSessionSimulator::OrderbookSessionSimulator() {}
 
 namespace py = pybind11;
 
-std::vector<OrderBookMetrics> OrderbookSessionSimulator::computeVariables(const std::string &csvPath, std::vector<std::string> &variables) {
+OrderBookMetrics OrderbookSessionSimulator::computeVariables(const std::string &csvPath, std::vector<std::string> &variables) {
 
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptr_entries;
@@ -25,32 +25,32 @@ std::vector<OrderBookMetrics> OrderbookSessionSimulator::computeVariables(const 
     size_t count = ptr_entries.size();
 
 
-    auto start = std::chrono::steady_clock::now();
-
     // for (size_t i = 0; i < count; ++i) {
     //     OrderBookEntry* entry = data[i];
 
     MarketState marketState;
-    std::vector<OrderBookMetrics> orderBookMetrics;
+    MetricMask mask = parseMask(variables);
+    OrderBookMetrics orderBookMetrics;
     orderBookMetrics.reserve(ptr_entries.size());
+
+    auto start = std::chrono::steady_clock::now();
 
     for (auto* p : ptr_entries) {
         marketState.update(p);
-        if (auto m = marketState.countOrderBookMetrics()) {
-            orderBookMetrics.push_back(std::move(*m));
+        if (auto m = marketState.countOrderBookMetrics(mask)) {
+            orderBookMetrics.addEntry(*m);
         }
     }
 
     auto finish = std::chrono::steady_clock::now();
-
     auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
     auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-
     std::cout << "Start timestamp (ms): " << start_ms << std::endl;
     std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;
     std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
 
+    orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
     return orderBookMetrics;
 }
 
@@ -64,6 +64,7 @@ void OrderbookSessionSimulator::computeBacktest(const std::string& csvPath, std:
     }
 
     MarketState marketState;
+    MetricMask mask = parseMask(variables);
 
     auto start = std::chrono::steady_clock::now();
 
@@ -73,7 +74,7 @@ void OrderbookSessionSimulator::computeBacktest(const std::string& csvPath, std:
 
     // if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
     //     if (!python_callback.is_none()) {
-    //         // python_callback(2, 1, 3, 7);
+    //         // python_callback(2, 1, 3, 7);mask
     //     }
     // }
 

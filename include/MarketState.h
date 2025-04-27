@@ -3,6 +3,7 @@
 
 #include <optional>
 
+#include "MetricMask.h"
 #include "OrderBook.h"
 #include "EntryDecoder.h"
 #include "OrderBookMetrics.h"
@@ -14,7 +15,7 @@ public:
 
     void update(DecodedEntry* entry);
 
-    std::optional<OrderBookMetrics> countOrderBookMetrics() const;
+    std::optional<OrderBookMetricsEntry> countOrderBookMetrics(MetricMask mask) const;
 
     OrderBook  orderBook;
 

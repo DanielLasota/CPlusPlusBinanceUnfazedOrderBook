@@ -23,6 +23,7 @@ set(SOURCES
         src/EntryDecoder.cpp
         src/FinalOrderBookSnapshot.cpp
         src/CSVHeader.cpp
+        src/OrderBookMetrics.cpp
 #        test/TestSingleVariableCounter.cpp
 #        test/TestOrderBook.cpp
 )

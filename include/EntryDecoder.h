@@ -1,5 +1,4 @@
-#ifndef ENTRYDECODER_H
-#define ENTRYDECODER_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -7,7 +6,7 @@
 
 #include "CSVHeader.h"
 #include "enums/AssetParameters.h"
-#include "enums/OrderBookEntry.h"
+#include "enums/DifferenceDepthEntry.h"
 #include "enums/TradeEntry.h"
 
 using DecodedEntry = std::variant<DifferenceDepthEntry, TradeEntry>;
@@ -20,6 +19,3 @@ public:
 private:
     static std::vector<std::string> splitLine(const std::string &line, char delimiter);
 };
-
-#endif // ENTRYDECODER_H
-

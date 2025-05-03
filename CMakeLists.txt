@@ -21,7 +21,6 @@ set(SOURCES
         src/DataVectorLoader.cpp
         src/AssetParameters.cpp
         src/EntryDecoder.cpp
-        src/FinalOrderBookSnapshot.cpp
         src/CSVHeader.cpp
         src/OrderBookMetrics.cpp
 #        test/TestSingleVariableCounter.cpp
@@ -48,6 +47,5 @@ set_target_properties(cpp_binance_orderbook PROPERTIES SUFFIX ".pyd")
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookSessionSimulator.cpp
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\SingleVariableCounter.cpp
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\MarketState.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\FinalOrderBookSnapshot.cpp
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\CSVHeader.cpp
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetrics.cpp

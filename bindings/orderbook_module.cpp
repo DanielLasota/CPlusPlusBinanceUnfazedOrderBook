@@ -1,16 +1,17 @@
-#include <MarketState.h>
 #include <sstream>
-#include <TradeEntry.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "OrderBookEntry.h"
+#include "MarketState.h"
+#include "TradeEntry.h"
+#include "DifferenceDepthEntry.h"
 #include "OrderBook.h"
 #include "OrderBookMetricsEntry.h"
 #include "OrderBookMetrics.h"
 #include "OrderBookSessionSimulator.h"
 
 namespace py = pybind11;
+using MS = MarketStatePooled;
 
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
@@ -29,15 +30,20 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         ;
 
     // ----- MarketState -----
-    py::class_<MarketState>(m, "MarketState")
+    py::class_<MS>(m, "MarketState")
         .def(py::init<>(), "Tworzy nowy MarketState")
-        .def("update", &MarketState::update, py::arg("entry"),
-             "Aktualizuje stan rynkowy na podstawie OrderBookEntry lub TradeEntry")
-        .def("count_order_book_metrics", &MarketState::countOrderBookMetrics, py::arg("mask"),
-             "Oblicza metryki (na podstawie MetricMask) i zwraca std::optional<OrderBookMetricsEntry>")
-        .def_readonly("orderBook", &MarketState::orderBook,
+        .def("update",
+             &MS::update,
+             py::arg("entry"),
+             "Aktualizuje stan rynkowy na podstawie DifferenceDepthEntry lub TradeEntry")
+        .def("count_order_book_metrics",
+             &MS::countOrderBookMetrics,
+             py::arg("mask"),
+             "Oblicza metryki zgodnie z MetricMask i zwraca Optional[OrderBookMetricsEntry]")
+        .def_property_readonly("orderBook",
+             [](MS &self) -> OrderBook& { return self.orderBook; },
              "Bieżący stan orderbooka (wewnętrzna struktura OrderBook)")
-    ;
+        ;
 
     // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")

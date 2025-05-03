@@ -42,10 +42,8 @@ class TestMarketState:
         bid_prices = [b.price for b in ms.orderBook.bids]
         ask_prices = [a.price for a in ms.orderBook.asks]
 
-        ms.orderBook.print_order_book()
-
-        # assert bid_prices == [10.0, 8.0]
-        # assert ask_prices == [9.0, 11.0]
+        assert bid_prices == [10.0, 8.0]
+        assert ask_prices == [11.0, 12.0]
 
     def test_given_series_of_final_snapshot_entries_is_orderbook_updated_and_sorted_correctly(self):
         ms = MarketState()

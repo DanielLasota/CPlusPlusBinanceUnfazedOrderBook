@@ -1,5 +1,4 @@
-#ifndef ORDERBOOKENTRY_H
-#define ORDERBOOKENTRY_H
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -20,5 +19,3 @@ struct DifferenceDepthEntry {
     std::string PSUnknownField;
     bool IsLast;
 };
-
-#endif // ORDERBOOKENTRY_H

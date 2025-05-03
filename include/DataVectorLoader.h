@@ -1,9 +1,7 @@
-#ifndef DATAVECTORLOADER_H
-#define DATAVECTORLOADER_H
+#pragma once
 
 #include <EntryDecoder.h>
 #include <enums/AssetParameters.h>
-#include <enums/OrderBookEntry.h>
 #include <vector>
 #include <string>
 
@@ -20,5 +18,3 @@ private:
 
     static AssetParameters decodeAssetParametersFromCSVName(const std::string &csvName);
 };
-
-#endif // DATAVECTORLOADER_H

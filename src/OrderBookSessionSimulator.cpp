@@ -21,7 +21,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
         ptr_entries.push_back(&entry);
     }
 
-    MarketState marketState;
+    MarketState<false> marketState;
     MetricMask mask = parseMask(variables);
     OrderBookMetrics orderBookMetrics(variables);
     orderBookMetrics.reserve(ptr_entries.size());
@@ -69,7 +69,7 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
         ptrEntries.push_back(&entry);
     }
 
-    MarketState marketState;
+    MarketState<false> marketState;
     MetricMask mask = parseMask(variables);
 
     auto start = std::chrono::steady_clock::now();
@@ -113,7 +113,8 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
             ptrEntries.push_back(&entry);
         }
 
-        MarketState marketState;
+        MarketState<false> marketState;
+
         for (auto* entryPtr : ptrEntries) {
             marketState.update(entryPtr);
         }

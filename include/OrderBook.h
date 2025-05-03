@@ -1,8 +1,9 @@
-#ifndef ORDERBOOK_H
-#define ORDERBOOK_H
+#pragma once
 
 #include <vector>
-#include "enums/OrderBookEntry.h"
+
+#include "enums/DifferenceDepthEntry.h"
+
 
 class OrderBook {
 public:
@@ -12,5 +13,3 @@ public:
     void addOrder(DifferenceDepthEntry* order);
     void printOrderBook() const;
 };
-
-#endif // ORDERBOOK_H

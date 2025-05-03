@@ -109,7 +109,7 @@ class TestOrderBookSessionSimulator:
                 {var: getattr(entry, var) for var in variables_list}
                 for entry in metrics
             ])
-            print(df)
+
             assert df.columns.tolist() == variables_list
             for col in df.columns:
                 assert not df[col].isnull().all(), f"Column `{col}` contains only NaN values"
@@ -165,7 +165,6 @@ class TestOrderBookSessionSimulator:
                 python_callback=python_callback
             )
             metrics_df = pd.DataFrame(callback_entries_list)
-            print(metrics_df)
 
             sheer_df = pd.read_csv(csv_path, comment='#')
 
@@ -229,9 +228,6 @@ class TestOrderBookSessionSimulator:
             final_depth_snapshot_after_09_04_df.rename(columns={'is_ask': 'IsAsk', 'price': 'Price', 'quantity': 'Quantity'}, inplace=True)
 
             first_depth_snapshot_root_csv_10_04 = pd.read_csv(first_depth_snapshot_root_csv_10_04_path, comment='#', dtype={'IsAsk': bool, 'Price': float, 'Quantity': float})
-
-            print(final_depth_snapshot_after_09_04_df)
-            print(first_depth_snapshot_root_csv_10_04)
 
             pd.testing.assert_frame_equal(
                 final_depth_snapshot_after_09_04_df[['IsAsk','Price','Quantity']].reset_index(drop=True),

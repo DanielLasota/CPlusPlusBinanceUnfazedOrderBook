@@ -1,15 +1,11 @@
-// ===== ./include/FinalOrderBookSnapshot.h =====
-#ifndef FINALORDERBOOKSNAPSHOT_H
-#define FINALORDERBOOKSNAPSHOT_H
+#pragma once
 
 #include <vector>
 #include "enums/OrderBookEntry.h"
 
-struct FinalOrderBookSnapshot {
+struct FinalDifferenceDepthSnapshot {
     std::vector<DifferenceDepthEntry> bids;
     std::vector<DifferenceDepthEntry> asks;
 
-    void printFinalOrderBookSnapshot() const;
+    void printFinalDifferenceDepthSnapshot() const;
 };
-
-#endif // FINALORDERBOOKSNAPSHOT_H

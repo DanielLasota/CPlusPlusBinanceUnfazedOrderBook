@@ -1,6 +1,6 @@
 #include <iostream>
 #include <optional>
-
+#include <variant>
 #include "MarketState.h"
 #include "enums/TradeEntry.h"
 #include "OrderBookMetrics.h"
@@ -11,9 +11,15 @@ MarketState::MarketState()
     : lastTradePtr(nullptr)
     , hasLastTrade(false)
     , orderBook()
+    , lastTimestampOfReceive(0)
 {}
 
 void MarketState::update(DecodedEntry* entry) {
+
+    std::visit([this](auto const& e){
+        this->lastTimestampOfReceive = e.TimestampOfReceive;
+    }, *entry);
+
     if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
         orderBook.addOrder(differenceDepthEntry);
         // std::cout << "received order: "<< differenceDepthEntry->Price << std::endl;
@@ -27,10 +33,13 @@ void MarketState::update(DecodedEntry* entry) {
 }
 
 std::optional<OrderBookMetricsEntry> MarketState::countOrderBookMetrics(MetricMask mask) const {
+
     if (orderBook.bids.size() < 2 || orderBook.asks.size() < 2 || !hasLastTrade)
         return std::nullopt;
 
     OrderBookMetricsEntry o{};
+    if (mask & TimestampOfReceive)
+        o.timestampOfReceive = lastTimestampOfReceive;
     if (mask & BestAsk)
         o.bestAsk = SingleVariableCounter::calculateBestAskPrice(orderBook);
     if (mask & BestBid)

@@ -1,25 +1,22 @@
-#ifndef ORDERBOOK_SESSION_SIMULATOR_H
-#define ORDERBOOK_SESSION_SIMULATOR_H
+#pragma once
 
+#include "OrderBook.h"
 #include "OrderBookMetrics.h"
-#include "FinalOrderBookSnapshot.h"
 
 #include <string>
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
-class OrderbookSessionSimulator {
+class OrderBookSessionSimulator {
 public:
-    OrderbookSessionSimulator();
+    OrderBookSessionSimulator();
 
-    OrderBookMetrics computeVariables(const std::string &csvPath, std::vector<std::string> &variables);
+    std::vector<OrderBookMetricsEntry> computeVariables(const std::string &csvPath, std::vector<std::string> &variables);
 
     void computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const py::object &python_callback = py::none());
 
-    FinalOrderBookSnapshot computeFinalDepthSnapshot(const std::string &csvPath);
+    OrderBook computeFinalDepthSnapshot(const std::string &csvPath);
 
 private:
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef MARKETSTATE_H
-#define MARKETSTATE_H
+#pragma once
 
 #include <optional>
 
@@ -17,7 +16,7 @@ public:
 
     std::optional<OrderBookMetricsEntry> countOrderBookMetrics(MetricMask mask) const;
 
-    OrderBook  orderBook;
+    OrderBook orderBook;
 
 private:
     int64_t lastTimestampOfReceive;
@@ -28,5 +27,3 @@ private:
 
     void reserveMemory(size_t size);
 };
-
-#endif // MARKETSTATE_H

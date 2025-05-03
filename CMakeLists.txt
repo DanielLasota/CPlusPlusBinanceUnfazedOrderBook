@@ -31,3 +31,23 @@ set(SOURCES
 pybind11_add_module(cpp_binance_orderbook ${SOURCES})
 
 set_target_properties(cpp_binance_orderbook PROPERTIES SUFFIX ".pyd")
+
+#-std=c++20
+#-O3
+#-march=native
+#-pthread
+#-IC:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\pybind11\include
+#-IC:\Users\daniel\AppData\Local\Programs\Python\Python311\include
+#-LC:\Users\daniel\AppData\Local\Programs\Python\Python311\libs
+#-IC:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\include
+#-lpython311
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\AssetParameters.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\DataVectorLoader.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\EntryDecoder.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBook.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookSessionSimulator.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\SingleVariableCounter.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\MarketState.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\FinalOrderBookSnapshot.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\CSVHeader.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetrics.cpp

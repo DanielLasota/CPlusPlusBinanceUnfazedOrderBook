@@ -17,6 +17,7 @@ struct TradeEntry {
     bool IsBuyerMarketMaker;
     std::string MUnknownParameter;
     std::string XUnknownParameter;
+    bool IsLast;
 };
 
 #endif // TRADEENTRY_H

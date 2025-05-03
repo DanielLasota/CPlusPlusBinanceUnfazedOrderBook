@@ -2,7 +2,7 @@
 #include <iostream>
 #include <ranges>
 
-void FinalOrderBookSnapshot::printFinalOrderBookSnapshot() const {
+void FinalDifferenceDepthSnapshot::printFinalDifferenceDepthSnapshot() const {
     std::cout << "Final Order Book Snapshot:" << std::endl;
 
     std::cout << "Asks:" << std::endl;

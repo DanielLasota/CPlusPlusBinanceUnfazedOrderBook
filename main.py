@@ -30,7 +30,7 @@ def orderbook_callback(best_bid, best_ask, mid_price, orderbook_imbalance):
 
 if __name__ == '__main__':
 
-    orderbook_session_simulator = cpp_binance_orderbook.OrderbookSessionSimulator()
+    orderbook_session_simulator = cpp_binance_orderbook.OrderBookSessionSimulator()
 
     csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_spot_adausdt_24-04-2025.csv"
 

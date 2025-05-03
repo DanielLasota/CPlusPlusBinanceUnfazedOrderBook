@@ -7,11 +7,11 @@
 #include "MarketState.h"
 #include "OrderBookMetrics.h"
 
-OrderbookSessionSimulator::OrderbookSessionSimulator() {}
+OrderBookSessionSimulator::OrderBookSessionSimulator() {}
 
 namespace py = pybind11;
 
-OrderBookMetrics OrderbookSessionSimulator::computeVariables(const std::string &csvPath, std::vector<std::string> &variables) {
+std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(const std::string &csvPath, std::vector<std::string> &variables) {
 
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptr_entries;
@@ -20,13 +20,6 @@ OrderBookMetrics OrderbookSessionSimulator::computeVariables(const std::string &
     for (auto &entry : entries) {
         ptr_entries.push_back(&entry);
     }
-
-    DecodedEntry** data = ptr_entries.data();
-    size_t count = ptr_entries.size();
-
-
-    // for (size_t i = 0; i < count; ++i) {
-    //     OrderBookEntry* entry = data[i];
 
     MarketState marketState;
     MetricMask mask = parseMask(variables);
@@ -37,8 +30,21 @@ OrderBookMetrics OrderbookSessionSimulator::computeVariables(const std::string &
 
     for (auto* p : ptr_entries) {
         marketState.update(p);
-        if (auto m = marketState.countOrderBookMetrics(mask)) {
-            orderBookMetrics.addEntry(*m);
+
+        const bool isLast = std::visit([](auto const& entry){
+                return entry.IsLast;
+        }, *p);
+
+        if (isLast == true) {
+            if (auto m = marketState.countOrderBookMetrics(mask)) {
+                orderBookMetrics.addEntry(*m);
+                // marketState.orderBook.printOrderBook();
+                // std::visit([](auto const& entry) {
+                //     std::cout << entry.TimestampOfReceive << " " << entry.Stream << std::endl;
+                // },*p);
+                // std::cout << "\n" << std::endl;
+                // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+            }
         }
     }
 
@@ -51,10 +57,10 @@ OrderBookMetrics OrderbookSessionSimulator::computeVariables(const std::string &
     std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
 
     orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
-    return orderBookMetrics;
+    return orderBookMetrics.entries();
 }
 
-void OrderbookSessionSimulator::computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const py::object &python_callback) {
+void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const py::object &python_callback) {
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptrEntries;
 
@@ -68,15 +74,25 @@ void OrderbookSessionSimulator::computeBacktest(const std::string& csvPath, std:
 
     auto start = std::chrono::steady_clock::now();
 
-    for (auto* entryPtr : ptrEntries) {
-        marketState.update(entryPtr);
-    }
+    for (auto* p : ptrEntries) {
+        marketState.update(p);
 
-    // if (orderbook.asks.size() >= 2 && orderbook.bids.size() >= 2) {
-    //     if (!python_callback.is_none()) {
-    //         // python_callback(2, 1, 3, 7);mask
-    //     }
-    // }
+        const bool isLast = std::visit([](auto const& entry){
+                return entry.IsLast;
+        }, *p);
+
+        if (isLast == true) {
+            if (auto m = marketState.countOrderBookMetrics(mask)) {
+                python_callback(*m );
+                // marketState.orderBook.printOrderBook();
+                // std::visit([](auto const& entry) {
+                //     std::cout << entry.TimestampOfReceive << " " << entry.Stream << std::endl;
+                // },*p);
+                // std::cout << "\n" << std::endl;
+                // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+            }
+        }
+    }
 
     auto finish = std::chrono::steady_clock::now();
     auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
@@ -88,7 +104,7 @@ void OrderbookSessionSimulator::computeBacktest(const std::string& csvPath, std:
 
 }
 
-FinalOrderBookSnapshot OrderbookSessionSimulator::computeFinalDepthSnapshot(const std::string &csvPath) {
+OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string &csvPath) {
     try {
         std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromSingleAssetParametersCSV(csvPath);
         std::vector<DecodedEntry*> ptrEntries;
@@ -102,22 +118,22 @@ FinalOrderBookSnapshot OrderbookSessionSimulator::computeFinalDepthSnapshot(cons
             marketState.update(entryPtr);
         }
 
-        FinalOrderBookSnapshot snapshot;
+        OrderBook snapshot;
         for (auto* bid : marketState.orderBook.bids) {
-            if(bid) {
-                snapshot.bids.push_back(*bid);
-            }
+            snapshot.bids.push_back(
+                new DifferenceDepthEntry(*bid)
+            );
         }
         for (auto* ask : marketState.orderBook.asks) {
-            if(ask) {
-                snapshot.asks.push_back(*ask);
-            }
+            snapshot.asks.push_back(
+                new DifferenceDepthEntry(*ask)
+            );
         }
 
         return snapshot;
 
     } catch (const std::exception &e) {
         std::cerr << "Exception: " << e.what() << std::endl;
-        return FinalOrderBookSnapshot{};
+        return OrderBook{};
     }
 }

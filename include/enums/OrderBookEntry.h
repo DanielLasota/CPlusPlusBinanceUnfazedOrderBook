@@ -18,6 +18,7 @@ struct DifferenceDepthEntry {
     double Price;
     double Quantity;
     std::string PSUnknownField;
+    bool IsLast;
 };
 
 #endif // ORDERBOOKENTRY_H

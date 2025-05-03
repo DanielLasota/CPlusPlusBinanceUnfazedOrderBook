@@ -20,6 +20,8 @@ public:
     OrderBook  orderBook;
 
 private:
+    int64_t lastTimestampOfReceive;
+
     const TradeEntry* lastTradePtr;
 
     bool hasLastTrade;

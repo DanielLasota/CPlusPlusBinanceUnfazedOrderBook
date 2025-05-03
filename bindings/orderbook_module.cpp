@@ -1,5 +1,4 @@
-// ===== ./bindings/orderbook_module.cpp =====
-#include <FinalOrderBookSnapshot.h>
+#include <MarketState.h>
 #include <sstream>
 #include <TradeEntry.h>
 #include <pybind11/pybind11.h>
@@ -14,8 +13,42 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
-    // ----- DifferenceDepthEntry (OrderBookEntry) -----
-    py::class_<DifferenceDepthEntry>(m, "OrderBookEntry")
+
+    // ----- OrderbookSessionSimulator -----
+    py::class_<OrderBookSessionSimulator>(m, "OrderBookSessionSimulator")
+        .def(py::init<>())
+        .def("compute_backtest", &OrderBookSessionSimulator::computeBacktest,
+             py::arg("csv_path"), py::arg("variables"), py::arg("python_callback") = py::none(),
+             "Uruchamia backtest; zwraca void")
+        .def("compute_final_depth_snapshot", &OrderBookSessionSimulator::computeFinalDepthSnapshot,
+             py::arg("csv_path"),
+             "Zwraca FinalOrderBookSnapshot")
+        .def("compute_variables", &OrderBookSessionSimulator::computeVariables,
+             py::arg("csv_path"), py::arg("variables"),
+             "Oblicza metryki z pliku CSV i zwraca OrderBookMetrics")
+        ;
+
+    // ----- MarketState -----
+    py::class_<MarketState>(m, "MarketState")
+        .def(py::init<>(), "Tworzy nowy MarketState")
+        .def("update", &MarketState::update, py::arg("entry"),
+             "Aktualizuje stan rynkowy na podstawie OrderBookEntry lub TradeEntry")
+        .def("count_order_book_metrics", &MarketState::countOrderBookMetrics, py::arg("mask"),
+             "Oblicza metryki (na podstawie MetricMask) i zwraca std::optional<OrderBookMetricsEntry>")
+        .def_readonly("orderBook", &MarketState::orderBook,
+             "Bieżący stan orderbooka (wewnętrzna struktura OrderBook)")
+    ;
+
+    // ----- OrderBook -----
+    py::class_<OrderBook>(m, "OrderBook")
+        .def(py::init<>())
+        .def("add_order", &OrderBook::addOrder, "Dodaje lub usuwa zlecenie")
+        .def("print_order_book", &OrderBook::printOrderBook, "Wypisuje stan orderbooka")
+        .def_readonly("asks", &OrderBook::asks)
+        .def_readonly("bids", &OrderBook::bids);
+
+    // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
+    py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
         .def(py::init<>())
         .def_readwrite("timestamp_of_receive", &DifferenceDepthEntry::TimestampOfReceive)
         .def_readwrite("stream", &DifferenceDepthEntry::Stream)
@@ -33,7 +66,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readwrite("is_last", &DifferenceDepthEntry::IsLast)
         .def("__repr__", [](const DifferenceDepthEntry &entry) {
             std::ostringstream oss;
-            oss << "<OrderBookEntry "
+            oss << "<DifferenceDepthEntry "
                 << "price=" << entry.Price << " qty=" << entry.Quantity << " is_ask=" << entry.IsAsk
                 << ">";
             return oss.str();
@@ -136,23 +169,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         })
     ;
 
-    // ----- OrderBook -----
-    py::class_<OrderBook>(m, "OrderBook")
-        .def(py::init<>())
-        .def("add_order", &OrderBook::addOrder, "Dodaje lub usuwa zlecenie")
-        .def("print_order_book", &OrderBook::printOrderBook, "Wypisuje stan orderbooka")
-        .def_readonly("asks", &OrderBook::asks)
-        .def_readonly("bids", &OrderBook::bids);
-
-    // ----- FinalOrderBookSnapshot -----
-    py::class_<FinalDifferenceDepthSnapshot>(m, "FinalOrderBookSnapshot")
-        .def(py::init<>())
-        .def_readonly("bids", &FinalDifferenceDepthSnapshot::bids)
-        .def_readonly("asks", &FinalDifferenceDepthSnapshot::asks)
-        .def("__repr__", [](const FinalDifferenceDepthSnapshot &s) {
-            return "<FinalOrderBookSnapshot bids=" + std::to_string(s.bids.size())
-                 + " asks=" + std::to_string(s.asks.size()) + ">";
-        });
 
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
@@ -177,17 +193,4 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         //      return self.variables_;
         // }, "Lista nazw metryk");
 
-    // ----- OrderbookSessionSimulator -----
-    py::class_<OrderBookSessionSimulator>(m, "OrderBookSessionSimulator")
-        .def(py::init<>())
-        .def("compute_backtest", &OrderBookSessionSimulator::computeBacktest,
-             py::arg("csv_path"), py::arg("variables"), py::arg("python_callback") = py::none(),
-             "Uruchamia backtest; zwraca void")
-        .def("compute_final_depth_snapshot", &OrderBookSessionSimulator::computeFinalDepthSnapshot,
-             py::arg("csv_path"),
-             "Zwraca FinalOrderBookSnapshot")
-        .def("compute_variables", &OrderBookSessionSimulator::computeVariables,
-             py::arg("csv_path"), py::arg("variables"),
-             "Oblicza metryki z pliku CSV i zwraca OrderBookMetrics")
-    ;
 }

@@ -104,36 +104,36 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
 
 }
 
-OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string &csvPath) {
-    try {
-        std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromSingleAssetParametersCSV(csvPath);
-        std::vector<DecodedEntry*> ptrEntries;
-        ptrEntries.reserve(entries.size());
-        for (auto &entry : entries) {
-            ptrEntries.push_back(&entry);
-        }
-
-        MarketState marketState;
-        for (auto* entryPtr : ptrEntries) {
-            marketState.update(entryPtr);
-        }
-
-        OrderBook snapshot;
-        for (auto* bid : marketState.orderBook.bids) {
-            snapshot.bids.push_back(
-                new DifferenceDepthEntry(*bid)
-            );
-        }
-        for (auto* ask : marketState.orderBook.asks) {
-            snapshot.asks.push_back(
-                new DifferenceDepthEntry(*ask)
-            );
-        }
-
-        return snapshot;
-
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return OrderBook{};
-    }
-}
+// OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string &csvPath) {
+//     try {
+//         std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromSingleAssetParametersCSV(csvPath);
+//         std::vector<DecodedEntry*> ptrEntries;
+//         ptrEntries.reserve(entries.size());
+//         for (auto &entry : entries) {
+//             ptrEntries.push_back(&entry);
+//         }
+//
+//         MarketState marketState;
+//         for (auto* entryPtr : ptrEntries) {
+//             marketState.update(entryPtr);
+//         }
+//
+//         OrderBook snapshot;
+//         for (auto* bid : marketState.orderBook.bids) {
+//             snapshot.bids.push_back(
+//                 new DifferenceDepthEntry(*bid)
+//             );
+//         }
+//         for (auto* ask : marketState.orderBook.asks) {
+//             snapshot.asks.push_back(
+//                 new DifferenceDepthEntry(*ask)
+//             );
+//         }
+//
+//         return snapshot;
+//
+//     } catch (const std::exception &e) {
+//         std::cerr << "Exception: " << e.what() << std::endl;
+//         return OrderBook{};
+//     }
+// }

@@ -21,7 +21,6 @@ set(SOURCES
         src/DataVectorLoader.cpp
         src/AssetParameters.cpp
         src/EntryDecoder.cpp
-        src/FinalOrderBookSnapshot.cpp
         src/CSVHeader.cpp
         src/OrderBookMetrics.cpp
 #        test/TestSingleVariableCounter.cpp

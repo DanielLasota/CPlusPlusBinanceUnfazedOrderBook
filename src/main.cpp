@@ -13,11 +13,11 @@ int main() {
     // std::string csvPath = "python_tests/csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv";
     std::vector<std::string> variables {
         "timestampOfReceive",
-        "bestAsk",
-        "bestBid",
-        "midPrice",
-        "bestVolumeImbalance",
-        "gap"
+//        "bestAsk",
+//        "bestBid",
+//        "midPrice",
+//        "bestVolumeImbalance",
+//        "gap"
     };
 
     orderBookSessionSimulator.computeVariables(csvPath,variables);

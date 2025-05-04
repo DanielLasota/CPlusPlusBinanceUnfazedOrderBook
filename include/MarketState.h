@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include "MetricMask.h"
@@ -16,7 +17,7 @@ public:
 
     std::optional<OrderBookMetricsEntry> countOrderBookMetrics(MetricMask mask) const;
 
-    OrderBook orderBook;
+    std::unique_ptr<OrderBook> orderBook;
 
 private:
     int64_t lastTimestampOfReceive;

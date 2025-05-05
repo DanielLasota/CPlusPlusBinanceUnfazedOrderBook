@@ -114,3 +114,41 @@ class TestMarketState:
     def test_given_empty_MarketState_when_count_order_book_metrics_then_returns_None(self):
         ms = MarketState()
         assert ms.count_order_book_metrics(1) is None
+
+    def testtest(self):
+        import time
+        ms = MarketState()
+        start = time.perf_counter()
+
+        ms.update_depth(
+            timestamp_of_receive=0,
+            price=10.0,
+            quantity=5.0,
+            is_ask=False
+        )
+
+        ms.update_depth(
+            timestamp_of_receive=0,
+            price=5.0,
+            quantity=5.0,
+            is_ask=False
+        )
+
+        # e1 = DifferenceDepthEntry()
+        # e1.timestamp_of_receive = 0
+        # e1.price = 10.0
+        # e1.quantity = 5.0
+        # e1.is_ask = True
+        # ms.update(e1)
+        #
+        # e2 = DifferenceDepthEntry()
+        # e2.timestamp_of_receive = 0
+        # e2.price = 11.0
+        # e2.quantity = 5.0
+        # e2.is_ask = True
+        # ms.update(e2)
+
+        end_time = time.perf_counter()
+        elapsed = (end_time - start) * 1e6
+        print(f"\n🏷️  Czas wstawienia 4 zleceń: {elapsed:.2f} µs")
+        ms.print_order_book()

@@ -11,7 +11,7 @@
 #include "OrderBookSessionSimulator.h"
 
 namespace py = pybind11;
-using MS = MarketStatePooled;
+using MS = MarketState<true>;
 
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
@@ -32,18 +32,62 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- MarketState -----
     py::class_<MS>(m, "MarketState")
         .def(py::init<>(), "Tworzy nowy MarketState")
-        .def("update",
-             &MS::update,
-             py::arg("entry"),
-             "Aktualizuje stan rynkowy na podstawie DifferenceDepthEntry lub TradeEntry")
+
+        // 1) ultraszybki depth update
+        .def("update_depth",
+            [](MS &self,
+               int64_t  timestamp_of_receive,
+               double   price,
+               double   quantity,
+               bool     is_ask)
+            {
+                DifferenceDepthEntry e{};
+                e.TimestampOfReceive = timestamp_of_receive;
+                e.Price              = price;
+                e.Quantity           = quantity;
+                e.IsAsk              = is_ask;
+                DecodedEntry var = e;            // tylko na potrzeby update()
+                self.update(&var);
+            },
+            py::arg("timestamp_of_receive"),
+            py::arg("price"),
+            py::arg("quantity"),
+            py::arg("is_ask"),
+            "Bardzo szybka aktualizacja DifferenceDepthEntry")
+
+        // 2) ultraszybki trade update
+        .def("update_trade",
+            [](MS &self,
+               int64_t  timestamp_of_receive,
+               double   price,
+               double   quantity,
+               bool     is_buyer_market_maker)
+            {
+                TradeEntry e{};
+                e.TimestampOfReceive   = timestamp_of_receive;
+                e.Price                = price;
+                e.Quantity             = quantity;
+                e.IsBuyerMarketMaker   = is_buyer_market_maker;
+                DecodedEntry var = e;            // tylko na potrzeby update()
+                self.update(&var);
+            },
+            py::arg("timestamp_of_receive"),
+            py::arg("price"),
+            py::arg("quantity"),
+            py::arg("is_buyer_market_maker"),
+            "Bardzo szybka aktualizacja TradeEntry")
+
+        // liczenie metryk
         .def("count_order_book_metrics",
              &MS::countOrderBookMetrics,
              py::arg("mask"),
              "Oblicza metryki zgodnie z MetricMask i zwraca Optional[OrderBookMetricsEntry]")
-        .def_property_readonly("orderBook",
-             [](MS &self) -> OrderBook& { return self.orderBook; },
-             "Bieżący stan orderbooka (wewnętrzna struktura OrderBook)")
-        ;
+
+        // nowa metoda do wypisania stanu orderbooka
+        .def("print_order_book",
+             &MS::printOrderBook,
+             "Wypisuje aktualny stan orderbooka (asks i bids)")
+    ;
 
     // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")
@@ -174,7 +218,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             };
         })
     ;
-
 
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")

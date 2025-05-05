@@ -124,12 +124,23 @@ class TestMarketState:
             timestamp_of_receive=0,
             price=10.0,
             quantity=5.0,
-            is_ask=False
+            is_ask=True
         )
-
+        ms.update_depth(
+            timestamp_of_receive=0,
+            price=11.0,
+            quantity=5.0,
+            is_ask=True
+        )
         ms.update_depth(
             timestamp_of_receive=0,
             price=5.0,
+            quantity=5.0,
+            is_ask=False
+        )
+        ms.update_depth(
+            timestamp_of_receive=0,
+            price=6.0,
             quantity=5.0,
             is_ask=False
         )

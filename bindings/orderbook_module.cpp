@@ -11,7 +11,7 @@
 #include "OrderBookSessionSimulator.h"
 
 namespace py = pybind11;
-using MS = MarketState<true>;
+using MS = MarketState;
 
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
@@ -82,20 +82,18 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              &MS::countOrderBookMetrics,
              py::arg("mask"),
              "Oblicza metryki zgodnie z MetricMask i zwraca Optional[OrderBookMetricsEntry]")
-
-        // nowa metoda do wypisania stanu orderbooka
         .def("print_order_book",
-             &MS::printOrderBook,
-             "Wypisuje aktualny stan orderbooka (asks i bids)")
-    ;
+             [](MS &self) {
+                 self.orderBook.printOrderBook();
+             },
+             "Wypisuje stan orderbooka")
+        ;
 
     // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<>())
-        .def("add_order", &OrderBook::addOrder, "Dodaje lub usuwa zlecenie")
         .def("print_order_book", &OrderBook::printOrderBook, "Wypisuje stan orderbooka")
-        .def_readonly("asks", &OrderBook::asks)
-        .def_readonly("bids", &OrderBook::bids);
+    ;
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
@@ -222,8 +220,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
         .def_readonly("timestampOfReceive",            &OrderBookMetricsEntry::timestampOfReceive)
-        .def_readonly("bestAsk",            &OrderBookMetricsEntry::bestAsk)
-        .def_readonly("bestBid",            &OrderBookMetricsEntry::bestBid)
+        .def_readonly("bestAsk",            &OrderBookMetricsEntry::bestAskPrice)
+        .def_readonly("bestBid",            &OrderBookMetricsEntry::bestBidPrice)
         .def_readonly("midPrice",           &OrderBookMetricsEntry::midPrice)
         .def_readonly("bestVolumeImbalance",&OrderBookMetricsEntry::bestVolumeImbalance)
         .def_readonly("queueImbalance",     &OrderBookMetricsEntry::queueImbalance)

@@ -1,20 +1,18 @@
-#ifndef SINGLEVARIABLECOUNTER_H
-#define SINGLEVARIABLECOUNTER_H
+#pragma once
+
 
 #include "enums/TradeEntry.h"
 #include "OrderBook.h"
 
 namespace SingleVariableCounter {
 
-    double calculateBestAskPrice(const OrderBook& orderbook);
-    double calculateBestBidPrice(const OrderBook& orderbook);
-    double calculateMidPrice(const OrderBook& orderbook);
-    double calculateBestVolumeImbalance(const OrderBook& orderbook);
-    double calculateQueueImbalance(const OrderBook& orderbook);
-    double calculateVolumeImbalance(const OrderBook& orderbook);
-    double calculateGap(const OrderBook& orderbook);
+    double calculateBestAskPrice(const OrderBook& orderBook);
+    double calculateBestBidPrice(const OrderBook& orderBook);
+    double calculateMidPrice(const OrderBook& orderBook);
+    double calculateBestVolumeImbalance(const OrderBook& orderBook);
+    double calculateQueueImbalance(const OrderBook& orderBook);
+    double calculateVolumeImbalance(const OrderBook& orderBook);
+    double calculateGap(const OrderBook& orderBook);
     bool calculateIsAggressorAsk(const TradeEntry *trade_entry);
 
 }
-
-#endif // SINGLEVARIABLECOUNTER_H

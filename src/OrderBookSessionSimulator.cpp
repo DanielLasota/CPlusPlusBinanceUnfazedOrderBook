@@ -21,7 +21,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
         ptr_entries.push_back(&entry);
     }
 
-    MarketState<false> marketState;
+    MarketState marketState;
     MetricMask mask = parseMask(variables);
     OrderBookMetrics orderBookMetrics(variables);
     orderBookMetrics.reserve(ptr_entries.size());
@@ -69,7 +69,7 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
         ptrEntries.push_back(&entry);
     }
 
-    MarketState<false> marketState;
+    MarketState marketState;
     MetricMask mask = parseMask(variables);
 
     auto start = std::chrono::steady_clock::now();
@@ -113,23 +113,23 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
             ptrEntries.push_back(&entry);
         }
 
-        MarketState<false> marketState;
+        MarketState marketState;
 
         for (auto* entryPtr : ptrEntries) {
             marketState.update(entryPtr);
         }
 
         OrderBook snapshot;
-        for (auto* bid : marketState.orderBook.bids) {
-            snapshot.bids.push_back(
-                new DifferenceDepthEntry(*bid)
-            );
-        }
-        for (auto* ask : marketState.orderBook.asks) {
-            snapshot.asks.push_back(
-                new DifferenceDepthEntry(*ask)
-            );
-        }
+        // for (auto* bid : marketState.orderBook.bids) {
+        //     snapshot.bids.push_back(
+        //         new DifferenceDepthEntry(*bid)
+        //     );
+        // }
+        // for (auto* ask : marketState.orderBook.asks) {
+        //     snapshot.asks.push_back(
+        //         new DifferenceDepthEntry(*ask)
+        //     );
+        // }
 
         return snapshot;
 

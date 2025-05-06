@@ -3,9 +3,9 @@
 #include <variant>
 #include <optional>
 #include <cstdint>
-#include <OrderBook.h>
 #include <vector>
 #include <unordered_map>
+#include <map>
 
 #include "MetricMask.h"
 #include "enums/TradeEntry.h"
@@ -68,7 +68,13 @@ private:
     PriceLevel* freeListHead_{nullptr};
 
     PriceLevel* askHead_{nullptr};
+    PriceLevel* askTail_{nullptr};
     PriceLevel* bidHead_{nullptr};
+    PriceLevel* bidTail_{nullptr};
+
+    // Sorted maps for O(log n) insertion
+    std::map<double, PriceLevel*> askMap_;
+    std::map<double, PriceLevel*, std::greater<double>> bidMap_;
 
     std::unordered_map<PriceSide, PriceLevel*, PriceSideHash> index_;
 
@@ -78,6 +84,7 @@ private:
     PriceLevel* allocateNode(double price, bool isAsk, double quantity);
     void deallocateNode(PriceLevel* node);
 
-    static void insertHead(PriceLevel*& head, PriceLevel* node);
-    static void removeNode(PriceLevel*& head, PriceLevel* node);
+    // Fast operations on doubly-linked list
+    void addNode(PriceLevel*& head, PriceLevel*& tail, PriceLevel* node, bool isAsk);
+    void removeNode(PriceLevel*& head, PriceLevel*& tail, PriceLevel* node);
 };

@@ -30,37 +30,117 @@ void OrderBook::deallocateNode(PriceLevel* node) {
     freeListHead_ = node;
 }
 
-void OrderBook::insertHead(PriceLevel*& head, PriceLevel* node) {
-    node->next = head;
-    if (head) head->prev = node;
-    head = node;
+// Add node at the correct position based on sorted map
+void OrderBook::addNode(PriceLevel*& head, PriceLevel*& tail, PriceLevel* node, bool isAsk) {
+    if (!head) {
+        // First node in the list
+        head = tail = node;
+        node->prev = node->next = nullptr;
+        return;
+    }
+
+    if (isAsk) {
+        // For asks, we maintain a sorted list in ascending order
+        auto it = askMap_.find(node->price);
+        if (it == askMap_.end()) {
+            // Can't happen, but just in case
+            // Add to beginning (lowest price)
+            node->next = head;
+            head->prev = node;
+            node->prev = nullptr;
+            head = node;
+        }
+        else {
+            auto nextIt = std::next(it);
+            if (nextIt == askMap_.end()) {
+                // Add to end
+                tail->next = node;
+                node->prev = tail;
+                node->next = nullptr;
+                tail = node;
+            } else {
+                // Add before nextIt's node
+                PriceLevel* nextNode = nextIt->second;
+                PriceLevel* prevNode = nextNode->prev;
+
+                node->next = nextNode;
+                node->prev = prevNode;
+
+                if (prevNode) prevNode->next = node;
+                else head = node;
+
+                nextNode->prev = node;
+            }
+        }
+    } else {
+        // For bids, we maintain a sorted list in descending order
+        auto it = bidMap_.find(node->price);
+        if (it == bidMap_.end()) {
+            // Can't happen, but just in case
+            // Add to beginning (highest price)
+            node->next = head;
+            head->prev = node;
+            node->prev = nullptr;
+            head = node;
+        } else {
+            auto nextIt = std::next(it);
+            if (nextIt == bidMap_.end()) {
+                // Add to end
+                tail->next = node;
+                node->prev = tail;
+                node->next = nullptr;
+                tail = node;
+            } else {
+                // Add before nextIt's node
+                PriceLevel* nextNode = nextIt->second;
+                PriceLevel* prevNode = nextNode->prev;
+
+                node->next = nextNode;
+                node->prev = prevNode;
+
+                if (prevNode) prevNode->next = node;
+                else head = node;
+
+                nextNode->prev = node;
+            }
+        }
+    }
 }
 
-void OrderBook::removeNode(PriceLevel*& head, PriceLevel* node) {
+void OrderBook::removeNode(PriceLevel*& head, PriceLevel*& tail, PriceLevel* node) {
     if (node->prev) node->prev->next = node->next;
-    else            head = node->next;
+    else head = node->next;
+
     if (node->next) node->next->prev = node->prev;
+    else tail = node->prev;
+
     node->prev = node->next = nullptr;
 }
 
 void OrderBook::update(DifferenceDepthEntry* e) {
-
     // dispatch
     PriceSide key{ e->Price, e->IsAsk };
     auto it = index_.find(key);
 
     if (e->Quantity == 0.0) {
-        // set level
+        // remove level
         if (it != index_.end()) {
             auto *node = it->second;
             // update sum/count
-            if (node->isAsk) { --askCount_; sumAskQty_ -= node->quantity; }
-            else             { --bidCount_; sumBidQty_ -= node->quantity; }
-            removeNode(node->isAsk ? askHead_ : bidHead_, node);
+            if (node->isAsk) {
+                --askCount_;
+                sumAskQty_ -= node->quantity;
+                askMap_.erase(node->price);
+                removeNode(askHead_, askTail_, node);
+            } else {
+                --bidCount_;
+                sumBidQty_ -= node->quantity;
+                bidMap_.erase(node->price);
+                removeNode(bidHead_, bidTail_, node);
+            }
             index_.erase(it);
             deallocateNode(node);
         }
-
     } else {
         if (it != index_.end()) {
             // existing level - only change quantity
@@ -71,47 +151,97 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                 sumBidQty_ += (e->Quantity - node->quantity);
             }
             node->quantity = e->Quantity;
-
         } else {
-            // a new level see also https://youtu.be/RTAZf_MAMYo?si=Mbj3mnvN6f15mA4a&t=12
+            // a new level
             auto *node = allocateNode(e->Price, e->IsAsk, e->Quantity);
             if (node->isAsk) {
-                ++askCount_; sumAskQty_ += node->quantity;
-                insertHead(askHead_, node);
+                ++askCount_;
+                sumAskQty_ += node->quantity;
+
+                // Insert into askMap and then update linked list
+                auto [mapIt, inserted] = askMap_.insert({node->price, node});
+
+                // Find the correct position in the linked list
+                if (askMap_.size() == 1) {
+                    // First element
+                    askHead_ = askTail_ = node;
+                } else {
+                    auto it = mapIt;
+
+                    // If not the first element in the map
+                    if (it != askMap_.begin()) {
+                        auto prevIt = std::prev(it);
+                        PriceLevel* prevNode = prevIt->second;
+
+                        // Insert after prevNode
+                        node->prev = prevNode;
+                        node->next = prevNode->next;
+
+                        if (prevNode->next) prevNode->next->prev = node;
+                        else askTail_ = node;
+
+                        prevNode->next = node;
+                    } else {
+                        // Insert at the beginning
+                        node->next = askHead_;
+                        askHead_->prev = node;
+                        node->prev = nullptr;
+                        askHead_ = node;
+                    }
+                }
             } else {
-                ++bidCount_; sumBidQty_ += node->quantity;
-                insertHead(bidHead_, node);
+                ++bidCount_;
+                sumBidQty_ += node->quantity;
+
+                // Insert into bidMap and then update linked list
+                auto [mapIt, inserted] = bidMap_.insert({node->price, node});
+
+                // Find the correct position in the linked list
+                if (bidMap_.size() == 1) {
+                    // First element
+                    bidHead_ = bidTail_ = node;
+                } else {
+                    auto it = mapIt;
+
+                    // If not the first element in the map
+                    if (it != bidMap_.begin()) {
+                        auto prevIt = std::prev(it);
+                        PriceLevel* prevNode = prevIt->second;
+
+                        // Insert after prevNode
+                        node->prev = prevNode;
+                        node->next = prevNode->next;
+
+                        if (prevNode->next) prevNode->next->prev = node;
+                        else bidTail_ = node;
+
+                        prevNode->next = node;
+                    } else {
+                        // Insert at the beginning
+                        node->next = bidHead_;
+                        bidHead_->prev = node;
+                        node->prev = nullptr;
+                        bidHead_ = node;
+                    }
+                }
             }
+
             index_[key] = node;
         }
     }
 }
 
 void OrderBook::printOrderBook() const {
-    std::vector<PriceLevel*> asks;
-    asks.reserve(askCount_);
-    for (auto *n = askHead_; n; n = n->next)
-        asks.push_back(n);
-
-    std::vector<PriceLevel*> bids;
-    bids.reserve(bidCount_);
-    for (auto *n = bidHead_; n; n = n->next)
-        bids.push_back(n);
-
-    // std::sort(asks.begin(), asks.end(),
-    //           [](auto *a, auto *b){ return a->price < b->price; });
-    // std::sort(bids.begin(), bids.end(),
-    //           [](auto *a, auto *b){ return a->price > b->price; });
 
     std::cout << "ORDERBOOK:\n";
     std::cout << "  Asks (lowest→highest):\n";
-    for (auto *n : asks) {
+    for (auto *n = askHead_; n; n = n->next) {
         std::cout << " Price " << n->price
                   << " Quantity "   << n->quantity << "\n";
     }
 
     std::cout << "  Bids (highest→lowest):\n";
-    for (auto *n : bids) {
+    for (auto *n = bidHead_; n; n = n->next) {
         std::cout << " Price " << n->price
                   << " Quantity "   << n->quantity << "\n";
     }

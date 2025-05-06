@@ -119,19 +119,12 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
             marketState.update(entryPtr);
         }
 
-        OrderBook snapshot;
-        // for (auto* bid : marketState.orderBook.bids) {
-        //     snapshot.bids.push_back(
-        //         new DifferenceDepthEntry(*bid)
-        //     );
-        // }
-        // for (auto* ask : marketState.orderBook.asks) {
-        //     snapshot.asks.push_back(
-        //         new DifferenceDepthEntry(*ask)
-        //     );
-        // }
+        marketState.orderBook.printOrderBook();
 
-        return snapshot;
+        std::cout << "best Ask Price " << marketState.orderBook.bestAskPrice() << " Quantity " << marketState.orderBook.bestAskQuantity() << std::endl;
+        std::cout << "best Bid Price " << marketState.orderBook.bestBidPrice() << " Quantity " << marketState.orderBook.bestBidQuantity() << std::endl;
+
+        return std::move(marketState.orderBook);
 
     } catch (const std::exception &e) {
         std::cerr << "Exception: " << e.what() << std::endl;

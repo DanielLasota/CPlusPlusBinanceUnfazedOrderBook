@@ -215,18 +215,16 @@ class TestOrderBookSessionSimulator:
         def test_given_root_difference_depth_csv_when_computing_final_snapshot_then_snapshot_is_equal_to_next_day_original_binance_depth_snapshot(self):
             from cpp_binance_orderbook import OrderBookSessionSimulator
             difference_depth_csv = 'csv/test_positive_binance_difference_depth_stream_usd_m_futures_trxusdt_09-04-2025_3_cols_till_next_day_firsts.csv'
-            first_depth_snapshot_root_csv_10_04_path = 'csv/test_positive_binance_depth_snapshot_usd_m_futures_trxusdt_10-04-2025_first_snapshot.csv'
             oss = OrderBookSessionSimulator()
 
             final_depth_snapshot_after_09_04: cpp_binance_orderbook.OrderBook = oss.compute_final_depth_snapshot(csv_path=difference_depth_csv)
-
             final_depth_snapshot_after_09_04_df = pd.DataFrame([
                 {var: getattr(entry, var) for var in ['is_ask', 'price', 'quantity']}
-                for entry in final_depth_snapshot_after_09_04.bids[:1000] + final_depth_snapshot_after_09_04.asks[:1000]
+                for entry in final_depth_snapshot_after_09_04.bids()[:1000] + final_depth_snapshot_after_09_04.asks()[:1000]
             ])
-
             final_depth_snapshot_after_09_04_df.rename(columns={'is_ask': 'IsAsk', 'price': 'Price', 'quantity': 'Quantity'}, inplace=True)
 
+            first_depth_snapshot_root_csv_10_04_path = 'csv/test_positive_binance_depth_snapshot_usd_m_futures_trxusdt_10-04-2025_first_snapshot.csv'
             first_depth_snapshot_root_csv_10_04 = pd.read_csv(first_depth_snapshot_root_csv_10_04_path, comment='#', dtype={'IsAsk': bool, 'Price': float, 'Quantity': float})
 
             pd.testing.assert_frame_equal(
@@ -281,3 +279,14 @@ class TestOrderBookSessionSimulator:
             ])
 
             assert order_book_df.shape[0] == 2000
+
+        def testtest(self):
+            from cpp_binance_orderbook import OrderBookSessionSimulator
+            oss = OrderBookSessionSimulator()
+            first_depth_snapshot_root_csv_10_04_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_14-04-2025.csv"
+
+            fds = oss.compute_final_depth_snapshot(first_depth_snapshot_root_csv_10_04_path)
+            fds.print_order_book()
+
+            print(fds.bids())
+            print(fds.asks())

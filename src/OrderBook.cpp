@@ -98,22 +98,40 @@ void OrderBook::printOrderBook() const {
     for (auto *n = bidHead_; n; n = n->next)
         bids.push_back(n);
 
-    std::sort(asks.begin(), asks.end(),
-              [](auto *a, auto *b){ return a->price < b->price; });
-    std::sort(bids.begin(), bids.end(),
-              [](auto *a, auto *b){ return a->price > b->price; });
+    // std::sort(asks.begin(), asks.end(),
+    //           [](auto *a, auto *b){ return a->price < b->price; });
+    // std::sort(bids.begin(), bids.end(),
+    //           [](auto *a, auto *b){ return a->price > b->price; });
 
     std::cout << "ORDERBOOK:\n";
     std::cout << "  Asks (lowest→highest):\n";
     for (auto *n : asks) {
-        std::cout << "    Price: " << n->price
-                  << ", Qty: "   << n->quantity << "\n";
+        std::cout << " Price " << n->price
+                  << " Quantity "   << n->quantity << "\n";
     }
 
     std::cout << "  Bids (highest→lowest):\n";
     for (auto *n : bids) {
-        std::cout << "    Price: " << n->price
-                  << ", Qty: "   << n->quantity << "\n";
+        std::cout << " Price " << n->price
+                  << " Quantity "   << n->quantity << "\n";
     }
     std::cout << std::endl;
+}
+
+std::vector<OrderBook::PriceLevel> OrderBook::getAsks() const {
+    std::vector<PriceLevel> result;
+    result.reserve(askCount_);
+    for (auto *node = askHead_; node; node = node->next) {
+        result.push_back(*node);
+    }
+    return result;
+}
+
+std::vector<OrderBook::PriceLevel> OrderBook::getBids() const {
+    std::vector<PriceLevel> result;
+    result.reserve(bidCount_);
+    for (auto *node = bidHead_; node; node = node->next) {
+        result.push_back(*node);
+    }
+    return result;
 }

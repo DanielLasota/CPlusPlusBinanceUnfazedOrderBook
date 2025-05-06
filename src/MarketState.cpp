@@ -26,8 +26,27 @@ void MarketState::update(DecodedEntry* entry) {
     }
 }
 
-std::optional<OrderBookMetricsEntry>
-MarketState::countOrderBookMetrics(MetricMask mask) const {
+void MarketState::updateOrderBook(int64_t timestampOfReceive, double price, double quantity, bool isAsk){
+    lastTimestampOfReceive = timestampOfReceive;
+    DifferenceDepthEntry e;
+    e.TimestampOfReceive = timestampOfReceive;
+    e.Price              = price;
+    e.Quantity           = quantity;
+    e.IsAsk              = isAsk;
+    orderBook.update(&e);
+}
+
+void MarketState::updateTradeRegister(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM) {
+    lastTimestampOfReceive = timestampOfReceive;
+    lastTradeStorage.TimestampOfReceive = timestampOfReceive;
+    lastTradeStorage.Price              = price;
+    lastTradeStorage.Quantity           = quantity;
+    lastTradeStorage.IsBuyerMarketMaker = isBuyerMM;
+    lastTradePtr = &lastTradeStorage;
+    hasLastTrade = true;
+}
+
+std::optional<OrderBookMetricsEntry>MarketState::countOrderBookMetrics(MetricMask mask) const {
     if (!hasLastTrade ||
         orderBook.askCount() < 2 ||
         orderBook.bidCount() < 2)
@@ -63,3 +82,5 @@ MarketState::countOrderBookMetrics(MetricMask mask) const {
     }
     return o;
 }
+
+void MarketState::doNothing() {}

@@ -119,10 +119,10 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
             marketState.update(entryPtr);
         }
 
-        marketState.orderBook.printOrderBook();
+        // marketState.orderBook.printOrderBook();
 
-        std::cout << "best Ask Price " << marketState.orderBook.bestAskPrice() << " Quantity " << marketState.orderBook.bestAskQuantity() << std::endl;
-        std::cout << "best Bid Price " << marketState.orderBook.bestBidPrice() << " Quantity " << marketState.orderBook.bestBidQuantity() << std::endl;
+        // std::cout << "best Ask Price " << marketState.orderBook.bestAskPrice() << " Quantity " << marketState.orderBook.bestAskQuantity() << std::endl;
+        // std::cout << "best Bid Price " << marketState.orderBook.bestBidPrice() << " Quantity " << marketState.orderBook.bestBidQuantity() << std::endl;
 
         return std::move(marketState.orderBook);
 

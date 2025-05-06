@@ -9,8 +9,8 @@ void processOrderbook();
 int main() {
     OrderBookSessionSimulator orderBookSessionSimulator;
 
-//    std::string csvPath = "C:/Users/daniel/Documents/merged_csvs/merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv";
-    std::string csvPath = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_14-04-2025.csv";
+    std::string csvPath = "C:/Users/daniel/Documents/merged_csvs/merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv";
+//    std::string csvPath = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_14-04-2025.csv";
 
     std::vector<std::string> variables {
         "timestampOfReceive",
@@ -21,6 +21,6 @@ int main() {
         "gap"
     };
 
-    orderBookSessionSimulator.computeFinalDepthSnapshot(csvPath);
+    orderBookSessionSimulator.computeVariables(csvPath, variables);
     return 0;
 }

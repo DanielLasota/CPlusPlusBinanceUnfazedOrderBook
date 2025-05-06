@@ -243,15 +243,15 @@ class TestOrderBookSessionSimulator:
 
             final_depth_snapshot_after_09_04: cpp_binance_orderbook.OrderBook = oss.compute_final_depth_snapshot(csv_path=difference_depth_csv)
 
-            bid_prices = [entry.price for entry in final_depth_snapshot_after_09_04.bids]
-            ask_prices = [entry.price for entry in final_depth_snapshot_after_09_04.asks]
+            bid_prices = [entry.price for entry in final_depth_snapshot_after_09_04.bids()]
+            ask_prices = [entry.price for entry in final_depth_snapshot_after_09_04.asks()]
 
             assert bid_prices == sorted(bid_prices, reverse=True), "Bids powinny być posortowane malejąco"
             assert ask_prices == sorted(ask_prices), "Asks powinny być posortowane rosnąco"
 
             final_depth_snapshot_after_09_04_df = pd.DataFrame([
                 {var: getattr(entry, var) for var in ['is_ask', 'price', 'quantity']}
-                for entry in final_depth_snapshot_after_09_04.bids + final_depth_snapshot_after_09_04.asks
+                for entry in final_depth_snapshot_after_09_04.bids() + final_depth_snapshot_after_09_04.asks()
             ])
 
             pd.testing.assert_series_equal(
@@ -275,18 +275,7 @@ class TestOrderBookSessionSimulator:
 
             order_book_df = pd.DataFrame([
                 {var: getattr(entry, var) for var in ['is_ask', 'price', 'quantity']}
-                for entry in order_book.bids + order_book.asks
+                for entry in order_book.bids() + order_book.asks()
             ])
 
             assert order_book_df.shape[0] == 2000
-
-        def testtest(self):
-            from cpp_binance_orderbook import OrderBookSessionSimulator
-            oss = OrderBookSessionSimulator()
-            first_depth_snapshot_root_csv_10_04_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_14-04-2025.csv"
-
-            fds = oss.compute_final_depth_snapshot(first_depth_snapshot_root_csv_10_04_path)
-            fds.print_order_book()
-
-            print(fds.bids())
-            print(fds.asks())

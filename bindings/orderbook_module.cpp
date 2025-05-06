@@ -32,52 +32,22 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- MarketState -----
     py::class_<MS>(m, "MarketState")
         .def(py::init<>(), "Tworzy nowy MarketState")
-
-        // 1) ultraszybki depth update
-        .def("update_depth",
-            [](MS &self,
-               int64_t  timestamp_of_receive,
-               double   price,
-               double   quantity,
-               bool     is_ask)
-            {
-                DifferenceDepthEntry e{};
-                e.TimestampOfReceive = timestamp_of_receive;
-                e.Price              = price;
-                e.Quantity           = quantity;
-                e.IsAsk              = is_ask;
-                DecodedEntry var = e;            // tylko na potrzeby update()
-                self.update(&var);
-            },
-            py::arg("timestamp_of_receive"),
-            py::arg("price"),
-            py::arg("quantity"),
-            py::arg("is_ask"),
-            "Bardzo szybka aktualizacja DifferenceDepthEntry")
-
-        // 2) ultraszybki trade update
-        .def("update_trade",
-            [](MS &self,
-               int64_t  timestamp_of_receive,
-               double   price,
-               double   quantity,
-               bool     is_buyer_market_maker)
-            {
-                TradeEntry e{};
-                e.TimestampOfReceive   = timestamp_of_receive;
-                e.Price                = price;
-                e.Quantity             = quantity;
-                e.IsBuyerMarketMaker   = is_buyer_market_maker;
-                DecodedEntry var = e;            // tylko na potrzeby update()
-                self.update(&var);
-            },
-            py::arg("timestamp_of_receive"),
-            py::arg("price"),
-            py::arg("quantity"),
-            py::arg("is_buyer_market_maker"),
-            "Bardzo szybka aktualizacja TradeEntry")
-
-        // liczenie metryk
+        .def("update_orderbook",
+             &MS::updateOrderBook,
+             py::call_guard<py::gil_scoped_release>(),
+             py::arg("timestamp_of_receive"),
+             py::arg("price"),
+             py::arg("quantity"),
+             py::arg("is_ask"),
+             "Bardzo szybka aktualizacja DifferenceDepthEntry")
+        .def("update_trade_register",
+             &MS::updateTradeRegister,
+             py::call_guard<py::gil_scoped_release>(),
+             py::arg("timestamp_of_receive"),
+             py::arg("price"),
+             py::arg("quantity"),
+             py::arg("is_buyer_market_maker"),
+             "Bardzo szybka aktualizacja TradeEntry")
         .def("count_order_book_metrics",
              &MS::countOrderBookMetrics,
              py::arg("mask"),
@@ -87,13 +57,35 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
                  self.orderBook.printOrderBook();
              },
              "Wypisuje stan orderbooka")
+        .def("do_nothing",
+            &MS::doNothing,
+            "xD it does nothing"
+            )
         ;
 
     // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<>())
-        .def("print_order_book", &OrderBook::printOrderBook, "Wypisuje stan orderbooka")
-    ;
+        .def("print_order_book", &OrderBook::printOrderBook)
+        .def("asks",          &OrderBook::getAsks,
+             "Return list of all ask levels in the book, in linked-list order")
+        .def("bids",          &OrderBook::getBids,
+             "Return list of all bid levels in the book, in linked-list order")
+        ;
+
+    // --- PriceLevel ----
+    py::class_<OrderBook::PriceLevel>(m, "PriceLevel")
+        .def_readonly("price",    &OrderBook::PriceLevel::price)
+        .def_readonly("quantity", &OrderBook::PriceLevel::quantity)
+        .def_readonly("is_ask",    &OrderBook::PriceLevel::isAsk)
+        .def("__repr__", [](const OrderBook::PriceLevel &pl) {
+            std::ostringstream o;
+            o << "<PriceLevel price=" << pl.price
+              << " qty=" << pl.quantity
+              << " ask="  << std::boolalpha << pl.isAsk
+              << ">";
+            return o.str();
+        });
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")

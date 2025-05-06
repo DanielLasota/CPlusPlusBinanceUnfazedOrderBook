@@ -34,6 +34,14 @@ struct PriceSideHash {
 
 class OrderBook {
 public:
+    struct PriceLevel {
+        double     price;
+        bool       isAsk;
+        double     quantity;
+        PriceLevel* prev;
+        PriceLevel* next;
+    };
+
     explicit OrderBook(size_t maxLevels = 100000);
 
     void update(DifferenceDepthEntry* entryPtr);
@@ -51,28 +59,24 @@ public:
     double secondAskPrice()  const { return askHead_->next->price; }
     double secondBidPrice()  const { return bidHead_->next->price; }
 
+    std::vector<PriceLevel> getAsks() const;
+    std::vector<PriceLevel> getBids() const;
+
 private:
-    struct PriceLevel {
-        double     price;
-        bool       isAsk;
-        double     quantity;
-        PriceLevel* prev;
-        PriceLevel* next;
-    };
 
     std::vector<PriceLevel> arena;
-    PriceLevel*             freeListHead_{nullptr};
+    PriceLevel* freeListHead_{nullptr};
 
-    PriceLevel*             askHead_{nullptr};
-    PriceLevel*             bidHead_{nullptr};
+    PriceLevel* askHead_{nullptr};
+    PriceLevel* bidHead_{nullptr};
 
     std::unordered_map<PriceSide, PriceLevel*, PriceSideHash> index_;
 
-    size_t       askCount_{0}, bidCount_{0};
-    double       sumAskQty_{0.0}, sumBidQty_{0.0};
+    size_t askCount_{0}, bidCount_{0};
+    double sumAskQty_{0.0}, sumBidQty_{0.0};
 
     PriceLevel* allocateNode(double price, bool isAsk, double quantity);
-    void        deallocateNode(PriceLevel* node);
+    void deallocateNode(PriceLevel* node);
 
     static void insertHead(PriceLevel*& head, PriceLevel* node);
     static void removeNode(PriceLevel*& head, PriceLevel* node);

@@ -163,3 +163,45 @@ class TestMarketState:
         elapsed = (end_time - start) * 1e6
         print(f"\n🏷️  Czas wstawienia 4 zleceń: {elapsed:.2f} µs")
         ms.print_order_book()
+
+    def test_first_1000_from_memory(self):
+        import time
+        from cpp_binance_orderbook import MarketState
+
+        n_to_read = 10_000
+
+        csv_path = "C:/Users/daniel/Documents/binance_archival_data/binance_difference_depth_stream_usd_m_futures_trxusdt_23-04-2025.csv"
+        ms = MarketState()
+
+        with open(csv_path, "r", encoding="utf-8") as f:
+            lines = [
+                line.strip() for line in f
+                if line.strip() and not line.startswith("#")
+            ]
+
+        data_lines = lines[1:1 + n_to_read]
+
+        start = time.perf_counter()
+        for line in data_lines:
+            parts = line.split(",")
+            # ts_recv = int(parts[0])
+            # is_ask   = (parts[9] == "1")
+            # price    = float(parts[10])
+            # qty      = float(parts[11])
+
+            ms.update_depth(
+                timestamp_of_receive=int(parts[0]),
+                price=float(parts[10]),
+                quantity=float(parts[11]),
+                is_ask=(parts[9] == "1")
+            )
+            # ms.do_nothing()
+
+        end = time.perf_counter()
+        elapsed_us = (end - start) * 1e6
+        print(f"\n🏷️  Czas wstawienia {n_to_read} zleceń: {elapsed_us:.2f} µs"
+              f"\n mean: {(elapsed_us/n_to_read):.3f} entry/microsecond")
+
+        ms.print_order_book()
+
+        assert len(data_lines) == n_to_read

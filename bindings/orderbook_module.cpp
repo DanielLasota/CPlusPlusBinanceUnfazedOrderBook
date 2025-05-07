@@ -1,3 +1,4 @@
+#include <SingleVariableCounter.h>
 #include <sstream>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -32,6 +33,11 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- MarketState -----
     py::class_<MS>(m, "MarketState")
         .def(py::init<>(), "Tworzy nowy MarketState")
+        .def_readonly("order_book", &MS::orderBook, py::return_value_policy::reference_internal)
+        .def("update",
+             &MS::update,
+             py::arg("entry"),
+             "Aktualizuje stan rynkowy na podstawie DifferenceDepthEntry lub TradeEntry")
         .def("update_orderbook",
              &MS::updateOrderBook,
              py::call_guard<py::gil_scoped_release>(),
@@ -40,14 +46,30 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              py::arg("quantity"),
              py::arg("is_ask"),
              "Bardzo szybka aktualizacja DifferenceDepthEntry")
-        .def("update_trade_register",
-             &MS::updateTradeRegister,
+        .def("update_trade_registry",
+             &MS::updateTradeRegistry,
              py::call_guard<py::gil_scoped_release>(),
              py::arg("timestamp_of_receive"),
              py::arg("price"),
              py::arg("quantity"),
              py::arg("is_buyer_market_maker"),
              "Bardzo szybka aktualizacja TradeEntry")
+            .def_property_readonly(
+                "has_last_trade",
+                &MS::getHasLastTrade,
+                "Czy jest w pamięci ostatni TradeEntry?"
+            )
+            .def_property_readonly(
+                "last_trade",
+                &MS::getLastTrade,
+                py::return_value_policy::reference_internal,
+                "Ostatni TradeEntry (rzuca, jeśli nie ma żadnego)"
+            )
+            .def_property_readonly(
+                "last_timestamp_of_receive",
+                &MS::getLastTimestampOfReceive,
+                "Ostatni użyty timestampOfReceive"
+            )
         .def("count_order_book_metrics",
              &MS::countOrderBookMetrics,
              py::arg("mask"),
@@ -63,6 +85,19 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             )
         ;
 
+        // ----- SingleVariableCounter -----
+        auto svc = m.def_submodule("single_variable_counter", "Compute single-variable order book metrics");
+        svc.def("calculate_best_ask_price",        &SingleVariableCounter::calculateBestAskPrice,        py::arg("order_book"));
+        svc.def("calculate_best_bid_price",        &SingleVariableCounter::calculateBestBidPrice,        py::arg("order_book"));
+        svc.def("calculate_mid_price",             &SingleVariableCounter::calculateMidPrice,            py::arg("order_book"));
+        svc.def("calculate_best_volume_imbalance", &SingleVariableCounter::calculateBestVolumeImbalance, py::arg("order_book"));
+        svc.def("calculate_queue_imbalance",       &SingleVariableCounter::calculateQueueImbalance,      py::arg("order_book"));
+        svc.def("calculate_volume_imbalance",      &SingleVariableCounter::calculateVolumeImbalance,     py::arg("order_book"));
+        svc.def("calculate_gap",                   &SingleVariableCounter::calculateGap,                 py::arg("order_book"));
+        svc.def("calculate_is_aggressor_ask",
+                [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); },
+                py::arg("trade_entry"));
+
     // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<>())
@@ -71,6 +106,30 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              "Return list of all ask levels in the book, in linked-list order")
         .def("bids",          &OrderBook::getBids,
              "Return list of all bid levels in the book, in linked-list order")
+        .def("ask_count",           &OrderBook::askCount,
+             "Number of ask levels in the book")
+        .def("bid_count",           &OrderBook::bidCount,
+             "Number of bid levels in the book")
+        .def("sum_ask_quantity",    &OrderBook::sumAskQuantity,
+             "Total quantity on the ask side")
+        .def("sum_bid_quantity",    &OrderBook::sumBidQuantity,
+             "Total quantity on the bid side")
+        .def("best_ask_price",      &OrderBook::bestAskPrice,
+             "Price of the best (lowest) ask")
+        .def("best_bid_price",      &OrderBook::bestBidPrice,
+             "Price of the best (highest) bid")
+        .def("best_ask_quantity",   &OrderBook::bestAskQuantity,
+             "Quantity available at the best ask")
+        .def("best_bid_quantity",   &OrderBook::bestBidQuantity,
+             "Quantity available at the best bid")
+        .def("second_ask_price",    &OrderBook::secondAskPrice,
+             "Price of the second-best ask")
+        .def("second_bid_price",    &OrderBook::secondBidPrice,
+             "Price of the second-best bid")
+        .def("update",
+             &OrderBook::update,
+             py::arg("entry"),
+             "Apply a single DifferenceDepthEntry update to this order book")
         ;
 
     // --- PriceLevel ----
@@ -232,4 +291,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         //      return self.variables_;
         // }, "Lista nazw metryk");
 
+    m.def("parse_mask", &parseMask, py::arg("variables"),
+      "Parsuje listę nazw zmiennych na bitową MetricMask");
 }

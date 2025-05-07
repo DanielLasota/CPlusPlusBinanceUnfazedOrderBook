@@ -42,7 +42,7 @@ public:
         PriceLevel* next;
     };
 
-    explicit OrderBook(size_t maxLevels = 100000);
+    explicit OrderBook(size_t maxLevels = 100'000);
 
     void update(DifferenceDepthEntry* entryPtr);
 

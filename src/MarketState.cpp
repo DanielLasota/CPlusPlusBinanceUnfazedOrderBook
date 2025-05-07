@@ -20,7 +20,8 @@ void MarketState::update(DecodedEntry* entry) {
     }
 
     if (auto* tradeEntry = std::get_if<TradeEntry>(entry)) {
-        lastTradePtr = tradeEntry;
+        lastTrade = *tradeEntry;
+        lastTradePtr = &lastTrade;
         hasLastTrade = true;
         // std::cout << "received trade: "<< tradeEntry->Price << std::endl;
     }
@@ -36,13 +37,13 @@ void MarketState::updateOrderBook(int64_t timestampOfReceive, double price, doub
     orderBook.update(&e);
 }
 
-void MarketState::updateTradeRegister(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM) {
+void MarketState::updateTradeRegistry(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM) {
     lastTimestampOfReceive = timestampOfReceive;
-    lastTradeStorage.TimestampOfReceive = timestampOfReceive;
-    lastTradeStorage.Price              = price;
-    lastTradeStorage.Quantity           = quantity;
-    lastTradeStorage.IsBuyerMarketMaker = isBuyerMM;
-    lastTradePtr = &lastTradeStorage;
+    lastTrade.TimestampOfReceive = timestampOfReceive;
+    lastTrade.Price              = price;
+    lastTrade.Quantity           = quantity;
+    lastTrade.IsBuyerMarketMaker = isBuyerMM;
+    lastTradePtr = &lastTrade;
     hasLastTrade = true;
 }
 

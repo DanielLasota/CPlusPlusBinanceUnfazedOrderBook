@@ -132,19 +132,19 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              "Apply a single DifferenceDepthEntry update to this order book")
         ;
 
-    // --- PriceLevel ----
-    py::class_<OrderBook::PriceLevel>(m, "PriceLevel")
-        .def_readonly("price",    &OrderBook::PriceLevel::price)
-        .def_readonly("quantity", &OrderBook::PriceLevel::quantity)
-        .def_readonly("is_ask",    &OrderBook::PriceLevel::isAsk)
-        .def("__repr__", [](const OrderBook::PriceLevel &pl) {
-            std::ostringstream o;
-            o << "<PriceLevel price=" << pl.price
-              << " qty=" << pl.quantity
-              << " ask="  << std::boolalpha << pl.isAsk
-              << ">";
-            return o.str();
-        });
+    // // --- PriceLevel ----
+    // py::class_<OrderBook::PriceLevel>(m, "PriceLevel")
+    //     .def_readonly("price",    &OrderBook::PriceLevel::price)
+    //     .def_readonly("quantity", &OrderBook::PriceLevel::quantity)
+    //     .def_readonly("is_ask",    &OrderBook::PriceLevel::isAsk)
+    //     .def("__repr__", [](const OrderBook::PriceLevel &pl) {
+    //         std::ostringstream o;
+    //         o << "<PriceLevel price=" << pl.price
+    //           << " qty=" << pl.quantity
+    //           << " ask="  << std::boolalpha << pl.isAsk
+    //           << ">";
+    //         return o.str();
+    //     });
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")

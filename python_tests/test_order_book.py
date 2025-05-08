@@ -1,4 +1,4 @@
-from cpp_binance_orderbook import OrderBook, DifferenceDepthEntry, PriceLevel
+from cpp_binance_orderbook import OrderBook, DifferenceDepthEntry
 
 
 class TestOrderBook:
@@ -152,7 +152,7 @@ class TestOrderBook:
 
             asks = ob.asks()
             assert isinstance(asks, list)
-            assert all(isinstance(l, PriceLevel) for l in asks)
+            assert all(isinstance(l, DifferenceDepthEntry) for l in asks)
             assert [(l.price, l.quantity) for l in asks] == [
                 (10.0, 2),
                 (11.0, 1),
@@ -164,7 +164,7 @@ class TestOrderBook:
             # bids() → descending
             bids = ob.bids()
             assert isinstance(bids, list)
-            assert all(isinstance(l, PriceLevel) for l in bids)
+            assert all(isinstance(l, DifferenceDepthEntry) for l in bids)
             assert [(l.price, l.quantity) for l in bids] == [
                 (9.0, 1),
                 (8.1, 2),

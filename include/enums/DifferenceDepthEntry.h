@@ -18,4 +18,6 @@ struct DifferenceDepthEntry {
     double Quantity;
     std::string PSUnknownField;
     bool IsLast;
+    DifferenceDepthEntry* prev;
+    DifferenceDepthEntry* next;
 };

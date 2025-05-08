@@ -34,13 +34,13 @@ struct PriceSideHash {
 
 class OrderBook {
 public:
-    struct PriceLevel {
-        double     price;
-        bool       isAsk;
-        double     quantity;
-        PriceLevel* prev;
-        PriceLevel* next;
-    };
+    // struct PriceLevel {
+    //     double     price;
+    //     bool       isAsk;
+    //     double     quantity;
+    //     PriceLevel* prev;
+    //     PriceLevel* next;
+    // };
 
     explicit OrderBook(size_t maxLevels = 100'000);
 
@@ -52,39 +52,39 @@ public:
     size_t bidCount()   const { return bidCount_; }
     double sumAskQuantity() const { return sumAskQty_; }
     double sumBidQuantity() const { return sumBidQty_; }
-    double bestAskPrice()    const { return askHead_->price; }
-    double bestBidPrice()    const { return bidHead_->price; }
-    double bestAskQuantity()    const { return askHead_->quantity; }
-    double bestBidQuantity()    const { return bidHead_->quantity; }
-    double secondAskPrice()  const { return askHead_->next->price; }
-    double secondBidPrice()  const { return bidHead_->next->price; }
+    double bestAskPrice()    const { return askHead_->Price; }
+    double bestBidPrice()    const { return bidHead_->Price; }
+    double bestAskQuantity()    const { return askHead_->Quantity; }
+    double bestBidQuantity()    const { return bidHead_->Quantity; }
+    double secondAskPrice()  const { return askHead_->next->Price; }
+    double secondBidPrice()  const { return bidHead_->next->Price; }
 
-    std::vector<PriceLevel> getAsks() const;
-    std::vector<PriceLevel> getBids() const;
+    std::vector<DifferenceDepthEntry> getAsks() const;
+    std::vector<DifferenceDepthEntry> getBids() const;
 
 private:
 
-    std::vector<PriceLevel> arena;
-    PriceLevel* freeListHead_{nullptr};
+    std::vector<DifferenceDepthEntry> arena;
+    DifferenceDepthEntry* freeListHead_{nullptr};
 
-    PriceLevel* askHead_{nullptr};
-    PriceLevel* askTail_{nullptr};
-    PriceLevel* bidHead_{nullptr};
-    PriceLevel* bidTail_{nullptr};
+    DifferenceDepthEntry* askHead_{nullptr};
+    DifferenceDepthEntry* askTail_{nullptr};
+    DifferenceDepthEntry* bidHead_{nullptr};
+    DifferenceDepthEntry* bidTail_{nullptr};
 
     // Sorted maps for O(log n) insertion
-    std::map<double, PriceLevel*> askMap_;
-    std::map<double, PriceLevel*, std::greater<double>> bidMap_;
+    std::map<double, DifferenceDepthEntry*> askMap_;
+    std::map<double, DifferenceDepthEntry*, std::greater<double>> bidMap_;
 
-    std::unordered_map<PriceSide, PriceLevel*, PriceSideHash> index_;
+    std::unordered_map<PriceSide, DifferenceDepthEntry*, PriceSideHash> index_;
 
     size_t askCount_{0}, bidCount_{0};
     double sumAskQty_{0.0}, sumBidQty_{0.0};
 
-    PriceLevel* allocateNode(double price, bool isAsk, double quantity);
-    void deallocateNode(PriceLevel* node);
+    DifferenceDepthEntry* allocateNode(double price, bool isAsk, double quantity);
+    void deallocateNode(DifferenceDepthEntry* node);
 
     // Fast operations on doubly-linked list
-    void addNode(PriceLevel*& head, PriceLevel*& tail, PriceLevel* node, bool isAsk);
-    void removeNode(PriceLevel*& head, PriceLevel*& tail, PriceLevel* node);
+    void addNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail, DifferenceDepthEntry* node, bool isAsk);
+    void removeNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail, DifferenceDepthEntry* node);
 };

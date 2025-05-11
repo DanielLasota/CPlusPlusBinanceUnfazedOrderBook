@@ -279,3 +279,61 @@ class TestOrderBookSessionSimulator:
             ])
 
             assert order_book_df.shape[0] == 2000
+
+    class TestParseMask:
+
+        def test_given_variables_list_when_parse_mask_then_accurate_bytes_are_returned(self):
+            from cpp_binance_orderbook import parse_mask
+
+            variables_list = [
+                'timestampOfReceive',
+                'bestAsk',
+                'bestBid',
+                'midPrice',
+                'bestVolumeImbalance',
+                'queueImbalance',
+                'volumeImbalance',
+                'gap',
+                'isAggressorAsk'
+            ]
+
+            mask = parse_mask(variables_list)
+
+            # TimestampOfReceive = 1<<0 = 1
+            # bestAsk              = 1<<1 = 2
+            # bestBid              = 1<<2 = 4
+            # midPrice             = 1<<3 = 8
+            # bestVolumeImbalance  = 1<<4 = 16
+            # queueImbalance       = 1<<5 = 32
+            # volumeImbalance      = 1<<6 = 64
+            # gap                  = 1<<7 = 128
+            # isAggressorAsk       = 1<<8 = 256
+            expected_mask = 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256  # = 511
+
+            assert mask == expected_mask
+
+        def test_given_partial_variables_list_when_parse_mask_then_correct_mask_is_returned(self):
+            from cpp_binance_orderbook import parse_mask
+
+            variables_list = [
+                'timestampOfReceive',
+                'midPrice',
+                'volumeImbalance'
+            ]
+
+            mask = parse_mask(variables_list)
+
+            # timestampOfReceive = 1<<0 =   1
+            # midPrice           = 1<<3 =   8
+            # volumeImbalance    = 1<<6 =  64
+            expected_mask = 1 + 8 + 64  # = 73
+
+            assert mask == expected_mask
+
+        def test_given_invalid_variable_name_then_exception_is_raised(self):
+            import pytest
+            from cpp_binance_orderbook import parse_mask
+
+            with pytest.raises(ValueError) as excinfo:
+                parse_mask(['crap'])
+            assert "Unknown variable name: crap" in str(excinfo.value)

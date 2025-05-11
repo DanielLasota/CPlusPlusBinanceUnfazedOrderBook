@@ -154,6 +154,11 @@ void OrderBook::update(DifferenceDepthEntry* e) {
         } else {
             // a new level
             auto *node = allocateNode(e->Price, e->IsAsk, e->Quantity);
+
+            *node = std::move(*e);
+            node->prev = nullptr;
+            node->next = nullptr;
+
             if (node->IsAsk) {
                 ++askCount_;
                 sumAskQty_ += node->Quantity;

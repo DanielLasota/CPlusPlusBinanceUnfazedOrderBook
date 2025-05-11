@@ -38,12 +38,6 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
         if (isLast == true) {
             if (auto m = marketState.countOrderBookMetrics(mask)) {
                 orderBookMetrics.addEntry(*m);
-                // marketState.orderBook.printOrderBook();
-                // std::visit([](auto const& entry) {
-                //     std::cout << entry.TimestampOfReceive << " " << entry.Stream << std::endl;
-                // },*p);
-                // std::cout << "\n" << std::endl;
-                // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
             }
         }
     }
@@ -118,11 +112,6 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
         for (auto* entryPtr : ptrEntries) {
             marketState.update(entryPtr);
         }
-
-        // marketState.orderBook.printOrderBook();
-
-        // std::cout << "best Ask Price " << marketState.orderBook.bestAskPrice() << " Quantity " << marketState.orderBook.bestAskQuantity() << std::endl;
-        // std::cout << "best Bid Price " << marketState.orderBook.bestBidPrice() << " Quantity " << marketState.orderBook.bestBidQuantity() << std::endl;
 
         return std::move(marketState.orderBook);
 

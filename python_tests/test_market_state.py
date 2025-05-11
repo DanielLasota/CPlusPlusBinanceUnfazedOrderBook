@@ -951,4 +951,3 @@ class TestMarketState:
             assert entry.gap == 0.0
             assert entry.isAggressorAsk is True
             assert entry.timestampOfReceive == trade_ts
-

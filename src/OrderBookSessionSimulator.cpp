@@ -38,7 +38,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
         }, *p);
 
         if (isLast == true) {
-            if (auto m = calc.compute(marketState)) {
+            if (auto m = calc.countMarketStateMetrics(marketState)) {
                 orderBookMetrics.addEntry(*m);
             }
         }
@@ -79,7 +79,7 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
         }, *p);
 
         if (isLast == true) {
-            if (auto m = calc.compute(marketState)) {
+            if (auto m = calc.countMarketStateMetrics(marketState)) {
                 python_callback(*m );
             }
         }

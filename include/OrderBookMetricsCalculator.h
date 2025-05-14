@@ -12,7 +12,7 @@ public:
       : mask_(mask)
     {}
 
-    std::optional<OrderBookMetricsEntry> compute(const MarketState& ms) const;
+    std::optional<OrderBookMetricsEntry> countMarketStateMetrics(const MarketState& ms) const;
 
 private:
     MetricMask mask_;

@@ -47,41 +47,4 @@ void MarketState::updateTradeRegistry(int64_t timestampOfReceive, double price, 
     hasLastTrade = true;
 }
 
-std::optional<OrderBookMetricsEntry>MarketState::countOrderBookMetrics(MetricMask mask) const {
-    if (!hasLastTrade ||
-        orderBook.askCount() < 2 ||
-        orderBook.bidCount() < 2)
-        return std::nullopt;
-
-    OrderBookMetricsEntry o{};
-    if (mask & TimestampOfReceive) {
-        o.timestampOfReceive = lastTimestampOfReceive;
-    }
-    if (mask & BestAsk) {
-        o.bestAskPrice = SingleVariableCounter::calculateBestAskPrice(orderBook);
-    }
-    if (mask & BestBid) {
-        o.bestBidPrice = SingleVariableCounter::calculateBestBidPrice(orderBook);
-    }
-    if (mask & MidPrice) {
-        o.midPrice = SingleVariableCounter::calculateMidPrice(orderBook);
-    }
-    if (mask & BestVolumeImbalance) {
-        o.bestVolumeImbalance = SingleVariableCounter::calculateBestVolumeImbalance(orderBook);
-    }
-    if (mask & QueueImbalance) {
-        o.queueImbalance = SingleVariableCounter::calculateQueueImbalance(orderBook);
-    }
-    if (mask & VolumeImbalance) {
-        o.volumeImbalance = SingleVariableCounter::calculateVolumeImbalance(orderBook);
-    }
-    if (mask & Gap) {
-        o.gap = SingleVariableCounter::calculateGap(orderBook);
-    }
-    if (mask & IsAggressorAsk) {
-        o.isAggressorAsk = SingleVariableCounter::calculateIsAggressorAsk(lastTradePtr);
-    }
-    return o;
-}
-
 void MarketState::doNothing() {}

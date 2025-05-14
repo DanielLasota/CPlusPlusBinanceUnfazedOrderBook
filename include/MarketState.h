@@ -18,8 +18,6 @@ public:
 
     void updateTradeRegistry(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM);
 
-    std::optional<OrderBookMetricsEntry> countOrderBookMetrics(MetricMask mask) const;
-
     void doNothing();
 
     OrderBook orderBook;

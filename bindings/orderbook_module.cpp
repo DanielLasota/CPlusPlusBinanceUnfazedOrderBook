@@ -10,6 +10,7 @@
 #include "OrderBookMetricsEntry.h"
 #include "OrderBookMetrics.h"
 #include "OrderBookSessionSimulator.h"
+#include "OrderBookMetricsCalculator.h"
 
 namespace py = pybind11;
 using MS = MarketState;
@@ -70,10 +71,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
                 &MS::getLastTimestampOfReceive,
                 "Ostatni użyty timestampOfReceive"
             )
-        .def("count_order_book_metrics",
-             &MS::countOrderBookMetrics,
-             py::arg("mask"),
-             "Oblicza metryki zgodnie z MetricMask i zwraca Optional[OrderBookMetricsEntry]")
         .def("print_order_book",
              [](MS &self) {
                  self.orderBook.printOrderBook();
@@ -131,20 +128,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              py::arg("entry"),
              "Apply a single DifferenceDepthEntry update to this order book")
         ;
-
-    // // --- PriceLevel ----
-    // py::class_<OrderBook::PriceLevel>(m, "PriceLevel")
-    //     .def_readonly("price",    &OrderBook::PriceLevel::price)
-    //     .def_readonly("quantity", &OrderBook::PriceLevel::quantity)
-    //     .def_readonly("is_ask",    &OrderBook::PriceLevel::isAsk)
-    //     .def("__repr__", [](const OrderBook::PriceLevel &pl) {
-    //         std::ostringstream o;
-    //         o << "<PriceLevel price=" << pl.price
-    //           << " qty=" << pl.quantity
-    //           << " ask="  << std::boolalpha << pl.isAsk
-    //           << ">";
-    //         return o.str();
-    //     });
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
@@ -293,4 +276,13 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     m.def("parse_mask", &parseMask, py::arg("variables"),
       "Parsuje listę nazw zmiennych na bitową MetricMask");
+
+    // ----- OrderBookMetricsCalculator -----
+    py::class_<OrderBookMetricsCalculator>(m, "OrderBookMetricsCalculator")
+        .def(py::init<MetricMask>(), py::arg("mask"))
+        .def("count_market_state_metrics",
+             &OrderBookMetricsCalculator::countMarketStateMetrics,
+             py::arg("market_state"),
+             "Oblicza OrderBookMetricsEntry dla podanego MarketState i maski");
+
 }

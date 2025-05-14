@@ -1,5 +1,6 @@
 #include <chrono>
 #include <iostream>
+#include <OrderBookMetricsCalculator.h>
 #include <pybind11/pybind11.h>
 
 #include "OrderbookSessionSimulator.h"
@@ -25,6 +26,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
     MetricMask mask = parseMask(variables);
     OrderBookMetrics orderBookMetrics(variables);
     orderBookMetrics.reserve(ptr_entries.size());
+    OrderBookMetricsCalculator calc(mask);
 
     auto start = std::chrono::steady_clock::now();
 
@@ -36,7 +38,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
         }, *p);
 
         if (isLast == true) {
-            if (auto m = marketState.countOrderBookMetrics(mask)) {
+            if (auto m = calc.compute(marketState)) {
                 orderBookMetrics.addEntry(*m);
             }
         }
@@ -65,6 +67,7 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
 
     MarketState marketState;
     MetricMask mask = parseMask(variables);
+    OrderBookMetricsCalculator calc(mask);
 
     auto start = std::chrono::steady_clock::now();
 
@@ -76,14 +79,8 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
         }, *p);
 
         if (isLast == true) {
-            if (auto m = marketState.countOrderBookMetrics(mask)) {
+            if (auto m = calc.compute(marketState)) {
                 python_callback(*m );
-                // marketState.orderBook.printOrderBook();
-                // std::visit([](auto const& entry) {
-                //     std::cout << entry.TimestampOfReceive << " " << entry.Stream << std::endl;
-                // },*p);
-                // std::cout << "\n" << std::endl;
-                // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
             }
         }
     }
@@ -103,6 +100,7 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
         std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromSingleAssetParametersCSV(csvPath);
         std::vector<DecodedEntry*> ptrEntries;
         ptrEntries.reserve(entries.size());
+
         for (auto &entry : entries) {
             ptrEntries.push_back(&entry);
         }

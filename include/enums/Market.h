@@ -1,9 +1,6 @@
-//
-// Created by daniel on 2.04.2025.
-//
+#pragma once
 
-#ifndef MARKET_H
-#define MARKET_H
+#include <ostream>
 
 enum class Market {
     SPOT,
@@ -11,4 +8,11 @@ enum class Market {
     COIN_M_FUTURES
 };
 
-#endif //MARKET_H
+inline std::ostream& operator<<(std::ostream& os, Market m) {
+    switch(m) {
+    case Market::SPOT:          return os << "SPOT";
+    case Market::USD_M_FUTURES: return os << "USD_M_FUTURES";
+    case Market::COIN_M_FUTURES:return os << "COIN_M_FUTURES";
+    }
+    return os << int(m);
+}

@@ -24,6 +24,7 @@ set(SOURCES
         src/CSVHeader.cpp
         src/OrderBookMetrics.cpp
         src/OrderBookMetricsCalculator.cpp
+        src/GlobalMarketState.cpp
 #        test/TestSingleVariableCounter.cpp
 #        test/TestOrderBook.cpp
 )
@@ -51,3 +52,4 @@ set_target_properties(cpp_binance_orderbook PROPERTIES SUFFIX ".pyd")
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\CSVHeader.cpp
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetrics.cpp
 #C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetricsCalculator.cpp
+#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\GlobalMarketState.cpp

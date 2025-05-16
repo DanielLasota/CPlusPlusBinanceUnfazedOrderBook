@@ -3,16 +3,24 @@
 #include <OrderBookMetricsCalculator.h>
 #include <pybind11/pybind11.h>
 
-#include "OrderbookSessionSimulator.h"
+#include "GlobalMarketState.h"
 #include "DataVectorLoader.h"
 #include "MarketState.h"
 #include "OrderBookMetrics.h"
+#include "OrderbookSessionSimulator.h"
 
 OrderBookSessionSimulator::OrderBookSessionSimulator() {}
 
-namespace py = pybind11;
-
 std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(const std::string &csvPath, std::vector<std::string> &variables) {
+
+    std::vector<AssetParameters> assetParameters = AssetParameters::decodeAssetParametersFromMergedCSVName(csvPath);
+
+    for (auto &ap : assetParameters)
+    {
+        if (ap.streamType == StreamType::DIFFERENCE_DEPTH_STREAM){
+            std::cout << ap << std::endl;
+        }
+    }
 
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptr_entries;
@@ -22,23 +30,20 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
         ptr_entries.push_back(&entry);
     }
 
-    MarketState marketState;
     MetricMask mask = parseMask(variables);
+    GlobalMarketState globalMarketState(mask);
     OrderBookMetrics orderBookMetrics(variables);
     orderBookMetrics.reserve(ptr_entries.size());
-    OrderBookMetricsCalculator calc(mask);
 
     auto start = std::chrono::steady_clock::now();
 
     for (auto* p : ptr_entries) {
-        marketState.update(p);
+        globalMarketState.update(p);
 
-        const bool isLast = std::visit([](auto const& entry){
-                return entry.IsLast;
-        }, *p);
+        const bool isLast = std::visit([](auto const& entry){return entry.IsLast;}, *p);
 
         if (isLast == true) {
-            if (auto m = calc.countMarketStateMetrics(marketState)) {
+            if (auto m = globalMarketState.countMarketStateMetrics(p)) {
                 orderBookMetrics.addEntry(*m);
             }
         }
@@ -56,7 +61,9 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
     return orderBookMetrics.entries();
 }
 
-void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const py::object &python_callback) {
+void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const pybind11::object &python_callback) {
+    // std::vector<AssetParameters> assetParameters = AssetParameters::decodeAssetParametersFromMergedCSVName(csvPath);
+
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptrEntries;
 
@@ -67,7 +74,7 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
 
     MarketState marketState;
     MetricMask mask = parseMask(variables);
-    OrderBookMetricsCalculator calc(mask);
+    GlobalMarketState globalMarketState(mask);
 
     auto start = std::chrono::steady_clock::now();
 
@@ -79,7 +86,7 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
         }, *p);
 
         if (isLast == true) {
-            if (auto m = calc.countMarketStateMetrics(marketState)) {
+            if (auto m = globalMarketState.countMarketStateMetrics(p)) {
                 python_callback(*m );
             }
         }

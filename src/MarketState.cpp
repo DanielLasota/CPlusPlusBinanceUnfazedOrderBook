@@ -1,10 +1,8 @@
-#include <optional>
 #include <variant>
+
 #include "MarketState.h"
 #include "enums/TradeEntry.h"
-#include "OrderBookMetrics.h"
 #include "SingleVariableCounter.h"
-#include "MetricMask.h"
 
 MarketState::MarketState() = default;
 
@@ -16,14 +14,12 @@ void MarketState::update(DecodedEntry* entry) {
 
     if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
         orderBook.update(differenceDepthEntry);
-        // std::cout << "received order: "<< differenceDepthEntry->Price << std::endl;
     }
 
     if (auto* tradeEntry = std::get_if<TradeEntry>(entry)) {
         lastTrade = *tradeEntry;
         lastTradePtr = &lastTrade;
         hasLastTrade = true;
-        // std::cout << "received trade: "<< tradeEntry->Price << std::endl;
     }
 }
 

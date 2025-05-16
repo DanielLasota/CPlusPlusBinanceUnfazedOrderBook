@@ -1,14 +1,13 @@
-#include "EntryDecoder.h"
-#include "CSVHeader.h"
-
 #include <sstream>
 #include <stdexcept>
 
+#include "CSVHeader.h"
+#include "EntryDecoder.h"
 
 DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters &params, const std::string &line) {
     auto tokens = splitLine(line, ',');
 
-    if (params.stream_type == StreamType::TRADE_STREAM) {
+    if (params.streamType == StreamType::TRADE_STREAM) {
         TradeEntry trade;
         try {
             if (params.market == Market::SPOT) {
@@ -41,7 +40,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         }
         return trade;
     }
-    else if (params.stream_type == StreamType::DEPTH_SNAPSHOT) {
+    else if (params.streamType == StreamType::DEPTH_SNAPSHOT) {
         DifferenceDepthEntry entry;
         try {
             if (params.market == Market::SPOT) {
@@ -79,7 +78,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         }
         return entry;
     }
-    else if (params.stream_type == StreamType::DIFFERENCE_DEPTH_STREAM) {
+    else if (params.streamType == StreamType::DIFFERENCE_DEPTH_STREAM) {
         DifferenceDepthEntry entry;
         try {
             if (params.market == Market::SPOT) {
@@ -177,9 +176,26 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
                     e.IsBuyerMarketMaker    = (tokens[h["IsBuyerMarketMaker"]] == "1");
                     e.MUnknownParameter     = tokens[h["MUnknownParameter"]];
                     e.IsLast                = (tokens[h["IsLast"]] == "1");
+                    e.market_               = Market::SPOT;
                     return e;
                 }
-                case Market::USD_M_FUTURES:
+                case Market::USD_M_FUTURES: {
+                    TradeEntry e;
+                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
+                    e.Stream                = tokens[h["Stream"]];
+                    e.EventType             = tokens[h["EventType"]];
+                    e.EventTime             = std::stoll(tokens[h["EventTime"]]);
+                    e.TransactionTime       = std::stoll(tokens[h["TransactionTime"]]);
+                    e.Symbol                = tokens[h["Symbol"]];
+                    e.TradeId               = std::stoll(tokens[h["TradeId"]]);
+                    e.Price                 = std::stod(tokens[h["Price"]]);
+                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
+                    e.IsBuyerMarketMaker    = (tokens[h["IsBuyerMarketMaker"]] == "1");
+                    e.XUnknownParameter     = tokens[h["XUnknownParameter"]];
+                    e.IsLast                = (tokens[h["IsLast"]] == "1");
+                    e.market_               = Market::USD_M_FUTURES;
+                    return e;
+                }
                 case Market::COIN_M_FUTURES: {
                     TradeEntry e;
                     e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
@@ -194,9 +210,10 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
                     e.IsBuyerMarketMaker    = (tokens[h["IsBuyerMarketMaker"]] == "1");
                     e.XUnknownParameter     = tokens[h["XUnknownParameter"]];
                     e.IsLast                = (tokens[h["IsLast"]] == "1");
+                    e.market_               = Market::COIN_M_FUTURES;
                     return e;
                 }
-            } // koniec switch(mk)
+            }
         }
 
         case StreamType::DEPTH_SNAPSHOT: {
@@ -204,20 +221,24 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
                 case Market::SPOT: {
                     DifferenceDepthEntry e;
                     e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
+                    e.Symbol                = tokens[h["Symbol"]];
                     e.IsAsk                 = (tokens[h["IsAsk"]] == "1");
                     e.Price                 = std::stod(tokens[h["Price"]]);
                     e.Quantity              = std::stod(tokens[h["Quantity"]]);
                     e.IsLast                = (tokens[h["IsLast"]] == "1");
+                    e.market_               = Market::SPOT;
                     return e;
                 }
                 case Market::USD_M_FUTURES: {
                     DifferenceDepthEntry e;
                     e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
                     e.TransactionTime       = std::stoll(tokens[h["TransactionTime"]]);
+                    e.Symbol                = tokens[h["Symbol"]];
                     e.IsAsk                 = (tokens[h["IsAsk"]] == "1");
                     e.Price                 = std::stod(tokens[h["Price"]]);
                     e.Quantity              = std::stod(tokens[h["Quantity"]]);
                     e.IsLast                = (tokens[h["IsLast"]] == "1");
+                    e.market_               = Market::USD_M_FUTURES;
                     return e;
                 }
                 case Market::COIN_M_FUTURES: {
@@ -229,9 +250,10 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
                     e.Price                 = std::stod(tokens[h["Price"]]);
                     e.Quantity              = std::stod(tokens[h["Quantity"]]);
                     e.IsLast                = (tokens[h["IsLast"]] == "1");
+                    e.market_               = Market::COIN_M_FUTURES;
                     return e;
                 }
-            } // koniec switch(mk)
+            }
         }
 
         case StreamType::DIFFERENCE_DEPTH_STREAM: {
@@ -249,6 +271,7 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
                     e.Price                 = std::stod(tokens[h["Price"]]);
                     e.Quantity              = std::stod(tokens[h["Quantity"]]);
                     e.IsLast                = (tokens[h["IsLast"]] == "1");
+                    e.market_               = Market::SPOT;
                     return e;
                 }
                 case Market::USD_M_FUTURES: {
@@ -266,6 +289,7 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
                     e.Price                     = std::stod(tokens[h["Price"]]);
                     e.Quantity                  = std::stod(tokens[h["Quantity"]]);
                     e.IsLast                    = (tokens[h["IsLast"]] == "1");
+                    e.market_                   = Market::USD_M_FUTURES;
                     return e;
                 }
                 case Market::COIN_M_FUTURES: {
@@ -284,6 +308,7 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
                     e.Quantity                  = std::stod(tokens[h["Quantity"]]);
                     e.PSUnknownField            = tokens[h["PSUnknownField"]];
                     e.IsLast                    = (tokens[h["IsLast"]] == "1");
+                    e.market_                   = Market::COIN_M_FUTURES;
                     return e;
                 }
             }

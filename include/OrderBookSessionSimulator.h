@@ -1,10 +1,10 @@
 #pragma once
 
-#include "OrderBook.h"
-#include "OrderBookMetrics.h"
-
 #include <string>
 #include <pybind11/pybind11.h>
+
+#include "OrderBook.h"
+#include "OrderBookMetrics.h"
 
 namespace py = pybind11;
 

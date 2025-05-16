@@ -1,9 +1,7 @@
 #include "OrderBookMetricsCalculator.h"
 #include "SingleVariableCounter.h"
 
-
-std::optional<OrderBookMetricsEntry>
-OrderBookMetricsCalculator::countMarketStateMetrics(const MarketState& ms) const {
+std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStateMetrics(const MarketState& ms) const {
     if (!ms.getHasLastTrade() ||
         ms.orderBook.askCount() < 2 ||
         ms.orderBook.bidCount() < 2)

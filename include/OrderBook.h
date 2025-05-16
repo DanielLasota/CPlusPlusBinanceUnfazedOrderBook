@@ -56,8 +56,8 @@ public:
     double bestBidPrice()    const { return bidHead_->Price; }
     double bestAskQuantity()    const { return askHead_->Quantity; }
     double bestBidQuantity()    const { return bidHead_->Quantity; }
-    double secondAskPrice()  const { return askHead_->next->Price; }
-    double secondBidPrice()  const { return bidHead_->next->Price; }
+    double secondAskPrice()  const { return askHead_->next_->Price; }
+    double secondBidPrice()  const { return bidHead_->next_->Price; }
 
     std::vector<DifferenceDepthEntry> getAsks() const;
     std::vector<DifferenceDepthEntry> getBids() const;

@@ -1,9 +1,6 @@
-//
-// Created by daniel on 2.04.2025.
-//
+#pragma once
 
-#ifndef STREAMTYPE_H
-#define STREAMTYPE_H
+#include <ostream>
 
 enum class StreamType {
     DIFFERENCE_DEPTH_STREAM,
@@ -11,4 +8,11 @@ enum class StreamType {
     DEPTH_SNAPSHOT
 };
 
-#endif //STREAMTYPE_H
+inline std::ostream& operator<<(std::ostream& os, StreamType s) {
+    switch(s) {
+    case StreamType::DIFFERENCE_DEPTH_STREAM: return os << "DIFFERENCE_DEPTH_STREAM";
+    case StreamType::TRADE_STREAM:            return os << "TRADE_STREAM";
+    case StreamType::DEPTH_SNAPSHOT:          return os << "DEPTH_SNAPSHOT";
+    }
+    return os << int(s);
+}

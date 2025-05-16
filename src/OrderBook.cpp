@@ -1,14 +1,15 @@
-#include "OrderBook.h"
 #include <algorithm>
 #include <iostream>
+
+#include "OrderBook.h"
 
 OrderBook::OrderBook(size_t maxLevels) {
     arena.resize(maxLevels);
     // build free list
     for (size_t i = 0; i + 1 < maxLevels; ++i) {
-        arena[i].next = &arena[i + 1];
+        arena[i].next_ = &arena[i + 1];
     }
-    arena[maxLevels - 1].next = nullptr;
+    arena[maxLevels - 1].next_ = nullptr;
     freeListHead_ = &arena[0];
 }
 
@@ -17,16 +18,16 @@ auto OrderBook::allocateNode(double price, bool isAsk, double quantity)
 {
     if (!freeListHead_) throw std::runtime_error("Pool exhausted");
     auto *node = freeListHead_;
-    freeListHead_ = freeListHead_->next;
+    freeListHead_ = freeListHead_->next_;
     node->Price    = price;
     node->IsAsk    = isAsk;
     node->Quantity = quantity;
-    node->prev = node->next = nullptr;
+    node->prev_ = node->next_ = nullptr;
     return node;
 }
 
 void OrderBook::deallocateNode(DifferenceDepthEntry* node) {
-    node->next = freeListHead_;
+    node->next_ = freeListHead_;
     freeListHead_ = node;
 }
 
@@ -35,7 +36,7 @@ void OrderBook::addNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail
     if (!head) {
         // First node in the list
         head = tail = node;
-        node->prev = node->next = nullptr;
+        node->prev_ = node->next_ = nullptr;
         return;
     }
 
@@ -45,31 +46,31 @@ void OrderBook::addNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail
         if (it == askMap_.end()) {
             // Can't happen, but just in case
             // Add to beginning (lowest price)
-            node->next = head;
-            head->prev = node;
-            node->prev = nullptr;
+            node->next_ = head;
+            head->prev_ = node;
+            node->prev_ = nullptr;
             head = node;
         }
         else {
             auto nextIt = std::next(it);
             if (nextIt == askMap_.end()) {
                 // Add to end
-                tail->next = node;
-                node->prev = tail;
-                node->next = nullptr;
+                tail->next_ = node;
+                node->prev_ = tail;
+                node->next_ = nullptr;
                 tail = node;
             } else {
                 // Add before nextIt's node
                 DifferenceDepthEntry* nextNode = nextIt->second;
-                DifferenceDepthEntry* prevNode = nextNode->prev;
+                DifferenceDepthEntry* prevNode = nextNode->prev_;
 
-                node->next = nextNode;
-                node->prev = prevNode;
+                node->next_ = nextNode;
+                node->prev_ = prevNode;
 
-                if (prevNode) prevNode->next = node;
+                if (prevNode) prevNode->next_ = node;
                 else head = node;
 
-                nextNode->prev = node;
+                nextNode->prev_ = node;
             }
         }
     } else {
@@ -78,43 +79,43 @@ void OrderBook::addNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail
         if (it == bidMap_.end()) {
             // Can't happen, but just in case
             // Add to beginning (highest price)
-            node->next = head;
-            head->prev = node;
-            node->prev = nullptr;
+            node->next_ = head;
+            head->prev_ = node;
+            node->prev_ = nullptr;
             head = node;
         } else {
             auto nextIt = std::next(it);
             if (nextIt == bidMap_.end()) {
                 // Add to end
-                tail->next = node;
-                node->prev = tail;
-                node->next = nullptr;
+                tail->next_ = node;
+                node->prev_ = tail;
+                node->next_ = nullptr;
                 tail = node;
             } else {
                 // Add before nextIt's node
                 DifferenceDepthEntry* nextNode = nextIt->second;
-                DifferenceDepthEntry* prevNode = nextNode->prev;
+                DifferenceDepthEntry* prevNode = nextNode->prev_;
 
-                node->next = nextNode;
-                node->prev = prevNode;
+                node->next_ = nextNode;
+                node->prev_ = prevNode;
 
-                if (prevNode) prevNode->next = node;
+                if (prevNode) prevNode->next_ = node;
                 else head = node;
 
-                nextNode->prev = node;
+                nextNode->prev_ = node;
             }
         }
     }
 }
 
 void OrderBook::removeNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail, DifferenceDepthEntry* node) {
-    if (node->prev) node->prev->next = node->next;
-    else head = node->next;
+    if (node->prev_) node->prev_->next_ = node->next_;
+    else head = node->next_;
 
-    if (node->next) node->next->prev = node->prev;
-    else tail = node->prev;
+    if (node->next_) node->next_->prev_ = node->prev_;
+    else tail = node->prev_;
 
-    node->prev = node->next = nullptr;
+    node->prev_ = node->next_ = nullptr;
 }
 
 void OrderBook::update(DifferenceDepthEntry* e) {
@@ -155,9 +156,19 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             // a new level
             auto *node = allocateNode(e->Price, e->IsAsk, e->Quantity);
 
-            *node = std::move(*e);
-            node->prev = nullptr;
-            node->next = nullptr;
+            DifferenceDepthEntry temp = *e; // Kopia
+            *node = std::move(temp); // Przeniesienie z kopii
+
+            node->prev_ = nullptr;
+            node->next_ = nullptr;
+
+            // auto *node = allocateNode(e->Price, e->IsAsk, e->Quantity);
+            // // Kopiuj tylko niezbędne pola zamiast przenoszenia
+            // node->Price = e->Price;
+            // node->IsAsk = e->IsAsk;
+            // node->Quantity = e->Quantity;
+            // node->prev_ = nullptr;
+            // node->next_ = nullptr;
 
             if (node->IsAsk) {
                 ++askCount_;
@@ -179,18 +190,18 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                         DifferenceDepthEntry* prevNode = prevIt->second;
 
                         // Insert after prevNode
-                        node->prev = prevNode;
-                        node->next = prevNode->next;
+                        node->prev_ = prevNode;
+                        node->next_ = prevNode->next_;
 
-                        if (prevNode->next) prevNode->next->prev = node;
+                        if (prevNode->next_) prevNode->next_->prev_ = node;
                         else askTail_ = node;
 
-                        prevNode->next = node;
+                        prevNode->next_ = node;
                     } else {
                         // Insert at the beginning
-                        node->next = askHead_;
-                        askHead_->prev = node;
-                        node->prev = nullptr;
+                        node->next_ = askHead_;
+                        askHead_->prev_ = node;
+                        node->prev_ = nullptr;
                         askHead_ = node;
                     }
                 }
@@ -214,18 +225,18 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                         DifferenceDepthEntry* prevNode = prevIt->second;
 
                         // Insert after prevNode
-                        node->prev = prevNode;
-                        node->next = prevNode->next;
+                        node->prev_ = prevNode;
+                        node->next_ = prevNode->next_;
 
-                        if (prevNode->next) prevNode->next->prev = node;
+                        if (prevNode->next_) prevNode->next_->prev_ = node;
                         else bidTail_ = node;
 
-                        prevNode->next = node;
+                        prevNode->next_ = node;
                     } else {
                         // Insert at the beginning
-                        node->next = bidHead_;
-                        bidHead_->prev = node;
-                        node->prev = nullptr;
+                        node->next_ = bidHead_;
+                        bidHead_->prev_ = node;
+                        node->prev_ = nullptr;
                         bidHead_ = node;
                     }
                 }
@@ -240,13 +251,13 @@ void OrderBook::printOrderBook() const {
 
     std::cout << "ORDERBOOK:\n";
     std::cout << "  Asks (lowest→highest):\n";
-    for (auto *n = askHead_; n; n = n->next) {
+    for (auto *n = askHead_; n; n = n->next_) {
         std::cout << " Price " << n->Price
                   << " Quantity "   << n->Quantity << "\n";
     }
 
     std::cout << "  Bids (highest→lowest):\n";
-    for (auto *n = bidHead_; n; n = n->next) {
+    for (auto *n = bidHead_; n; n = n->next_) {
         std::cout << " Price " << n->Price
                   << " Quantity "   << n->Quantity << "\n";
     }
@@ -256,7 +267,7 @@ void OrderBook::printOrderBook() const {
 std::vector<DifferenceDepthEntry> OrderBook::getAsks() const {
     std::vector<DifferenceDepthEntry> result;
     result.reserve(askCount_);
-    for (auto *node = askHead_; node; node = node->next) {
+    for (auto *node = askHead_; node; node = node->next_) {
         result.push_back(*node);
     }
     return result;
@@ -265,7 +276,7 @@ std::vector<DifferenceDepthEntry> OrderBook::getAsks() const {
 std::vector<DifferenceDepthEntry> OrderBook::getBids() const {
     std::vector<DifferenceDepthEntry> result;
     result.reserve(bidCount_);
-    for (auto *node = bidHead_; node; node = node->next) {
+    for (auto *node = bidHead_; node; node = node->next_) {
         result.push_back(*node);
     }
     return result;

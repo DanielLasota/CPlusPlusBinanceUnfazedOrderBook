@@ -1,8 +1,9 @@
-#ifndef TRADEENTRY_H
-#define TRADEENTRY_H
+#pragma once
 
 #include <cstdint>
 #include <string>
+
+#include "enums/Market.h"
 
 struct TradeEntry {
     int64_t TimestampOfReceive;
@@ -18,7 +19,5 @@ struct TradeEntry {
     std::string MUnknownParameter;
     std::string XUnknownParameter;
     bool IsLast;
+    Market market_;
 };
-
-#endif // TRADEENTRY_H
-

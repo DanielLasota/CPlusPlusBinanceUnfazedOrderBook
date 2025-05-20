@@ -19,5 +19,5 @@ struct TradeEntry {
     std::string MUnknownParameter;
     std::string XUnknownParameter;
     bool IsLast;
-    Market market_;
+    Market Market_;
 };

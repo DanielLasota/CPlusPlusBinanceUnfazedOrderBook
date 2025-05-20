@@ -21,8 +21,8 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
         for (size_t j = 0; j < variables_.size(); ++j) {
             const auto &var = variables_[j];
             if      (var == "timestampOfReceive")  file << e.timestampOfReceive;
-            else if (var == "bestAsk")             file << e.bestAskPrice;
-            else if (var == "bestBid")             file << e.bestBidPrice;
+            else if (var == "bestAskPrice")        file << e.bestAskPrice;
+            else if (var == "bestBidPrice")        file << e.bestBidPrice;
             else if (var == "midPrice")            file << e.midPrice;
             else if (var == "bestVolumeImbalance") file << e.bestVolumeImbalance;
             else if (var == "queueImbalance")      file << e.queueImbalance;

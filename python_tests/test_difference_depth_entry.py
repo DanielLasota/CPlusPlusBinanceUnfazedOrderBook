@@ -1,4 +1,4 @@
-from cpp_binance_orderbook import DifferenceDepthEntry
+from cpp_binance_orderbook import DifferenceDepthEntry, Market
 
 
 class TestDifferenceDepthEntry:
@@ -20,7 +20,8 @@ class TestDifferenceDepthEntry:
             0.0,    # price
             0.0,    # quantity
             "",     # ps_unknown_field
-            0       # is_last (False -> 0)
+            0,      # is_last (False -> 0)
+            Market.SPOT
         ]
         assert e.to_list() == expected
 
@@ -40,6 +41,7 @@ class TestDifferenceDepthEntry:
         e2.quantity                       = 1.234
         e2.ps_unknown_field               = "foo"
         e2.is_last                        = True
+        e2.market                         = Market.USD_M_FUTURES
 
         expected2 = [
             123456789,
@@ -55,7 +57,8 @@ class TestDifferenceDepthEntry:
             5678.90,
             1.234,
             "foo",
-            1           # True -> 1
+            1,          # True -> 1
+            Market.USD_M_FUTURES
         ]
         assert e2.to_list() == expected2
 
@@ -75,10 +78,11 @@ class TestDifferenceDepthEntry:
             "price",
             "quantity",
             "ps_unknown_field",
-            "is_last"
+            "is_last",
+            "market"
         ]
         # field_names property returns correct list
-        assert e.field_names == expected_names
+        assert e.field_names() == expected_names
 
         # and each of those names corresponds to an actual attribute on the object
         for attr in expected_names:

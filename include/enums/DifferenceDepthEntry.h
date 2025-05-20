@@ -18,7 +18,7 @@ struct DifferenceDepthEntry {
     double Quantity;
     std::string PSUnknownField;
     bool IsLast;
-    Market market_;
+    Market Market_;
     DifferenceDepthEntry* prev_;
     DifferenceDepthEntry* next_;
 };

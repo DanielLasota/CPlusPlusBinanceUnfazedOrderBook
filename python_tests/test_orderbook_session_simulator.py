@@ -41,7 +41,7 @@ class TestOrderBookSessionSimulator:
 
             csv_path = "csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv"
 
-            bad_variables_list = ['bestBid', 'bestAsk', 'midPrice', 'gap', 'crap']
+            bad_variables_list = ['bestBidPrice', 'bestAskPrice', 'midPrice', 'gap', 'crap']
 
             with pytest.raises(ValueError) as excinfo:
                 metrics = oss.compute_variables(
@@ -60,8 +60,8 @@ class TestOrderBookSessionSimulator:
 
             variables_list = [
                 'timestampOfReceive',
-                'bestBid',
-                'bestAsk',
+                'bestBidPrice',
+                'bestAskPrice',
                 'midPrice',
                 'bestVolumeImbalance',
                 'queueImbalance',
@@ -91,8 +91,8 @@ class TestOrderBookSessionSimulator:
             oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
             variables_list = [
-                'bestBid',
-                'bestAsk',
+                'bestBidPrice',
+                'bestAskPrice',
                 'midPrice',
                 'bestVolumeImbalance',
                 'queueImbalance',
@@ -115,6 +115,7 @@ class TestOrderBookSessionSimulator:
                 assert not df[col].isnull().all(), f"Column `{col}` contains only NaN values"
 
     class TestOrderBookSessionSimulatorComputeBacktest:
+
         def test_given_single_pair_merged_csv_when_passing_bad_variable_name_then_exception_is_raised(self):
             import cpp_binance_orderbook
 
@@ -122,7 +123,7 @@ class TestOrderBookSessionSimulator:
 
             oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
-            bad_variables_list = ['bestBid', 'bestAsk', 'midPrice', 'gap', 'crap']
+            bad_variables_list = ['bestBidPrice', 'bestAskPrice', 'midPrice', 'gap', 'crap']
 
             with pytest.raises(ValueError) as excinfo:
                 metrics = oss.compute_backtest(
@@ -140,8 +141,8 @@ class TestOrderBookSessionSimulator:
 
             variables_list = [
                 'timestampOfReceive',
-                'bestBid',
-                'bestAsk',
+                'bestBidPrice',
+                'bestAskPrice',
                 'midPrice',
                 'bestVolumeImbalance',
                 'queueImbalance',
@@ -180,8 +181,8 @@ class TestOrderBookSessionSimulator:
 
             variables_list = [
                 'timestampOfReceive',
-                'bestBid',
-                'bestAsk',
+                'bestBidPrice',
+                'bestAskPrice',
                 'midPrice',
                 'bestVolumeImbalance',
                 'queueImbalance',
@@ -217,22 +218,22 @@ class TestOrderBookSessionSimulator:
             difference_depth_csv = 'csv/test_positive_binance_difference_depth_stream_usd_m_futures_trxusdt_09-04-2025_3_cols_till_next_day_firsts.csv'
             oss = OrderBookSessionSimulator()
 
-            final_depth_snapshot_after_09_04: cpp_binance_orderbook.OrderBook = oss.compute_final_depth_snapshot(csv_path=difference_depth_csv)
-            final_depth_snapshot_after_09_04_df = pd.DataFrame([
+            final_depth_snapshot_from_orderbook_after_09_04: cpp_binance_orderbook.OrderBook = oss.compute_final_depth_snapshot(csv_path=difference_depth_csv)
+            final_depth_snapshot_from_cpp_orderbook_after_09_04_df = pd.DataFrame([
                 {var: getattr(entry, var) for var in ['is_ask', 'price', 'quantity']}
-                for entry in final_depth_snapshot_after_09_04.bids()[:1000] + final_depth_snapshot_after_09_04.asks()[:1000]
+                for entry in final_depth_snapshot_from_orderbook_after_09_04.bids()[:1000] + final_depth_snapshot_from_orderbook_after_09_04.asks()[:1000]
             ])
-            final_depth_snapshot_after_09_04_df.rename(columns={'is_ask': 'IsAsk', 'price': 'Price', 'quantity': 'Quantity'}, inplace=True)
+            final_depth_snapshot_from_cpp_orderbook_after_09_04_df.rename(columns={'is_ask': 'IsAsk', 'price': 'Price', 'quantity': 'Quantity'}, inplace=True)
 
             first_depth_snapshot_root_csv_10_04_path = 'csv/test_positive_binance_depth_snapshot_usd_m_futures_trxusdt_10-04-2025_first_snapshot.csv'
             first_depth_snapshot_root_csv_10_04 = pd.read_csv(first_depth_snapshot_root_csv_10_04_path, comment='#', dtype={'IsAsk': bool, 'Price': float, 'Quantity': float})
 
             pd.testing.assert_frame_equal(
-                final_depth_snapshot_after_09_04_df[['IsAsk','Price','Quantity']].reset_index(drop=True),
+                final_depth_snapshot_from_cpp_orderbook_after_09_04_df[['IsAsk','Price','Quantity']].reset_index(drop=True),
                 first_depth_snapshot_root_csv_10_04[['IsAsk','Price','Quantity']].reset_index(drop=True)
             )
 
-            records1 = final_depth_snapshot_after_09_04_df[['IsAsk','Price','Quantity']].reset_index(drop=True).to_dict('records')
+            records1 = final_depth_snapshot_from_cpp_orderbook_after_09_04_df[['IsAsk','Price','Quantity']].reset_index(drop=True).to_dict('records')
             records2 = first_depth_snapshot_root_csv_10_04[['IsAsk','Price','Quantity']].reset_index(drop=True).to_dict('records')
             assert records1 == records2
 
@@ -287,8 +288,8 @@ class TestOrderBookSessionSimulator:
 
             variables_list = [
                 'timestampOfReceive',
-                'bestAsk',
-                'bestBid',
+                'bestAskPrice',
+                'bestBidPrice',
                 'midPrice',
                 'bestVolumeImbalance',
                 'queueImbalance',

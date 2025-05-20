@@ -1,4 +1,4 @@
-from cpp_binance_orderbook import TradeEntry
+from cpp_binance_orderbook import TradeEntry, Market
 
 
 class TestTradeEntry:
@@ -19,7 +19,8 @@ class TestTradeEntry:
             0,    # is_buyer_market_maker (False -> 0)
             "",   # m_unknown_parameter
             "",   # x_unknown_parameter
-            0     # is_last (False -> 0)
+            0,    # is_last (False -> 0),
+            Market.SPOT
         ]
         assert e.to_list() == expected
 
@@ -38,6 +39,7 @@ class TestTradeEntry:
         e2.m_unknown_parameter    = "alpha"
         e2.x_unknown_parameter    = "beta"
         e2.is_last                = True
+        e2.market                 = Market.COIN_M_FUTURES
 
         expected2 = [
             987654321,
@@ -52,7 +54,8 @@ class TestTradeEntry:
             1,        # True -> 1
             "alpha",
             "beta",
-            1         # True -> 1
+            1,        # True -> 1
+            Market.COIN_M_FUTURES
         ]
         assert e2.to_list() == expected2
 
@@ -71,10 +74,11 @@ class TestTradeEntry:
             "is_buyer_market_maker",
             "m_unknown_parameter",
             "x_unknown_parameter",
-            "is_last"
+            "is_last",
+            "market"
         ]
         # field_names property returns correct list
-        assert e.field_names == expected_names
+        assert e.field_names() == expected_names
 
         # and each name corresponds to an actual attribute on the object
         for attr in expected_names:

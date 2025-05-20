@@ -13,10 +13,10 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & TimestampOfReceive) {
         e.timestampOfReceive    = ms.getLastTimestampOfReceive();
     }
-    if (mask_ & BestAsk) {
+    if (mask_ & BestAskPrice) {
         e.bestAskPrice          = SingleVariableCounter::calculateBestAskPrice(ms.orderBook);
     }
-    if (mask_ & BestBid) {
+    if (mask_ & BestBidPrice) {
         e.bestBidPrice          = SingleVariableCounter::calculateBestBidPrice(ms.orderBook);
     }
     if (mask_ & MidPrice) {

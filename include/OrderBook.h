@@ -34,14 +34,6 @@ struct PriceSideHash {
 
 class OrderBook {
 public:
-    // struct PriceLevel {
-    //     double     price;
-    //     bool       isAsk;
-    //     double     quantity;
-    //     PriceLevel* prev;
-    //     PriceLevel* next;
-    // };
-
     explicit OrderBook(size_t maxLevels = 100'000);
 
     void update(DifferenceDepthEntry* entryPtr);

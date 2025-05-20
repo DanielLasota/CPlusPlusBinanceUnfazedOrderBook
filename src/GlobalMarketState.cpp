@@ -1,4 +1,3 @@
-#include <iostream>
 #include <variant>
 
 #include "GlobalMarketState.h"
@@ -9,56 +8,45 @@ GlobalMarketState::GlobalMarketState(MetricMask mask)
 
 void GlobalMarketState::update(DecodedEntry* entry) {
     AssetKey key = extractKey(*entry);
-
-    if (auto e = std::get_if<DifferenceDepthEntry>(entry)){
-        // std::cout << e->market_ << " " << e->Symbol << std::endl;
-        if (e->Symbol.empty())
-        {
-            std::cout << "update diff " << e->TimestampOfReceive << " symbol: " << e->Symbol << " " << e->Price << std::endl;
-        }
-    }
-
-    states_[key].update(entry);
-
-    if (auto e = std::get_if<DifferenceDepthEntry>(entry)){
-        // std::cout << e->market_ << " " << e->Symbol << std::endl;
-        if (e->Symbol.empty())
-        {
-            std::cout << "2update diff " << e->TimestampOfReceive << " symbol: " << e->Symbol << " " << e->Price << std::endl;
-        }
-    }
-
+    marketStates_[key].update(entry);
 }
 
-std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetrics(DecodedEntry* entry) {
+std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetricsByEntry(DecodedEntry* entry) {
     AssetKey key = extractKey(*entry);
-    if (auto e = std::get_if<DifferenceDepthEntry>(entry)){
-        // std::cout << e->market_ << " " << e->Symbol << std::endl;
-        if (e->Symbol.empty())
-        {
-            std::cout << "countMarketStateMetrics diff " << e->TimestampOfReceive << " symbol: " << e->Symbol << " " << e->Price << std::endl;
-        }
+    return calculator_.countMarketStateMetrics(marketStates_[key]);
+}
+
+std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetrics(const std::string& symbol, const Market& market) {
+    AssetKey key{ market, symbol };
+    return calculator_.countMarketStateMetrics(marketStates_[key]);
+}
+
+MarketState& GlobalMarketState::getMarketState(const std::string& symbol, const std::string& market_str) {
+    Market market;
+    if (market_str == "SPOT") {
+        market = Market::SPOT;
     }
-    return calculator_.countMarketStateMetrics(states_[key]);
+    else if (market_str == "USD_M_FUTURES") {
+        market = Market::USD_M_FUTURES;
+    }
+    else if (market_str == "COIN_M_FUTURES") {
+        market = Market::COIN_M_FUTURES;
+    }
+    else {
+        throw std::invalid_argument("Unknown market: " + market_str);
+    }
+
+    AssetKey key{ market, symbol };
+    return marketStates_[key];
 }
 
 AssetKey GlobalMarketState::extractKey(const DecodedEntry& d) const {
     if (auto e = std::get_if<DifferenceDepthEntry>(&d)){
-        // std::cout << e->market_ << " " << e->Symbol << std::endl;
-        if (e->Symbol.empty())
-        {
-            std::cout << "extractKey diff " << e->TimestampOfReceive << " symbol: " << e->Symbol << " " << e->Price << std::endl;
-        }
-        return AssetKey{ e->market_, e->Symbol };
+        return AssetKey{ e->Market_, e->Symbol };
     }
 
     else if (auto e = std::get_if<TradeEntry>(&d)){
-        // std::cout << e->market_ << " " << e->Symbol << std::endl;
-        if (e->Symbol.empty())
-        {
-            std::cout << "trade " << e->TimestampOfReceive << " symbol: " << e->Symbol << " " << e->Price << std::endl;
-        }
-        return AssetKey{ e->market_, e->Symbol };
+        return AssetKey{ e->Market_, e->Symbol };
     }
     else
         throw std::runtime_error("Unknown DecodedEntry variant");

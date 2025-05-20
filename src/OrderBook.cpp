@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 
 #include "OrderBook.h"
 
 OrderBook::OrderBook(size_t maxLevels) {
     arena.resize(maxLevels);
-    // build free list
     for (size_t i = 0; i + 1 < maxLevels; ++i) {
         arena[i].next_ = &arena[i + 1];
     }
@@ -142,7 +142,8 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             index_.erase(it);
             deallocateNode(node);
         }
-    } else {
+    }
+    else {
         if (it != index_.end()) {
             // existing level - only change quantity
             auto *node = it->second;
@@ -151,13 +152,22 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             } else {
                 sumBidQty_ += (e->Quantity - node->Quantity);
             }
+            node->TimestampOfReceive = e->TimestampOfReceive;
+            node->EventTime = e->EventTime;
+            node->TransactionTime = e->TransactionTime;
+            node->FirstUpdateId = e->FirstUpdateId;
+            node->FinalUpdateId = e->FinalUpdateId;
+            node->FinalUpdateIdInLastStream = e->FinalUpdateIdInLastStream;
             node->Quantity = e->Quantity;
-        } else {
+            node->PSUnknownField = e->PSUnknownField;
+            node->IsLast = e->IsLast;
+        }
+        else {
             // a new level
             auto *node = allocateNode(e->Price, e->IsAsk, e->Quantity);
 
-            DifferenceDepthEntry temp = *e; // Kopia
-            *node = std::move(temp); // Przeniesienie z kopii
+            DifferenceDepthEntry temp = *e;
+            *node = std::move(temp);
 
             node->prev_ = nullptr;
             node->next_ = nullptr;
@@ -205,7 +215,8 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                         askHead_ = node;
                     }
                 }
-            } else {
+            }
+            else {
                 ++bidCount_;
                 sumBidQty_ += node->Quantity;
 
@@ -216,7 +227,8 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                 if (bidMap_.size() == 1) {
                     // First element
                     bidHead_ = bidTail_ = node;
-                } else {
+                }
+                else {
                     auto it = mapIt;
 
                     // If not the first element in the map
@@ -232,7 +244,8 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                         else bidTail_ = node;
 
                         prevNode->next_ = node;
-                    } else {
+                    }
+                    else {
                         // Insert at the beginning
                         node->next_ = bidHead_;
                         bidHead_->prev_ = node;
@@ -241,25 +254,42 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                     }
                 }
             }
-
             index_[key] = node;
         }
     }
 }
 
 void OrderBook::printOrderBook() const {
-
+    std::cout << std::fixed << std::setprecision(5);
     std::cout << "ORDERBOOK:\n";
     std::cout << "  Asks (lowest→highest):\n";
-    for (auto *n = askHead_; n; n = n->next_) {
-        std::cout << " Price " << n->Price
-                  << " Quantity "   << n->Quantity << "\n";
+    for (auto *n = askTail_; n; n = n->prev_) {
+        std::cout
+        << n->TimestampOfReceive << " "
+        << n->Stream << " "
+        << n->EventType << " "
+        << n->Symbol << " "
+        << n->IsAsk << " "
+        << n->Price << " "
+        << n->Quantity << " "
+        << n->IsLast << " "
+        << n->Market_ << " "
+        << "\n";
     }
 
     std::cout << "  Bids (highest→lowest):\n";
     for (auto *n = bidHead_; n; n = n->next_) {
-        std::cout << " Price " << n->Price
-                  << " Quantity "   << n->Quantity << "\n";
+        std::cout
+        << n->TimestampOfReceive << " "
+        << n->Stream << " "
+        << n->EventType << " "
+        << n->Symbol << " "
+        << n->IsAsk << " "
+        << n->Price << " "
+        << n->Quantity << " "
+        << n->IsLast << " "
+        << n->Market_ << " "
+        << "\n";
     }
     std::cout << std::endl;
 }

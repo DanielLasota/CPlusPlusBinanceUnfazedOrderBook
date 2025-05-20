@@ -1,6 +1,5 @@
 #include <chrono>
 #include <iostream>
-#include <OrderBookMetricsCalculator.h>
 #include <pybind11/pybind11.h>
 
 #include "GlobalMarketState.h"
@@ -8,19 +7,11 @@
 #include "MarketState.h"
 #include "OrderBookMetrics.h"
 #include "OrderbookSessionSimulator.h"
+#include "OrderBookMetricsCalculator.h"
 
 OrderBookSessionSimulator::OrderBookSessionSimulator() {}
 
 std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(const std::string &csvPath, std::vector<std::string> &variables) {
-
-    std::vector<AssetParameters> assetParameters = AssetParameters::decodeAssetParametersFromMergedCSVName(csvPath);
-
-    for (auto &ap : assetParameters)
-    {
-        if (ap.streamType == StreamType::DIFFERENCE_DEPTH_STREAM){
-            std::cout << ap << std::endl;
-        }
-    }
 
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptr_entries;
@@ -43,7 +34,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
         const bool isLast = std::visit([](auto const& entry){return entry.IsLast;}, *p);
 
         if (isLast == true) {
-            if (auto m = globalMarketState.countMarketStateMetrics(p)) {
+            if (auto m = globalMarketState.countMarketStateMetricsByEntry(p)) {
                 orderBookMetrics.addEntry(*m);
             }
         }
@@ -72,21 +63,18 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
         ptrEntries.push_back(&entry);
     }
 
-    MarketState marketState;
     MetricMask mask = parseMask(variables);
     GlobalMarketState globalMarketState(mask);
 
     auto start = std::chrono::steady_clock::now();
 
     for (auto* p : ptrEntries) {
-        marketState.update(p);
+        globalMarketState.update(p);
 
-        const bool isLast = std::visit([](auto const& entry){
-                return entry.IsLast;
-        }, *p);
+        const bool isLast = std::visit([](auto const& entry){return entry.IsLast;}, *p);
 
         if (isLast == true) {
-            if (auto m = globalMarketState.countMarketStateMetrics(p)) {
+            if (auto m = globalMarketState.countMarketStateMetricsByEntry(p)) {
                 python_callback(*m );
             }
         }
@@ -117,6 +105,8 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
         for (auto* entryPtr : ptrEntries) {
             marketState.update(entryPtr);
         }
+
+        marketState.orderBook.printOrderBook();
 
         return std::move(marketState.orderBook);
 

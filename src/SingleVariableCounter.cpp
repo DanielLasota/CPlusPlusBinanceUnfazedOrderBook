@@ -1,6 +1,13 @@
 #include "SingleVariableCounter.h"
 #include "OrderBook.h"
 
+inline double round2(double x) {
+    double y = x * 100.0;
+    y += (y >= 0.0 ?  0.5 : -0.5);
+    int t = static_cast<int>(y);
+    return t * 0.01;
+}
+
 namespace SingleVariableCounter {
 
     double calculateBestAskPrice(const OrderBook& orderBook) {
@@ -22,11 +29,14 @@ namespace SingleVariableCounter {
     }
 
     double calculateQueueImbalance(const OrderBook& orderBook) {
-        return static_cast<double>(orderBook.bidCount() - orderBook.askCount()) / static_cast<double>(orderBook.bidCount() + orderBook.askCount());
+        return
+        static_cast<double>(orderBook.bidCount() - orderBook.askCount())
+        / static_cast<double>(orderBook.bidCount() + orderBook.askCount());
     }
 
     double calculateVolumeImbalance(const OrderBook& orderBook) {
-        return (orderBook.sumBidQuantity() - orderBook.sumAskQuantity()) / (orderBook.sumBidQuantity() + orderBook.sumAskQuantity());
+        return (orderBook.sumBidQuantity() - orderBook.sumAskQuantity())
+            / (orderBook.sumBidQuantity() + orderBook.sumAskQuantity());
     }
 
     double calculateGap(const OrderBook& orderBook) {

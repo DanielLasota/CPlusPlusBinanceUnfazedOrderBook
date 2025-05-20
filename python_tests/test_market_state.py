@@ -1,4 +1,10 @@
-from cpp_binance_orderbook import MarketState, DifferenceDepthEntry, TradeEntry, OrderBookMetricsCalculator, parse_mask
+from cpp_binance_orderbook import (
+    MarketState,
+    DifferenceDepthEntry,
+    TradeEntry,
+    OrderBookMetricsCalculator,
+    parse_mask
+)
 
 
 class TestMarketState:
@@ -671,11 +677,14 @@ class TestMarketState:
         def test_given_empty_market_state_when_count_order_book_metrics_then_returns_none(self):
             variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
-                "gap"
+                "queueImbalance",
+                "volumeImbalance",
+                "gap",
+                "isAggressorAsk"
             ]
             mask = parse_mask(variables)
             ms = MarketState()
@@ -685,17 +694,18 @@ class TestMarketState:
             assert variables is None
 
         def test_given_non_empty_orderbook_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
                 "volumeImbalance",
                 "gap",
                 "isAggressorAsk"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             # wstawiamy dwa poziomy ask i dwa poziomy bid
             for price, qty in [(10.0, 1), (11.0, 2)]:
@@ -718,17 +728,18 @@ class TestMarketState:
             assert result is None
 
         def test_given_empty_orderbook_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
                 "volumeImbalance",
                 "gap",
                 "isAggressorAsk"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             # tylko trade, zero poziomów w orderbooku
             t = TradeEntry()
@@ -743,17 +754,18 @@ class TestMarketState:
             assert result is None
 
         def test_given_orderbook_with_one_order_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
                 "volumeImbalance",
                 "gap",
                 "isAggressorAsk"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             # dokładnie po jednym poziomie na każdej stronie
             a = DifferenceDepthEntry()
@@ -784,10 +796,10 @@ class TestMarketState:
 
         def test_given_non_empty_market_state_when_count_order_book_metrics_then_returns_correct_order_book_metrics_entry(self):
             # przygotuj maskę na wszystkie metryki
-            vars = [
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
@@ -795,7 +807,7 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(vars)
+            mask = parse_mask(variables)
 
             ms = MarketState()
             # dwa poziomy ask (10@1, 11@1)
@@ -829,8 +841,8 @@ class TestMarketState:
 
             # sprawdź wszystkie pola
             # bestAsk = 10, bestBid = 9
-            assert entry.bestAsk == 10.0
-            assert entry.bestBid == 9.0
+            assert entry.bestAskPrice == 10.0
+            assert entry.bestBidPrice == 9.0
             # midPrice = (10+9)/2 = 9.5
             assert entry.midPrice == 9.5
             # bestVolumeImbalance = (1 - 1)/(1+1) = 0
@@ -849,31 +861,33 @@ class TestMarketState:
     class TestMarketStateCountVariablesWithFastUpdate:
 
         def test_given_empty_market_state_when_count_order_book_metrics_then_returns_none(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "gap"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             obmc = OrderBookMetricsCalculator(mask)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
         def test_given_non_empty_orderbook_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
                 "volumeImbalance",
                 "gap",
                 "isAggressorAsk"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             # wstawiamy dwa poziomy ask i dwa poziomy bid
             for price, qty in [(10.0, 1), (11.0, 2)]:
@@ -886,17 +900,18 @@ class TestMarketState:
             assert result is None
 
         def test_given_empty_orderbook_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
                 "volumeImbalance",
                 "gap",
                 "isAggressorAsk"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             # tylko trade, zero poziomów w orderbooku
             ms.update_trade_registry(100, 5.0, 1.5, True)
@@ -905,17 +920,18 @@ class TestMarketState:
             assert result is None
 
         def test_given_orderbook_with_one_order_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
                 "volumeImbalance",
                 "gap",
                 "isAggressorAsk"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             # dokładnie po jednym poziomie na każdej stronie
             ms.update_orderbook(1, 10.0, 2.0, True)
@@ -927,17 +943,18 @@ class TestMarketState:
             assert result is None
 
         def test_given_non_empty_market_state_when_count_order_book_metrics_then_returns_correct_order_book_metrics_entry(self):
-            mask = parse_mask([
+            variables = [
                 "timestampOfReceive",
-                "bestAsk",
-                "bestBid",
+                "bestAskPrice",
+                "bestBidPrice",
                 "midPrice",
                 "bestVolumeImbalance",
                 "queueImbalance",
                 "volumeImbalance",
                 "gap",
                 "isAggressorAsk"
-            ])
+            ]
+            mask = parse_mask(variables)
             ms = MarketState()
             # dwa poziomy ask (10@1, 11@1)
             ms.update_orderbook(1, 10.0, 1.0, True)
@@ -953,8 +970,8 @@ class TestMarketState:
             entry = obmc.count_market_state_metrics(ms)
             assert entry is not None
 
-            assert entry.bestAsk == 10.0
-            assert entry.bestBid == 9.0
+            assert entry.bestAskPrice == 10.0
+            assert entry.bestBidPrice == 9.0
             assert entry.midPrice == 9.5
             assert entry.bestVolumeImbalance == 0.0
             assert entry.queueImbalance == 0.0

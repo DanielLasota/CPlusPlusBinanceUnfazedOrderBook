@@ -7,8 +7,8 @@
 
 enum Metric : uint16_t {
     TimestampOfReceive   = 1 << 0,
-    BestAsk              = 1 << 1,
-    BestBid              = 1 << 2,
+    BestAskPrice         = 1 << 1,
+    BestBidPrice         = 1 << 2,
     MidPrice             = 1 << 3,
     BestVolumeImbalance  = 1 << 4,
     QueueImbalance       = 1 << 5,
@@ -22,8 +22,8 @@ inline MetricMask parseMask(const std::vector<std::string>& vars) {
     MetricMask m = 0;
     for (auto const& s : vars) {
         if      (s == "timestampOfReceive")   m |= TimestampOfReceive;
-        else if (s == "bestAsk")              m |= BestAsk;
-        else if (s == "bestBid")              m |= BestBid;
+        else if (s == "bestAskPrice")         m |= BestAskPrice;
+        else if (s == "bestBidPrice")         m |= BestBidPrice;
         else if (s == "midPrice")             m |= MidPrice;
         else if (s == "bestVolumeImbalance")  m |= BestVolumeImbalance;
         else if (s == "queueImbalance")       m |= QueueImbalance;

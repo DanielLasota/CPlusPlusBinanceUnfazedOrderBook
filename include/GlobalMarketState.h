@@ -32,11 +32,25 @@ public:
 
     void update(DecodedEntry* entry);
 
-    std::optional<OrderBookMetricsEntry> countMarketStateMetrics(DecodedEntry* entry);
+    std::optional<OrderBookMetricsEntry> countMarketStateMetricsByEntry(DecodedEntry* entry);
+    std::optional<OrderBookMetricsEntry> countMarketStateMetrics(const std::string& symbol, const Market& market);
+
+    MarketState& getMarketState(const std::string& symbol, const std::string& market_str);
+
+    size_t marketStateCount() const { return marketStates_.size(); }
+
+    std::vector<std::pair<std::string, Market>> marketStateList() const {
+        std::vector<std::pair<std::string, Market>> out;
+        out.reserve(marketStates_.size());
+        for (auto const& kv : marketStates_) {
+            out.emplace_back(kv.first.symbol, kv.first.market);
+        }
+        return out;
+    }
 
 private:
     AssetKey extractKey(const DecodedEntry& d) const;
-    MetricMask                                                      mask_;
-    OrderBookMetricsCalculator                                      calculator_;
-    std::unordered_map<AssetKey, MarketState, AssetKeyHash>         states_;
+    MetricMask mask_;
+    OrderBookMetricsCalculator calculator_;
+    std::unordered_map<AssetKey, MarketState, AssetKeyHash> marketStates_;
 };

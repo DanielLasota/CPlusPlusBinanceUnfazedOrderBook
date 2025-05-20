@@ -1,17 +1,18 @@
 from types import NoneType
-
-import cpp_binance_orderbook
+import pytest
 
 from cpp_binance_orderbook import (
     GlobalMarketState,
     DifferenceDepthEntry,
     parse_mask,
-    Market, TradeEntry
+    Market,
+    TradeEntry,
+    OrderBookMetricsEntry
 )
 
 def sample_order_list(
         symbol: str,
-        market: cpp_binance_orderbook.Market,
+        market: Market,
         price_hash: float,
         quantity_hash: float
 ) -> list[DifferenceDepthEntry]:
@@ -114,10 +115,10 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", "SPOT")
-            ms_btcusdt = gms.get_market_state("BTCUSDT", "USD_M_FUTURES")
-            ms_adausdt = gms.get_market_state("ADAUSDT", "COIN_M_FUTURES")
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", "USD_M_FUTURES")
+            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
+            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
 
             actual_trxusdt = [*reversed(ms_trxusdt.order_book.asks()), *ms_trxusdt.order_book.bids()]
             expected_trxusdt = sorted(sample_trxusdt_spot_order_list, key=lambda x: x.price, reverse=True)
@@ -187,8 +188,8 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.order_book.second_bid_price() == 41.5
             assert ms_dogeusdt.last_timestamp_of_receive == 10.0
 
-            assert gms.market_state_count() == 4
-            assert gms.market_state_list() == [
+            assert gms.get_market_state_count() == 4
+            assert gms.get_market_state_list() == [
                 ('TRXUSDT', Market.SPOT),
                 ('DOGEUSDT', Market.USD_M_FUTURES),
                 ('BTCUSDT', Market.USD_M_FUTURES),
@@ -243,10 +244,10 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", "SPOT")
-            ms_btcusdt = gms.get_market_state("BTCUSDT", "USD_M_FUTURES")
-            ms_adausdt = gms.get_market_state("ADAUSDT", "COIN_M_FUTURES")
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", "USD_M_FUTURES")
+            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
+            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
 
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -539,8 +540,9 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.order_book.second_ask_price() == 42.3
             assert ms_dogeusdt.order_book.second_bid_price() == 41.5
             assert ms_dogeusdt.last_timestamp_of_receive == 28
-            assert gms.market_state_count() == 4
-            assert gms.market_state_list() == [
+
+            assert gms.get_market_state_count() == 4
+            assert gms.get_market_state_list() == [
                 ('TRXUSDT', Market.SPOT),
                 ('DOGEUSDT', Market.USD_M_FUTURES),
                 ('BTCUSDT', Market.USD_M_FUTURES),
@@ -595,10 +597,10 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", "SPOT")
-            ms_btcusdt = gms.get_market_state("BTCUSDT", "USD_M_FUTURES")
-            ms_adausdt = gms.get_market_state("ADAUSDT", "COIN_M_FUTURES")
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", "USD_M_FUTURES")
+            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
+            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
 
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -886,8 +888,8 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.order_book.second_bid_price() == 41.1
             assert ms_dogeusdt.last_timestamp_of_receive ==28
 
-            assert gms.market_state_count() == 4
-            assert gms.market_state_list() == [
+            assert gms.get_market_state_count() == 4
+            assert gms.get_market_state_list() == [
                 ('TRXUSDT', Market.SPOT),
                 ('DOGEUSDT', Market.USD_M_FUTURES),
                 ('BTCUSDT', Market.USD_M_FUTURES),
@@ -1010,10 +1012,10 @@ class TestGlobalMarketState:
             dogeusdt_trade.market                  = Market.USD_M_FUTURES
             gms.update(dogeusdt_trade)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", "SPOT")
-            ms_btcusdt = gms.get_market_state("BTCUSDT", "USD_M_FUTURES")
-            ms_adausdt = gms.get_market_state("ADAUSDT", "COIN_M_FUTURES")
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", "USD_M_FUTURES")
+            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
+            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 20
@@ -1084,8 +1086,8 @@ class TestGlobalMarketState:
             assert ms_adausdt.last_timestamp_of_receive == 22
             assert ms_dogeusdt.last_timestamp_of_receive == 23
 
-            assert gms.market_state_count() == 4
-            assert gms.market_state_list() == [
+            assert gms.get_market_state_count() == 4
+            assert gms.get_market_state_list() == [
                 ('TRXUSDT', Market.SPOT),
                 ('DOGEUSDT', Market.USD_M_FUTURES),
                 ('BTCUSDT', Market.USD_M_FUTURES),
@@ -1208,10 +1210,10 @@ class TestGlobalMarketState:
             dogeusdt_trade.market                  = Market.USD_M_FUTURES
             gms.update(dogeusdt_trade)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", "SPOT")
-            ms_btcusdt = gms.get_market_state("BTCUSDT", "USD_M_FUTURES")
-            ms_adausdt = gms.get_market_state("ADAUSDT", "COIN_M_FUTURES")
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", "USD_M_FUTURES")
+            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
+            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 20
@@ -1418,8 +1420,8 @@ class TestGlobalMarketState:
             assert ms_adausdt.last_timestamp_of_receive == 32
             assert ms_dogeusdt.last_timestamp_of_receive == 33
 
-            assert gms.market_state_count() == 4
-            assert gms.market_state_list() == [
+            assert gms.get_market_state_count() == 4
+            assert gms.get_market_state_list() == [
                 ('TRXUSDT', Market.SPOT),
                 ('DOGEUSDT', Market.USD_M_FUTURES),
                 ('BTCUSDT', Market.USD_M_FUTURES),
@@ -1428,7 +1430,7 @@ class TestGlobalMarketState:
 
     class TestGlobalMarketStateCountVariables:
 
-        def test_given_empty_market_state_when_count_order_book_metrics_then_returns_none(self):
+        def test_given_no_market_state_when_count_order_book_metrics_then_returns_none(self):
             variables = [
                 "timestampOfReceive",
                 "bestAskPrice",
@@ -1442,9 +1444,9 @@ class TestGlobalMarketState:
             ]
             mask = parse_mask(variables)
             gms = GlobalMarketState(mask)
-            x = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
-            assert x is None
-            assert isinstance(x, NoneType)
+
+            with pytest.raises(RuntimeError, match="no specified market"):
+                x = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
 
         def test_given_non_empty_orderbook_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
             variables = [
@@ -1850,10 +1852,10 @@ class TestGlobalMarketState:
             dogeusdt_trade.market                  = Market.USD_M_FUTURES
             gms.update(dogeusdt_trade)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", "SPOT")
-            ms_btcusdt = gms.get_market_state("BTCUSDT", "USD_M_FUTURES")
-            ms_adausdt = gms.get_market_state("ADAUSDT", "COIN_M_FUTURES")
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", "USD_M_FUTURES")
+            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
+            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
 
             # ms_trxusdt.print_order_book()
             # print(ms_trxusdt.last_trade)
@@ -1871,10 +1873,10 @@ class TestGlobalMarketState:
             # print(ms_dogeusdt.last_trade)
             # print()
 
-            x1: cpp_binance_orderbook.OrderBookMetricsEntry = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
-            x2: cpp_binance_orderbook.OrderBookMetricsEntry = gms.count_market_state_metrics("BTCUSDT", Market.USD_M_FUTURES)
-            x3: cpp_binance_orderbook.OrderBookMetricsEntry = gms.count_market_state_metrics("ADAUSDT", Market.COIN_M_FUTURES)
-            x4: cpp_binance_orderbook.OrderBookMetricsEntry = gms.count_market_state_metrics("DOGEUSDT", Market.USD_M_FUTURES)
+            x1: OrderBookMetricsEntry = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
+            x2: OrderBookMetricsEntry = gms.count_market_state_metrics("BTCUSDT", Market.USD_M_FUTURES)
+            x3: OrderBookMetricsEntry = gms.count_market_state_metrics("ADAUSDT", Market.COIN_M_FUTURES)
+            x4: OrderBookMetricsEntry = gms.count_market_state_metrics("DOGEUSDT", Market.USD_M_FUTURES)
 
             # === x1 (TRXUSDT) ===
             assert x1.timestampOfReceive == 20

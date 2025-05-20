@@ -57,10 +57,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              py::arg("symbol"), py::arg("market_str"),
              py::return_value_policy::reference_internal,
              "Zwraca obiekt MarketState dla danego symbolu i rynku")
-            .def("market_state_count", &GlobalMarketState::marketStateCount,
+            .def("get_market_state_count", &GlobalMarketState::getMarketStateCount,
                  "Liczba przechowywanych (symbol, market)")
-            .def("__len__", &GlobalMarketState::marketStateCount)
-            .def("market_state_list", &GlobalMarketState::marketStateList,
+            .def("__len__", &GlobalMarketState::getMarketStateCount)
+            .def("get_market_state_list", &GlobalMarketState::getMarketStateList,
                  "Zwraca listę (symbol, market) dostępnych w GlobalMarketState")
         ;
 

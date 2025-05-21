@@ -20,7 +20,7 @@ class TestTradeEntry:
             "",   # m_unknown_parameter
             "",   # x_unknown_parameter
             0,    # is_last (False -> 0),
-            Market.SPOT
+            Market.UNKNOWN
         ]
         assert e.to_list() == expected
 
@@ -81,5 +81,30 @@ class TestTradeEntry:
         assert e.field_names() == expected_names
 
         # and each name corresponds to an actual attribute on the object
+        for attr in expected_names:
+            assert hasattr(e, attr), f"TradeEntry is missing attribute '{attr}'"
+
+    def test_given_trade_entry_constructor_when_field_names_then_returned_names_are_correct(self):
+        e = TradeEntry(
+            1, "a", "b", 2, 3, "X", 4, 1.1, 2.2, False, "m", "x", False, Market.SPOT
+        )
+        expected_names = [
+            "timestamp_of_receive",
+            "stream",
+            "event_type",
+            "event_time",
+            "transaction_time",
+            "symbol",
+            "trade_id",
+            "price",
+            "quantity",
+            "is_buyer_market_maker",
+            "m_unknown_parameter",
+            "x_unknown_parameter",
+            "is_last",
+            "market"
+        ]
+        assert e.field_names() == expected_names
+
         for attr in expected_names:
             assert hasattr(e, attr), f"TradeEntry is missing attribute '{attr}'"

@@ -21,7 +21,7 @@ class TestDifferenceDepthEntry:
             0.0,    # quantity
             "",     # ps_unknown_field
             0,      # is_last (False -> 0)
-            Market.SPOT
+            Market.UNKNOWN
         ]
         assert e.to_list() == expected
 
@@ -85,5 +85,31 @@ class TestDifferenceDepthEntry:
         assert e.field_names() == expected_names
 
         # and each of those names corresponds to an actual attribute on the object
+        for attr in expected_names:
+            assert hasattr(e, attr), f"DifferenceDepthEntry is missing attribute '{attr}'"
+
+    def test_given_constructor_order_book_entry_when_field_names_then_returned_names_are_correct(self):
+        expected_names = [
+            "timestamp_of_receive",
+            "stream",
+            "event_type",
+            "event_time",
+            "transaction_time",
+            "symbol",
+            "first_update_id",
+            "final_update_id",
+            "final_update_id_in_last_stream",
+            "is_ask",
+            "price",
+            "quantity",
+            "ps_unknown_field",
+            "is_last",
+            "market"
+        ]
+        e = DifferenceDepthEntry(
+            0, "", "", 0, 0, "", 0, 0, 0, 0, 0.0, 0.0, "", 0, Market.SPOT
+        )
+        assert e.field_names() == expected_names
+
         for attr in expected_names:
             assert hasattr(e, attr), f"DifferenceDepthEntry is missing attribute '{attr}'"

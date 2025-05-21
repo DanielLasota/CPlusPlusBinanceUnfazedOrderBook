@@ -166,6 +166,39 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
         .def(py::init<>())
+        .def(py::init<
+            int64_t,
+            const std::string&,
+            const std::string&,
+            int64_t,
+            int64_t,
+            const std::string&,
+            int64_t,
+            int64_t,
+            int64_t,
+            bool,
+            double,
+            double,
+            const std::string&,
+            bool,
+            Market
+            >(),
+            py::arg("timestamp_of_receive"),
+            py::arg("stream"),
+            py::arg("event_type"),
+            py::arg("event_time"),
+            py::arg("transaction_time"),
+            py::arg("symbol"),
+            py::arg("first_update_id"),
+            py::arg("final_update_id"),
+            py::arg("final_update_id_in_last_stream"),
+            py::arg("is_ask"),
+            py::arg("price"),
+            py::arg("quantity"),
+            py::arg("ps_unknown_field"),
+            py::arg("is_last"),
+            py::arg("market")
+        )
         .def_readwrite("timestamp_of_receive", &DifferenceDepthEntry::TimestampOfReceive)
         .def_readwrite("stream", &DifferenceDepthEntry::Stream)
         .def_readwrite("event_type", &DifferenceDepthEntry::EventType)
@@ -237,6 +270,37 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- TradeEntry -----
     py::class_<TradeEntry>(m, "TradeEntry")
         .def(py::init<>())
+        .def(py::init<
+            int64_t,
+            const std::string&,
+            const std::string&,
+            int64_t,
+            int64_t,
+            const std::string&,
+            int64_t,
+            double,
+            double,
+            bool,
+            const std::string&,
+            const std::string&,
+            bool,
+            Market
+            >(),
+            py::arg("timestamp_of_receive"),
+            py::arg("stream"),
+            py::arg("event_type"),
+            py::arg("event_time"),
+            py::arg("transaction_time"),
+            py::arg("symbol"),
+            py::arg("trade_id"),
+            py::arg("price"),
+            py::arg("quantity"),
+            py::arg("is_buyer_market_maker"),
+            py::arg("m_unknown_parameter"),
+            py::arg("x_unknown_parameter"),
+            py::arg("is_last"),
+            py::arg("market")
+        )
         .def_readwrite("timestamp_of_receive",    &TradeEntry::TimestampOfReceive)
         .def_readwrite("stream",                  &TradeEntry::Stream)
         .def_readwrite("event_type",              &TradeEntry::EventType)
@@ -358,5 +422,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .value("SPOT",          Market::SPOT)
         .value("USD_M_FUTURES", Market::USD_M_FUTURES)
         .value("COIN_M_FUTURES",Market::COIN_M_FUTURES)
+        .value("UNKNOWN",            Market::UNKNOWN)
         .export_values();
 }

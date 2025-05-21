@@ -4,7 +4,7 @@
 #include <pybind11/pybind11.h>
 
 #include "OrderBook.h"
-#include "OrderBookMetrics.h"
+#include "OrderBookMetricsEntry.h"
 
 namespace py = pybind11;
 

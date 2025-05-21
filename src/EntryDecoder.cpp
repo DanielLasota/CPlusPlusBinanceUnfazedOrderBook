@@ -8,119 +8,172 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
     auto tokens = splitLine(line, ',');
 
     if (params.streamType == StreamType::TRADE_STREAM) {
-        TradeEntry trade;
         if (params.market == Market::SPOT) {
-            trade.TimestampOfReceive = std::stoll(tokens[0]);
-            trade.Stream = tokens[1];
-            trade.EventType = tokens[2];
-            trade.EventTime = std::stoll(tokens[3]);
-            trade.TransactionTime = std::stoll(tokens[4]);
-            trade.Symbol = tokens[5];
-            trade.TradeId = std::stoll(tokens[6]);
-            trade.Price = std::stod(tokens[7]);
-            trade.Quantity = std::stod(tokens[8]);
-            trade.IsBuyerMarketMaker = std::stoi(tokens[9]);
-            trade.MUnknownParameter = tokens[10];
+            return TradeEntry(
+                std::stoll(tokens[0]),
+                tokens[1],
+                tokens[2],
+                std::stoll(tokens[3]),
+                std::stoll(tokens[4]),
+                tokens[5],
+                std::stoll(tokens[6]),
+                std::stod(tokens[7]),
+                std::stod(tokens[8]),
+                std::stoi(tokens[9]),
+                tokens[10],
+                "",
+                false,
+                Market::SPOT
+            );
         }
         else if (params.market == Market::USD_M_FUTURES || params.market == Market::COIN_M_FUTURES) {
-            trade.TimestampOfReceive = std::stoll(tokens[0]);
-            trade.Stream = tokens[1];
-            trade.EventType = tokens[2];
-            trade.EventTime = std::stoll(tokens[3]);
-            trade.TransactionTime = std::stoll(tokens[4]);
-            trade.Symbol = tokens[5];
-            trade.TradeId = std::stoll(tokens[6]);
-            trade.Price = std::stod(tokens[7]);
-            trade.Quantity = std::stod(tokens[8]);
-            trade.IsBuyerMarketMaker = std::stoi(tokens[9]);
-            trade.XUnknownParameter = tokens[10];
+            return TradeEntry(
+                std::stoll(tokens[0]),
+                tokens[1],
+                tokens[2],
+                std::stoll(tokens[3]),
+                std::stoll(tokens[4]),
+                tokens[5],
+                std::stoll(tokens[6]),
+                std::stod(tokens[7]),
+                std::stod(tokens[8]),
+                std::stoi(tokens[9]),
+                "",
+                tokens[10],
+                false,
+                params.market
+            );
         }
-        return trade;
+        else {
+            throw std::runtime_error("Unknown market for trade decoding");
+        }
     }
     else if (params.streamType == StreamType::DEPTH_SNAPSHOT) {
-        DifferenceDepthEntry entry;
         if (params.market == Market::SPOT) {
-            entry.TimestampOfReceive = std::stoll(tokens[0]);
-            // entry.TimestampOfRequest = std::stoll(tokens[1]);
-            // entry.LastUpdateId      = std::stoll(tokens[2]);  // LastUpdateId
-            entry.IsAsk = (std::stoi(tokens[3]) != 0);
-            entry.Price = std::stod(tokens[4]);
-            entry.Quantity = std::stod(tokens[5]);
+            return DifferenceDepthEntry(
+                std::stoll(tokens[0]),
+                "",
+                "",
+                0,
+                0,
+                "",
+                0,
+                0,
+                0,
+                (std::stoi(tokens[3]) != 0),
+                std::stod(tokens[4]),
+                std::stod(tokens[5]),
+                "",
+                false,
+                Market::SPOT
+            );
         }
         else if (params.market == Market::USD_M_FUTURES) {
-            entry.TimestampOfReceive = std::stoll(tokens[0]);
-            // entry.TimestampOfRequest = std::stoll(tokens[1]);
-            // entry.MessageOutputTime  = std::stoll(tokens[2]);
-            entry.TransactionTime = std::stoll(tokens[3]);
-            // entry.LastUpdateId      = std::stoll(tokens[4]);  // LastUpdateId
-            entry.IsAsk = (std::stoi(tokens[5]) != 0);
-            entry.Price = std::stod(tokens[6]);
-            entry.Quantity = std::stod(tokens[7]);
+            return DifferenceDepthEntry(
+                std::stoll(tokens[0]),
+                "",
+                "",
+                0,
+                std::stoll(tokens[3]),
+                "", // Symbol
+                0,
+                0,
+                0,
+                (std::stoi(tokens[5]) != 0),
+                std::stod(tokens[6]),
+                std::stod(tokens[7]),
+                "",
+                false,
+                Market::USD_M_FUTURES
+            );
         }
         else if (params.market == Market::COIN_M_FUTURES) {
-            entry.TimestampOfReceive = std::stoll(tokens[0]);
-            // entry.TimestampOfRequest = std::stoll(tokens[1]);
-            // entry.MessageOutputTime  = std::stoll(tokens[2]);
-            entry.TransactionTime = std::stoll(tokens[3]);
-            // entry.LastUpdateId      = std::stoll(tokens[4]);  // LastUpdateId
-            entry.Symbol = tokens[5];
-            // entry.Pair               = tokens[6];
-            entry.IsAsk = (std::stoi(tokens[7]) != 0);
-            entry.Price = std::stod(tokens[8]);
-            entry.Quantity = std::stod(tokens[9]);
+            return DifferenceDepthEntry(
+                std::stoll(tokens[0]),
+                "",
+                "",
+                0,
+                std::stoll(tokens[3]),
+                tokens[5],
+                0,
+                0,
+                0,
+                (std::stoi(tokens[7]) != 0),
+                std::stod(tokens[8]),
+                std::stod(tokens[9]),
+                "",
+                false,
+                Market::COIN_M_FUTURES
+            );
         }
         else {
             throw std::runtime_error("Unknown market for snapshot decoding");
         }
-        return entry;
     }
     else if (params.streamType == StreamType::DIFFERENCE_DEPTH_STREAM) {
-        DifferenceDepthEntry entry;
         if (params.market == Market::SPOT) {
-            entry.TimestampOfReceive = std::stoll(tokens[0]);
-            entry.Stream = tokens[1];
-            entry.EventType = tokens[2];
-            entry.EventTime = std::stoll(tokens[3]);
-            entry.Symbol = tokens[4];
-            entry.FirstUpdateId = std::stoll(tokens[5]);
-            entry.FinalUpdateId = std::stoll(tokens[6]);
-            entry.IsAsk = (std::stoi(tokens[7]) != 0);
-            entry.Price = std::stod(tokens[8]);
-            entry.Quantity = std::stod(tokens[9]);
+            return DifferenceDepthEntry(
+                std::stoll(tokens[0]),
+                tokens[1],
+                tokens[2],
+                std::stoll(tokens[3]),
+                0,
+                tokens[4],
+                std::stoll(tokens[5]),
+                std::stoll(tokens[6]),
+                0,
+                (std::stoi(tokens[7]) != 0),
+                std::stod(tokens[8]),
+                std::stod(tokens[9]),
+                "",
+                false,
+                Market::SPOT
+            );
         }
         else if (params.market == Market::USD_M_FUTURES) {
-            entry.TimestampOfReceive = std::stoll(tokens[0]);
-            entry.Stream = tokens[1];
-            entry.EventType = tokens[2];
-            entry.EventTime = std::stoll(tokens[3]);
-            entry.TransactionTime = std::stoll(tokens[4]);
-            entry.Symbol = tokens[5];
-            entry.FirstUpdateId = std::stoll(tokens[6]);
-            entry.FinalUpdateId = std::stoll(tokens[7]);
-            entry.FinalUpdateIdInLastStream = std::stoll(tokens[8]);
-            entry.IsAsk = (std::stoi(tokens[9]) != 0);
-            entry.Price = std::stod(tokens[10]);
-            entry.Quantity = std::stod(tokens[11]);
+            return DifferenceDepthEntry(
+                std::stoll(tokens[0]),
+                tokens[1],
+                tokens[2],
+                std::stoll(tokens[3]),
+                std::stoll(tokens[4]),
+                tokens[5],
+                std::stoll(tokens[6]),
+                std::stoll(tokens[7]),
+                std::stoll(tokens[8]),
+                (std::stoi(tokens[9]) != 0),
+                std::stod(tokens[10]),
+                std::stod(tokens[11]),
+                "",
+                false,
+                Market::USD_M_FUTURES
+            );
         }
         else if (params.market == Market::COIN_M_FUTURES) {
-            entry.TimestampOfReceive = std::stoll(tokens[0]);
-            entry.Stream = tokens[1];
-            entry.EventType = tokens[2];
-            entry.EventTime = std::stoll(tokens[3]);
-            entry.TransactionTime = std::stoll(tokens[4]);
-            entry.Symbol = tokens[5];
-            entry.FirstUpdateId = std::stoll(tokens[6]);
-            entry.FinalUpdateId = std::stoll(tokens[7]);
-            entry.FinalUpdateIdInLastStream = std::stoll(tokens[8]);
-            entry.IsAsk = (std::stoi(tokens[9]) != 0);
-            entry.Price = std::stod(tokens[10]);
-            entry.Quantity = std::stod(tokens[11]);
-            entry.PSUnknownField = tokens[12];
+            return DifferenceDepthEntry(
+                std::stoll(tokens[0]),
+                tokens[1],
+                tokens[2],
+                std::stoll(tokens[3]),
+                std::stoll(tokens[4]),
+                tokens[5],
+                std::stoll(tokens[6]),
+                std::stoll(tokens[7]),
+                std::stoll(tokens[8]),
+                (std::stoi(tokens[9]) != 0),
+                std::stod(tokens[10]),
+                std::stod(tokens[11]),
+                tokens[12],
+                false,
+                Market::COIN_M_FUTURES
+            );
         }
         else {
             throw std::runtime_error("Unknown Market during decoding OrderBookEntry");
         }
-        return entry;
+    }
+    else {
+        throw std::runtime_error("Unknown StreamType in decodeSingleAssetParameterEntry");
     }
 }
 
@@ -149,55 +202,58 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
         case StreamType::TRADE_STREAM: {
             switch (mk) {
                 case Market::SPOT: {
-                    TradeEntry e;
-                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.Stream                = tokens[h["Stream"]];
-                    e.EventType             = tokens[h["EventType"]];
-                    e.EventTime             = std::stoll(tokens[h["EventTime"]]);
-                    e.TransactionTime       = std::stoll(tokens[h["TransactionTime"]]);
-                    e.Symbol                = tokens[h["Symbol"]];
-                    e.TradeId               = std::stoll(tokens[h["TradeId"]]);
-                    e.Price                 = std::stod(tokens[h["Price"]]);
-                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
-                    e.IsBuyerMarketMaker    = (tokens[h["IsBuyerMarketMaker"]] == "1");
-                    e.MUnknownParameter     = tokens[h["MUnknownParameter"]];
-                    e.IsLast                = (tokens[h["IsLast"]] == "1");
-                    e.Market_               = Market::SPOT;
-                    return e;
+                    return TradeEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        tokens[h["Stream"]],
+                        tokens[h["EventType"]],
+                        std::stoll(tokens[h["EventTime"]]),
+                        std::stoll(tokens[h["TransactionTime"]]),
+                        tokens[h["Symbol"]],
+                        std::stoll(tokens[h["TradeId"]]),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        (tokens[h["IsBuyerMarketMaker"]] == "1"),
+                        tokens[h["MUnknownParameter"]],
+                        "",
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::SPOT
+                    );
                 }
                 case Market::USD_M_FUTURES: {
-                    TradeEntry e;
-                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.Stream                = tokens[h["Stream"]];
-                    e.EventType             = tokens[h["EventType"]];
-                    e.EventTime             = std::stoll(tokens[h["EventTime"]]);
-                    e.TransactionTime       = std::stoll(tokens[h["TransactionTime"]]);
-                    e.Symbol                = tokens[h["Symbol"]];
-                    e.TradeId               = std::stoll(tokens[h["TradeId"]]);
-                    e.Price                 = std::stod(tokens[h["Price"]]);
-                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
-                    e.IsBuyerMarketMaker    = (tokens[h["IsBuyerMarketMaker"]] == "1");
-                    e.XUnknownParameter     = tokens[h["XUnknownParameter"]];
-                    e.IsLast                = (tokens[h["IsLast"]] == "1");
-                    e.Market_               = Market::USD_M_FUTURES;
-                    return e;
+                    return TradeEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        tokens[h["Stream"]],
+                        tokens[h["EventType"]],
+                        std::stoll(tokens[h["EventTime"]]),
+                        std::stoll(tokens[h["TransactionTime"]]),
+                        tokens[h["Symbol"]],
+                        std::stoll(tokens[h["TradeId"]]),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        (tokens[h["IsBuyerMarketMaker"]] == "1"),
+                        "",
+                        tokens[h["XUnknownParameter"]],
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::USD_M_FUTURES
+                    );
                 }
                 case Market::COIN_M_FUTURES: {
-                    TradeEntry e;
-                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.Stream                = tokens[h["Stream"]];
-                    e.EventType             = tokens[h["EventType"]];
-                    e.EventTime             = std::stoll(tokens[h["EventTime"]]);
-                    e.TransactionTime       = std::stoll(tokens[h["TransactionTime"]]);
-                    e.Symbol                = tokens[h["Symbol"]];
-                    e.TradeId               = std::stoll(tokens[h["TradeId"]]);
-                    e.Price                 = std::stod(tokens[h["Price"]]);
-                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
-                    e.IsBuyerMarketMaker    = (tokens[h["IsBuyerMarketMaker"]] == "1");
-                    e.XUnknownParameter     = tokens[h["XUnknownParameter"]];
-                    e.IsLast                = (tokens[h["IsLast"]] == "1");
-                    e.Market_               = Market::COIN_M_FUTURES;
-                    return e;
+                    return TradeEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        tokens[h["Stream"]],
+                        tokens[h["EventType"]],
+                        std::stoll(tokens[h["EventTime"]]),
+                        std::stoll(tokens[h["TransactionTime"]]),
+                        tokens[h["Symbol"]],
+                        std::stoll(tokens[h["TradeId"]]),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        (tokens[h["IsBuyerMarketMaker"]] == "1"),
+                        "",
+                        tokens[h["XUnknownParameter"]],
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::COIN_M_FUTURES
+                    );
                 }
             }
         }
@@ -205,39 +261,61 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
         case StreamType::DEPTH_SNAPSHOT: {
             switch (mk) {
                 case Market::SPOT: {
-                    DifferenceDepthEntry e;
-                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.Symbol                = tokens[h["Symbol"]];
-                    e.IsAsk                 = (tokens[h["IsAsk"]] == "1");
-                    e.Price                 = std::stod(tokens[h["Price"]]);
-                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
-                    e.IsLast                = (tokens[h["IsLast"]] == "1");
-                    e.Market_               = Market::SPOT;
-                    return e;
+                    return DifferenceDepthEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        "",
+                        "",
+                        0,
+                        0,
+                        tokens[h["Symbol"]],
+                        0,
+                        0,
+                        0,
+                        (tokens[h["IsAsk"]] == "1"),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        "",
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::SPOT
+                    );
                 }
                 case Market::USD_M_FUTURES: {
-                    DifferenceDepthEntry e;
-                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.TransactionTime       = std::stoll(tokens[h["TransactionTime"]]);
-                    e.Symbol                = tokens[h["Symbol"]];
-                    e.IsAsk                 = (tokens[h["IsAsk"]] == "1");
-                    e.Price                 = std::stod(tokens[h["Price"]]);
-                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
-                    e.IsLast                = (tokens[h["IsLast"]] == "1");
-                    e.Market_               = Market::USD_M_FUTURES;
-                    return e;
+                    return DifferenceDepthEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        "",
+                        "",
+                        0,
+                        std::stoll(tokens[h["TransactionTime"]]),
+                        tokens[h["Symbol"]],
+                        0,
+                        0,
+                        0,
+                        (tokens[h["IsAsk"]] == "1"),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        "",
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::USD_M_FUTURES
+                    );
                 }
                 case Market::COIN_M_FUTURES: {
-                    DifferenceDepthEntry e;
-                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.TransactionTime       = std::stoll(tokens[h["TransactionTime"]]);
-                    e.Symbol                = tokens[h["Symbol"]];
-                    e.IsAsk                 = (tokens[h["IsAsk"]] == "1");
-                    e.Price                 = std::stod(tokens[h["Price"]]);
-                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
-                    e.IsLast                = (tokens[h["IsLast"]] == "1");
-                    e.Market_               = Market::COIN_M_FUTURES;
-                    return e;
+                    return DifferenceDepthEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        "",
+                        "",
+                        0,
+                        std::stoll(tokens[h["TransactionTime"]]),
+                        tokens[h["Symbol"]],
+                        0,
+                        0,
+                        0,
+                        (tokens[h["IsAsk"]] == "1"),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        "",
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::COIN_M_FUTURES
+                    );
                 }
             }
         }
@@ -245,61 +323,66 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(const std::string &lin
         case StreamType::DIFFERENCE_DEPTH_STREAM: {
             switch (mk) {
                 case Market::SPOT: {
-                    DifferenceDepthEntry e;
-                    e.TimestampOfReceive    = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.Stream                = tokens[h["Stream"]];
-                    e.EventType             = tokens[h["EventType"]];
-                    e.EventTime             = std::stoll(tokens[h["EventTime"]]);
-                    e.Symbol                = tokens[h["Symbol"]];
-                    e.FirstUpdateId         = std::stoll(tokens[h["FirstUpdateId"]]);
-                    e.FinalUpdateId         = std::stoll(tokens[h["FinalUpdateId"]]);
-                    e.IsAsk                 = (std::stoi(tokens[h["IsAsk"]]) != 0);
-                    e.Price                 = std::stod(tokens[h["Price"]]);
-                    e.Quantity              = std::stod(tokens[h["Quantity"]]);
-                    e.IsLast                = (tokens[h["IsLast"]] == "1");
-                    e.Market_               = Market::SPOT;
-                    return e;
+                    return DifferenceDepthEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        tokens[h["Stream"]],
+                        tokens[h["EventType"]],
+                        std::stoll(tokens[h["EventTime"]]),
+                        0,
+                        tokens[h["Symbol"]],
+                        std::stoll(tokens[h["FirstUpdateId"]]),
+                        std::stoll(tokens[h["FinalUpdateId"]]),
+                        0,
+                        (std::stoi(tokens[h["IsAsk"]]) != 0),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        "",
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::SPOT
+                    );
                 }
                 case Market::USD_M_FUTURES: {
-                    DifferenceDepthEntry e;
-                    e.TimestampOfReceive        = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.Stream                    = tokens[h["Stream"]];
-                    e.EventType                 = tokens[h["EventType"]];
-                    e.EventTime                 = std::stoll(tokens[h["EventTime"]]);
-                    e.TransactionTime           = std::stoll(tokens[h["TransactionTime"]]);
-                    e.Symbol                    = tokens[h["Symbol"]];
-                    e.FirstUpdateId             = std::stoll(tokens[h["FirstUpdateId"]]);
-                    e.FinalUpdateId             = std::stoll(tokens[h["FinalUpdateId"]]);
-                    e.FinalUpdateIdInLastStream = std::stoll(tokens[h["FinalUpdateIdInLastStream"]]);
-                    e.IsAsk                     = (std::stoi(tokens[h["IsAsk"]]) != 0);
-                    e.Price                     = std::stod(tokens[h["Price"]]);
-                    e.Quantity                  = std::stod(tokens[h["Quantity"]]);
-                    e.IsLast                    = (tokens[h["IsLast"]] == "1");
-                    e.Market_                   = Market::USD_M_FUTURES;
-                    return e;
+                    return DifferenceDepthEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        tokens[h["Stream"]],
+                        tokens[h["EventType"]],
+                        std::stoll(tokens[h["EventTime"]]),
+                        std::stoll(tokens[h["TransactionTime"]]),
+                        tokens[h["Symbol"]],
+                        std::stoll(tokens[h["FirstUpdateId"]]),
+                        std::stoll(tokens[h["FinalUpdateId"]]),
+                        std::stoll(tokens[h["FinalUpdateIdInLastStream"]]),
+                        (std::stoi(tokens[h["IsAsk"]]) != 0),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        "",
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::USD_M_FUTURES
+                    );
                 }
                 case Market::COIN_M_FUTURES: {
-                    DifferenceDepthEntry e;
-                    e.TimestampOfReceive        = std::stoll(tokens[h["TimestampOfReceiveUS"]]);
-                    e.Stream                    = tokens[h["Stream"]];
-                    e.EventType                 = tokens[h["EventType"]];
-                    e.EventTime                 = std::stoll(tokens[h["EventTime"]]);
-                    e.TransactionTime           = std::stoll(tokens[h["TransactionTime"]]);
-                    e.Symbol                    = tokens[h["Symbol"]];
-                    e.FirstUpdateId             = std::stoll(tokens[h["FirstUpdateId"]]);
-                    e.FinalUpdateId             = std::stoll(tokens[h["FinalUpdateId"]]);
-                    e.FinalUpdateIdInLastStream = std::stoll(tokens[h["FinalUpdateIdInLastStream"]]);
-                    e.IsAsk                     = (std::stoi(tokens[h["IsAsk"]]) != 0);
-                    e.Price                     = std::stod(tokens[h["Price"]]);
-                    e.Quantity                  = std::stod(tokens[h["Quantity"]]);
-                    e.PSUnknownField            = tokens[h["PSUnknownField"]];
-                    e.IsLast                    = (tokens[h["IsLast"]] == "1");
-                    e.Market_                   = Market::COIN_M_FUTURES;
-                    return e;
+                    return DifferenceDepthEntry(
+                        std::stoll(tokens[h["TimestampOfReceiveUS"]]),
+                        tokens[h["Stream"]],
+                        tokens[h["EventType"]],
+                        std::stoll(tokens[h["EventTime"]]),
+                        std::stoll(tokens[h["TransactionTime"]]),
+                        tokens[h["Symbol"]],
+                        std::stoll(tokens[h["FirstUpdateId"]]),
+                        std::stoll(tokens[h["FinalUpdateId"]]),
+                        std::stoll(tokens[h["FinalUpdateIdInLastStream"]]),
+                        (std::stoi(tokens[h["IsAsk"]]) != 0),
+                        std::stod(tokens[h["Price"]]),
+                        std::stod(tokens[h["Quantity"]]),
+                        tokens[h["PSUnknownField"]],
+                        (tokens[h["IsLast"]] == "1"),
+                        Market::COIN_M_FUTURES
+                    );
                 }
             }
         }
     }
+    throw std::runtime_error("decodeMultiAssetParameterEntry: Unhandled StreamType/Market");
 }
 
 std::vector<std::string> EntryDecoder::splitLine(const std::string &line, char delimiter) {

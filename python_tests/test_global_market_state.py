@@ -33,29 +33,26 @@ def sample_order_list(
         (10, 0, round((price_hash + 1.1), 5), quantity_hash + 9),
     ]
 
-    for (
-            timestamp_of_receive,
-            is_ask,
-            price,
-            quantity
-    ) in expected_data_list:
-        e = DifferenceDepthEntry()
-        e.timestamp_of_receive = timestamp_of_receive
-        e.stream = f'{symbol.lower()}@depth@100ms'
-        e.event_type = 'depthUpdate'
-        e.event_time = timestamp_of_receive
-        e.transaction_time = timestamp_of_receive
-        e.symbol = symbol
-        e.first_update_id = timestamp_of_receive
-        e.final_update_id = timestamp_of_receive
-        e.final_update_id_in_last_stream = timestamp_of_receive
-        e.is_ask = is_ask
-        e.price = price
-        e.quantity = quantity
-        e.ps_unknown_field = 'market'
-        e.is_last = 1
-        e.market = market
-        orders_list.append(e)
+    for (timestamp_of_receive, is_ask, price, quantity) in expected_data_list:
+        orders_list.append(
+            DifferenceDepthEntry(
+                timestamp_of_receive=timestamp_of_receive,
+                stream=f'{symbol.lower()}@depth@100ms',
+                event_type='depthUpdate',
+                event_time=timestamp_of_receive,
+                transaction_time=timestamp_of_receive,
+                symbol=symbol,
+                first_update_id=timestamp_of_receive,
+                final_update_id=timestamp_of_receive,
+                final_update_id_in_last_stream=timestamp_of_receive,
+                is_ask=is_ask,
+                price=price,
+                quantity=quantity,
+                ps_unknown_field='market',
+                is_last=1,
+                market=market
+            )
+        )
 
     return orders_list
 
@@ -251,23 +248,24 @@ class TestGlobalMarketState:
 
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
-            new_ask_trxusdt = DifferenceDepthEntry()
             new_ask_trxusdt_timestamp_of_receive = 21
-            new_ask_trxusdt.timestamp_of_receive = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.stream = f'trxusdt@depth@100ms'
-            new_ask_trxusdt.event_type = 'depthUpdate'
-            new_ask_trxusdt.event_time = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.transaction_time = 11
-            new_ask_trxusdt.symbol = "TRXUSDT"
-            new_ask_trxusdt.first_update_id = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.final_update_id = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.final_update_id_in_last_stream = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.is_ask = 1
-            new_ask_trxusdt.price = 12.54589
-            new_ask_trxusdt.quantity = 3.0
-            new_ask_trxusdt.ps_unknown_field = 'market'
-            new_ask_trxusdt.is_last = 0
-            new_ask_trxusdt.market = Market.SPOT
+            new_ask_trxusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_trxusdt_timestamp_of_receive,
+                stream=f'trxusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_trxusdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="TRXUSDT",
+                first_update_id=new_ask_trxusdt_timestamp_of_receive,
+                final_update_id=new_ask_trxusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_trxusdt_timestamp_of_receive,
+                is_ask=1,
+                price=12.54589,
+                quantity=3.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.SPOT
+                )
             gms.update(new_ask_trxusdt)
             to_remove = None
             for e in sample_trxusdt_spot_order_list:
@@ -278,23 +276,25 @@ class TestGlobalMarketState:
                 sample_trxusdt_spot_order_list.remove(to_remove)
             sample_trxusdt_spot_order_list.append(new_ask_trxusdt)
 
-            new_bid_trxusdt = DifferenceDepthEntry()
             new_bid_trxusdt_timestamp_of_receive = 22
-            new_bid_trxusdt.timestamp_of_receive = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.stream = f'trxusdt@depth@100ms'
-            new_bid_trxusdt.event_type = 'depthUpdate'
-            new_bid_trxusdt.event_time = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.transaction_time = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.symbol = "TRXUSDT"
-            new_bid_trxusdt.first_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.final_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.final_update_id_in_last_stream = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.is_ask = 0
-            new_bid_trxusdt.price = 10.24589
-            new_bid_trxusdt.quantity = 1.0
-            new_bid_trxusdt.ps_unknown_field = 'market'
-            new_bid_trxusdt.is_last = 0
-            new_bid_trxusdt.market = Market.SPOT
+            new_bid_trxusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
+                stream=f'trxusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_trxusdt_timestamp_of_receive,
+                transaction_time=new_bid_trxusdt_timestamp_of_receive,
+                symbol="TRXUSDT",
+                first_update_id=new_bid_trxusdt_timestamp_of_receive,
+                final_update_id=new_bid_trxusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_trxusdt_timestamp_of_receive,
+                is_ask=0,
+                price=10.24589,
+                quantity=1.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.SPOT
+            )
+
             gms.update(new_bid_trxusdt)
             to_remove = None
             for e in sample_trxusdt_spot_order_list:
@@ -324,23 +324,25 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            new_ask_btcusdt = DifferenceDepthEntry()
             new_ask_btcusdt_timestamp_of_receive = 23
-            new_ask_btcusdt.timestamp_of_receive = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.stream = f'btcusdt@depth@100ms'
-            new_ask_btcusdt.event_type = 'depthUpdate'
-            new_ask_btcusdt.event_time = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.transaction_time = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.symbol = "BTCUSDT"
-            new_ask_btcusdt.first_update_id = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.final_update_id = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.final_update_id_in_last_stream = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.is_ask = 1
-            new_ask_btcusdt.price = 22.3
-            new_ask_btcusdt.quantity = 3.0
-            new_ask_btcusdt.ps_unknown_field = 'market'
-            new_ask_btcusdt.is_last = 0
-            new_ask_btcusdt.market = Market.USD_M_FUTURES
+            new_ask_btcusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_btcusdt_timestamp_of_receive,
+                stream=f'btcusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_btcusdt_timestamp_of_receive,
+                transaction_time=new_ask_btcusdt_timestamp_of_receive,
+                symbol="BTCUSDT",
+                first_update_id=new_ask_btcusdt_timestamp_of_receive,
+                final_update_id=new_ask_btcusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_btcusdt_timestamp_of_receive,
+                is_ask=1,
+                price=22.3,
+                quantity=3.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
+
             gms.update(new_ask_btcusdt)
             to_remove = None
             for e in sample_btcusdt_usd_m_futures_order_list:
@@ -351,24 +353,26 @@ class TestGlobalMarketState:
                 sample_btcusdt_usd_m_futures_order_list.remove(to_remove)
             sample_btcusdt_usd_m_futures_order_list.append(new_ask_btcusdt)
 
-            new_bid_btcusdt = DifferenceDepthEntry()
             new_bid_trxusdt_timestamp_of_receive = 24
-            new_bid_btcusdt.timestamp_of_receive = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.stream = f'btcusdt@depth@100ms'
-            new_bid_btcusdt.event_type = 'depthUpdate'
-            new_bid_btcusdt.event_time = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.transaction_time = 11
-            new_bid_btcusdt.symbol = "BTCUSDT"
-            new_bid_btcusdt.first_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.final_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.final_update_id_in_last_stream = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.is_ask = 0
-            new_bid_btcusdt.price = 22.0 # best bid
-            new_bid_btcusdt.quantity = 1.0
-            new_bid_btcusdt.ps_unknown_field = 'market'
-            new_bid_btcusdt.is_last = 0
-            new_bid_btcusdt.market = Market.USD_M_FUTURES
+            new_bid_btcusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
+                stream=f'btcusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_trxusdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="BTCUSDT",
+                first_update_id=new_bid_trxusdt_timestamp_of_receive,
+                final_update_id=new_bid_trxusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_trxusdt_timestamp_of_receive,
+                is_ask=0,
+                price=22.0,
+                quantity=1.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(new_bid_btcusdt)
+
             to_remove = None
             for e in sample_btcusdt_usd_m_futures_order_list:
                 if e.price == new_bid_btcusdt.price and e.is_ask == new_bid_btcusdt.is_ask:
@@ -397,23 +401,25 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            new_ask_adausdt = DifferenceDepthEntry()
             new_ask_adausdt_timestamp_of_receive = 25
-            new_ask_adausdt.timestamp_of_receive = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.stream = f'adausdt@depth@100ms'
-            new_ask_adausdt.event_type = 'depthUpdate'
-            new_ask_adausdt.event_time = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.transaction_time = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.symbol = "ADAUSDT"
-            new_ask_adausdt.first_update_id = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.final_update_id = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.final_update_id_in_last_stream = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.is_ask = 1
-            new_ask_adausdt.price = 33.1
-            new_ask_adausdt.quantity = 3.0
-            new_ask_adausdt.ps_unknown_field = 'market'
-            new_ask_adausdt.is_last = 0
-            new_ask_adausdt.market = Market.COIN_M_FUTURES
+            new_ask_adausdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_adausdt_timestamp_of_receive,
+                stream=f'adausdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_adausdt_timestamp_of_receive,
+                transaction_time=new_ask_adausdt_timestamp_of_receive,
+                symbol="ADAUSDT",
+                first_update_id=new_ask_adausdt_timestamp_of_receive,
+                final_update_id=new_ask_adausdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_adausdt_timestamp_of_receive,
+                is_ask=1,
+                price=33.1,
+                quantity=3.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.COIN_M_FUTURES
+            )
+
             gms.update(new_ask_adausdt)
             to_remove = None
             for e in sample_adausdt_usd_coin_m_futures_order_list:
@@ -424,23 +430,25 @@ class TestGlobalMarketState:
                 sample_adausdt_usd_coin_m_futures_order_list.remove(to_remove)
             sample_adausdt_usd_coin_m_futures_order_list.append(new_ask_adausdt)
 
-            new_bid_adausdt = DifferenceDepthEntry()
             new_bid_adausdt_timestamp_of_receive = 26
-            new_bid_adausdt.timestamp_of_receive = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.stream = f'adausdt@depth@100ms'
-            new_bid_adausdt.event_type = 'depthUpdate'
-            new_bid_adausdt.event_time = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.transaction_time = 11
-            new_bid_adausdt.symbol = "ADAUSDT"
-            new_bid_adausdt.first_update_id = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.final_update_id = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.final_update_id_in_last_stream = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.is_ask = 0
-            new_bid_adausdt.price = 30.0 # last bid
-            new_bid_adausdt.quantity = 1.0
-            new_bid_adausdt.ps_unknown_field = 'market'
-            new_bid_adausdt.is_last = 0
-            new_bid_adausdt.market = Market.COIN_M_FUTURES
+            new_bid_adausdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_adausdt_timestamp_of_receive,
+                stream=f'adausdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_adausdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="ADAUSDT",
+                first_update_id=new_bid_adausdt_timestamp_of_receive,
+                final_update_id=new_bid_adausdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_adausdt_timestamp_of_receive,
+                is_ask=0,
+                price=30.0,
+                quantity=1.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.COIN_M_FUTURES
+            )
+
             gms.update(new_bid_adausdt)
             to_remove = None
             for e in sample_adausdt_usd_coin_m_futures_order_list:
@@ -470,23 +478,25 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            new_ask_dogeusdt = DifferenceDepthEntry()
             new_ask_dogeusdt_timestamp_of_receive = 27
-            new_ask_dogeusdt.timestamp_of_receive = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.stream = f'dogeusdt@depth@100ms'
-            new_ask_dogeusdt.event_type = 'depthUpdate'
-            new_ask_dogeusdt.event_time = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.transaction_time = 11
-            new_ask_dogeusdt.symbol = "DOGEUSDT"
-            new_ask_dogeusdt.first_update_id = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.final_update_id = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.final_update_id_in_last_stream = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.is_ask = 1
-            new_ask_dogeusdt.price = 42.1
-            new_ask_dogeusdt.quantity = 3.0
-            new_ask_dogeusdt.ps_unknown_field = 'market'
-            new_ask_dogeusdt.is_last = 0
-            new_ask_dogeusdt.market = Market.USD_M_FUTURES
+            new_ask_dogeusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_dogeusdt_timestamp_of_receive,
+                stream=f'dogeusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_dogeusdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="DOGEUSDT",
+                first_update_id=new_ask_dogeusdt_timestamp_of_receive,
+                final_update_id=new_ask_dogeusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_dogeusdt_timestamp_of_receive,
+                is_ask=1,
+                price=42.1,
+                quantity=3.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
+
             gms.update(new_ask_dogeusdt)
             to_remove = None
             for e in sample_dogeusdt_usd_m_futures_order_list:
@@ -497,23 +507,25 @@ class TestGlobalMarketState:
                 sample_dogeusdt_usd_m_futures_order_list.remove(to_remove)
             sample_dogeusdt_usd_m_futures_order_list.append(new_ask_dogeusdt)
 
-            new_bid_dogeusdt = DifferenceDepthEntry()
             new_bid_dogeusdt_timestamp_of_receive = 28
-            new_bid_dogeusdt.timestamp_of_receive = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.stream = f'dogeusdt@depth@100ms'
-            new_bid_dogeusdt.event_type = 'depthUpdate'
-            new_bid_dogeusdt.event_time = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.transaction_time = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.symbol = "DOGEUSDT"
-            new_bid_dogeusdt.first_update_id = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.final_update_id = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.final_update_id_in_last_stream = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.is_ask = 0
-            new_bid_dogeusdt.price = 42.0
-            new_bid_dogeusdt.quantity = 1.0
-            new_bid_dogeusdt.ps_unknown_field = 'market'
-            new_bid_dogeusdt.is_last = 0
-            new_bid_dogeusdt.market = Market.USD_M_FUTURES
+            new_bid_dogeusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_dogeusdt_timestamp_of_receive,
+                stream=f'dogeusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_dogeusdt_timestamp_of_receive,
+                transaction_time=new_bid_dogeusdt_timestamp_of_receive,
+                symbol="DOGEUSDT",
+                first_update_id=new_bid_dogeusdt_timestamp_of_receive,
+                final_update_id=new_bid_dogeusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_dogeusdt_timestamp_of_receive,
+                is_ask=0,
+                price=42.0,
+                quantity=1.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
+
             gms.update(new_bid_dogeusdt)
             to_remove = None
             for e in sample_dogeusdt_usd_m_futures_order_list:
@@ -605,23 +617,24 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            new_ask_trxusdt = DifferenceDepthEntry()
             new_ask_trxusdt_timestamp_of_receive = 21
-            new_ask_trxusdt.timestamp_of_receive = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.stream = f'trxusdt@depth@100ms'
-            new_ask_trxusdt.event_type = 'depthUpdate'
-            new_ask_trxusdt.event_time = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.transaction_time = 11
-            new_ask_trxusdt.symbol = "TRXUSDT"
-            new_ask_trxusdt.first_update_id = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.final_update_id = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.final_update_id_in_last_stream = new_ask_trxusdt_timestamp_of_receive
-            new_ask_trxusdt.is_ask = 1
-            new_ask_trxusdt.price = 12.54589
-            new_ask_trxusdt.quantity = 0.0
-            new_ask_trxusdt.ps_unknown_field = 'market'
-            new_ask_trxusdt.is_last = 0
-            new_ask_trxusdt.market = Market.SPOT
+            new_ask_trxusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_trxusdt_timestamp_of_receive,
+                stream=f'trxusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_trxusdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="TRXUSDT",
+                first_update_id=new_ask_trxusdt_timestamp_of_receive,
+                final_update_id=new_ask_trxusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_trxusdt_timestamp_of_receive,
+                is_ask=1,
+                price=12.54589,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.SPOT
+            )
             gms.update(new_ask_trxusdt)
             to_remove = None
             for e in sample_trxusdt_spot_order_list:
@@ -631,23 +644,24 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_trxusdt_spot_order_list.remove(to_remove)
 
-            new_bid_trxusdt = DifferenceDepthEntry()
             new_bid_trxusdt_timestamp_of_receive = 22
-            new_bid_trxusdt.timestamp_of_receive = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.stream = f'trxusdt@depth@100ms'
-            new_bid_trxusdt.event_type = 'depthUpdate'
-            new_bid_trxusdt.event_time = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.transaction_time = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.symbol = "TRXUSDT"
-            new_bid_trxusdt.first_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.final_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.final_update_id_in_last_stream = new_bid_trxusdt_timestamp_of_receive
-            new_bid_trxusdt.is_ask = 0
-            new_bid_trxusdt.price = 10.24589
-            new_bid_trxusdt.quantity = 0.0
-            new_bid_trxusdt.ps_unknown_field = 'market'
-            new_bid_trxusdt.is_last = 0
-            new_bid_trxusdt.market = Market.SPOT
+            new_bid_trxusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
+                stream=f'trxusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_trxusdt_timestamp_of_receive,
+                transaction_time=new_bid_trxusdt_timestamp_of_receive,
+                symbol="TRXUSDT",
+                first_update_id=new_bid_trxusdt_timestamp_of_receive,
+                final_update_id=new_bid_trxusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_trxusdt_timestamp_of_receive,
+                is_ask=0,
+                price=10.24589,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.SPOT
+            )
             gms.update(new_bid_trxusdt)
             to_remove = None
             for e in sample_trxusdt_spot_order_list:
@@ -677,23 +691,24 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            new_ask_btcusdt = DifferenceDepthEntry()
             new_ask_btcusdt_timestamp_of_receive = 23
-            new_ask_btcusdt.timestamp_of_receive = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.stream = f'btcusdt@depth@100ms'
-            new_ask_btcusdt.event_type = 'depthUpdate'
-            new_ask_btcusdt.event_time = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.transaction_time = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.symbol = "BTCUSDT"
-            new_ask_btcusdt.first_update_id = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.final_update_id = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.final_update_id_in_last_stream = new_ask_btcusdt_timestamp_of_receive
-            new_ask_btcusdt.is_ask = 1
-            new_ask_btcusdt.price = 22.3
-            new_ask_btcusdt.quantity = 0.0
-            new_ask_btcusdt.ps_unknown_field = 'market'
-            new_ask_btcusdt.is_last = 0
-            new_ask_btcusdt.market = Market.USD_M_FUTURES
+            new_ask_btcusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_btcusdt_timestamp_of_receive,
+                stream=f'btcusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_btcusdt_timestamp_of_receive,
+                transaction_time=new_ask_btcusdt_timestamp_of_receive,
+                symbol="BTCUSDT",
+                first_update_id=new_ask_btcusdt_timestamp_of_receive,
+                final_update_id=new_ask_btcusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_btcusdt_timestamp_of_receive,
+                is_ask=1,
+                price=22.3,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(new_ask_btcusdt)
             to_remove = None
             for e in sample_btcusdt_usd_m_futures_order_list:
@@ -703,23 +718,24 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_btcusdt_usd_m_futures_order_list.remove(to_remove)
 
-            new_bid_btcusdt = DifferenceDepthEntry()
-            new_bid_trxusdt_timestamp_of_receive = 24
-            new_bid_btcusdt.timestamp_of_receive = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.stream = f'btcusdt@depth@100ms'
-            new_bid_btcusdt.event_type = 'depthUpdate'
-            new_bid_btcusdt.event_time = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.transaction_time = 11
-            new_bid_btcusdt.symbol = "BTCUSDT"
-            new_bid_btcusdt.first_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.final_update_id = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.final_update_id_in_last_stream = new_bid_trxusdt_timestamp_of_receive
-            new_bid_btcusdt.is_ask = 0
-            new_bid_btcusdt.price = 22.0 # best bid
-            new_bid_btcusdt.quantity = 0.0
-            new_bid_btcusdt.ps_unknown_field = 'market'
-            new_bid_btcusdt.is_last = 0
-            new_bid_btcusdt.market = Market.USD_M_FUTURES
+            new_bid_btcusdt_timestamp_of_receive = 24
+            new_bid_btcusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_btcusdt_timestamp_of_receive,
+                stream=f'btcusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_btcusdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="BTCUSDT",
+                first_update_id=new_bid_btcusdt_timestamp_of_receive,
+                final_update_id=new_bid_btcusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_btcusdt_timestamp_of_receive,
+                is_ask=0,
+                price=22.0,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(new_bid_btcusdt)
             to_remove = None
             for e in sample_btcusdt_usd_m_futures_order_list:
@@ -748,23 +764,24 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            new_ask_adausdt = DifferenceDepthEntry()
             new_ask_adausdt_timestamp_of_receive = 25
-            new_ask_adausdt.timestamp_of_receive = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.stream = f'adausdt@depth@100ms'
-            new_ask_adausdt.event_type = 'depthUpdate'
-            new_ask_adausdt.event_time = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.transaction_time = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.symbol = "ADAUSDT"
-            new_ask_adausdt.first_update_id = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.final_update_id = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.final_update_id_in_last_stream = new_ask_adausdt_timestamp_of_receive
-            new_ask_adausdt.is_ask = 1
-            new_ask_adausdt.price = 33.1
-            new_ask_adausdt.quantity = 0.0
-            new_ask_adausdt.ps_unknown_field = 'market'
-            new_ask_adausdt.is_last = 0
-            new_ask_adausdt.market = Market.COIN_M_FUTURES
+            new_ask_adausdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_adausdt_timestamp_of_receive,
+                stream=f'adausdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_adausdt_timestamp_of_receive,
+                transaction_time=new_ask_adausdt_timestamp_of_receive,
+                symbol="ADAUSDT",
+                first_update_id=new_ask_adausdt_timestamp_of_receive,
+                final_update_id=new_ask_adausdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_adausdt_timestamp_of_receive,
+                is_ask=1,
+                price=33.1,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(new_ask_adausdt)
             to_remove = None
             for e in sample_adausdt_usd_coin_m_futures_order_list:
@@ -774,23 +791,24 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_adausdt_usd_coin_m_futures_order_list.remove(to_remove)
 
-            new_bid_adausdt = DifferenceDepthEntry()
             new_bid_adausdt_timestamp_of_receive = 26
-            new_bid_adausdt.timestamp_of_receive = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.stream = f'adausdt@depth@100ms'
-            new_bid_adausdt.event_type = 'depthUpdate'
-            new_bid_adausdt.event_time = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.transaction_time = 11
-            new_bid_adausdt.symbol = "ADAUSDT"
-            new_bid_adausdt.first_update_id = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.final_update_id = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.final_update_id_in_last_stream = new_bid_adausdt_timestamp_of_receive
-            new_bid_adausdt.is_ask = 0
-            new_bid_adausdt.price = 30.0 # last bid
-            new_bid_adausdt.quantity = 0.0
-            new_bid_adausdt.ps_unknown_field = 'market'
-            new_bid_adausdt.is_last = 0
-            new_bid_adausdt.market = Market.COIN_M_FUTURES
+            new_bid_adausdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_adausdt_timestamp_of_receive,
+                stream=f'adausdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_adausdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="ADAUSDT",
+                first_update_id=new_bid_adausdt_timestamp_of_receive,
+                final_update_id=new_bid_adausdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_adausdt_timestamp_of_receive,
+                is_ask=0,
+                price=30.0,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(new_bid_adausdt)
             to_remove = None
             for e in sample_adausdt_usd_coin_m_futures_order_list:
@@ -819,23 +837,24 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            new_ask_dogeusdt = DifferenceDepthEntry()
             new_ask_dogeusdt_timestamp_of_receive = 27
-            new_ask_dogeusdt.timestamp_of_receive = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.stream = f'dogeusdt@depth@100ms'
-            new_ask_dogeusdt.event_type = 'depthUpdate'
-            new_ask_dogeusdt.event_time = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.transaction_time = 11
-            new_ask_dogeusdt.symbol = "DOGEUSDT"
-            new_ask_dogeusdt.first_update_id = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.final_update_id = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.final_update_id_in_last_stream = new_ask_dogeusdt_timestamp_of_receive
-            new_ask_dogeusdt.is_ask = 1
-            new_ask_dogeusdt.price = 42.1
-            new_ask_dogeusdt.quantity = 0.0
-            new_ask_dogeusdt.ps_unknown_field = 'market'
-            new_ask_dogeusdt.is_last = 0
-            new_ask_dogeusdt.market = Market.USD_M_FUTURES
+            new_ask_dogeusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_ask_dogeusdt_timestamp_of_receive,
+                stream=f'dogeusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_ask_dogeusdt_timestamp_of_receive,
+                transaction_time=11,
+                symbol="DOGEUSDT",
+                first_update_id=new_ask_dogeusdt_timestamp_of_receive,
+                final_update_id=new_ask_dogeusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_ask_dogeusdt_timestamp_of_receive,
+                is_ask=1,
+                price=42.1,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(new_ask_dogeusdt)
             to_remove = None
             for e in sample_dogeusdt_usd_m_futures_order_list:
@@ -845,23 +864,24 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_dogeusdt_usd_m_futures_order_list.remove(to_remove)
 
-            new_bid_dogeusdt = DifferenceDepthEntry()
             new_bid_dogeusdt_timestamp_of_receive = 28
-            new_bid_dogeusdt.timestamp_of_receive = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.stream = f'dogeusdt@depth@100ms'
-            new_bid_dogeusdt.event_type = 'depthUpdate'
-            new_bid_dogeusdt.event_time = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.transaction_time = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.symbol = "DOGEUSDT"
-            new_bid_dogeusdt.first_update_id = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.final_update_id = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.final_update_id_in_last_stream = new_bid_dogeusdt_timestamp_of_receive
-            new_bid_dogeusdt.is_ask = 0
-            new_bid_dogeusdt.price = 42.0
-            new_bid_dogeusdt.quantity = 0.0
-            new_bid_dogeusdt.ps_unknown_field = 'market'
-            new_bid_dogeusdt.is_last = 0
-            new_bid_dogeusdt.market = Market.USD_M_FUTURES
+            new_bid_dogeusdt = DifferenceDepthEntry(
+                timestamp_of_receive=new_bid_dogeusdt_timestamp_of_receive,
+                stream=f'dogeusdt@depth@100ms',
+                event_type='depthUpdate',
+                event_time=new_bid_dogeusdt_timestamp_of_receive,
+                transaction_time=new_bid_dogeusdt_timestamp_of_receive,
+                symbol="DOGEUSDT",
+                first_update_id=new_bid_dogeusdt_timestamp_of_receive,
+                final_update_id=new_bid_dogeusdt_timestamp_of_receive,
+                final_update_id_in_last_stream=new_bid_dogeusdt_timestamp_of_receive,
+                is_ask=0,
+                price=42.0,
+                quantity=0.0,
+                ps_unknown_field='market',
+                is_last=0,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(new_bid_dogeusdt)
             to_remove = None
             for e in sample_dogeusdt_usd_m_futures_order_list:
@@ -944,72 +964,76 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            trxusdt_trade = TradeEntry()
-            trxusdt_trade.timestamp_of_receive     = 20
-            trxusdt_trade.stream                   = 'trxusdt@trade'
-            trxusdt_trade.event_type               = 'trade'
-            trxusdt_trade.event_time               = 20
-            trxusdt_trade.transaction_time         = 20
-            trxusdt_trade.symbol                   = 'TRXUSDT'
-            trxusdt_trade.trade_id                 = 1
-            trxusdt_trade.price                    = 10.0
-            trxusdt_trade.quantity                 = 1.0
-            trxusdt_trade.is_buyer_market_maker    = 1
-            trxusdt_trade.m_unknown_parameter      = 'TRUE'
-            trxusdt_trade.x_unknown_parameter      = 'MARKET'
-            trxusdt_trade.is_last                  = 1
-            trxusdt_trade.market                   = Market.SPOT
+            trxusdt_trade = TradeEntry(
+                timestamp_of_receive=20,
+                stream='trxusdt@trade',
+                event_type='trade',
+                event_time=20,
+                transaction_time=20,
+                symbol='TRXUSDT',
+                trade_id=1,
+                price=10.0,
+                quantity=1.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.SPOT
+            )
             gms.update(trxusdt_trade)
 
-            btcusdt_trade = TradeEntry()
-            btcusdt_trade.timestamp_of_receive    = 21
-            btcusdt_trade.stream                  = 'btcusdt@trade'
-            btcusdt_trade.event_type              = 'trade'
-            btcusdt_trade.event_time              = 21
-            btcusdt_trade.transaction_time        = 21
-            btcusdt_trade.symbol                  = 'BTCUSDT'
-            btcusdt_trade.trade_id                = 2
-            btcusdt_trade.price                   = 11.0
-            btcusdt_trade.quantity                = 2.0
-            btcusdt_trade.is_buyer_market_maker   = 0
-            btcusdt_trade.m_unknown_parameter     = 'FALSE'
-            btcusdt_trade.x_unknown_parameter     = ''
-            btcusdt_trade.is_last                 = 1
-            btcusdt_trade.market                  = Market.USD_M_FUTURES
+            btcusdt_trade = TradeEntry(
+                timestamp_of_receive=21,
+                stream='btcusdt@trade',
+                event_type='trade',
+                event_time=21,
+                transaction_time=21,
+                symbol='BTCUSDT',
+                trade_id=2,
+                price=11.0,
+                quantity=2.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(btcusdt_trade)
 
-            adausdt_trade = TradeEntry()
-            adausdt_trade.timestamp_of_receive    = 22
-            adausdt_trade.stream                  = 'adausdt@trade'
-            adausdt_trade.event_type              = 'trade'
-            adausdt_trade.event_time              = 22
-            adausdt_trade.transaction_time        = 22
-            adausdt_trade.symbol                  = 'ADAUSDT'
-            adausdt_trade.trade_id                = 3
-            adausdt_trade.price                   = 12.0
-            adausdt_trade.quantity                = 3.0
-            adausdt_trade.is_buyer_market_maker   = 1
-            adausdt_trade.m_unknown_parameter     = 'TRUE'
-            adausdt_trade.x_unknown_parameter     = 'MARKET'
-            adausdt_trade.is_last                 = 1
-            adausdt_trade.market                  = Market.COIN_M_FUTURES
+            adausdt_trade = TradeEntry(
+                timestamp_of_receive=22,
+                stream='adausdt@trade',
+                event_type='trade',
+                event_time=22,
+                transaction_time=22,
+                symbol='ADAUSDT',
+                trade_id=3,
+                price=12.0,
+                quantity=3.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(adausdt_trade)
 
-            dogeusdt_trade = TradeEntry()
-            dogeusdt_trade.timestamp_of_receive    = 23
-            dogeusdt_trade.stream                  = 'dogeusdt@trade'
-            dogeusdt_trade.event_type              = 'trade'
-            dogeusdt_trade.event_time              = 23
-            dogeusdt_trade.transaction_time        = 23
-            dogeusdt_trade.symbol                  = 'DOGEUSDT'
-            dogeusdt_trade.trade_id                = 4
-            dogeusdt_trade.price                   = 13.0
-            dogeusdt_trade.quantity                = 4.0
-            dogeusdt_trade.is_buyer_market_maker   = 0
-            dogeusdt_trade.m_unknown_parameter     = 'FALSE'
-            dogeusdt_trade.x_unknown_parameter     = ''
-            dogeusdt_trade.is_last                 = 1
-            dogeusdt_trade.market                  = Market.USD_M_FUTURES
+            dogeusdt_trade = TradeEntry(
+                timestamp_of_receive=23,
+                stream='dogeusdt@trade',
+                event_type='trade',
+                event_time=23,
+                transaction_time=23,
+                symbol='DOGEUSDT',
+                trade_id=4,
+                price=13.0,
+                quantity=4.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(dogeusdt_trade)
 
             ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
@@ -1142,72 +1166,76 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            trxusdt_trade = TradeEntry()
-            trxusdt_trade.timestamp_of_receive     = 20
-            trxusdt_trade.stream                   = 'trxusdt@trade'
-            trxusdt_trade.event_type               = 'trade'
-            trxusdt_trade.event_time               = 20
-            trxusdt_trade.transaction_time         = 20
-            trxusdt_trade.symbol                   = 'TRXUSDT'
-            trxusdt_trade.trade_id                 = 1
-            trxusdt_trade.price                    = 10.0
-            trxusdt_trade.quantity                 = 1.0
-            trxusdt_trade.is_buyer_market_maker    = 1
-            trxusdt_trade.m_unknown_parameter      = 'TRUE'
-            trxusdt_trade.x_unknown_parameter      = 'MARKET'
-            trxusdt_trade.is_last                  = 1
-            trxusdt_trade.market                   = Market.SPOT
+            trxusdt_trade = TradeEntry(
+                timestamp_of_receive=20,
+                stream='trxusdt@trade',
+                event_type='trade',
+                event_time=20,
+                transaction_time=20,
+                symbol='TRXUSDT',
+                trade_id=1,
+                price=10.0,
+                quantity=1.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.SPOT
+            )
             gms.update(trxusdt_trade)
 
-            btcusdt_trade = TradeEntry()
-            btcusdt_trade.timestamp_of_receive    = 21
-            btcusdt_trade.stream                  = 'btcusdt@trade'
-            btcusdt_trade.event_type              = 'trade'
-            btcusdt_trade.event_time              = 21
-            btcusdt_trade.transaction_time        = 21
-            btcusdt_trade.symbol                  = 'BTCUSDT'
-            btcusdt_trade.trade_id                = 2
-            btcusdt_trade.price                   = 11.0
-            btcusdt_trade.quantity                = 2.0
-            btcusdt_trade.is_buyer_market_maker   = 0
-            btcusdt_trade.m_unknown_parameter     = 'FALSE'
-            btcusdt_trade.x_unknown_parameter     = ''
-            btcusdt_trade.is_last                 = 1
-            btcusdt_trade.market                  = Market.USD_M_FUTURES
+            btcusdt_trade = TradeEntry(
+                timestamp_of_receive=21,
+                stream='btcusdt@trade',
+                event_type='trade',
+                event_time=21,
+                transaction_time=21,
+                symbol='BTCUSDT',
+                trade_id=2,
+                price=11.0,
+                quantity=2.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(btcusdt_trade)
 
-            adausdt_trade = TradeEntry()
-            adausdt_trade.timestamp_of_receive    = 22
-            adausdt_trade.stream                  = 'adausdt@trade'
-            adausdt_trade.event_type              = 'trade'
-            adausdt_trade.event_time              = 22
-            adausdt_trade.transaction_time        = 22
-            adausdt_trade.symbol                  = 'ADAUSDT'
-            adausdt_trade.trade_id                = 3
-            adausdt_trade.price                   = 12.0
-            adausdt_trade.quantity                = 3.0
-            adausdt_trade.is_buyer_market_maker   = 1
-            adausdt_trade.m_unknown_parameter     = 'TRUE'
-            adausdt_trade.x_unknown_parameter     = 'MARKET'
-            adausdt_trade.is_last                 = 1
-            adausdt_trade.market                  = Market.COIN_M_FUTURES
+            adausdt_trade = TradeEntry(
+                timestamp_of_receive=22,
+                stream='adausdt@trade',
+                event_type='trade',
+                event_time=22,
+                transaction_time=22,
+                symbol='ADAUSDT',
+                trade_id=3,
+                price=12.0,
+                quantity=3.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(adausdt_trade)
 
-            dogeusdt_trade = TradeEntry()
-            dogeusdt_trade.timestamp_of_receive    = 23
-            dogeusdt_trade.stream                  = 'dogeusdt@trade'
-            dogeusdt_trade.event_type              = 'trade'
-            dogeusdt_trade.event_time              = 23
-            dogeusdt_trade.transaction_time        = 23
-            dogeusdt_trade.symbol                  = 'DOGEUSDT'
-            dogeusdt_trade.trade_id                = 4
-            dogeusdt_trade.price                   = 13.0
-            dogeusdt_trade.quantity                = 4.0
-            dogeusdt_trade.is_buyer_market_maker   = 0
-            dogeusdt_trade.m_unknown_parameter     = 'FALSE'
-            dogeusdt_trade.x_unknown_parameter     = ''
-            dogeusdt_trade.is_last                 = 1
-            dogeusdt_trade.market                  = Market.USD_M_FUTURES
+            dogeusdt_trade = TradeEntry(
+                timestamp_of_receive=23,
+                stream='dogeusdt@trade',
+                event_type='trade',
+                event_time=23,
+                transaction_time=23,
+                symbol='DOGEUSDT',
+                trade_id=4,
+                price=13.0,
+                quantity=4.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(dogeusdt_trade)
 
             ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
@@ -1287,72 +1315,76 @@ class TestGlobalMarketState:
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
 
-            trxusdt_next_trade = TradeEntry()
-            trxusdt_next_trade.timestamp_of_receive     = 30
-            trxusdt_next_trade.stream                   = 'trxusdt@trade'
-            trxusdt_next_trade.event_type               = 'trade'
-            trxusdt_next_trade.event_time               = 30
-            trxusdt_next_trade.transaction_time         = 30
-            trxusdt_next_trade.symbol                   = 'TRXUSDT'
-            trxusdt_next_trade.trade_id                 = 5
-            trxusdt_next_trade.price                    = 20.0
-            trxusdt_next_trade.quantity                 = 10.0
-            trxusdt_next_trade.is_buyer_market_maker    = 0
-            trxusdt_next_trade.m_unknown_parameter      = 'TRUE'
-            trxusdt_next_trade.x_unknown_parameter      = 'MARKET'
-            trxusdt_next_trade.is_last                  = 1
-            trxusdt_next_trade.market                   = Market.SPOT
+            trxusdt_next_trade = TradeEntry(
+                timestamp_of_receive=30,
+                stream='trxusdt@trade',
+                event_type='trade',
+                event_time=30,
+                transaction_time=30,
+                symbol='TRXUSDT',
+                trade_id=5,
+                price=20.0,
+                quantity=10.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.SPOT
+            )
             gms.update(trxusdt_next_trade)
 
-            btcusdt_next_trade = TradeEntry()
-            btcusdt_next_trade.timestamp_of_receive    = 31
-            btcusdt_next_trade.stream                  = 'btcusdt@trade'
-            btcusdt_next_trade.event_type              = 'trade'
-            btcusdt_next_trade.event_time              = 31
-            btcusdt_next_trade.transaction_time        = 31
-            btcusdt_next_trade.symbol                  = 'BTCUSDT'
-            btcusdt_next_trade.trade_id                = 6
-            btcusdt_next_trade.price                   = 21.0
-            btcusdt_next_trade.quantity                = 11.0
-            btcusdt_next_trade.is_buyer_market_maker   = 1
-            btcusdt_next_trade.m_unknown_parameter     = 'FALSE'
-            btcusdt_next_trade.x_unknown_parameter     = ''
-            btcusdt_next_trade.is_last                 = 1
-            btcusdt_next_trade.market                  = Market.USD_M_FUTURES
+            btcusdt_next_trade = TradeEntry(
+                timestamp_of_receive=31,
+                stream='btcusdt@trade',
+                event_type='trade',
+                event_time=31,
+                transaction_time=31,
+                symbol='BTCUSDT',
+                trade_id=6,
+                price=21.0,
+                quantity=11.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(btcusdt_next_trade)
 
-            adausdt_next_trade = TradeEntry()
-            adausdt_next_trade.timestamp_of_receive    = 32
-            adausdt_next_trade.stream                  = 'adausdt@trade'
-            adausdt_next_trade.event_type              = 'trade'
-            adausdt_next_trade.event_time              = 32
-            adausdt_next_trade.transaction_time        = 32
-            adausdt_next_trade.symbol                  = 'ADAUSDT'
-            adausdt_next_trade.trade_id                = 7
-            adausdt_next_trade.price                   = 22.0
-            adausdt_next_trade.quantity                = 12.0
-            adausdt_next_trade.is_buyer_market_maker   = 0
-            adausdt_next_trade.m_unknown_parameter     = 'TRUE'
-            adausdt_next_trade.x_unknown_parameter     = 'MARKET'
-            adausdt_next_trade.is_last                 = 1
-            adausdt_next_trade.market                  = Market.COIN_M_FUTURES
+            adausdt_next_trade = TradeEntry(
+                timestamp_of_receive=32,
+                stream='adausdt@trade',
+                event_type='trade',
+                event_time=32,
+                transaction_time=32,
+                symbol='ADAUSDT',
+                trade_id=7,
+                price=22.0,
+                quantity=12.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(adausdt_next_trade)
 
-            dogeusdt_next_trade = TradeEntry()
-            dogeusdt_next_trade.timestamp_of_receive    = 33
-            dogeusdt_next_trade.stream                  = 'dogeusdt@trade'
-            dogeusdt_next_trade.event_type              = 'trade'
-            dogeusdt_next_trade.event_time              = 33
-            dogeusdt_next_trade.transaction_time        = 33
-            dogeusdt_next_trade.symbol                  = 'DOGEUSDT'
-            dogeusdt_next_trade.trade_id                = 8
-            dogeusdt_next_trade.price                   = 13.0
-            dogeusdt_next_trade.quantity                = 33.0
-            dogeusdt_next_trade.is_buyer_market_maker   = 1
-            dogeusdt_next_trade.m_unknown_parameter     = 'FALSE'
-            dogeusdt_next_trade.x_unknown_parameter     = ''
-            dogeusdt_next_trade.is_last                 = 1
-            dogeusdt_next_trade.market                  = Market.USD_M_FUTURES
+            dogeusdt_next_trade = TradeEntry(
+                timestamp_of_receive=33,
+                stream='dogeusdt@trade',
+                event_type='trade',
+                event_time=33,
+                transaction_time=33,
+                symbol='DOGEUSDT',
+                trade_id=8,
+                price=13.0,
+                quantity=33.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(dogeusdt_next_trade)
 
             # TRXUSDT
@@ -1525,72 +1557,76 @@ class TestGlobalMarketState:
             mask = parse_mask(variables)
             gms = GlobalMarketState(mask)
 
-            trxusdt_trade = TradeEntry()
-            trxusdt_trade.timestamp_of_receive     = 20
-            trxusdt_trade.stream                   = 'trxusdt@trade'
-            trxusdt_trade.event_type               = 'trade'
-            trxusdt_trade.event_time               = 20
-            trxusdt_trade.transaction_time         = 20
-            trxusdt_trade.symbol                   = 'TRXUSDT'
-            trxusdt_trade.trade_id                 = 1
-            trxusdt_trade.price                    = 10.0
-            trxusdt_trade.quantity                 = 1.0
-            trxusdt_trade.is_buyer_market_maker    = 1
-            trxusdt_trade.m_unknown_parameter      = 'TRUE'
-            trxusdt_trade.x_unknown_parameter      = 'MARKET'
-            trxusdt_trade.is_last                  = 1
-            trxusdt_trade.market                   = Market.SPOT
+            trxusdt_trade = TradeEntry(
+                timestamp_of_receive=20,
+                stream='trxusdt@trade',
+                event_type='trade',
+                event_time=20,
+                transaction_time=20,
+                symbol='TRXUSDT',
+                trade_id=1,
+                price=10.0,
+                quantity=1.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.SPOT
+            )
             gms.update(trxusdt_trade)
 
-            btcusdt_trade = TradeEntry()
-            btcusdt_trade.timestamp_of_receive    = 21
-            btcusdt_trade.stream                  = 'btcusdt@trade'
-            btcusdt_trade.event_type              = 'trade'
-            btcusdt_trade.event_time              = 21
-            btcusdt_trade.transaction_time        = 21
-            btcusdt_trade.symbol                  = 'BTCUSDT'
-            btcusdt_trade.trade_id                = 2
-            btcusdt_trade.price                   = 11.0
-            btcusdt_trade.quantity                = 2.0
-            btcusdt_trade.is_buyer_market_maker   = 0
-            btcusdt_trade.m_unknown_parameter     = 'FALSE'
-            btcusdt_trade.x_unknown_parameter     = ''
-            btcusdt_trade.is_last                 = 1
-            btcusdt_trade.market                  = Market.USD_M_FUTURES
+            btcusdt_trade = TradeEntry(
+                timestamp_of_receive=21,
+                stream='btcusdt@trade',
+                event_type='trade',
+                event_time=21,
+                transaction_time=21,
+                symbol='BTCUSDT',
+                trade_id=2,
+                price=11.0,
+                quantity=2.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(btcusdt_trade)
 
-            adausdt_trade = TradeEntry()
-            adausdt_trade.timestamp_of_receive    = 22
-            adausdt_trade.stream                  = 'adausdt@trade'
-            adausdt_trade.event_type              = 'trade'
-            adausdt_trade.event_time              = 22
-            adausdt_trade.transaction_time        = 22
-            adausdt_trade.symbol                  = 'ADAUSDT'
-            adausdt_trade.trade_id                = 3
-            adausdt_trade.price                   = 12.0
-            adausdt_trade.quantity                = 3.0
-            adausdt_trade.is_buyer_market_maker   = 1
-            adausdt_trade.m_unknown_parameter     = 'TRUE'
-            adausdt_trade.x_unknown_parameter     = 'MARKET'
-            adausdt_trade.is_last                 = 1
-            adausdt_trade.market                  = Market.COIN_M_FUTURES
+            adausdt_trade = TradeEntry(
+                timestamp_of_receive=22,
+                stream='adausdt@trade',
+                event_type='trade',
+                event_time=22,
+                transaction_time=22,
+                symbol='ADAUSDT',
+                trade_id=3,
+                price=12.0,
+                quantity=3.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(adausdt_trade)
 
-            dogeusdt_trade = TradeEntry()
-            dogeusdt_trade.timestamp_of_receive    = 23
-            dogeusdt_trade.stream                  = 'dogeusdt@trade'
-            dogeusdt_trade.event_type              = 'trade'
-            dogeusdt_trade.event_time              = 23
-            dogeusdt_trade.transaction_time        = 23
-            dogeusdt_trade.symbol                  = 'DOGEUSDT'
-            dogeusdt_trade.trade_id                = 4
-            dogeusdt_trade.price                   = 13.0
-            dogeusdt_trade.quantity                = 4.0
-            dogeusdt_trade.is_buyer_market_maker   = 0
-            dogeusdt_trade.m_unknown_parameter     = 'FALSE'
-            dogeusdt_trade.x_unknown_parameter     = ''
-            dogeusdt_trade.is_last                 = 1
-            dogeusdt_trade.market                  = Market.USD_M_FUTURES
+            dogeusdt_trade = TradeEntry(
+                timestamp_of_receive=23,
+                stream='dogeusdt@trade',
+                event_type='trade',
+                event_time=23,
+                transaction_time=23,
+                symbol='DOGEUSDT',
+                trade_id=4,
+                price=13.0,
+                quantity=4.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(dogeusdt_trade)
 
             x1 = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
@@ -1654,72 +1690,76 @@ class TestGlobalMarketState:
                 entry = order_list[0]
                 gms.update(entry)
 
-            trxusdt_trade = TradeEntry()
-            trxusdt_trade.timestamp_of_receive     = 20
-            trxusdt_trade.stream                   = 'trxusdt@trade'
-            trxusdt_trade.event_type               = 'trade'
-            trxusdt_trade.event_time               = 20
-            trxusdt_trade.transaction_time         = 20
-            trxusdt_trade.symbol                   = 'TRXUSDT'
-            trxusdt_trade.trade_id                 = 1
-            trxusdt_trade.price                    = 10.0
-            trxusdt_trade.quantity                 = 1.0
-            trxusdt_trade.is_buyer_market_maker    = 1
-            trxusdt_trade.m_unknown_parameter      = 'TRUE'
-            trxusdt_trade.x_unknown_parameter      = 'MARKET'
-            trxusdt_trade.is_last                  = 1
-            trxusdt_trade.market                   = Market.SPOT
+            trxusdt_trade = TradeEntry(
+                timestamp_of_receive=20,
+                stream='trxusdt@trade',
+                event_type='trade',
+                event_time=20,
+                transaction_time=20,
+                symbol='TRXUSDT',
+                trade_id=1,
+                price=10.0,
+                quantity=1.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.SPOT
+            )
             gms.update(trxusdt_trade)
 
-            btcusdt_trade = TradeEntry()
-            btcusdt_trade.timestamp_of_receive    = 21
-            btcusdt_trade.stream                  = 'btcusdt@trade'
-            btcusdt_trade.event_type              = 'trade'
-            btcusdt_trade.event_time              = 21
-            btcusdt_trade.transaction_time        = 21
-            btcusdt_trade.symbol                  = 'BTCUSDT'
-            btcusdt_trade.trade_id                = 2
-            btcusdt_trade.price                   = 11.0
-            btcusdt_trade.quantity                = 2.0
-            btcusdt_trade.is_buyer_market_maker   = 0
-            btcusdt_trade.m_unknown_parameter     = 'FALSE'
-            btcusdt_trade.x_unknown_parameter     = ''
-            btcusdt_trade.is_last                 = 1
-            btcusdt_trade.market                  = Market.USD_M_FUTURES
+            btcusdt_trade = TradeEntry(
+                timestamp_of_receive=21,
+                stream='btcusdt@trade',
+                event_type='trade',
+                event_time=21,
+                transaction_time=21,
+                symbol='BTCUSDT',
+                trade_id=2,
+                price=11.0,
+                quantity=2.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(btcusdt_trade)
 
-            adausdt_trade = TradeEntry()
-            adausdt_trade.timestamp_of_receive    = 22
-            adausdt_trade.stream                  = 'adausdt@trade'
-            adausdt_trade.event_type              = 'trade'
-            adausdt_trade.event_time              = 22
-            adausdt_trade.transaction_time        = 22
-            adausdt_trade.symbol                  = 'ADAUSDT'
-            adausdt_trade.trade_id                = 3
-            adausdt_trade.price                   = 12.0
-            adausdt_trade.quantity                = 3.0
-            adausdt_trade.is_buyer_market_maker   = 1
-            adausdt_trade.m_unknown_parameter     = 'TRUE'
-            adausdt_trade.x_unknown_parameter     = 'MARKET'
-            adausdt_trade.is_last                 = 1
-            adausdt_trade.market                  = Market.COIN_M_FUTURES
+            adausdt_trade = TradeEntry(
+                timestamp_of_receive=22,
+                stream='adausdt@trade',
+                event_type='trade',
+                event_time=22,
+                transaction_time=22,
+                symbol='ADAUSDT',
+                trade_id=3,
+                price=12.0,
+                quantity=3.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(adausdt_trade)
 
-            dogeusdt_trade = TradeEntry()
-            dogeusdt_trade.timestamp_of_receive    = 23
-            dogeusdt_trade.stream                  = 'dogeusdt@trade'
-            dogeusdt_trade.event_type              = 'trade'
-            dogeusdt_trade.event_time              = 23
-            dogeusdt_trade.transaction_time        = 23
-            dogeusdt_trade.symbol                  = 'DOGEUSDT'
-            dogeusdt_trade.trade_id                = 4
-            dogeusdt_trade.price                   = 13.0
-            dogeusdt_trade.quantity                = 4.0
-            dogeusdt_trade.is_buyer_market_maker   = 0
-            dogeusdt_trade.m_unknown_parameter     = 'FALSE'
-            dogeusdt_trade.x_unknown_parameter     = ''
-            dogeusdt_trade.is_last                 = 1
-            dogeusdt_trade.market                  = Market.USD_M_FUTURES
+            dogeusdt_trade = TradeEntry(
+                timestamp_of_receive=23,
+                stream='dogeusdt@trade',
+                event_type='trade',
+                event_time=23,
+                transaction_time=23,
+                symbol='DOGEUSDT',
+                trade_id=4,
+                price=13.0,
+                quantity=4.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(dogeusdt_trade)
 
             x1 = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
@@ -1784,72 +1824,76 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            trxusdt_trade = TradeEntry()
-            trxusdt_trade.timestamp_of_receive     = 20
-            trxusdt_trade.stream                   = 'trxusdt@trade'
-            trxusdt_trade.event_type               = 'trade'
-            trxusdt_trade.event_time               = 20
-            trxusdt_trade.transaction_time         = 20
-            trxusdt_trade.symbol                   = 'TRXUSDT'
-            trxusdt_trade.trade_id                 = 1
-            trxusdt_trade.price                    = 10.0
-            trxusdt_trade.quantity                 = 1.0
-            trxusdt_trade.is_buyer_market_maker    = 1
-            trxusdt_trade.m_unknown_parameter      = 'TRUE'
-            trxusdt_trade.x_unknown_parameter      = 'MARKET'
-            trxusdt_trade.is_last                  = 1
-            trxusdt_trade.market                   = Market.SPOT
+            trxusdt_trade = TradeEntry(
+                timestamp_of_receive=20,
+                stream='trxusdt@trade',
+                event_type='trade',
+                event_time=20,
+                transaction_time=20,
+                symbol='TRXUSDT',
+                trade_id=1,
+                price=10.0,
+                quantity=1.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.SPOT
+            )
             gms.update(trxusdt_trade)
 
-            btcusdt_trade = TradeEntry()
-            btcusdt_trade.timestamp_of_receive    = 21
-            btcusdt_trade.stream                  = 'btcusdt@trade'
-            btcusdt_trade.event_type              = 'trade'
-            btcusdt_trade.event_time              = 21
-            btcusdt_trade.transaction_time        = 21
-            btcusdt_trade.symbol                  = 'BTCUSDT'
-            btcusdt_trade.trade_id                = 2
-            btcusdt_trade.price                   = 11.0
-            btcusdt_trade.quantity                = 2.0
-            btcusdt_trade.is_buyer_market_maker   = 0
-            btcusdt_trade.m_unknown_parameter     = 'FALSE'
-            btcusdt_trade.x_unknown_parameter     = ''
-            btcusdt_trade.is_last                 = 1
-            btcusdt_trade.market                  = Market.USD_M_FUTURES
+            btcusdt_trade = TradeEntry(
+                timestamp_of_receive=21,
+                stream='btcusdt@trade',
+                event_type='trade',
+                event_time=21,
+                transaction_time=21,
+                symbol='BTCUSDT',
+                trade_id=2,
+                price=11.0,
+                quantity=2.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(btcusdt_trade)
 
-            adausdt_trade = TradeEntry()
-            adausdt_trade.timestamp_of_receive    = 22
-            adausdt_trade.stream                  = 'adausdt@trade'
-            adausdt_trade.event_type              = 'trade'
-            adausdt_trade.event_time              = 22
-            adausdt_trade.transaction_time        = 22
-            adausdt_trade.symbol                  = 'ADAUSDT'
-            adausdt_trade.trade_id                = 3
-            adausdt_trade.price                   = 12.0
-            adausdt_trade.quantity                = 3.0
-            adausdt_trade.is_buyer_market_maker   = 1
-            adausdt_trade.m_unknown_parameter     = 'TRUE'
-            adausdt_trade.x_unknown_parameter     = 'MARKET'
-            adausdt_trade.is_last                 = 1
-            adausdt_trade.market                  = Market.COIN_M_FUTURES
+            adausdt_trade = TradeEntry(
+                timestamp_of_receive=22,
+                stream='adausdt@trade',
+                event_type='trade',
+                event_time=22,
+                transaction_time=22,
+                symbol='ADAUSDT',
+                trade_id=3,
+                price=12.0,
+                quantity=3.0,
+                is_buyer_market_maker=1,
+                m_unknown_parameter='TRUE',
+                x_unknown_parameter='MARKET',
+                is_last=1,
+                market=Market.COIN_M_FUTURES
+            )
             gms.update(adausdt_trade)
 
-            dogeusdt_trade = TradeEntry()
-            dogeusdt_trade.timestamp_of_receive    = 23
-            dogeusdt_trade.stream                  = 'dogeusdt@trade'
-            dogeusdt_trade.event_type              = 'trade'
-            dogeusdt_trade.event_time              = 23
-            dogeusdt_trade.transaction_time        = 23
-            dogeusdt_trade.symbol                  = 'DOGEUSDT'
-            dogeusdt_trade.trade_id                = 4
-            dogeusdt_trade.price                   = 13.0
-            dogeusdt_trade.quantity                = 4.0
-            dogeusdt_trade.is_buyer_market_maker   = 0
-            dogeusdt_trade.m_unknown_parameter     = 'FALSE'
-            dogeusdt_trade.x_unknown_parameter     = ''
-            dogeusdt_trade.is_last                 = 1
-            dogeusdt_trade.market                  = Market.USD_M_FUTURES
+            dogeusdt_trade = TradeEntry(
+                timestamp_of_receive=23,
+                stream='dogeusdt@trade',
+                event_type='trade',
+                event_time=23,
+                transaction_time=23,
+                symbol='DOGEUSDT',
+                trade_id=4,
+                price=13.0,
+                quantity=4.0,
+                is_buyer_market_maker=0,
+                m_unknown_parameter='FALSE',
+                x_unknown_parameter='',
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
             gms.update(dogeusdt_trade)
 
             ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)

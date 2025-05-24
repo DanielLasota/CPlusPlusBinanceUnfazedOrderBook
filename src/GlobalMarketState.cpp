@@ -1,13 +1,12 @@
 #include "GlobalMarketState.h"
 
 GlobalMarketState::GlobalMarketState(MetricMask mask)
-    : mask_(mask), calculator_(mask)
-{
-}
+    : mask_(mask), calculator_(mask) {}
 
 void GlobalMarketState::update(DecodedEntry* entry) {
     AssetKey key = AssetKey(*entry);
-    marketStates_[key].update(entry);
+    auto [it, inserted] = marketStates_.try_emplace(key, key.market, key.symbol);
+    it->second.update(entry);
 }
 
 std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetricsByEntry(DecodedEntry* entry) {

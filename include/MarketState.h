@@ -5,7 +5,15 @@
 
 class MarketState {
 public:
-    explicit MarketState();
+    MarketState() = default;
+
+    MarketState(const Market market_, const std::string& symbol_)
+        : market_(market_), symbol_(symbol_), lastTrade()
+    {}
+
+    Market get_market() const { return market_; }
+
+    const std::string& get_symbol() const { return symbol_; }
 
     void update(DecodedEntry* entry);
 
@@ -17,9 +25,7 @@ public:
 
     OrderBook orderBook;
 
-    bool getHasLastTrade() const {
-        return hasLastTrade;
-    }
+    bool getHasLastTrade() const {return hasLastTrade;}
 
     const TradeEntry& getLastTrade() const {
         if (!hasLastTrade || lastTradePtr == nullptr) {
@@ -28,11 +34,12 @@ public:
         return *lastTradePtr;
     }
 
-    uint64_t getLastTimestampOfReceive() const {
-        return lastTimestampOfReceive;
-    }
+    uint64_t getLastTimestampOfReceive() const {return lastTimestampOfReceive;}
 
 private:
+    Market market_;
+    std::string symbol_;
+
     uint64_t lastTimestampOfReceive{0};
 
     TradeEntry   lastTrade;

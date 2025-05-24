@@ -41,19 +41,17 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
     }
 
     auto finish = std::chrono::steady_clock::now();
-    auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
-    auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-    std::cout << "Start timestamp (ms): " << start_ms << std::endl;
-    std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;
     std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
 
     orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
+    MarketState marketState = globalMarketState.getMarketState("TRXUSDT", Market::USD_M_FUTURES);
+    // marketState.orderBook.printOrderBook();
+
     return orderBookMetrics.entries();
 }
 
 void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const pybind11::object &python_callback) {
-    // std::vector<AssetParameters> assetParameters = AssetParameters::decodeAssetParametersFromMergedCSVName(csvPath);
 
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptrEntries;
@@ -81,11 +79,7 @@ void OrderBookSessionSimulator::computeBacktest(const std::string& csvPath, std:
     }
 
     auto finish = std::chrono::steady_clock::now();
-    auto start_ms = std::chrono::duration_cast<std::chrono::milliseconds>(start.time_since_epoch()).count();
-    auto finish_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish.time_since_epoch()).count();
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-    std::cout << "Start timestamp (ms): " << start_ms << std::endl;
-    std::cout << "Finish timestamp (ms): " << finish_ms << std::endl;
     std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
 
 }
@@ -106,7 +100,7 @@ OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string
             marketState.update(entryPtr);
         }
 
-        marketState.orderBook.printOrderBook();
+        // marketState.orderBook.printOrderBook();
 
         return std::move(marketState.orderBook);
 

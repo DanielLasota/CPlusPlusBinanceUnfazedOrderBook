@@ -266,13 +266,10 @@ void OrderBook::printOrderBook() const {
     for (auto *n = askTail_; n; n = n->prev_) {
         std::cout
         << n->TimestampOfReceive << " "
-        << n->Stream << " "
-        << n->EventType << " "
         << n->Symbol << " "
         << n->IsAsk << " "
         << n->Price << " "
         << n->Quantity << " "
-        << n->IsLast << " "
         << n->Market_ << " "
         << "\n";
     }
@@ -281,13 +278,10 @@ void OrderBook::printOrderBook() const {
     for (auto *n = bidHead_; n; n = n->next_) {
         std::cout
         << n->TimestampOfReceive << " "
-        << n->Stream << " "
-        << n->EventType << " "
         << n->Symbol << " "
         << n->IsAsk << " "
         << n->Price << " "
         << n->Quantity << " "
-        << n->IsLast << " "
         << n->Market_ << " "
         << "\n";
     }

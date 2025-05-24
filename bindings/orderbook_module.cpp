@@ -89,27 +89,37 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              py::arg("quantity"),
              py::arg("is_buyer_market_maker"),
              "Bardzo szybka aktualizacja TradeEntry")
-            .def_property_readonly(
-                "has_last_trade",
-                &MS::getHasLastTrade,
-                "Czy jest w pamięci ostatni TradeEntry?"
-            )
-            .def_property_readonly(
-                "last_trade",
-                &MS::getLastTrade,
-                py::return_value_policy::reference_internal,
-                "Ostatni TradeEntry (rzuca, jeśli nie ma żadnego)"
-            )
-            .def_property_readonly(
-                "last_timestamp_of_receive",
-                &MS::getLastTimestampOfReceive,
-                "Ostatni użyty timestampOfReceive"
-            )
+        .def_property_readonly(
+            "has_last_trade",
+            &MS::getHasLastTrade,
+            "Czy jest w pamięci ostatni TradeEntry?"
+        )
+        .def_property_readonly(
+            "last_trade",
+            &MS::getLastTrade,
+            py::return_value_policy::reference_internal,
+            "Ostatni TradeEntry (rzuca, jeśli nie ma żadnego)"
+        )
+        .def_property_readonly(
+            "last_timestamp_of_receive",
+            &MS::getLastTimestampOfReceive,
+            "Ostatni użyty timestampOfReceive"
+        )
         .def("print_order_book",
              [](MS &self) {
                  self.orderBook.printOrderBook();
              },
              "Wypisuje stan orderbooka")
+        .def_property_readonly(
+            "symbol",
+            &MS::get_symbol,
+            "Zwraca symbol tej MarketState"
+        )
+        .def_property_readonly(
+            "market",
+            &MS::get_market,
+            "Zwraca market tej MarketState"
+        )
         .def("do_nothing",
             &MS::doNothing,
             "xD it does nothing"
@@ -371,6 +381,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
         .def_readonly("timestampOfReceive",     &OrderBookMetricsEntry::timestampOfReceive)
+        .def_readonly("market",                 &OrderBookMetricsEntry::market)
+        .def_readonly("symbol",                 &OrderBookMetricsEntry::symbol)
         .def_readonly("bestAskPrice",           &OrderBookMetricsEntry::bestAskPrice)
         .def_readonly("bestBidPrice",           &OrderBookMetricsEntry::bestBidPrice)
         .def_readonly("midPrice",               &OrderBookMetricsEntry::midPrice)

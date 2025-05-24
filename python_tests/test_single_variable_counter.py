@@ -56,13 +56,13 @@ class TestSingleVariableCounter:
         ob = self.get_sample_order_book()
         # (bid_qty - ask_qty)/(bid_qty + ask_qty) = (1-2)/(1+2) = -1/3
         result = svc.calculate_best_volume_imbalance(ob)
-        assert result == -1/3
+        assert result == -0.33
 
     def test_calculate_queue_imbalance(self):
         ob = self.get_sample_order_book()
         # (bid_count - ask_count)/(bid_count + ask_count) = (6-5)/11 = 1/11 = 0.09
         result = svc.calculate_queue_imbalance(ob)
-        assert round(result, 2) == 0.09
+        assert result == 0.09
 
     def test_calculate_volume_imbalance(self):
         ob = self.get_sample_order_book()
@@ -78,7 +78,7 @@ class TestSingleVariableCounter:
         # (second_bid + second_ask) - (best_bid + best_ask)
         # = (8.1 + 11.0) - (9.0 + 10.0) = 19.1 - 19 = 0.1
         result = svc.calculate_gap(ob)
-        assert round(result,2) == 0.1
+        assert result == 0.1
 
     def test_calculate_is_aggressor_ask(self):
         t = TradeEntry()

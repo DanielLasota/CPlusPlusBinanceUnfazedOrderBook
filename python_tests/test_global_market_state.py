@@ -1927,10 +1927,10 @@ class TestGlobalMarketState:
             assert x1.bestAskPrice == 12.34589
             assert x1.bestBidPrice == 12.24589
             assert x1.midPrice == 12.29589
-            assert round(x1.bestVolumeImbalance, 2) == 0.5
-            assert round(x1.queueImbalance, 2) == 0.0
-            assert round(x1.volumeImbalance, 2) == 0.45
-            assert round(x1.gap, 2) == -0.3
+            assert x1.bestVolumeImbalance == 0.5
+            assert x1.queueImbalance == 0.0
+            assert x1.volumeImbalance == 0.45
+            assert x1.gap == -0.3
             assert x1.isAggressorAsk == 1
 
             # === x2 (BTCUSDT) ===
@@ -1938,10 +1938,10 @@ class TestGlobalMarketState:
             assert x2.bestAskPrice == 22.1
             assert x2.bestBidPrice == 22.0
             assert x2.midPrice == 22.05
-            assert round(x2.bestVolumeImbalance, 2) == 0.08
-            assert round(x2.queueImbalance, 2) == 0.0
-            assert round(x2.volumeImbalance, 2) == 0.11
-            assert round(x2.gap, 2) == -0.3
+            assert x2.bestVolumeImbalance == 0.08
+            assert x2.queueImbalance == 0.0
+            assert x2.volumeImbalance == 0.11
+            assert x2.gap == -0.3
             assert x2.isAggressorAsk == 0
 
             # === x3 (ADAUSDT) ===
@@ -1949,10 +1949,10 @@ class TestGlobalMarketState:
             assert x3.bestAskPrice == 32.1
             assert x3.bestBidPrice == 32.0
             assert x3.midPrice == 32.05
-            assert round(x3.bestVolumeImbalance, 2) == 0.05
-            assert round(x3.queueImbalance, 2) == 0.0
-            assert round(x3.volumeImbalance, 2) == 0.06
-            assert round(x3.gap, 2) == -0.3
+            assert x3.bestVolumeImbalance == 0.05
+            assert x3.queueImbalance == 0.0
+            assert x3.volumeImbalance == 0.06
+            assert x3.gap == -0.3
             assert x3.isAggressorAsk == 1
 
             # === x4 (DOGEUSDT) ===
@@ -1960,8 +1960,8 @@ class TestGlobalMarketState:
             assert x4.bestAskPrice == 42.1
             assert x4.bestBidPrice == 42.0
             assert x4.midPrice == 42.05
-            assert round(x4.bestVolumeImbalance, 2) == 0.03
-            assert round(x4.queueImbalance, 2) == 0.0
-            assert round(x4.volumeImbalance, 2) == 0.05
-            assert round(x4.gap, 2) == -0.3
+            assert x4.bestVolumeImbalance == 0.03
+            assert x4.queueImbalance == 0.0
+            assert x4.volumeImbalance == 0.05
+            assert x4.gap == -0.3
             assert x4.isAggressorAsk == 0

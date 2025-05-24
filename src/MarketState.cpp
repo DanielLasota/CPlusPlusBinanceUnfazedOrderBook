@@ -4,8 +4,6 @@
 #include "enums/TradeEntry.h"
 #include "SingleVariableCounter.h"
 
-MarketState::MarketState() = default;
-
 void MarketState::update(DecodedEntry* entry) {
 
     std::visit([this](auto const& e){

@@ -17,6 +17,8 @@ int main() {
 
     std::vector<std::string> variables {
         "timestampOfReceive",
+        "market",
+        "symbol",
         "bestAskPrice",
         "bestBidPrice",
         "midPrice",

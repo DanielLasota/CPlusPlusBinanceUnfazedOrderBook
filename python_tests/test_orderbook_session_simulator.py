@@ -300,16 +300,17 @@ class TestOrderBookSessionSimulator:
 
             mask = parse_mask(variables_list)
 
-            # TimestampOfReceive = 1<<0 = 1
-            # bestAsk              = 1<<1 = 2
-            # bestBid              = 1<<2 = 4
-            # midPrice             = 1<<3 = 8
-            # bestVolumeImbalance  = 1<<4 = 16
-            # queueImbalance       = 1<<5 = 32
-            # volumeImbalance      = 1<<6 = 64
-            # gap                  = 1<<7 = 128
-            # isAggressorAsk       = 1<<8 = 256
-            expected_mask = 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256  # = 511
+            # Nowe przesunięcia bitów!
+            # timestampOfReceive    = 1 << 0 =       1
+            # bestAskPrice         = 1 << 3 =       8
+            # bestBidPrice         = 1 << 4 =      16
+            # midPrice             = 1 << 5 =      32
+            # bestVolumeImbalance  = 1 << 6 =      64
+            # queueImbalance       = 1 << 7 =     128
+            # volumeImbalance      = 1 << 8 =     256
+            # gap                  = 1 << 9 =     512
+            # isAggressorAsk       = 1 << 10 =   1024
+            expected_mask = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024  # = 2041
 
             assert mask == expected_mask
 
@@ -324,10 +325,10 @@ class TestOrderBookSessionSimulator:
 
             mask = parse_mask(variables_list)
 
-            # timestampOfReceive = 1<<0 =   1
-            # midPrice           = 1<<3 =   8
-            # volumeImbalance    = 1<<6 =  64
-            expected_mask = 1 + 8 + 64  # = 73
+            # timestampOfReceive = 1 << 0 = 1
+            # midPrice           = 1 << 5 = 32
+            # volumeImbalance    = 1 << 8 = 256
+            expected_mask = 1 + 32 + 256  # = 289
 
             assert mask == expected_mask
 

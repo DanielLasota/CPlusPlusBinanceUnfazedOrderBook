@@ -1,35 +1,30 @@
 #include "CSVHeader.h"
-#include <stdexcept>
 
-CSVHeader::CSVHeader(const std::string &headerLine) {
-    size_t start = 0;
-    while (true) {
-        auto pos = headerLine.find(',', start);
-        auto len = (pos == std::string::npos
-                    ? headerLine.size() - start
-                    : pos - start);
+ColMap buildColMap(const std::vector<std::string_view>& headerTokens) {
+    ColMap colMap;
+    colMap.fill(-1);
+    for (size_t i = 0; i < headerTokens.size(); ++i) {
+        for (size_t j = 0; j < CSVHeaderFieldNames.size(); ++j) {
+            if (headerTokens[i] == CSVHeaderFieldNames[j]) {
+                colMap[j] = static_cast<int>(i);
+                break;
+            }
+        }
+    }
+    return colMap;
+}
 
-        names_.emplace_back(headerLine.substr(start, len));
-
-        if (pos == std::string::npos)
+std::vector<std::string_view> splitLineSV(std::string_view line, char delimiter) {
+    std::vector<std::string_view> tokens;
+    size_t pos = 0;
+    while (pos < line.size()) {
+        size_t next = line.find(delimiter, pos);
+        if (next == std::string_view::npos) {
+            tokens.emplace_back(line.substr(pos));
             break;
-        start = pos + 1;
+        }
+        tokens.emplace_back(line.substr(pos, next - pos));
+        pos = next + 1;
     }
-
-    idx_.reserve(names_.size());
-    for (size_t i = 0; i < names_.size(); ++i) {
-        idx_.emplace(std::string_view{names_[i]}, i);
-    }
-}
-
-size_t CSVHeader::operator[](std::string_view col) const {
-    auto it = idx_.find(col);
-    if (it == idx_.end()) {
-        throw std::out_of_range("CSVHeader: brak kolumny `" + std::string(col) + "`");
-    }
-    return it->second;
-}
-
-bool CSVHeader::contains(std::string_view col) const {
-    return idx_.find(col) != idx_.end();
+    return tokens;
 }

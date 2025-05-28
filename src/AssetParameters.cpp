@@ -85,14 +85,12 @@ static StreamType parse_stream(const std::string &s) {
 std::vector<AssetParameters> AssetParameters::decodeAssetParametersFromMergedCSVName(const std::string &csvPath) {
     namespace fs = std::filesystem;
 
-    // 1) filename without directory or ".csv"
     std::string name = fs::path(csvPath).stem().string();
     const std::string prefix = "binance_merged_";
     if (name.rfind(prefix, 0) != 0)
         throw std::invalid_argument("Niepoprawna nazwa merged CSV: " + name);
-    std::string rem = name.substr(prefix.size());  // e.g. "depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_adausdt_trxusdt_14-04-2025"
+    std::string rem = name.substr(prefix.size());
 
-    // helper lists
     static const std::vector<std::string> known_streams = {
         "depth_snapshot",
         "difference_depth_stream",
@@ -104,7 +102,6 @@ std::vector<AssetParameters> AssetParameters::decodeAssetParametersFromMergedCSV
         "spot"
     };
 
-    // 2) Greedy consume stream types from the front
     std::vector<std::string> streams;
     size_t pos = 0;
     while (pos < rem.size()) {
@@ -121,7 +118,6 @@ std::vector<AssetParameters> AssetParameters::decodeAssetParametersFromMergedCSV
         if (!matched) break;
     }
 
-    // 3) Greedy consume markets next
     std::vector<std::string> markets;
     while (pos < rem.size()) {
         bool matched = false;
@@ -137,18 +133,15 @@ std::vector<AssetParameters> AssetParameters::decodeAssetParametersFromMergedCSV
         if (!matched) break;
     }
 
-    // 4) Now the rest is "pairs..._date"
     std::string tail = rem.substr(pos);
     if (tail.size() < 1 || tail[0] == '_') tail.erase(0, 1);
 
-    // split off date
     auto last_us = tail.rfind('_');
     if (last_us == std::string::npos)
         throw std::invalid_argument("Brak daty w merged CSV name: " + name);
     std::string date      = tail.substr(last_us+1);       // e.g. "14-04-2025"
     std::string pairs_str = tail.substr(0, last_us);      // e.g. "adausdt_trxusdt"
 
-    // 5) split pairs_str on '_'
     std::vector<std::string> pairs;
     {
       std::istringstream iss(pairs_str);
@@ -158,7 +151,6 @@ std::vector<AssetParameters> AssetParameters::decodeAssetParametersFromMergedCSV
       }
     }
 
-    // 6) build the cross‐product
     std::vector<AssetParameters> result;
     result.reserve(streams.size() * markets.size() * pairs.size());
     for (auto const &st : streams) {

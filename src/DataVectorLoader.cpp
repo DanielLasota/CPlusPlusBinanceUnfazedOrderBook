@@ -11,9 +11,7 @@
 #include "EntryDecoder.h"
 
 std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersCSV(const std::string &csvPath) {
-
     AssetParameters assetParameters = AssetParameters::decodeAssetParametersFromSingleCSVName(csvPath);
-    // std::cout << "Found Asset Parameters: " << assetParameters << std::endl;
 
     std::vector<DecodedEntry> entries;
     std::ifstream file(csvPath);
@@ -36,7 +34,6 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersC
         try {
             DecodedEntry entry = EntryDecoder::decodeSingleAssetParameterEntry(assetParameters, line);
             entries.push_back(entry);
-
         } catch (const std::exception &e) {
             std::cerr << "Błąd przetwarzania linii: " << line << " - " << e.what() << std::endl;
         }
@@ -46,7 +43,6 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersC
 }
 
 std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCSV(const std::string &csvPath) {
-
     std::ifstream file(csvPath);
     if (!file.is_open()) {
         throw std::runtime_error("Nie można otworzyć pliku: " + csvPath);
@@ -58,7 +54,8 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
             continue;
         break;
     }
-    CSVHeader header(headerLine);
+    std::vector<std::string_view> headerTokens = splitLineSV(headerLine, ',');
+    ColMap colMap = buildColMap(headerTokens);
 
     std::vector<DecodedEntry> entries;
     std::string line;
@@ -67,7 +64,7 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
             continue;
 
         try {
-            DecodedEntry entry = EntryDecoder::decodeMultiAssetParameterEntry(line, header);
+            DecodedEntry entry = EntryDecoder::decodeMultiAssetParameterEntry(line, colMap);
             entries.push_back(std::move(entry));
         }
         catch (const std::exception &e) {
@@ -77,14 +74,4 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
     }
 
     return entries;
-}
-
-std::vector<std::string> DataVectorLoader::splitLine(const std::string &line, char delimiter) {
-    std::vector<std::string> tokens;
-    std::istringstream tokenStream(line);
-    std::string token;
-    while (std::getline(tokenStream, token, delimiter)) {
-        tokens.push_back(token);
-    }
-    return tokens;
 }

@@ -23,6 +23,7 @@ set(SOURCES
         src/EntryDecoder.cpp
         src/CSVHeader.cpp
         src/OrderBookMetrics.cpp
+        src/OrderBookMetricsArrays.cpp
         src/OrderBookMetricsCalculator.cpp
         src/GlobalMarketState.cpp
 #        test/TestSingleVariableCounter.cpp

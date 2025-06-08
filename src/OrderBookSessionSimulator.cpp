@@ -8,6 +8,7 @@
 #include "OrderBookMetrics.h"
 #include "OrderbookSessionSimulator.h"
 #include "OrderBookMetricsCalculator.h"
+#include "OrderBookMetricsArrays.h"
 
 OrderBookSessionSimulator::OrderBookSessionSimulator() {}
 
@@ -88,6 +89,35 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeBacktest(co
     // auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
     // std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
     return orderBookMetrics.entries();
+}
+
+py::dict OrderBookSessionSimulator::computeVariablesNumpy(const std::string &csvPath, std::vector<std::string> &variables) {
+    std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
+    std::vector<DecodedEntry*> ptrEntries;
+    ptrEntries.reserve(entries.size());
+    for (auto &entry : entries) {
+        ptrEntries.push_back(&entry);
+    }
+
+    MetricMask mask = parseMask(variables);
+    GlobalMarketState globalMarketState(mask);
+
+    OrderBookMetricsArrays arrays;
+    arrays.reserve(ptrEntries.size());
+
+    for (auto* p : ptrEntries) {
+        globalMarketState.update(p);
+
+        const bool isLast = std::visit([](auto const& entry){return entry.IsLast;}, *p);
+
+        if (isLast) {
+            if (auto m = globalMarketState.countMarketStateMetricsByEntry(p)) {
+                arrays.addEntry(*m);
+            }
+        }
+    }
+
+    return arrays.toNumpyDict(variables);
 }
 
 OrderBook OrderBookSessionSimulator::computeFinalDepthSnapshot(const std::string &csvPath) {

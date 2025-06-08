@@ -43,5 +43,8 @@ if __name__ == '__main__':
         "isAggressorAsk"
     ]
 
-    variables = orderbook_snapshot = orderbook_session_simulator.compute_variables(csv_path=csv_path, variables=variables)
+    arrays = orderbook_session_simulator.compute_variables_numpy(csv_path=csv_path, variables=variables)
+    import pandas as pd
+    df = pd.DataFrame(arrays)
+    print(df.head())
 

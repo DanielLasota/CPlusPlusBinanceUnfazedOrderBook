@@ -23,7 +23,8 @@ int main() {
         "gap",
         "isAggressorAsk"
     };
-    orderBookSessionSimulator.computeVariables(csvPath, variables);
+    auto arrays = orderBookSessionSimulator.computeVariablesNumpy(csvPath, variables);
+    std::cout << "returned " << arrays.size() << " arrays" << std::endl;
 
     return 0;
 }

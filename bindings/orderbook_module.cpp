@@ -34,6 +34,9 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def("compute_variables", &OrderBookSessionSimulator::computeVariables,
              py::arg("csv_path"), py::arg("variables"),
              "Oblicza metryki z pliku CSV i zwraca OrderBookMetrics")
+        .def("compute_variables_numpy", &OrderBookSessionSimulator::computeVariablesNumpy,
+             py::arg("csv_path"), py::arg("variables"),
+             "Zwraca slownik numpy-array dla wskazanych zmiennych")
         ;
 
     // ----- GlobalMarketState -----

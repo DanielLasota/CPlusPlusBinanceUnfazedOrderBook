@@ -14,7 +14,7 @@ public:
 
     std::vector<OrderBookMetricsEntry> computeVariables(const std::string &csvPath, std::vector<std::string> &variables);
 
-    void computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const py::object &python_callback = py::none());
+    std::vector<OrderBookMetricsEntry> computeBacktest(const std::string& csvPath, std::vector<std::string> &variables, const py::object &python_callback = py::none());
 
     OrderBook computeFinalDepthSnapshot(const std::string &csvPath);
 

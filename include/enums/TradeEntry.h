@@ -6,12 +6,7 @@
 
 struct TradeEntry {
     int64_t TimestampOfReceive;
-    std::string Stream;
-    std::string EventType;
-    int64_t EventTime;
-    int64_t TransactionTime;
     std::string Symbol;
-    int64_t TradeId;
     double Price;
     double Quantity;
     bool IsBuyerMarketMaker;
@@ -22,12 +17,7 @@ struct TradeEntry {
 
     TradeEntry(
         int64_t TimestampOfReceive,
-        const std::string& Stream,
-        const std::string& EventType,
-        int64_t EventTime,
-        int64_t TransactionTime,
         const std::string& Symbol,
-        int64_t TradeId,
         double Price,
         double Quantity,
         bool IsBuyerMarketMaker,
@@ -37,12 +27,7 @@ struct TradeEntry {
         Market Market_
     )
     : TimestampOfReceive(TimestampOfReceive)
-    , Stream(Stream)
-    , EventType(EventType)
-    , EventTime(EventTime)
-    , TransactionTime(TransactionTime)
     , Symbol(Symbol)
-    , TradeId(TradeId)
     , Price(Price)
     , Quantity(Quantity)
     , IsBuyerMarketMaker(IsBuyerMarketMaker)

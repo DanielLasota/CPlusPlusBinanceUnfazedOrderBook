@@ -179,49 +179,25 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def(py::init<
             int64_t,
             const std::string&,
-            const std::string&,
-            int64_t,
-            int64_t,
-            const std::string&,
-            int64_t,
-            int64_t,
-            int64_t,
             bool,
             double,
             double,
-            const std::string&,
             bool,
             Market
             >(),
             py::arg("timestamp_of_receive"),
-            py::arg("stream"),
-            py::arg("event_type"),
-            py::arg("event_time"),
-            py::arg("transaction_time"),
             py::arg("symbol"),
-            py::arg("first_update_id"),
-            py::arg("final_update_id"),
-            py::arg("final_update_id_in_last_stream"),
             py::arg("is_ask"),
             py::arg("price"),
             py::arg("quantity"),
-            py::arg("ps_unknown_field"),
             py::arg("is_last"),
             py::arg("market")
         )
         .def_readwrite("timestamp_of_receive", &DifferenceDepthEntry::TimestampOfReceive)
-        .def_readwrite("stream", &DifferenceDepthEntry::Stream)
-        .def_readwrite("event_type", &DifferenceDepthEntry::EventType)
-        .def_readwrite("event_time", &DifferenceDepthEntry::EventTime)
-        .def_readwrite("transaction_time", &DifferenceDepthEntry::TransactionTime)
         .def_readwrite("symbol", &DifferenceDepthEntry::Symbol)
-        .def_readwrite("first_update_id", &DifferenceDepthEntry::FirstUpdateId)
-        .def_readwrite("final_update_id", &DifferenceDepthEntry::FinalUpdateId)
-        .def_readwrite("final_update_id_in_last_stream", &DifferenceDepthEntry::FinalUpdateIdInLastStream)
         .def_readwrite("is_ask", &DifferenceDepthEntry::IsAsk)
         .def_readwrite("price", &DifferenceDepthEntry::Price)
         .def_readwrite("quantity", &DifferenceDepthEntry::Quantity)
-        .def_readwrite("ps_unknown_field", &DifferenceDepthEntry::PSUnknownField)
         .def_readwrite("is_last", &DifferenceDepthEntry::IsLast)
         .def_readwrite("market", &DifferenceDepthEntry::Market_)
         .def("__str__", [](const DifferenceDepthEntry &entry) {
@@ -229,7 +205,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             oss << std::fixed << std::setprecision(5);
             oss
             << "TimestampOfReceive: " << entry.TimestampOfReceive << " "
-            << "Stream: " << entry.Stream << " "
             << "Symbol: " << entry.Symbol << " "
             << "IsAsk: " << entry.IsAsk << " "
             << "Price: " << entry.Price << " "
@@ -241,18 +216,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def("to_list", [](const DifferenceDepthEntry &e) {
             py::list v;
             v.append(e.TimestampOfReceive);
-            v.append(e.Stream);
-            v.append(e.EventType);
-            v.append(e.EventTime);
-            v.append(e.TransactionTime);
             v.append(e.Symbol);
-            v.append(e.FirstUpdateId);
-            v.append(e.FinalUpdateId);
-            v.append(e.FinalUpdateIdInLastStream);
             v.append(e.IsAsk ? 1 : 0);
             v.append(e.Price);
             v.append(e.Quantity);
-            v.append(e.PSUnknownField);
             v.append(e.IsLast ? 1 : 0);
             v.append(e.Market_);
             return v;
@@ -260,18 +227,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_static("field_names", []() {
             return std::vector<std::string>{
                 "timestamp_of_receive",
-                "stream",
-                "event_type",
-                "event_time",
-                "transaction_time",
                 "symbol",
-                "first_update_id",
-                "final_update_id",
-                "final_update_id_in_last_stream",
                 "is_ask",
                 "price",
                 "quantity",
-                "ps_unknown_field",
                 "is_last",
                 "market"
             };
@@ -283,11 +242,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def(py::init<
             int64_t,
             const std::string&,
-            const std::string&,
-            int64_t,
-            int64_t,
-            const std::string&,
-            int64_t,
             double,
             double,
             bool,
@@ -297,12 +251,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             Market
             >(),
             py::arg("timestamp_of_receive"),
-            py::arg("stream"),
-            py::arg("event_type"),
-            py::arg("event_time"),
-            py::arg("transaction_time"),
             py::arg("symbol"),
-            py::arg("trade_id"),
             py::arg("price"),
             py::arg("quantity"),
             py::arg("is_buyer_market_maker"),
@@ -312,12 +261,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             py::arg("market")
         )
         .def_readwrite("timestamp_of_receive",    &TradeEntry::TimestampOfReceive)
-        .def_readwrite("stream",                  &TradeEntry::Stream)
-        .def_readwrite("event_type",              &TradeEntry::EventType)
-        .def_readwrite("event_time",              &TradeEntry::EventTime)
-        .def_readwrite("transaction_time",        &TradeEntry::TransactionTime)
         .def_readwrite("symbol",                  &TradeEntry::Symbol)
-        .def_readwrite("trade_id",                &TradeEntry::TradeId)
         .def_readwrite("price",                   &TradeEntry::Price)
         .def_readwrite("quantity",                &TradeEntry::Quantity)
         .def_readwrite("is_buyer_market_maker",   &TradeEntry::IsBuyerMarketMaker)
@@ -330,9 +274,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             oss << std::fixed << std::setprecision(5);
             oss
             << "TimestampOfReceive: " << entry.TimestampOfReceive << " "
-            << "Stream: " << entry.Stream << " "
             << "Symbol: " << entry.Symbol << " "
-            << "TradeId: " << entry.TradeId << " "
             << "Price: " << entry.Price << " "
             << "Quantity: " << entry.Quantity << " "
             << "IsBuyerMarketMaker: " << entry.IsBuyerMarketMaker << " "
@@ -343,12 +285,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def("to_list", [](const TradeEntry &e) {
             py::list v;
             v.append(e.TimestampOfReceive);
-            v.append(e.Stream);
-            v.append(e.EventType);
-            v.append(e.EventTime);
-            v.append(e.TransactionTime);
             v.append(e.Symbol);
-            v.append(e.TradeId);
             v.append(e.Price);
             v.append(e.Quantity);
             v.append(e.IsBuyerMarketMaker ? 1 : 0);
@@ -361,12 +298,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_static("field_names", []() {
             return std::vector<std::string>{
                 "timestamp_of_receive",
-                "stream",
-                "event_type",
-                "event_time",
-                "transaction_time",
                 "symbol",
-                "trade_id",
                 "price",
                 "quantity",
                 "is_buyer_market_maker",

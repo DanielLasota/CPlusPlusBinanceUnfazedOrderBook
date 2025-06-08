@@ -69,15 +69,15 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersC
 }
 
 std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCSV(const std::string &csvPath) {
-    auto start0 = std::chrono::steady_clock::now();
+    // auto start0 = std::chrono::steady_clock::now();
 
     MMapData mm = mmap_file(csvPath);
     std::string_view file_view(mm.data, mm.size);
-    auto start1 = std::chrono::steady_clock::now();
+    // auto start1 = std::chrono::steady_clock::now();
 
     auto lines = split_sv_by_newline(file_view);
 
-    auto start2 = std::chrono::steady_clock::now();
+    // auto start2 = std::chrono::steady_clock::now();
 
     std::string_view headerLine;
     size_t headerIdx = 0;
@@ -109,13 +109,13 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
         }
     }
 
-    auto start3 = std::chrono::steady_clock::now();
-    auto elapsed_ms1 = std::chrono::duration_cast<std::chrono::milliseconds>(start1 - start0).count();
-    auto elapsed_ms2 = std::chrono::duration_cast<std::chrono::milliseconds>(start2 - start1).count();
-    auto elapsed_ms3 = std::chrono::duration_cast<std::chrono::milliseconds>(start3 - start2).count();
-    std::cout << "mmap: " << elapsed_ms1 << " ms" << std::endl;
-    std::cout << "split_sv_by_newline: " << elapsed_ms2 << " ms" << std::endl;
-    std::cout << "decodeMultiAssetParameterEntry loop: " << elapsed_ms3 << " ms" << std::endl;
+    // auto start3 = std::chrono::steady_clock::now();
+    // auto elapsed_ms1 = std::chrono::duration_cast<std::chrono::milliseconds>(start1 - start0).count();
+    // auto elapsed_ms2 = std::chrono::duration_cast<std::chrono::milliseconds>(start2 - start1).count();
+    // auto elapsed_ms3 = std::chrono::duration_cast<std::chrono::milliseconds>(start3 - start2).count();
+    // std::cout << "mmap: " << elapsed_ms1 << " ms" << std::endl;
+    // std::cout << "split_sv_by_newline: " << elapsed_ms2 << " ms" << std::endl;
+    // std::cout << "decodeMultiAssetParameterEntry loop: " << elapsed_ms3 << " ms" << std::endl;
 
     munmap_file(mm);
     return entries;

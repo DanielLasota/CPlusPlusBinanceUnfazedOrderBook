@@ -153,13 +153,7 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                 sumBidQty_ += (e->Quantity - node->Quantity);
             }
             node->TimestampOfReceive = e->TimestampOfReceive;
-            node->EventTime = e->EventTime;
-            node->TransactionTime = e->TransactionTime;
-            node->FirstUpdateId = e->FirstUpdateId;
-            node->FinalUpdateId = e->FinalUpdateId;
-            node->FinalUpdateIdInLastStream = e->FinalUpdateIdInLastStream;
             node->Quantity = e->Quantity;
-            node->PSUnknownField = e->PSUnknownField;
             node->IsLast = e->IsLast;
         }
         else {

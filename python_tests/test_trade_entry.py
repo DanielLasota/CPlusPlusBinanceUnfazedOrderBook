@@ -8,12 +8,7 @@ class TestTradeEntry:
         e = TradeEntry()
         expected = [
             0,    # timestamp_of_receive
-            "",   # stream
-            "",   # event_type
-            0,    # event_time
-            0,    # transaction_time
             "",   # symbol
-            0,    # trade_id
             0.0,  # price
             0.0,  # quantity
             0,    # is_buyer_market_maker (False -> 0)
@@ -27,12 +22,7 @@ class TestTradeEntry:
         # populated case
         e2 = TradeEntry()
         e2.timestamp_of_receive   = 987654321
-        e2.stream                 = "trade_stream"
-        e2.event_type             = "trade"
-        e2.event_time             = 11
-        e2.transaction_time       = 22
         e2.symbol                 = "ETHUSD"
-        e2.trade_id               = 424242
         e2.price                  = 2500.55
         e2.quantity               = 0.005
         e2.is_buyer_market_maker  = True
@@ -43,12 +33,7 @@ class TestTradeEntry:
 
         expected2 = [
             987654321,
-            "trade_stream",
-            "trade",
-            11,
-            22,
             "ETHUSD",
-            424242,
             2500.55,
             0.005,
             1,        # True -> 1
@@ -63,12 +48,7 @@ class TestTradeEntry:
         e = TradeEntry()
         expected_names = [
             "timestamp_of_receive",
-            "stream",
-            "event_type",
-            "event_time",
-            "transaction_time",
             "symbol",
-            "trade_id",
             "price",
             "quantity",
             "is_buyer_market_maker",
@@ -86,16 +66,19 @@ class TestTradeEntry:
 
     def test_given_trade_entry_constructor_when_field_names_then_returned_names_are_correct(self):
         e = TradeEntry(
-            1, "a", "b", 2, 3, "X", 4, 1.1, 2.2, False, "m", "x", False, Market.SPOT
+            1,
+            "X",
+            1.1,
+            2.2,
+            False,
+            "m",
+            "x",
+            False,
+            Market.SPOT
         )
         expected_names = [
             "timestamp_of_receive",
-            "stream",
-            "event_type",
-            "event_time",
-            "transaction_time",
             "symbol",
-            "trade_id",
             "price",
             "quantity",
             "is_buyer_market_maker",

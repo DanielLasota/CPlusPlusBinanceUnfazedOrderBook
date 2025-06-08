@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "SingleVariableCounter.h"
 #include "OrderBook.h"
 
@@ -6,6 +8,11 @@ inline double round2(double x) {
     y += (y >= 0.0 ?  0.5 : -0.5);
     int t = static_cast<int>(y);
     return t * 0.01;
+}
+
+inline double round8(double x) {
+    double p = 100000000.0; // 8
+    return std::round(x * p) / p;
 }
 
 namespace SingleVariableCounter {

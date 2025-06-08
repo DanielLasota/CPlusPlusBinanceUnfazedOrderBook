@@ -37,18 +37,10 @@ def sample_order_list(
         orders_list.append(
             DifferenceDepthEntry(
                 timestamp_of_receive=timestamp_of_receive,
-                stream=f'{symbol.lower()}@depth@100ms',
-                event_type='depthUpdate',
-                event_time=timestamp_of_receive,
-                transaction_time=timestamp_of_receive,
                 symbol=symbol,
-                first_update_id=timestamp_of_receive,
-                final_update_id=timestamp_of_receive,
-                final_update_id_in_last_stream=timestamp_of_receive,
                 is_ask=is_ask,
                 price=price,
                 quantity=quantity,
-                ps_unknown_field='market',
                 is_last=1,
                 market=market
             )
@@ -251,18 +243,10 @@ class TestGlobalMarketState:
             new_ask_trxusdt_timestamp_of_receive = 21
             new_ask_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_trxusdt_timestamp_of_receive,
-                stream=f'trxusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_trxusdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="TRXUSDT",
-                first_update_id=new_ask_trxusdt_timestamp_of_receive,
-                final_update_id=new_ask_trxusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_trxusdt_timestamp_of_receive,
                 is_ask=1,
                 price=12.54589,
                 quantity=3.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.SPOT
                 )
@@ -279,18 +263,10 @@ class TestGlobalMarketState:
             new_bid_trxusdt_timestamp_of_receive = 22
             new_bid_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
-                stream=f'trxusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_trxusdt_timestamp_of_receive,
-                transaction_time=new_bid_trxusdt_timestamp_of_receive,
                 symbol="TRXUSDT",
-                first_update_id=new_bid_trxusdt_timestamp_of_receive,
-                final_update_id=new_bid_trxusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_trxusdt_timestamp_of_receive,
                 is_ask=0,
                 price=10.24589,
                 quantity=1.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.SPOT
             )
@@ -327,18 +303,10 @@ class TestGlobalMarketState:
             new_ask_btcusdt_timestamp_of_receive = 23
             new_ask_btcusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_btcusdt_timestamp_of_receive,
-                stream=f'btcusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_btcusdt_timestamp_of_receive,
-                transaction_time=new_ask_btcusdt_timestamp_of_receive,
                 symbol="BTCUSDT",
-                first_update_id=new_ask_btcusdt_timestamp_of_receive,
-                final_update_id=new_ask_btcusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_btcusdt_timestamp_of_receive,
                 is_ask=1,
                 price=22.3,
                 quantity=3.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -356,18 +324,10 @@ class TestGlobalMarketState:
             new_bid_trxusdt_timestamp_of_receive = 24
             new_bid_btcusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
-                stream=f'btcusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_trxusdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="BTCUSDT",
-                first_update_id=new_bid_trxusdt_timestamp_of_receive,
-                final_update_id=new_bid_trxusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_trxusdt_timestamp_of_receive,
                 is_ask=0,
                 price=22.0,
                 quantity=1.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -404,18 +364,10 @@ class TestGlobalMarketState:
             new_ask_adausdt_timestamp_of_receive = 25
             new_ask_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_adausdt_timestamp_of_receive,
-                stream=f'adausdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_adausdt_timestamp_of_receive,
-                transaction_time=new_ask_adausdt_timestamp_of_receive,
                 symbol="ADAUSDT",
-                first_update_id=new_ask_adausdt_timestamp_of_receive,
-                final_update_id=new_ask_adausdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_adausdt_timestamp_of_receive,
                 is_ask=1,
                 price=33.1,
                 quantity=3.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.COIN_M_FUTURES
             )
@@ -433,18 +385,10 @@ class TestGlobalMarketState:
             new_bid_adausdt_timestamp_of_receive = 26
             new_bid_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_adausdt_timestamp_of_receive,
-                stream=f'adausdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_adausdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="ADAUSDT",
-                first_update_id=new_bid_adausdt_timestamp_of_receive,
-                final_update_id=new_bid_adausdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_adausdt_timestamp_of_receive,
                 is_ask=0,
                 price=30.0,
                 quantity=1.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.COIN_M_FUTURES
             )
@@ -481,18 +425,10 @@ class TestGlobalMarketState:
             new_ask_dogeusdt_timestamp_of_receive = 27
             new_ask_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_dogeusdt_timestamp_of_receive,
-                stream=f'dogeusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_dogeusdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="DOGEUSDT",
-                first_update_id=new_ask_dogeusdt_timestamp_of_receive,
-                final_update_id=new_ask_dogeusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_dogeusdt_timestamp_of_receive,
                 is_ask=1,
                 price=42.1,
                 quantity=3.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -510,18 +446,10 @@ class TestGlobalMarketState:
             new_bid_dogeusdt_timestamp_of_receive = 28
             new_bid_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_dogeusdt_timestamp_of_receive,
-                stream=f'dogeusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_dogeusdt_timestamp_of_receive,
-                transaction_time=new_bid_dogeusdt_timestamp_of_receive,
                 symbol="DOGEUSDT",
-                first_update_id=new_bid_dogeusdt_timestamp_of_receive,
-                final_update_id=new_bid_dogeusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_dogeusdt_timestamp_of_receive,
                 is_ask=0,
                 price=42.0,
                 quantity=1.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -620,18 +548,10 @@ class TestGlobalMarketState:
             new_ask_trxusdt_timestamp_of_receive = 21
             new_ask_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_trxusdt_timestamp_of_receive,
-                stream=f'trxusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_trxusdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="TRXUSDT",
-                first_update_id=new_ask_trxusdt_timestamp_of_receive,
-                final_update_id=new_ask_trxusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_trxusdt_timestamp_of_receive,
                 is_ask=1,
                 price=12.54589,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.SPOT
             )
@@ -647,18 +567,10 @@ class TestGlobalMarketState:
             new_bid_trxusdt_timestamp_of_receive = 22
             new_bid_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
-                stream=f'trxusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_trxusdt_timestamp_of_receive,
-                transaction_time=new_bid_trxusdt_timestamp_of_receive,
                 symbol="TRXUSDT",
-                first_update_id=new_bid_trxusdt_timestamp_of_receive,
-                final_update_id=new_bid_trxusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_trxusdt_timestamp_of_receive,
                 is_ask=0,
                 price=10.24589,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.SPOT
             )
@@ -694,18 +606,10 @@ class TestGlobalMarketState:
             new_ask_btcusdt_timestamp_of_receive = 23
             new_ask_btcusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_btcusdt_timestamp_of_receive,
-                stream=f'btcusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_btcusdt_timestamp_of_receive,
-                transaction_time=new_ask_btcusdt_timestamp_of_receive,
                 symbol="BTCUSDT",
-                first_update_id=new_ask_btcusdt_timestamp_of_receive,
-                final_update_id=new_ask_btcusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_btcusdt_timestamp_of_receive,
                 is_ask=1,
                 price=22.3,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -721,18 +625,10 @@ class TestGlobalMarketState:
             new_bid_btcusdt_timestamp_of_receive = 24
             new_bid_btcusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_btcusdt_timestamp_of_receive,
-                stream=f'btcusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_btcusdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="BTCUSDT",
-                first_update_id=new_bid_btcusdt_timestamp_of_receive,
-                final_update_id=new_bid_btcusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_btcusdt_timestamp_of_receive,
                 is_ask=0,
                 price=22.0,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -767,18 +663,10 @@ class TestGlobalMarketState:
             new_ask_adausdt_timestamp_of_receive = 25
             new_ask_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_adausdt_timestamp_of_receive,
-                stream=f'adausdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_adausdt_timestamp_of_receive,
-                transaction_time=new_ask_adausdt_timestamp_of_receive,
                 symbol="ADAUSDT",
-                first_update_id=new_ask_adausdt_timestamp_of_receive,
-                final_update_id=new_ask_adausdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_adausdt_timestamp_of_receive,
                 is_ask=1,
                 price=33.1,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.COIN_M_FUTURES
             )
@@ -794,18 +682,10 @@ class TestGlobalMarketState:
             new_bid_adausdt_timestamp_of_receive = 26
             new_bid_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_adausdt_timestamp_of_receive,
-                stream=f'adausdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_adausdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="ADAUSDT",
-                first_update_id=new_bid_adausdt_timestamp_of_receive,
-                final_update_id=new_bid_adausdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_adausdt_timestamp_of_receive,
                 is_ask=0,
                 price=30.0,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.COIN_M_FUTURES
             )
@@ -840,18 +720,10 @@ class TestGlobalMarketState:
             new_ask_dogeusdt_timestamp_of_receive = 27
             new_ask_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_dogeusdt_timestamp_of_receive,
-                stream=f'dogeusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_ask_dogeusdt_timestamp_of_receive,
-                transaction_time=11,
                 symbol="DOGEUSDT",
-                first_update_id=new_ask_dogeusdt_timestamp_of_receive,
-                final_update_id=new_ask_dogeusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_ask_dogeusdt_timestamp_of_receive,
                 is_ask=1,
                 price=42.1,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -867,18 +739,10 @@ class TestGlobalMarketState:
             new_bid_dogeusdt_timestamp_of_receive = 28
             new_bid_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_dogeusdt_timestamp_of_receive,
-                stream=f'dogeusdt@depth@100ms',
-                event_type='depthUpdate',
-                event_time=new_bid_dogeusdt_timestamp_of_receive,
-                transaction_time=new_bid_dogeusdt_timestamp_of_receive,
                 symbol="DOGEUSDT",
-                first_update_id=new_bid_dogeusdt_timestamp_of_receive,
-                final_update_id=new_bid_dogeusdt_timestamp_of_receive,
-                final_update_id_in_last_stream=new_bid_dogeusdt_timestamp_of_receive,
                 is_ask=0,
                 price=42.0,
                 quantity=0.0,
-                ps_unknown_field='market',
                 is_last=0,
                 market=Market.USD_M_FUTURES
             )
@@ -966,12 +830,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                stream='trxusdt@trade',
-                event_type='trade',
-                event_time=20,
-                transaction_time=20,
                 symbol='TRXUSDT',
-                trade_id=1,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -984,12 +843,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                stream='btcusdt@trade',
-                event_type='trade',
-                event_time=21,
-                transaction_time=21,
                 symbol='BTCUSDT',
-                trade_id=2,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1002,12 +856,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                stream='adausdt@trade',
-                event_type='trade',
-                event_time=22,
-                transaction_time=22,
                 symbol='ADAUSDT',
-                trade_id=3,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1020,12 +869,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                stream='dogeusdt@trade',
-                event_type='trade',
-                event_time=23,
-                transaction_time=23,
                 symbol='DOGEUSDT',
-                trade_id=4,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1043,12 +887,7 @@ class TestGlobalMarketState:
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 20
-            assert ms_trxusdt.last_trade.stream                   == 'trxusdt@trade'
-            assert ms_trxusdt.last_trade.event_type               == 'trade'
-            assert ms_trxusdt.last_trade.event_time               == 20
-            assert ms_trxusdt.last_trade.transaction_time         == 20
             assert ms_trxusdt.last_trade.symbol                   == 'TRXUSDT'
-            assert ms_trxusdt.last_trade.trade_id                 == 1
             assert ms_trxusdt.last_trade.price                    == 10.0
             assert ms_trxusdt.last_trade.quantity                 == 1.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 1
@@ -1059,12 +898,7 @@ class TestGlobalMarketState:
 
             # BTCUSDT
             assert ms_btcusdt.last_trade.timestamp_of_receive     == 21
-            assert ms_btcusdt.last_trade.stream                   == 'btcusdt@trade'
-            assert ms_btcusdt.last_trade.event_type               == 'trade'
-            assert ms_btcusdt.last_trade.event_time               == 21
-            assert ms_btcusdt.last_trade.transaction_time         == 21
             assert ms_btcusdt.last_trade.symbol                   == 'BTCUSDT'
-            assert ms_btcusdt.last_trade.trade_id                 == 2
             assert ms_btcusdt.last_trade.price                    == 11.0
             assert ms_btcusdt.last_trade.quantity                 == 2.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 0
@@ -1075,12 +909,7 @@ class TestGlobalMarketState:
 
             # ADAUSDT
             assert ms_adausdt.last_trade.timestamp_of_receive     == 22
-            assert ms_adausdt.last_trade.stream                   == 'adausdt@trade'
-            assert ms_adausdt.last_trade.event_type               == 'trade'
-            assert ms_adausdt.last_trade.event_time               == 22
-            assert ms_adausdt.last_trade.transaction_time         == 22
             assert ms_adausdt.last_trade.symbol                   == 'ADAUSDT'
-            assert ms_adausdt.last_trade.trade_id                 == 3
             assert ms_adausdt.last_trade.price                    == 12.0
             assert ms_adausdt.last_trade.quantity                 == 3.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 1
@@ -1091,12 +920,7 @@ class TestGlobalMarketState:
 
             # DOGEUSDT
             assert ms_dogeusdt.last_trade.timestamp_of_receive    == 23
-            assert ms_dogeusdt.last_trade.stream                  == 'dogeusdt@trade'
-            assert ms_dogeusdt.last_trade.event_type              == 'trade'
-            assert ms_dogeusdt.last_trade.event_time              == 23
-            assert ms_dogeusdt.last_trade.transaction_time        == 23
             assert ms_dogeusdt.last_trade.symbol                  == 'DOGEUSDT'
-            assert ms_dogeusdt.last_trade.trade_id                == 4
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 4.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 0
@@ -1168,12 +992,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                stream='trxusdt@trade',
-                event_type='trade',
-                event_time=20,
-                transaction_time=20,
                 symbol='TRXUSDT',
-                trade_id=1,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1186,12 +1005,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                stream='btcusdt@trade',
-                event_type='trade',
-                event_time=21,
-                transaction_time=21,
                 symbol='BTCUSDT',
-                trade_id=2,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1204,12 +1018,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                stream='adausdt@trade',
-                event_type='trade',
-                event_time=22,
-                transaction_time=22,
                 symbol='ADAUSDT',
-                trade_id=3,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1222,12 +1031,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                stream='dogeusdt@trade',
-                event_type='trade',
-                event_time=23,
-                transaction_time=23,
                 symbol='DOGEUSDT',
-                trade_id=4,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1245,12 +1049,7 @@ class TestGlobalMarketState:
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 20
-            assert ms_trxusdt.last_trade.stream                   == 'trxusdt@trade'
-            assert ms_trxusdt.last_trade.event_type               == 'trade'
-            assert ms_trxusdt.last_trade.event_time               == 20
-            assert ms_trxusdt.last_trade.transaction_time         == 20
             assert ms_trxusdt.last_trade.symbol                   == 'TRXUSDT'
-            assert ms_trxusdt.last_trade.trade_id                 == 1
             assert ms_trxusdt.last_trade.price                    == 10.0
             assert ms_trxusdt.last_trade.quantity                 == 1.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 1
@@ -1261,12 +1060,7 @@ class TestGlobalMarketState:
 
             # BTCUSDT
             assert ms_btcusdt.last_trade.timestamp_of_receive     == 21
-            assert ms_btcusdt.last_trade.stream                   == 'btcusdt@trade'
-            assert ms_btcusdt.last_trade.event_type               == 'trade'
-            assert ms_btcusdt.last_trade.event_time               == 21
-            assert ms_btcusdt.last_trade.transaction_time         == 21
             assert ms_btcusdt.last_trade.symbol                   == 'BTCUSDT'
-            assert ms_btcusdt.last_trade.trade_id                 == 2
             assert ms_btcusdt.last_trade.price                    == 11.0
             assert ms_btcusdt.last_trade.quantity                 == 2.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 0
@@ -1277,12 +1071,7 @@ class TestGlobalMarketState:
 
             # ADAUSDT
             assert ms_adausdt.last_trade.timestamp_of_receive     == 22
-            assert ms_adausdt.last_trade.stream                   == 'adausdt@trade'
-            assert ms_adausdt.last_trade.event_type               == 'trade'
-            assert ms_adausdt.last_trade.event_time               == 22
-            assert ms_adausdt.last_trade.transaction_time         == 22
             assert ms_adausdt.last_trade.symbol                   == 'ADAUSDT'
-            assert ms_adausdt.last_trade.trade_id                 == 3
             assert ms_adausdt.last_trade.price                    == 12.0
             assert ms_adausdt.last_trade.quantity                 == 3.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 1
@@ -1293,12 +1082,7 @@ class TestGlobalMarketState:
 
             # DOGEUSDT
             assert ms_dogeusdt.last_trade.timestamp_of_receive    == 23
-            assert ms_dogeusdt.last_trade.stream                  == 'dogeusdt@trade'
-            assert ms_dogeusdt.last_trade.event_type              == 'trade'
-            assert ms_dogeusdt.last_trade.event_time              == 23
-            assert ms_dogeusdt.last_trade.transaction_time        == 23
             assert ms_dogeusdt.last_trade.symbol                  == 'DOGEUSDT'
-            assert ms_dogeusdt.last_trade.trade_id                == 4
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 4.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 0
@@ -1317,12 +1101,7 @@ class TestGlobalMarketState:
 
             trxusdt_next_trade = TradeEntry(
                 timestamp_of_receive=30,
-                stream='trxusdt@trade',
-                event_type='trade',
-                event_time=30,
-                transaction_time=30,
                 symbol='TRXUSDT',
-                trade_id=5,
                 price=20.0,
                 quantity=10.0,
                 is_buyer_market_maker=0,
@@ -1335,12 +1114,7 @@ class TestGlobalMarketState:
 
             btcusdt_next_trade = TradeEntry(
                 timestamp_of_receive=31,
-                stream='btcusdt@trade',
-                event_type='trade',
-                event_time=31,
-                transaction_time=31,
                 symbol='BTCUSDT',
-                trade_id=6,
                 price=21.0,
                 quantity=11.0,
                 is_buyer_market_maker=1,
@@ -1353,12 +1127,7 @@ class TestGlobalMarketState:
 
             adausdt_next_trade = TradeEntry(
                 timestamp_of_receive=32,
-                stream='adausdt@trade',
-                event_type='trade',
-                event_time=32,
-                transaction_time=32,
                 symbol='ADAUSDT',
-                trade_id=7,
                 price=22.0,
                 quantity=12.0,
                 is_buyer_market_maker=0,
@@ -1371,12 +1140,7 @@ class TestGlobalMarketState:
 
             dogeusdt_next_trade = TradeEntry(
                 timestamp_of_receive=33,
-                stream='dogeusdt@trade',
-                event_type='trade',
-                event_time=33,
-                transaction_time=33,
                 symbol='DOGEUSDT',
-                trade_id=8,
                 price=13.0,
                 quantity=33.0,
                 is_buyer_market_maker=1,
@@ -1389,14 +1153,10 @@ class TestGlobalMarketState:
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 30
-            assert ms_trxusdt.last_trade.trade_id                 == 5
+            assert ms_trxusdt.last_trade.symbol                   == 'TRXUSDT'
             assert ms_trxusdt.last_trade.price                    == 20.0
             assert ms_trxusdt.last_trade.quantity                 == 10.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 0
-            assert ms_trxusdt.last_trade.stream                   == 'trxusdt@trade'
-            assert ms_trxusdt.last_trade.event_type               == 'trade'
-            assert ms_trxusdt.last_trade.event_time               == 30
-            assert ms_trxusdt.last_trade.transaction_time         == 30
             assert ms_trxusdt.last_trade.m_unknown_parameter      == 'TRUE'
             assert ms_trxusdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_trxusdt.last_trade.is_last                  == 1
@@ -1404,14 +1164,10 @@ class TestGlobalMarketState:
 
             # BTCUSDT
             assert ms_btcusdt.last_trade.timestamp_of_receive     == 31
-            assert ms_btcusdt.last_trade.trade_id                 == 6
+            assert ms_btcusdt.last_trade.symbol                   == 'BTCUSDT'
             assert ms_btcusdt.last_trade.price                    == 21.0
             assert ms_btcusdt.last_trade.quantity                 == 11.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 1
-            assert ms_btcusdt.last_trade.stream                   == 'btcusdt@trade'
-            assert ms_btcusdt.last_trade.event_type               == 'trade'
-            assert ms_btcusdt.last_trade.event_time               == 31
-            assert ms_btcusdt.last_trade.transaction_time         == 31
             assert ms_btcusdt.last_trade.m_unknown_parameter      == 'FALSE'
             assert ms_btcusdt.last_trade.x_unknown_parameter      == ''
             assert ms_btcusdt.last_trade.is_last                  == 1
@@ -1419,14 +1175,10 @@ class TestGlobalMarketState:
 
             # ADAUSDT
             assert ms_adausdt.last_trade.timestamp_of_receive     == 32
-            assert ms_adausdt.last_trade.trade_id                 == 7
+            assert ms_adausdt.last_trade.symbol                   == 'ADAUSDT'
             assert ms_adausdt.last_trade.price                    == 22.0
             assert ms_adausdt.last_trade.quantity                 == 12.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 0
-            assert ms_adausdt.last_trade.stream                   == 'adausdt@trade'
-            assert ms_adausdt.last_trade.event_type               == 'trade'
-            assert ms_adausdt.last_trade.event_time               == 32
-            assert ms_adausdt.last_trade.transaction_time         == 32
             assert ms_adausdt.last_trade.m_unknown_parameter      == 'TRUE'
             assert ms_adausdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_adausdt.last_trade.is_last                  == 1
@@ -1434,14 +1186,10 @@ class TestGlobalMarketState:
 
             # DOGEUSDT
             assert ms_dogeusdt.last_trade.timestamp_of_receive    == 33
-            assert ms_dogeusdt.last_trade.trade_id                == 8
+            assert ms_dogeusdt.last_trade.symbol                  == 'DOGEUSDT'
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 33.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 1
-            assert ms_dogeusdt.last_trade.stream                  == 'dogeusdt@trade'
-            assert ms_dogeusdt.last_trade.event_type              == 'trade'
-            assert ms_dogeusdt.last_trade.event_time              == 33
-            assert ms_dogeusdt.last_trade.transaction_time        == 33
             assert ms_dogeusdt.last_trade.m_unknown_parameter     == 'FALSE'
             assert ms_dogeusdt.last_trade.x_unknown_parameter     == ''
             assert ms_dogeusdt.last_trade.is_last                 == 1
@@ -1559,12 +1307,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                stream='trxusdt@trade',
-                event_type='trade',
-                event_time=20,
-                transaction_time=20,
                 symbol='TRXUSDT',
-                trade_id=1,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1577,12 +1320,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                stream='btcusdt@trade',
-                event_type='trade',
-                event_time=21,
-                transaction_time=21,
                 symbol='BTCUSDT',
-                trade_id=2,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1595,12 +1333,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                stream='adausdt@trade',
-                event_type='trade',
-                event_time=22,
-                transaction_time=22,
                 symbol='ADAUSDT',
-                trade_id=3,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1613,12 +1346,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                stream='dogeusdt@trade',
-                event_type='trade',
-                event_time=23,
-                transaction_time=23,
                 symbol='DOGEUSDT',
-                trade_id=4,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1692,12 +1420,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                stream='trxusdt@trade',
-                event_type='trade',
-                event_time=20,
-                transaction_time=20,
                 symbol='TRXUSDT',
-                trade_id=1,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1710,12 +1433,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                stream='btcusdt@trade',
-                event_type='trade',
-                event_time=21,
-                transaction_time=21,
                 symbol='BTCUSDT',
-                trade_id=2,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1728,12 +1446,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                stream='adausdt@trade',
-                event_type='trade',
-                event_time=22,
-                transaction_time=22,
                 symbol='ADAUSDT',
-                trade_id=3,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1746,12 +1459,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                stream='dogeusdt@trade',
-                event_type='trade',
-                event_time=23,
-                transaction_time=23,
                 symbol='DOGEUSDT',
-                trade_id=4,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1826,12 +1534,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                stream='trxusdt@trade',
-                event_type='trade',
-                event_time=20,
-                transaction_time=20,
                 symbol='TRXUSDT',
-                trade_id=1,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1844,12 +1547,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                stream='btcusdt@trade',
-                event_type='trade',
-                event_time=21,
-                transaction_time=21,
                 symbol='BTCUSDT',
-                trade_id=2,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1862,12 +1560,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                stream='adausdt@trade',
-                event_type='trade',
-                event_time=22,
-                transaction_time=22,
                 symbol='ADAUSDT',
-                trade_id=3,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1880,12 +1573,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                stream='dogeusdt@trade',
-                event_type='trade',
-                event_time=23,
-                transaction_time=23,
                 symbol='DOGEUSDT',
-                trade_id=4,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,

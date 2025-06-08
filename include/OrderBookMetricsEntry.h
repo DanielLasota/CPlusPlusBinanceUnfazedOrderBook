@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "enums/Market.h"
+#include <enums/Market.h>
 
 struct OrderBookMetricsEntry {
     int64_t timestampOfReceive;

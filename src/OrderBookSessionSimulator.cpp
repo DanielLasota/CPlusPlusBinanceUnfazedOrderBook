@@ -49,7 +49,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
     auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
     std::cout << "ob loop elapsed: " << elapsed_ms << " ms" << std::endl;
 
-    // orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
+    orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
 
     return orderBookMetrics.entries();
 }

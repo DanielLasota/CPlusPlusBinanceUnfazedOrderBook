@@ -328,6 +328,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             oss << std::fixed << std::setprecision(5);
             oss
             << "timestampOfReceive: " << entry.timestampOfReceive << " "
+            << "market: " << static_cast<int>(entry.market) << " "
+            << "symbol: " << static_cast<int>(entry.symbol) << " "
             << "bestAskPrice: " << entry.bestAskPrice << " "
             << "bestBidPrice: " << entry.bestBidPrice << " "
             << "midPrice: " << entry.midPrice << " "

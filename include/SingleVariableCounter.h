@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "enums/TradeEntry.h"
 #include "OrderBook.h"
 

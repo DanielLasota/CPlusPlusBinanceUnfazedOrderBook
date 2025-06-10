@@ -112,12 +112,12 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              "Wypisuje stan orderbooka")
         .def_property_readonly(
             "symbol",
-            &MS::get_symbol,
+            &MS::getSymbol,
             "Zwraca symbol tej MarketState"
         )
         .def_property_readonly(
             "market",
-            &MS::get_market,
+            &MS::getMarket,
             "Zwraca market tej MarketState"
         )
         .def("do_nothing",
@@ -193,35 +193,35 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             py::arg("is_last"),
             py::arg("market")
         )
-        .def_readwrite("timestamp_of_receive", &DifferenceDepthEntry::TimestampOfReceive)
+        .def_readwrite("timestamp_of_receive", &DifferenceDepthEntry::timestampOfReceive)
         .def_readwrite("symbol", &DifferenceDepthEntry::symbol)
-        .def_readwrite("is_ask", &DifferenceDepthEntry::IsAsk)
-        .def_readwrite("price", &DifferenceDepthEntry::Price)
-        .def_readwrite("quantity", &DifferenceDepthEntry::Quantity)
-        .def_readwrite("is_last", &DifferenceDepthEntry::IsLast)
-        .def_readwrite("market", &DifferenceDepthEntry::Market_)
+        .def_readwrite("is_ask", &DifferenceDepthEntry::isAsk)
+        .def_readwrite("price", &DifferenceDepthEntry::price)
+        .def_readwrite("quantity", &DifferenceDepthEntry::quantity)
+        .def_readwrite("is_last", &DifferenceDepthEntry::isLast)
+        .def_readwrite("market", &DifferenceDepthEntry::market)
         .def("__str__", [](const DifferenceDepthEntry &entry) {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(5);
             oss
-            << "TimestampOfReceive: " << entry.TimestampOfReceive << " "
+            << "TimestampOfReceive: " << entry.timestampOfReceive << " "
             << "Symbol: " << entry.symbol << " "
-            << "IsAsk: " << entry.IsAsk << " "
-            << "Price: " << entry.Price << " "
-            << "Quantity: " << entry.Quantity << " "
-            << "IsLast: " << entry.IsLast << " "
-            << "Market_: " << entry.Market_ << " ";
+            << "IsAsk: " << entry.isAsk << " "
+            << "Price: " << entry.price << " "
+            << "Quantity: " << entry.quantity << " "
+            << "IsLast: " << entry.isLast << " "
+            << "Market_: " << entry.market << " ";
             return oss.str();
         })
         .def("to_list", [](const DifferenceDepthEntry &e) {
             py::list v;
-            v.append(e.TimestampOfReceive);
+            v.append(e.timestampOfReceive);
             v.append(e.symbol);
-            v.append(e.IsAsk ? 1 : 0);
-            v.append(e.Price);
-            v.append(e.Quantity);
-            v.append(e.IsLast ? 1 : 0);
-            v.append(e.Market_);
+            v.append(e.isAsk ? 1 : 0);
+            v.append(e.price);
+            v.append(e.quantity);
+            v.append(e.isLast ? 1 : 0);
+            v.append(e.market);
             return v;
         })
         .def_static("field_names", []() {
@@ -260,39 +260,39 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             py::arg("is_last"),
             py::arg("market")
         )
-        .def_readwrite("timestamp_of_receive",    &TradeEntry::TimestampOfReceive)
+        .def_readwrite("timestamp_of_receive",    &TradeEntry::timestampOfReceive)
         .def_readwrite("symbol",                  &TradeEntry::symbol)
-        .def_readwrite("price",                   &TradeEntry::Price)
-        .def_readwrite("quantity",                &TradeEntry::Quantity)
-        .def_readwrite("is_buyer_market_maker",   &TradeEntry::IsBuyerMarketMaker)
-        .def_readwrite("m_unknown_parameter",     &TradeEntry::MUnknownParameter)
-        .def_readwrite("x_unknown_parameter",     &TradeEntry::XUnknownParameter)
-        .def_readwrite("is_last",                 &TradeEntry::IsLast)
-        .def_readwrite("market",                  &TradeEntry::Market_)
+        .def_readwrite("price",                   &TradeEntry::price)
+        .def_readwrite("quantity",                &TradeEntry::quantity)
+        .def_readwrite("is_buyer_market_maker",   &TradeEntry::isBuyerMarketMaker)
+        .def_readwrite("m_unknown_parameter",     &TradeEntry::mUnknownParameter)
+        .def_readwrite("x_unknown_parameter",     &TradeEntry::xUnknownParameter)
+        .def_readwrite("is_last",                 &TradeEntry::isLast)
+        .def_readwrite("market",                  &TradeEntry::market)
         .def("__str__", [](const TradeEntry &entry) {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(5);
             oss
-            << "TimestampOfReceive: " << entry.TimestampOfReceive << " "
+            << "TimestampOfReceive: " << entry.timestampOfReceive << " "
             << "Symbol: " << entry.symbol << " "
-            << "Price: " << entry.Price << " "
-            << "Quantity: " << entry.Quantity << " "
-            << "IsBuyerMarketMaker: " << entry.IsBuyerMarketMaker << " "
-            << "IsLast: " << entry.IsLast << " "
-            << "Market_: " << entry.Market_ << " ";
+            << "Price: " << entry.price << " "
+            << "Quantity: " << entry.quantity << " "
+            << "IsBuyerMarketMaker: " << entry.isBuyerMarketMaker << " "
+            << "IsLast: " << entry.isLast << " "
+            << "Market_: " << entry.market << " ";
             return oss.str();
         })
         .def("to_list", [](const TradeEntry &e) {
             py::list v;
-            v.append(e.TimestampOfReceive);
+            v.append(e.timestampOfReceive);
             v.append(e.symbol);
-            v.append(e.Price);
-            v.append(e.Quantity);
-            v.append(e.IsBuyerMarketMaker ? 1 : 0);
-            v.append(e.MUnknownParameter);
-            v.append(e.XUnknownParameter);
-            v.append(e.IsLast ? 1 : 0);
-            v.append(e.Market_);
+            v.append(e.price);
+            v.append(e.quantity);
+            v.append(e.isBuyerMarketMaker ? 1 : 0);
+            v.append(e.mUnknownParameter);
+            v.append(e.xUnknownParameter);
+            v.append(e.isLast ? 1 : 0);
+            v.append(e.market);
             return v;
         })
         .def_static("field_names", []() {

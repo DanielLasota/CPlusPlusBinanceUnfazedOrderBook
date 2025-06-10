@@ -19,9 +19,9 @@ auto OrderBook::allocateNode(double price, bool isAsk, double quantity)
     if (!freeListHead_) throw std::runtime_error("Pool exhausted");
     auto *node = freeListHead_;
     freeListHead_ = freeListHead_->next_;
-    node->Price    = price;
-    node->IsAsk    = isAsk;
-    node->Quantity = quantity;
+    node->price    = price;
+    node->isAsk    = isAsk;
+    node->quantity = quantity;
     node->prev_ = node->next_ = nullptr;
     return node;
 }
@@ -42,7 +42,7 @@ void OrderBook::addNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail
 
     if (isAsk) {
         // For asks, we maintain a sorted list in ascending order
-        auto it = askMap_.find(node->Price);
+        auto it = askMap_.find(node->price);
         if (it == askMap_.end()) {
             // Can't happen, but just in case
             // Add to beginning (lowest price)
@@ -75,7 +75,7 @@ void OrderBook::addNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail
         }
     } else {
         // For bids, we maintain a sorted list in descending order
-        auto it = bidMap_.find(node->Price);
+        auto it = bidMap_.find(node->price);
         if (it == bidMap_.end()) {
             // Can't happen, but just in case
             // Add to beginning (highest price)
@@ -120,23 +120,23 @@ void OrderBook::removeNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& t
 
 void OrderBook::update(DifferenceDepthEntry* e) {
     // dispatch
-    PriceSide key{ e->Price, e->IsAsk };
+    PriceSide key{ e->price, e->isAsk };
     auto it = index_.find(key);
 
-    if (e->Quantity == 0.0) {
+    if (e->quantity == 0.0) {
         // remove level
         if (it != index_.end()) {
             auto *node = it->second;
             // update sum/count
-            if (node->IsAsk) {
+            if (node->isAsk) {
                 --askCount_;
-                sumAskQty_ -= node->Quantity;
-                askMap_.erase(node->Price);
+                sumAskQty_ -= node->quantity;
+                askMap_.erase(node->price);
                 removeNode(askHead_, askTail_, node);
             } else {
                 --bidCount_;
-                sumBidQty_ -= node->Quantity;
-                bidMap_.erase(node->Price);
+                sumBidQty_ -= node->quantity;
+                bidMap_.erase(node->price);
                 removeNode(bidHead_, bidTail_, node);
             }
             index_.erase(it);
@@ -147,18 +147,18 @@ void OrderBook::update(DifferenceDepthEntry* e) {
         if (it != index_.end()) {
             // existing level - only change quantity
             auto *node = it->second;
-            if (node->IsAsk) {
-                sumAskQty_ += (e->Quantity - node->Quantity);
+            if (node->isAsk) {
+                sumAskQty_ += (e->quantity - node->quantity);
             } else {
-                sumBidQty_ += (e->Quantity - node->Quantity);
+                sumBidQty_ += (e->quantity - node->quantity);
             }
-            node->TimestampOfReceive = e->TimestampOfReceive;
-            node->Quantity = e->Quantity;
-            node->IsLast = e->IsLast;
+            node->timestampOfReceive = e->timestampOfReceive;
+            node->quantity = e->quantity;
+            node->isLast = e->isLast;
         }
         else {
             // a new level
-            auto *node = allocateNode(e->Price, e->IsAsk, e->Quantity);
+            auto *node = allocateNode(e->price, e->isAsk, e->quantity);
 
             DifferenceDepthEntry temp = *e;
             *node = std::move(temp);
@@ -174,12 +174,12 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             // node->prev_ = nullptr;
             // node->next_ = nullptr;
 
-            if (node->IsAsk) {
+            if (node->isAsk) {
                 ++askCount_;
-                sumAskQty_ += node->Quantity;
+                sumAskQty_ += node->quantity;
 
                 // Insert into askMap and then update linked list
-                auto [mapIt, inserted] = askMap_.insert({node->Price, node});
+                auto [mapIt, inserted] = askMap_.insert({node->price, node});
 
                 // Find the correct position in the linked list
                 if (askMap_.size() == 1) {
@@ -212,10 +212,10 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             }
             else {
                 ++bidCount_;
-                sumBidQty_ += node->Quantity;
+                sumBidQty_ += node->quantity;
 
                 // Insert into bidMap and then update linked list
-                auto [mapIt, inserted] = bidMap_.insert({node->Price, node});
+                auto [mapIt, inserted] = bidMap_.insert({node->price, node});
 
                 // Find the correct position in the linked list
                 if (bidMap_.size() == 1) {
@@ -259,24 +259,24 @@ void OrderBook::printOrderBook() const {
     std::cout << "  Asks (lowest→highest):\n";
     for (auto *n = askTail_; n; n = n->prev_) {
         std::cout
-        << n->TimestampOfReceive << " "
+        << n->timestampOfReceive << " "
         << n->symbol << " "
-        << n->IsAsk << " "
-        << n->Price << " "
-        << n->Quantity << " "
-        << n->Market_ << " "
+        << n->isAsk << " "
+        << n->price << " "
+        << n->quantity << " "
+        << n->market << " "
         << "\n";
     }
 
     std::cout << "  Bids (highest→lowest):\n";
     for (auto *n = bidHead_; n; n = n->next_) {
         std::cout
-        << n->TimestampOfReceive << " "
+        << n->timestampOfReceive << " "
         << n->symbol << " "
-        << n->IsAsk << " "
-        << n->Price << " "
-        << n->Quantity << " "
-        << n->Market_ << " "
+        << n->isAsk << " "
+        << n->price << " "
+        << n->quantity << " "
+        << n->market << " "
         << "\n";
     }
     std::cout << std::endl;

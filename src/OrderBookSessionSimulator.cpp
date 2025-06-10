@@ -36,7 +36,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
     for (auto* p : ptrEntries) {
         globalMarketState.update(p);
 
-        const bool isLast = std::visit([](auto const& entry){return entry.IsLast;}, *p);
+        const bool isLast = std::visit([](auto const& entry){return entry.isLast;}, *p);
 
         if (isLast == true) {
             if (auto m = globalMarketState.countMarketStateMetricsByEntry(p)) {
@@ -67,6 +67,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeBacktest(co
     MetricMask mask = parseMask(variables);
     GlobalMarketState globalMarketState(mask);
     OrderBookMetrics orderBookMetrics(variables);
+
     orderBookMetrics.reserve(ptrEntries.size());
 
     // auto start = std::chrono::steady_clock::now();
@@ -74,7 +75,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeBacktest(co
     for (auto* p : ptrEntries) {
         globalMarketState.update(p);
 
-        const bool isLast = std::visit([](auto const& entry){return entry.IsLast;}, *p);
+        const bool isLast = std::visit([](auto const& entry){return entry.isLast;}, *p);
 
         if (isLast == true) {
             if (auto m = globalMarketState.countMarketStateMetricsByEntry(p)) {

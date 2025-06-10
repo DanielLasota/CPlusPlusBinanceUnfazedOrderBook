@@ -60,7 +60,7 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersC
             DecodedEntry entry = EntryDecoder::decodeSingleAssetParameterEntry(assetParameters, line_sv);
             entries.push_back(std::move(entry));
         } catch (const std::exception &e) {
-            std::cerr << "Błąd przetwarzania linii: " << std::string(line_sv) << " - " << e.what() << std::endl;
+            std::cerr << "Error processing the line: " << std::string(line_sv) << " - " << e.what() << std::endl;
         }
     }
 
@@ -88,7 +88,7 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
         }
     }
     if (headerLine.empty())
-        throw std::runtime_error("Nie znaleziono nagłówka w pliku: " + csvPath);
+        throw std::runtime_error("Header not found in file: " + csvPath);
 
     std::vector<std::string_view> headerTokens = splitLineSV(headerLine, ',');
     ColMap colMap = buildColMap(headerTokens);
@@ -104,7 +104,7 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
             entries.push_back(std::move(entry));
         }
         catch (const std::exception &e) {
-            std::cerr << "Błąd przetwarzania linii: " << std::string(line_sv)
+            std::cerr << "Error processing line: " << std::string(line_sv)
                       << " - " << e.what() << std::endl;
         }
     }

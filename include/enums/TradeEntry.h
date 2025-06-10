@@ -2,11 +2,13 @@
 
 #include <cstdint>
 #include <string>
+
+#include "symbol.h"
 #include "enums/Market.h"
 
 struct TradeEntry {
     int64_t TimestampOfReceive;
-    std::string Symbol;
+    Symbol symbol;
     double Price;
     double Quantity;
     bool IsBuyerMarketMaker;
@@ -17,7 +19,7 @@ struct TradeEntry {
 
     TradeEntry(
         int64_t TimestampOfReceive,
-        const std::string& Symbol,
+        Symbol Symbol,
         double Price,
         double Quantity,
         bool IsBuyerMarketMaker,
@@ -27,7 +29,7 @@ struct TradeEntry {
         Market Market_
     )
     : TimestampOfReceive(TimestampOfReceive)
-    , Symbol(Symbol)
+    , symbol(Symbol)
     , Price(Price)
     , Quantity(Quantity)
     , IsBuyerMarketMaker(IsBuyerMarketMaker)
@@ -36,5 +38,7 @@ struct TradeEntry {
     , IsLast(IsLast)
     , Market_(Market_)
     {}
+
     TradeEntry() = default;
+
 };

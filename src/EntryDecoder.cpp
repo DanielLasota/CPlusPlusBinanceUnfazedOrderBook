@@ -27,7 +27,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         if (params.market == Market::SPOT) {
             return TradeEntry(
                 parse_int(tokens[0]),
-                std::string(tokens[1]),
+                parseSymbol(tokens[1]),
                 parse_double(tokens[2]),
                 parse_double(tokens[3]),
                 tokens[4] == "1",
@@ -40,7 +40,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::USD_M_FUTURES || params.market == Market::COIN_M_FUTURES) {
             return TradeEntry(
                 parse_int(tokens[0]),
-                std::string(tokens[1]),
+                parseSymbol(tokens[1]),
                 parse_double(tokens[2]),
                 parse_double(tokens[3]),
                 tokens[4] == "1",
@@ -58,7 +58,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         if (params.market == Market::SPOT) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                "",
+                parseSymbol(""),
                 (tokens[3] == "1"),
                 parse_double(tokens[4]),
                 parse_double(tokens[5]),
@@ -69,7 +69,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::USD_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                "", // Symbol
+                parseSymbol(""), // Symbol
                 (tokens[5] == "1"),
                 parse_double(tokens[6]),
                 parse_double(tokens[7]),
@@ -80,7 +80,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::COIN_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                std::string(tokens[5]),
+                parseSymbol(tokens[5]),
                 (tokens[7] == "1"),
                 parse_double(tokens[8]),
                 parse_double(tokens[9]),
@@ -96,7 +96,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         if (params.market == Market::SPOT) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                std::string(tokens[4]),
+                parseSymbol(tokens[4]),
                 (tokens[7] == "1"),
                 parse_double(tokens[8]),
                 parse_double(tokens[9]),
@@ -107,7 +107,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::USD_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                std::string(tokens[5]),
+                parseSymbol(tokens[5]),
                 (tokens[9] == "1"),
                 parse_double(tokens[10]),
                 parse_double(tokens[11]),
@@ -118,7 +118,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::COIN_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                std::string(tokens[5]),
+                parseSymbol(tokens[5]),
                 (tokens[9] == "1"),
                 parse_double(tokens[10]),
                 parse_double(tokens[11]),
@@ -135,34 +135,19 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
     }
 }
 
-static StreamType parseStreamType(std::string_view s) {
-    if (s == "TRADE_STREAM") return StreamType::TRADE_STREAM;
-    if (s == "DIFFERENCE_DEPTH_STREAM") return StreamType::DIFFERENCE_DEPTH_STREAM;
-    if (s == "DEPTH_SNAPSHOT") return StreamType::DEPTH_SNAPSHOT;
-    if (s == "FINAL_DEPTH_SNAPSHOT") return StreamType::DEPTH_SNAPSHOT;
-    throw std::invalid_argument("Unknown StreamType: " + std::string(s));
-}
-
-static Market parseMarket(std::string_view s) {
-    if (s == "SPOT") return Market::SPOT;
-    if (s == "USD_M_FUTURES") return Market::USD_M_FUTURES;
-    if (s == "COIN_M_FUTURES")return Market::COIN_M_FUTURES;
-    throw std::invalid_argument("Unknown Market: " + std::string(s));
-}
-
 DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line, const ColMap& h) {
     auto tokens = splitLineSV(line, ',');
 
-    StreamType st = parseStreamType(tokens[h[COL_StreamType]]);
-    Market     mk = parseMarket(tokens[h[COL_Market]]);
+    StreamType streamType = parseStreamType(tokens[h[COL_StreamType]][0]);
+    Market     market = parseMarket(tokens[h[COL_Market]][0]);
 
-    switch (st) {
+    switch (streamType) {
         case StreamType::TRADE_STREAM: {
-            switch (mk) {
+            switch (market) {
                 case Market::SPOT: {
                     return TradeEntry(
                         parse_int(tokens[h[COL_TimestampOfReceiveUS]]),
-                        std::string(tokens[h[COL_Symbol]]),
+                        parseSymbol(tokens[h[COL_Symbol]]),
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
                         (tokens[h[COL_IsBuyerMarketMaker]] == "1"),
@@ -176,24 +161,24 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line,
                 case Market::COIN_M_FUTURES: {
                     return TradeEntry(
                         parse_int(tokens[h[COL_TimestampOfReceiveUS]]),
-                        std::string(tokens[h[COL_Symbol]]),
+                        parseSymbol(tokens[h[COL_Symbol]]),
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
                         (tokens[h[COL_IsBuyerMarketMaker]] == "1"),
                         "",
                         std::string(tokens[h[COL_XUnknownParameter]]),
                         (tokens[h[COL_IsLast]] == "1"),
-                        mk
+                        market
                     );
                 }
             }
         }
         case StreamType::DEPTH_SNAPSHOT: {
-            switch (mk) {
+            switch (market) {
                 case Market::SPOT: {
                     return DifferenceDepthEntry(
                         parse_int(tokens[h[COL_TimestampOfReceiveUS]]),
-                        std::string(tokens[h[COL_Symbol]]),
+                        parseSymbol(tokens[h[COL_Symbol]]),
                         (tokens[h[COL_IsAsk]] == "1"),
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
@@ -205,22 +190,23 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line,
                 case Market::COIN_M_FUTURES: {
                     return DifferenceDepthEntry(
                         parse_int(tokens[h[COL_TimestampOfReceiveUS]]),
-                        std::string(tokens[h[COL_Symbol]]),
+                        parseSymbol(tokens[h[COL_Symbol]]),
                         (tokens[h[COL_IsAsk]] == "1"),
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
                         (tokens[h[COL_IsLast]] == "1"),
-                        mk
+                        market
                     );
                 }
             }
         }
+        case StreamType::FINAL_DEPTH_SNAPSHOT:
         case StreamType::DIFFERENCE_DEPTH_STREAM: {
-            switch (mk) {
+            switch (market) {
                 case Market::SPOT: {
                     return DifferenceDepthEntry(
                         parse_int(tokens[h[COL_TimestampOfReceiveUS]]),
-                        std::string(tokens[h[COL_Symbol]]),
+                        parseSymbol(tokens[h[COL_Symbol]]),
                         (tokens[h[COL_IsAsk]] == "1"),
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
@@ -231,7 +217,7 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line,
                 case Market::USD_M_FUTURES: {
                     return DifferenceDepthEntry(
                         parse_int(tokens[h[COL_TimestampOfReceiveUS]]),
-                        std::string(tokens[h[COL_Symbol]]),
+                        parseSymbol(tokens[h[COL_Symbol]]),
                         (tokens[h[COL_IsAsk]] == "1"),
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
@@ -242,7 +228,7 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line,
                 case Market::COIN_M_FUTURES: {
                     return DifferenceDepthEntry(
                         parse_int(tokens[h[COL_TimestampOfReceiveUS]]),
-                        std::string(tokens[h[COL_Symbol]]),
+                        parseSymbol(tokens[h[COL_Symbol]]),
                         (tokens[h[COL_IsAsk]] == "1"),
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),

@@ -18,13 +18,13 @@ public:
 
     std::optional<OrderBookMetricsEntry> countMarketStateMetricsByEntry(DecodedEntry* entry);
 
-    std::optional<OrderBookMetricsEntry> countMarketStateMetrics(const std::string& symbol, const Market& market);
+    std::optional<OrderBookMetricsEntry> countMarketStateMetrics(Symbol symbol, const Market& market);
 
-    MarketState& getMarketState(const std::string& symbol, const Market& market);
+    MarketState& getMarketState(Symbol symbol, const Market& market);
 
     size_t getMarketStateCount() const;
 
-    std::vector<std::pair<std::string, Market>> getMarketStateList() const;
+    std::vector<std::pair<Symbol, Market>> getMarketStateList() const;
 
 private:
     MetricMask mask_;

@@ -1,4 +1,4 @@
-from cpp_binance_orderbook import TradeEntry, Market
+from cpp_binance_orderbook import TradeEntry, Market, Symbol
 
 
 class TestTradeEntry:
@@ -8,7 +8,7 @@ class TestTradeEntry:
         e = TradeEntry()
         expected = [
             0,    # timestamp_of_receive
-            "",   # symbol
+            Symbol.UNKNOWN,   # symbol
             0.0,  # price
             0.0,  # quantity
             0,    # is_buyer_market_maker (False -> 0)
@@ -22,7 +22,7 @@ class TestTradeEntry:
         # populated case
         e2 = TradeEntry()
         e2.timestamp_of_receive   = 987654321
-        e2.symbol                 = "ETHUSD"
+        e2.symbol                 = Symbol.ETHUSDT
         e2.price                  = 2500.55
         e2.quantity               = 0.005
         e2.is_buyer_market_maker  = True
@@ -33,7 +33,7 @@ class TestTradeEntry:
 
         expected2 = [
             987654321,
-            "ETHUSD",
+            Symbol.ETHUSDT,
             2500.55,
             0.005,
             1,        # True -> 1
@@ -67,7 +67,7 @@ class TestTradeEntry:
     def test_given_trade_entry_constructor_when_field_names_then_returned_names_are_correct(self):
         e = TradeEntry(
             1,
-            "X",
+            Symbol.ETHUSDT,
             1.1,
             2.2,
             False,

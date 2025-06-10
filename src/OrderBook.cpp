@@ -260,7 +260,7 @@ void OrderBook::printOrderBook() const {
     for (auto *n = askTail_; n; n = n->prev_) {
         std::cout
         << n->TimestampOfReceive << " "
-        << n->Symbol << " "
+        << n->symbol << " "
         << n->IsAsk << " "
         << n->Price << " "
         << n->Quantity << " "
@@ -272,7 +272,7 @@ void OrderBook::printOrderBook() const {
     for (auto *n = bidHead_; n; n = n->next_) {
         std::cout
         << n->TimestampOfReceive << " "
-        << n->Symbol << " "
+        << n->symbol << " "
         << n->IsAsk << " "
         << n->Price << " "
         << n->Quantity << " "

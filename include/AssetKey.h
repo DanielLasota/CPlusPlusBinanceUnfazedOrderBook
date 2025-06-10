@@ -1,36 +1,46 @@
 #pragma once
 
-struct AssetKey {
-    Market      market;
-    std::string symbol;
+#include <variant>
+#include <cstdint>
+#include <stdexcept>
+#include "enums/DifferenceDepthEntry.h"
+#include "enums/TradeEntry.h"
+#include "enums/symbol.h"
+#include "enums/Market.h"
 
-    AssetKey(Market m, std::string s)
-      : market(m), symbol(std::move(s))
+using DecodedEntry = std::variant<DifferenceDepthEntry, TradeEntry>;
+
+struct AssetKey {
+    Market   market;
+    Symbol symbol;
+
+    AssetKey(Market m, Symbol s) noexcept
+      : market(m), symbol(s)
     {}
 
-    AssetKey(const DecodedEntry &d) {
-        if (auto e = std::get_if<DifferenceDepthEntry>(&d)) {
-            market = e->Market_;
-            symbol = e->Symbol;
+    AssetKey(const DecodedEntry &d) noexcept {
+        if (auto dd = std::get_if<DifferenceDepthEntry>(&d)) {
+            market = dd->Market_;
+            symbol = dd->symbol;
         }
-        else if (auto e = std::get_if<TradeEntry>(&d)) {
-            market = e->Market_;
-            symbol = e->Symbol;
+        else if (auto te = std::get_if<TradeEntry>(&d)) {
+            market = te->Market_;
+            symbol = te->symbol;
         }
         else {
-            throw std::runtime_error("Unknown DecodedEntry variant");
+            std::terminate();
         }
     }
 
-    bool operator==(const AssetKey& o) const noexcept {
-        return market == o.market && symbol == o.symbol;
+    bool operator==(const AssetKey &o) const noexcept {
+        return market == o.market
+            && symbol == o.symbol;
     }
 };
 
 struct AssetKeyHash {
     size_t operator()(AssetKey const& k) const noexcept {
-        auto h1 = std::hash<int>{}(int(k.market));
-        auto h2 = std::hash<std::string>{}(k.symbol);
-        return h1 ^ (h2 << 1);
+        return (static_cast<size_t>(k.market) << 16)
+             | static_cast<size_t>(k.symbol);
     }
 };

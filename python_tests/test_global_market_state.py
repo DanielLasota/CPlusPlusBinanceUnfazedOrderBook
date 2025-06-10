@@ -1,4 +1,6 @@
 from types import NoneType
+
+import cpp_binance_orderbook
 import pytest
 
 from cpp_binance_orderbook import (
@@ -7,11 +9,12 @@ from cpp_binance_orderbook import (
     parse_mask,
     Market,
     TradeEntry,
-    OrderBookMetricsEntry
+    OrderBookMetricsEntry,
+    Symbol
 )
 
 def sample_order_list(
-        symbol: str,
+        symbol: cpp_binance_orderbook.Symbol,
         market: Market,
         price_hash: float,
         quantity_hash: float
@@ -72,25 +75,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -104,10 +107,10 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
-            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
-            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
+            ms_trxusdt = gms.get_market_state(Symbol.TRXUSDT, Market.SPOT)
+            ms_btcusdt = gms.get_market_state(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             actual_trxusdt = [*reversed(ms_trxusdt.order_book.asks()), *ms_trxusdt.order_book.bids()]
             expected_trxusdt = sorted(sample_trxusdt_spot_order_list, key=lambda x: x.price, reverse=True)
@@ -178,12 +181,13 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_timestamp_of_receive == 10.0
 
             assert gms.get_market_state_count() == 4
-            assert gms.get_market_state_list() == [
-                ('TRXUSDT', Market.SPOT),
-                ('DOGEUSDT', Market.USD_M_FUTURES),
-                ('BTCUSDT', Market.USD_M_FUTURES),
-                ('ADAUSDT', Market.COIN_M_FUTURES),
-            ]
+
+            assert sorted(gms.get_market_state_list(), key=lambda x: (int(x[0]), int(x[1]))) == sorted([
+                (Symbol.TRXUSDT, Market.SPOT),
+                (Symbol.DOGEUSDT, Market.USD_M_FUTURES),
+                (Symbol.BTCUSDT, Market.USD_M_FUTURES),
+                (Symbol.ADAUSDT, Market.COIN_M_FUTURES),
+            ], key=lambda x: (int(x[0]), int(x[1])))
 
         def test_given_global_market_state_when_add_existing_price_level_order_then_order_is_being_updated_and_sorted_correctly(self):
             variables = [
@@ -201,25 +205,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -233,17 +237,17 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
-            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
-            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
+            ms_trxusdt = gms.get_market_state(Symbol.TRXUSDT, Market.SPOT)
+            ms_btcusdt = gms.get_market_state(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
             new_ask_trxusdt_timestamp_of_receive = 21
             new_ask_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_trxusdt_timestamp_of_receive,
-                symbol="TRXUSDT",
+                symbol=Symbol.TRXUSDT,
                 is_ask=1,
                 price=12.54589,
                 quantity=3.0,
@@ -263,7 +267,7 @@ class TestGlobalMarketState:
             new_bid_trxusdt_timestamp_of_receive = 22
             new_bid_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
-                symbol="TRXUSDT",
+                symbol=Symbol.TRXUSDT,
                 is_ask=0,
                 price=10.24589,
                 quantity=1.0,
@@ -303,7 +307,7 @@ class TestGlobalMarketState:
             new_ask_btcusdt_timestamp_of_receive = 23
             new_ask_btcusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_btcusdt_timestamp_of_receive,
-                symbol="BTCUSDT",
+                symbol=Symbol.BTCUSDT,
                 is_ask=1,
                 price=22.3,
                 quantity=3.0,
@@ -321,10 +325,10 @@ class TestGlobalMarketState:
                 sample_btcusdt_usd_m_futures_order_list.remove(to_remove)
             sample_btcusdt_usd_m_futures_order_list.append(new_ask_btcusdt)
 
-            new_bid_trxusdt_timestamp_of_receive = 24
+            new_bid_btcusdt_timestamp_of_receive = 24
             new_bid_btcusdt = DifferenceDepthEntry(
-                timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
-                symbol="BTCUSDT",
+                timestamp_of_receive=new_bid_btcusdt_timestamp_of_receive,
+                symbol=Symbol.BTCUSDT,
                 is_ask=0,
                 price=22.0,
                 quantity=1.0,
@@ -364,7 +368,7 @@ class TestGlobalMarketState:
             new_ask_adausdt_timestamp_of_receive = 25
             new_ask_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_adausdt_timestamp_of_receive,
-                symbol="ADAUSDT",
+                symbol=Symbol.ADAUSDT,
                 is_ask=1,
                 price=33.1,
                 quantity=3.0,
@@ -385,7 +389,7 @@ class TestGlobalMarketState:
             new_bid_adausdt_timestamp_of_receive = 26
             new_bid_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_adausdt_timestamp_of_receive,
-                symbol="ADAUSDT",
+                symbol=Symbol.ADAUSDT,
                 is_ask=0,
                 price=30.0,
                 quantity=1.0,
@@ -425,7 +429,7 @@ class TestGlobalMarketState:
             new_ask_dogeusdt_timestamp_of_receive = 27
             new_ask_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_dogeusdt_timestamp_of_receive,
-                symbol="DOGEUSDT",
+                symbol=Symbol.DOGEUSDT,
                 is_ask=1,
                 price=42.1,
                 quantity=3.0,
@@ -446,7 +450,7 @@ class TestGlobalMarketState:
             new_bid_dogeusdt_timestamp_of_receive = 28
             new_bid_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_dogeusdt_timestamp_of_receive,
-                symbol="DOGEUSDT",
+                symbol=Symbol.DOGEUSDT,
                 is_ask=0,
                 price=42.0,
                 quantity=1.0,
@@ -482,12 +486,13 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_timestamp_of_receive == 28
 
             assert gms.get_market_state_count() == 4
-            assert gms.get_market_state_list() == [
-                ('TRXUSDT', Market.SPOT),
-                ('DOGEUSDT', Market.USD_M_FUTURES),
-                ('BTCUSDT', Market.USD_M_FUTURES),
-                ('ADAUSDT', Market.COIN_M_FUTURES),
-            ]
+
+            assert sorted(gms.get_market_state_list(), key=lambda x: (int(x[0]), int(x[1]))) == sorted([
+                (Symbol.TRXUSDT, Market.SPOT),
+                (Symbol.DOGEUSDT, Market.USD_M_FUTURES),
+                (Symbol.BTCUSDT, Market.USD_M_FUTURES),
+                (Symbol.ADAUSDT, Market.COIN_M_FUTURES),
+            ], key=lambda x: (int(x[0]), int(x[1])))
 
         def test_given_existing_order_when_add_order_with_zero_quantity_then_order_is_removed(self):
             variables = [
@@ -505,25 +510,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -537,10 +542,10 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
-            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
-            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
+            ms_trxusdt = gms.get_market_state(Symbol.TRXUSDT, Market.SPOT)
+            ms_btcusdt = gms.get_market_state(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -548,7 +553,7 @@ class TestGlobalMarketState:
             new_ask_trxusdt_timestamp_of_receive = 21
             new_ask_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_trxusdt_timestamp_of_receive,
-                symbol="TRXUSDT",
+                symbol=Symbol.TRXUSDT,
                 is_ask=1,
                 price=12.54589,
                 quantity=0.0,
@@ -567,7 +572,7 @@ class TestGlobalMarketState:
             new_bid_trxusdt_timestamp_of_receive = 22
             new_bid_trxusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_trxusdt_timestamp_of_receive,
-                symbol="TRXUSDT",
+                symbol=Symbol.TRXUSDT,
                 is_ask=0,
                 price=10.24589,
                 quantity=0.0,
@@ -606,7 +611,7 @@ class TestGlobalMarketState:
             new_ask_btcusdt_timestamp_of_receive = 23
             new_ask_btcusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_btcusdt_timestamp_of_receive,
-                symbol="BTCUSDT",
+                symbol=Symbol.BTCUSDT,
                 is_ask=1,
                 price=22.3,
                 quantity=0.0,
@@ -625,7 +630,7 @@ class TestGlobalMarketState:
             new_bid_btcusdt_timestamp_of_receive = 24
             new_bid_btcusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_btcusdt_timestamp_of_receive,
-                symbol="BTCUSDT",
+                symbol=Symbol.BTCUSDT,
                 is_ask=0,
                 price=22.0,
                 quantity=0.0,
@@ -663,7 +668,7 @@ class TestGlobalMarketState:
             new_ask_adausdt_timestamp_of_receive = 25
             new_ask_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_adausdt_timestamp_of_receive,
-                symbol="ADAUSDT",
+                symbol=Symbol.ADAUSDT,
                 is_ask=1,
                 price=33.1,
                 quantity=0.0,
@@ -682,7 +687,7 @@ class TestGlobalMarketState:
             new_bid_adausdt_timestamp_of_receive = 26
             new_bid_adausdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_adausdt_timestamp_of_receive,
-                symbol="ADAUSDT",
+                symbol=Symbol.ADAUSDT,
                 is_ask=0,
                 price=30.0,
                 quantity=0.0,
@@ -720,7 +725,7 @@ class TestGlobalMarketState:
             new_ask_dogeusdt_timestamp_of_receive = 27
             new_ask_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_ask_dogeusdt_timestamp_of_receive,
-                symbol="DOGEUSDT",
+                symbol=Symbol.DOGEUSDT,
                 is_ask=1,
                 price=42.1,
                 quantity=0.0,
@@ -739,7 +744,7 @@ class TestGlobalMarketState:
             new_bid_dogeusdt_timestamp_of_receive = 28
             new_bid_dogeusdt = DifferenceDepthEntry(
                 timestamp_of_receive=new_bid_dogeusdt_timestamp_of_receive,
-                symbol="DOGEUSDT",
+                symbol=Symbol.DOGEUSDT,
                 is_ask=0,
                 price=42.0,
                 quantity=0.0,
@@ -773,12 +778,13 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_timestamp_of_receive ==28
 
             assert gms.get_market_state_count() == 4
-            assert gms.get_market_state_list() == [
-                ('TRXUSDT', Market.SPOT),
-                ('DOGEUSDT', Market.USD_M_FUTURES),
-                ('BTCUSDT', Market.USD_M_FUTURES),
-                ('ADAUSDT', Market.COIN_M_FUTURES),
-            ]
+            assert sorted(gms.get_market_state_list(), key=lambda x: (int(x[0]), int(x[1]))) == sorted([
+                (Symbol.TRXUSDT, Market.SPOT),
+                (Symbol.DOGEUSDT, Market.USD_M_FUTURES),
+                (Symbol.BTCUSDT, Market.USD_M_FUTURES),
+                (Symbol.ADAUSDT, Market.COIN_M_FUTURES),
+            ], key=lambda x: (int(x[0]), int(x[1])))
+
 
         def test_given_last_trade_storage_when_updating_first_trade_is_last_trade_updated_correctly(self):
             variables = [
@@ -796,25 +802,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -830,7 +836,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -843,7 +849,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -856,7 +862,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -869,7 +875,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -880,14 +886,14 @@ class TestGlobalMarketState:
             )
             gms.update(dogeusdt_trade)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
-            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
-            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
+            ms_trxusdt = gms.get_market_state(Symbol.TRXUSDT, Market.SPOT)
+            ms_btcusdt = gms.get_market_state(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 20
-            assert ms_trxusdt.last_trade.symbol                   == 'TRXUSDT'
+            assert ms_trxusdt.last_trade.symbol                   == Symbol.TRXUSDT
             assert ms_trxusdt.last_trade.price                    == 10.0
             assert ms_trxusdt.last_trade.quantity                 == 1.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 1
@@ -898,7 +904,7 @@ class TestGlobalMarketState:
 
             # BTCUSDT
             assert ms_btcusdt.last_trade.timestamp_of_receive     == 21
-            assert ms_btcusdt.last_trade.symbol                   == 'BTCUSDT'
+            assert ms_btcusdt.last_trade.symbol                   == Symbol.BTCUSDT
             assert ms_btcusdt.last_trade.price                    == 11.0
             assert ms_btcusdt.last_trade.quantity                 == 2.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 0
@@ -909,7 +915,7 @@ class TestGlobalMarketState:
 
             # ADAUSDT
             assert ms_adausdt.last_trade.timestamp_of_receive     == 22
-            assert ms_adausdt.last_trade.symbol                   == 'ADAUSDT'
+            assert ms_adausdt.last_trade.symbol                   == Symbol.ADAUSDT
             assert ms_adausdt.last_trade.price                    == 12.0
             assert ms_adausdt.last_trade.quantity                 == 3.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 1
@@ -920,7 +926,7 @@ class TestGlobalMarketState:
 
             # DOGEUSDT
             assert ms_dogeusdt.last_trade.timestamp_of_receive    == 23
-            assert ms_dogeusdt.last_trade.symbol                  == 'DOGEUSDT'
+            assert ms_dogeusdt.last_trade.symbol                  == Symbol.DOGEUSDT
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 4.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 0
@@ -935,12 +941,12 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_timestamp_of_receive == 23
 
             assert gms.get_market_state_count() == 4
-            assert gms.get_market_state_list() == [
-                ('TRXUSDT', Market.SPOT),
-                ('DOGEUSDT', Market.USD_M_FUTURES),
-                ('BTCUSDT', Market.USD_M_FUTURES),
-                ('ADAUSDT', Market.COIN_M_FUTURES),
-            ]
+            assert sorted(gms.get_market_state_list(), key=lambda x: (int(x[0]), int(x[1]))) == sorted([
+                (Symbol.TRXUSDT, Market.SPOT),
+                (Symbol.DOGEUSDT, Market.USD_M_FUTURES),
+                (Symbol.BTCUSDT, Market.USD_M_FUTURES),
+                (Symbol.ADAUSDT, Market.COIN_M_FUTURES),
+            ], key=lambda x: (int(x[0]), int(x[1])))
 
         def test_given_last_trade_storage_when_updating_existing_trade_is_last_trade_updated_correctly(self):
             variables = [
@@ -958,25 +964,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -992,7 +998,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1005,7 +1011,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1018,7 +1024,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1031,7 +1037,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1042,14 +1048,14 @@ class TestGlobalMarketState:
             )
             gms.update(dogeusdt_trade)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
-            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
-            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
+            ms_trxusdt = gms.get_market_state(Symbol.TRXUSDT, Market.SPOT)
+            ms_btcusdt = gms.get_market_state(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 20
-            assert ms_trxusdt.last_trade.symbol                   == 'TRXUSDT'
+            assert ms_trxusdt.last_trade.symbol                   == Symbol.TRXUSDT
             assert ms_trxusdt.last_trade.price                    == 10.0
             assert ms_trxusdt.last_trade.quantity                 == 1.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 1
@@ -1060,7 +1066,7 @@ class TestGlobalMarketState:
 
             # BTCUSDT
             assert ms_btcusdt.last_trade.timestamp_of_receive     == 21
-            assert ms_btcusdt.last_trade.symbol                   == 'BTCUSDT'
+            assert ms_btcusdt.last_trade.symbol                   == Symbol.BTCUSDT
             assert ms_btcusdt.last_trade.price                    == 11.0
             assert ms_btcusdt.last_trade.quantity                 == 2.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 0
@@ -1071,7 +1077,7 @@ class TestGlobalMarketState:
 
             # ADAUSDT
             assert ms_adausdt.last_trade.timestamp_of_receive     == 22
-            assert ms_adausdt.last_trade.symbol                   == 'ADAUSDT'
+            assert ms_adausdt.last_trade.symbol                   == Symbol.ADAUSDT
             assert ms_adausdt.last_trade.price                    == 12.0
             assert ms_adausdt.last_trade.quantity                 == 3.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 1
@@ -1082,7 +1088,7 @@ class TestGlobalMarketState:
 
             # DOGEUSDT
             assert ms_dogeusdt.last_trade.timestamp_of_receive    == 23
-            assert ms_dogeusdt.last_trade.symbol                  == 'DOGEUSDT'
+            assert ms_dogeusdt.last_trade.symbol                  == Symbol.DOGEUSDT
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 4.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 0
@@ -1101,7 +1107,7 @@ class TestGlobalMarketState:
 
             trxusdt_next_trade = TradeEntry(
                 timestamp_of_receive=30,
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 price=20.0,
                 quantity=10.0,
                 is_buyer_market_maker=0,
@@ -1114,7 +1120,7 @@ class TestGlobalMarketState:
 
             btcusdt_next_trade = TradeEntry(
                 timestamp_of_receive=31,
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 price=21.0,
                 quantity=11.0,
                 is_buyer_market_maker=1,
@@ -1127,7 +1133,7 @@ class TestGlobalMarketState:
 
             adausdt_next_trade = TradeEntry(
                 timestamp_of_receive=32,
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 price=22.0,
                 quantity=12.0,
                 is_buyer_market_maker=0,
@@ -1140,7 +1146,7 @@ class TestGlobalMarketState:
 
             dogeusdt_next_trade = TradeEntry(
                 timestamp_of_receive=33,
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 price=13.0,
                 quantity=33.0,
                 is_buyer_market_maker=1,
@@ -1153,7 +1159,7 @@ class TestGlobalMarketState:
 
             # TRXUSDT
             assert ms_trxusdt.last_trade.timestamp_of_receive     == 30
-            assert ms_trxusdt.last_trade.symbol                   == 'TRXUSDT'
+            assert ms_trxusdt.last_trade.symbol                   == Symbol.TRXUSDT
             assert ms_trxusdt.last_trade.price                    == 20.0
             assert ms_trxusdt.last_trade.quantity                 == 10.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 0
@@ -1164,7 +1170,7 @@ class TestGlobalMarketState:
 
             # BTCUSDT
             assert ms_btcusdt.last_trade.timestamp_of_receive     == 31
-            assert ms_btcusdt.last_trade.symbol                   == 'BTCUSDT'
+            assert ms_btcusdt.last_trade.symbol                   == Symbol.BTCUSDT
             assert ms_btcusdt.last_trade.price                    == 21.0
             assert ms_btcusdt.last_trade.quantity                 == 11.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 1
@@ -1175,7 +1181,7 @@ class TestGlobalMarketState:
 
             # ADAUSDT
             assert ms_adausdt.last_trade.timestamp_of_receive     == 32
-            assert ms_adausdt.last_trade.symbol                   == 'ADAUSDT'
+            assert ms_adausdt.last_trade.symbol                   == Symbol.ADAUSDT
             assert ms_adausdt.last_trade.price                    == 22.0
             assert ms_adausdt.last_trade.quantity                 == 12.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 0
@@ -1186,7 +1192,7 @@ class TestGlobalMarketState:
 
             # DOGEUSDT
             assert ms_dogeusdt.last_trade.timestamp_of_receive    == 33
-            assert ms_dogeusdt.last_trade.symbol                  == 'DOGEUSDT'
+            assert ms_dogeusdt.last_trade.symbol                  == Symbol.DOGEUSDT
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 33.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 1
@@ -1201,12 +1207,12 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_timestamp_of_receive == 33
 
             assert gms.get_market_state_count() == 4
-            assert gms.get_market_state_list() == [
-                ('TRXUSDT', Market.SPOT),
-                ('DOGEUSDT', Market.USD_M_FUTURES),
-                ('BTCUSDT', Market.USD_M_FUTURES),
-                ('ADAUSDT', Market.COIN_M_FUTURES),
-            ]
+            assert sorted(gms.get_market_state_list(), key=lambda x: (int(x[0]), int(x[1]))) == sorted([
+                (Symbol.TRXUSDT, Market.SPOT),
+                (Symbol.DOGEUSDT, Market.USD_M_FUTURES),
+                (Symbol.BTCUSDT, Market.USD_M_FUTURES),
+                (Symbol.ADAUSDT, Market.COIN_M_FUTURES),
+            ], key=lambda x: (int(x[0]), int(x[1])))
 
     class TestGlobalMarketStateCountVariables:
 
@@ -1226,7 +1232,7 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             with pytest.raises(RuntimeError, match="no specified market"):
-                x = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
+                x = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
 
         def test_given_non_empty_orderbook_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
             variables = [
@@ -1244,25 +1250,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -1276,10 +1282,10 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            x1 = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
-            x2 = gms.count_market_state_metrics("BTCUSDT", Market.USD_M_FUTURES)
-            x3 = gms.count_market_state_metrics("ADAUSDT", Market.COIN_M_FUTURES)
-            x4 = gms.count_market_state_metrics("DOGEUSDT", Market.USD_M_FUTURES)
+            x1 = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
+            x2 = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3 = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4 = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             assert x1 is None
             assert x2 is None
@@ -1307,7 +1313,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1320,7 +1326,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1333,7 +1339,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1346,7 +1352,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1357,10 +1363,10 @@ class TestGlobalMarketState:
             )
             gms.update(dogeusdt_trade)
 
-            x1 = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
-            x2 = gms.count_market_state_metrics("BTCUSDT", Market.USD_M_FUTURES)
-            x3 = gms.count_market_state_metrics("ADAUSDT", Market.COIN_M_FUTURES)
-            x4 = gms.count_market_state_metrics("DOGEUSDT", Market.USD_M_FUTURES)
+            x1 = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
+            x2 = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3 = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4 = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
             assert x1 is None
             assert x2 is None
             assert x3 is None
@@ -1386,25 +1392,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -1420,7 +1426,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1433,7 +1439,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1446,7 +1452,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1459,7 +1465,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1470,10 +1476,10 @@ class TestGlobalMarketState:
             )
             gms.update(dogeusdt_trade)
 
-            x1 = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
-            x2 = gms.count_market_state_metrics("BTCUSDT", Market.USD_M_FUTURES)
-            x3 = gms.count_market_state_metrics("ADAUSDT", Market.COIN_M_FUTURES)
-            x4 = gms.count_market_state_metrics("DOGEUSDT", Market.USD_M_FUTURES)
+            x1 = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
+            x2 = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3 = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4 = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             assert x1 is None
             assert x2 is None
@@ -1500,25 +1506,25 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(mask)
 
             sample_trxusdt_spot_order_list = sample_order_list(
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 market=Market.SPOT,
                 price_hash=10.24589,
                 quantity_hash=0.0
             )
             sample_btcusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=20.0,
                 quantity_hash=10.0
             )
             sample_adausdt_usd_coin_m_futures_order_list = sample_order_list(
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 market=Market.COIN_M_FUTURES,
                 price_hash=30.0,
                 quantity_hash=20.0
             )
             sample_dogeusdt_usd_m_futures_order_list = sample_order_list(
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 market=Market.USD_M_FUTURES,
                 price_hash=40.0,
                 quantity_hash=30.0
@@ -1534,7 +1540,7 @@ class TestGlobalMarketState:
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
-                symbol='TRXUSDT',
+                symbol=Symbol.TRXUSDT,
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
@@ -1547,7 +1553,7 @@ class TestGlobalMarketState:
 
             btcusdt_trade = TradeEntry(
                 timestamp_of_receive=21,
-                symbol='BTCUSDT',
+                symbol=Symbol.BTCUSDT,
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
@@ -1560,7 +1566,7 @@ class TestGlobalMarketState:
 
             adausdt_trade = TradeEntry(
                 timestamp_of_receive=22,
-                symbol='ADAUSDT',
+                symbol=Symbol.ADAUSDT,
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
@@ -1573,7 +1579,7 @@ class TestGlobalMarketState:
 
             dogeusdt_trade = TradeEntry(
                 timestamp_of_receive=23,
-                symbol='DOGEUSDT',
+                symbol=Symbol.DOGEUSDT,
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
@@ -1584,10 +1590,10 @@ class TestGlobalMarketState:
             )
             gms.update(dogeusdt_trade)
 
-            ms_trxusdt = gms.get_market_state("TRXUSDT", Market.SPOT)
-            ms_btcusdt = gms.get_market_state("BTCUSDT", Market.USD_M_FUTURES)
-            ms_adausdt = gms.get_market_state("ADAUSDT", Market.COIN_M_FUTURES)
-            ms_dogeusdt = gms.get_market_state("DOGEUSDT", Market.USD_M_FUTURES)
+            ms_trxusdt = gms.get_market_state(Symbol.TRXUSDT, Market.SPOT)
+            ms_btcusdt = gms.get_market_state(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            ms_adausdt = gms.get_market_state(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            ms_dogeusdt = gms.get_market_state(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             # ms_trxusdt.print_order_book()
             # print(ms_trxusdt.last_trade)
@@ -1605,10 +1611,10 @@ class TestGlobalMarketState:
             # print(ms_dogeusdt.last_trade)
             # print()
 
-            x1: OrderBookMetricsEntry = gms.count_market_state_metrics("TRXUSDT", Market.SPOT)
-            x2: OrderBookMetricsEntry = gms.count_market_state_metrics("BTCUSDT", Market.USD_M_FUTURES)
-            x3: OrderBookMetricsEntry = gms.count_market_state_metrics("ADAUSDT", Market.COIN_M_FUTURES)
-            x4: OrderBookMetricsEntry = gms.count_market_state_metrics("DOGEUSDT", Market.USD_M_FUTURES)
+            x1: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
+            x2: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             # === x1 (TRXUSDT) ===
             assert x1.timestampOfReceive == 20

@@ -28,6 +28,7 @@ def copy_sources_to_clipboard(directories):
 if __name__ == '__main__':
     dirs_to_scan = [
         './bindings/',
+        './bin/',
         './include/',
         './include/enums',
         './src/',

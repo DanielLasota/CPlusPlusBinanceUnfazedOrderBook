@@ -54,7 +54,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              "Stara wersja: liczy metryki dla podanego DecodedEntry")
         .def("get_market_state",
              &GlobalMarketState::getMarketState,
-             py::arg("symbol"), py::arg("market_str"),
+             py::arg("symbol"), py::arg("market"),
              py::return_value_policy::reference_internal,
              "Zwraca obiekt MarketState dla danego symbolu i rynku")
             .def("get_market_state_count", &GlobalMarketState::getMarketStateCount,
@@ -178,7 +178,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def(py::init<>())
         .def(py::init<
             int64_t,
-            const std::string&,
+            Symbol,
             bool,
             double,
             double,
@@ -194,7 +194,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             py::arg("market")
         )
         .def_readwrite("timestamp_of_receive", &DifferenceDepthEntry::TimestampOfReceive)
-        .def_readwrite("symbol", &DifferenceDepthEntry::Symbol)
+        .def_readwrite("symbol", &DifferenceDepthEntry::symbol)
         .def_readwrite("is_ask", &DifferenceDepthEntry::IsAsk)
         .def_readwrite("price", &DifferenceDepthEntry::Price)
         .def_readwrite("quantity", &DifferenceDepthEntry::Quantity)
@@ -205,7 +205,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             oss << std::fixed << std::setprecision(5);
             oss
             << "TimestampOfReceive: " << entry.TimestampOfReceive << " "
-            << "Symbol: " << entry.Symbol << " "
+            << "Symbol: " << entry.symbol << " "
             << "IsAsk: " << entry.IsAsk << " "
             << "Price: " << entry.Price << " "
             << "Quantity: " << entry.Quantity << " "
@@ -216,7 +216,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def("to_list", [](const DifferenceDepthEntry &e) {
             py::list v;
             v.append(e.TimestampOfReceive);
-            v.append(e.Symbol);
+            v.append(e.symbol);
             v.append(e.IsAsk ? 1 : 0);
             v.append(e.Price);
             v.append(e.Quantity);
@@ -241,7 +241,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def(py::init<>())
         .def(py::init<
             int64_t,
-            const std::string&,
+            Symbol,
             double,
             double,
             bool,
@@ -261,7 +261,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             py::arg("market")
         )
         .def_readwrite("timestamp_of_receive",    &TradeEntry::TimestampOfReceive)
-        .def_readwrite("symbol",                  &TradeEntry::Symbol)
+        .def_readwrite("symbol",                  &TradeEntry::symbol)
         .def_readwrite("price",                   &TradeEntry::Price)
         .def_readwrite("quantity",                &TradeEntry::Quantity)
         .def_readwrite("is_buyer_market_maker",   &TradeEntry::IsBuyerMarketMaker)
@@ -274,7 +274,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             oss << std::fixed << std::setprecision(5);
             oss
             << "TimestampOfReceive: " << entry.TimestampOfReceive << " "
-            << "Symbol: " << entry.Symbol << " "
+            << "Symbol: " << entry.symbol << " "
             << "Price: " << entry.Price << " "
             << "Quantity: " << entry.Quantity << " "
             << "IsBuyerMarketMaker: " << entry.IsBuyerMarketMaker << " "
@@ -285,7 +285,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def("to_list", [](const TradeEntry &e) {
             py::list v;
             v.append(e.TimestampOfReceive);
-            v.append(e.Symbol);
+            v.append(e.symbol);
             v.append(e.Price);
             v.append(e.Quantity);
             v.append(e.IsBuyerMarketMaker ? 1 : 0);
@@ -366,6 +366,32 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .value("SPOT",          Market::SPOT)
         .value("USD_M_FUTURES", Market::USD_M_FUTURES)
         .value("COIN_M_FUTURES",Market::COIN_M_FUTURES)
-        .value("UNKNOWN",            Market::UNKNOWN)
+        .value("UNKNOWN",       Market::UNKNOWN)
         .export_values();
+
+    py::enum_<Symbol>(m, "Symbol")
+        .value("UNKNOWN",   Symbol::UNKNOWN)
+        .value("BTCUSDT",   Symbol::BTCUSDT)
+        .value("ETHUSDT",   Symbol::ETHUSDT)
+        .value("BNBUSDT",   Symbol::BNBUSDT)
+        .value("SOLUSDT",   Symbol::SOLUSDT)
+        .value("XRPUSDT",   Symbol::XRPUSDT)
+        .value("DOGEUSDT",  Symbol::DOGEUSDT)
+        .value("ADAUSDT",   Symbol::ADAUSDT)
+        .value("SHIBUSDT",  Symbol::SHIBUSDT)
+        .value("LTCUSDT",   Symbol::LTCUSDT)
+        .value("AVAXUSDT",  Symbol::AVAXUSDT)
+        .value("TRXUSDT",   Symbol::TRXUSDT)
+        .value("DOTUSDT",   Symbol::DOTUSDT)
+        .value("BCHUSDT",   Symbol::BCHUSDT)
+        .value("SUIUSDT",   Symbol::SUIUSDT)
+        .export_values();
+
+    py::enum_<StreamType>(m, "StreamType")
+        .value("DIFFERENCE_DEPTH_STREAM", StreamType::DIFFERENCE_DEPTH_STREAM)
+        .value("TRADE_STREAM",            StreamType::TRADE_STREAM)
+        .value("DEPTH_SNAPSHOT",          StreamType::DEPTH_SNAPSHOT)
+        .value("FINAL_DEPTH_SNAPSHOT",    StreamType::FINAL_DEPTH_SNAPSHOT)
+        .export_values();
+
 }

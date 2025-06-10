@@ -7,13 +7,13 @@ class MarketState {
 public:
     MarketState() = default;
 
-    MarketState(const Market market_, const std::string& symbol_)
-        : market_(market_), symbol_(symbol_), lastTrade()
+    MarketState(const Market market_, Symbol symbol)
+        : market_(market_), symbol_(symbol), lastTrade()
     {}
 
     Market get_market() const { return market_; }
 
-    const std::string& get_symbol() const { return symbol_; }
+    Symbol get_symbol() const { return symbol_; }
 
     void update(DecodedEntry* entry);
 
@@ -38,7 +38,7 @@ public:
 
 private:
     Market market_;
-    std::string symbol_;
+    Symbol symbol_;
 
     uint64_t lastTimestampOfReceive{0};
 

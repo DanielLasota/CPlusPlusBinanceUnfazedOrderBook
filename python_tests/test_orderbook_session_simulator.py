@@ -39,7 +39,7 @@ class TestOrderBookSessionSimulator:
 
             oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
-            csv_path = "csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv"
+            csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
 
             bad_variables_list = ['bestBidPrice', 'bestAskPrice', 'midPrice', 'gap', 'crap']
 
@@ -54,7 +54,7 @@ class TestOrderBookSessionSimulator:
 
             import cpp_binance_orderbook
 
-            csv_path = "csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv"
+            csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
 
             oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
@@ -102,7 +102,7 @@ class TestOrderBookSessionSimulator:
             ]
 
             metrics = oss.compute_variables(
-                "csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv",
+                "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv",
                 variables=variables_list
             )
             df = pd.DataFrame([
@@ -119,7 +119,7 @@ class TestOrderBookSessionSimulator:
         def test_given_single_pair_merged_csv_when_passing_bad_variable_name_then_exception_is_raised(self):
             import cpp_binance_orderbook
 
-            csv_path = "csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv"
+            csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
 
             oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
@@ -136,7 +136,7 @@ class TestOrderBookSessionSimulator:
 
             import cpp_binance_orderbook
 
-            csv_path = "csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv"
+            csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
             oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
             variables_list = [
@@ -176,7 +176,7 @@ class TestOrderBookSessionSimulator:
         def test_given_single_pair_merged_csv_when_python_callback_then_callback_variables_sum_is_equal_to_selected_variables(self):
             import cpp_binance_orderbook
 
-            csv_path = "csv/test_positive_binance_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_24-04-2025.csv"
+            csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
             oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
             variables_list = [

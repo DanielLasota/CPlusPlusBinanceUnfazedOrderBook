@@ -1,12 +1,13 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
+
+#include "enums/symbol.h"
 #include "enums/Market.h"
 
 struct DifferenceDepthEntry {
     int64_t TimestampOfReceive;
-    std::string Symbol;
+    Symbol symbol;
     bool IsAsk;
     double Price;
     double Quantity;
@@ -17,7 +18,7 @@ struct DifferenceDepthEntry {
 
     DifferenceDepthEntry(
         int64_t TimestampOfReceive,
-        const std::string& Symbol,
+        Symbol Symbol,
         bool IsAsk,
         double Price,
         double Quantity,
@@ -27,7 +28,7 @@ struct DifferenceDepthEntry {
         DifferenceDepthEntry* next_ = nullptr
     )
     : TimestampOfReceive(TimestampOfReceive)
-    , Symbol(Symbol)
+    , symbol(Symbol)
     , IsAsk(IsAsk)
     , Price(Price)
     , Quantity(Quantity)
@@ -36,5 +37,7 @@ struct DifferenceDepthEntry {
     , prev_(prev_)
     , next_(next_)
     {}
+
     DifferenceDepthEntry() = default;
+
 };

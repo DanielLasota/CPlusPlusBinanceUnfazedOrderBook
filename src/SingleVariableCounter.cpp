@@ -62,7 +62,7 @@ namespace SingleVariableCounter {
     }
 
     bool calculateIsAggressorAsk(const TradeEntry *trade_entry) {
-        return trade_entry->IsBuyerMarketMaker;
+        return trade_entry->isBuyerMarketMaker;
     }
 
 }

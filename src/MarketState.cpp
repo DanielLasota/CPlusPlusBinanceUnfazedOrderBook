@@ -7,7 +7,7 @@
 void MarketState::update(DecodedEntry* entry) {
 
     std::visit([this](auto const& e){
-        this->lastTimestampOfReceive = e.TimestampOfReceive;
+        this->lastTimestampOfReceive = e.timestampOfReceive;
     }, *entry);
 
     if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
@@ -24,19 +24,19 @@ void MarketState::update(DecodedEntry* entry) {
 void MarketState::updateOrderBook(int64_t timestampOfReceive, double price, double quantity, bool isAsk){
     lastTimestampOfReceive = timestampOfReceive;
     DifferenceDepthEntry e;
-    e.TimestampOfReceive = timestampOfReceive;
-    e.Price              = price;
-    e.Quantity           = quantity;
-    e.IsAsk              = isAsk;
+    e.timestampOfReceive = timestampOfReceive;
+    e.price              = price;
+    e.quantity           = quantity;
+    e.isAsk              = isAsk;
     orderBook.update(&e);
 }
 
 void MarketState::updateTradeRegistry(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM) {
     lastTimestampOfReceive = timestampOfReceive;
-    lastTrade.TimestampOfReceive = timestampOfReceive;
-    lastTrade.Price              = price;
-    lastTrade.Quantity           = quantity;
-    lastTrade.IsBuyerMarketMaker = isBuyerMM;
+    lastTrade.timestampOfReceive = timestampOfReceive;
+    lastTrade.price              = price;
+    lastTrade.quantity           = quantity;
+    lastTrade.isBuyerMarketMaker = isBuyerMM;
     lastTradePtr = &lastTrade;
     hasLastTrade = true;
 }

@@ -44,12 +44,12 @@ public:
     size_t bidCount()   const { return bidCount_; }
     double sumAskQuantity() const { return sumAskQty_; }
     double sumBidQuantity() const { return sumBidQty_; }
-    double bestAskPrice()    const { return askHead_->Price; }
-    double bestBidPrice()    const { return bidHead_->Price; }
-    double bestAskQuantity()    const { return askHead_->Quantity; }
-    double bestBidQuantity()    const { return bidHead_->Quantity; }
-    double secondAskPrice()  const { return askHead_->next_->Price; }
-    double secondBidPrice()  const { return bidHead_->next_->Price; }
+    double bestAskPrice()    const { return askHead_->price; }
+    double bestBidPrice()    const { return bidHead_->price; }
+    double bestAskQuantity()    const { return askHead_->quantity; }
+    double bestBidQuantity()    const { return bidHead_->quantity; }
+    double secondAskPrice()  const { return askHead_->next_->price; }
+    double secondBidPrice()  const { return bidHead_->next_->price; }
 
     std::vector<DifferenceDepthEntry> getAsks() const;
     std::vector<DifferenceDepthEntry> getBids() const;
@@ -64,7 +64,6 @@ private:
     DifferenceDepthEntry* bidHead_{nullptr};
     DifferenceDepthEntry* bidTail_{nullptr};
 
-    // Sorted maps for O(log n) insertion
     std::map<double, DifferenceDepthEntry*> askMap_;
     std::map<double, DifferenceDepthEntry*, std::greater<double>> bidMap_;
 

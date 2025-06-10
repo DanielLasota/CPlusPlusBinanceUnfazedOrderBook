@@ -7,36 +7,36 @@
 #include "enums/Market.h"
 
 struct TradeEntry {
-    int64_t TimestampOfReceive;
+    int64_t timestampOfReceive;
     Symbol symbol;
-    double Price;
-    double Quantity;
-    bool IsBuyerMarketMaker;
-    std::string MUnknownParameter;
-    std::string XUnknownParameter;
-    bool IsLast;
-    Market Market_;
+    double price;
+    double quantity;
+    bool isBuyerMarketMaker;
+    std::string mUnknownParameter;
+    std::string xUnknownParameter;
+    bool isLast;
+    Market market;
 
     TradeEntry(
-        int64_t TimestampOfReceive,
-        Symbol Symbol,
-        double Price,
-        double Quantity,
-        bool IsBuyerMarketMaker,
-        const std::string& MUnknownParameter,
-        const std::string& XUnknownParameter,
-        bool IsLast,
-        Market Market_
+        int64_t timestampOfReceive,
+        Symbol symbol,
+        double price,
+        double quantity,
+        bool isBuyerMarketMaker,
+        const std::string& mUnknownParameter,
+        const std::string& xUnknownParameter,
+        bool isLast,
+        Market market
     )
-    : TimestampOfReceive(TimestampOfReceive)
-    , symbol(Symbol)
-    , Price(Price)
-    , Quantity(Quantity)
-    , IsBuyerMarketMaker(IsBuyerMarketMaker)
-    , MUnknownParameter(MUnknownParameter)
-    , XUnknownParameter(XUnknownParameter)
-    , IsLast(IsLast)
-    , Market_(Market_)
+    : timestampOfReceive(timestampOfReceive)
+    , symbol(symbol)
+    , price(price)
+    , quantity(quantity)
+    , isBuyerMarketMaker(isBuyerMarketMaker)
+    , mUnknownParameter(mUnknownParameter)
+    , xUnknownParameter(xUnknownParameter)
+    , isLast(isLast)
+    , market(market)
     {}
 
     TradeEntry() = default;

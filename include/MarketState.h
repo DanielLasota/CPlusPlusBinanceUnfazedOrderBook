@@ -8,12 +8,12 @@ public:
     MarketState() = default;
 
     MarketState(const Market market_, Symbol symbol)
-        : market_(market_), symbol_(symbol), lastTrade()
+        : market(market_), symbol(symbol), lastTrade()
     {}
 
-    Market get_market() const { return market_; }
+    Market getMarket() const { return market; }
 
-    Symbol get_symbol() const { return symbol_; }
+    Symbol getSymbol() const { return symbol; }
 
     void update(DecodedEntry* entry);
 
@@ -37,8 +37,8 @@ public:
     uint64_t getLastTimestampOfReceive() const {return lastTimestampOfReceive;}
 
 private:
-    Market market_;
-    Symbol symbol_;
+    Market market;
+    Symbol symbol;
 
     uint64_t lastTimestampOfReceive{0};
 

@@ -6,34 +6,34 @@
 #include "enums/Market.h"
 
 struct DifferenceDepthEntry {
-    int64_t TimestampOfReceive;
+    int64_t timestampOfReceive;
     Symbol symbol;
-    bool IsAsk;
-    double Price;
-    double Quantity;
-    bool IsLast;
-    Market Market_;
+    bool isAsk;
+    double price;
+    double quantity;
+    bool isLast;
+    Market market;
     DifferenceDepthEntry* prev_;
     DifferenceDepthEntry* next_;
 
     DifferenceDepthEntry(
-        int64_t TimestampOfReceive,
-        Symbol Symbol,
-        bool IsAsk,
-        double Price,
-        double Quantity,
-        bool IsLast,
-        Market Market_,
+        int64_t timestampOfReceive,
+        Symbol symbol,
+        bool isAsk,
+        double price,
+        double quantity,
+        bool isLast,
+        Market market,
         DifferenceDepthEntry* prev_ = nullptr,
         DifferenceDepthEntry* next_ = nullptr
     )
-    : TimestampOfReceive(TimestampOfReceive)
-    , symbol(Symbol)
-    , IsAsk(IsAsk)
-    , Price(Price)
-    , Quantity(Quantity)
-    , IsLast(IsLast)
-    , Market_(Market_)
+    : timestampOfReceive(timestampOfReceive)
+    , symbol(symbol)
+    , isAsk(isAsk)
+    , price(price)
+    , quantity(quantity)
+    , isLast(isLast)
+    , market(market)
     , prev_(prev_)
     , next_(next_)
     {}

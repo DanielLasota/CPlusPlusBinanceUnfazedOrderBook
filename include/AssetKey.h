@@ -11,7 +11,7 @@
 using DecodedEntry = std::variant<DifferenceDepthEntry, TradeEntry>;
 
 struct AssetKey {
-    Market   market;
+    Market market;
     Symbol symbol;
 
     AssetKey(Market m, Symbol s) noexcept
@@ -20,11 +20,11 @@ struct AssetKey {
 
     AssetKey(const DecodedEntry &d) noexcept {
         if (auto dd = std::get_if<DifferenceDepthEntry>(&d)) {
-            market = dd->Market_;
+            market = dd->market;
             symbol = dd->symbol;
         }
         else if (auto te = std::get_if<TradeEntry>(&d)) {
-            market = te->Market_;
+            market = te->market;
             symbol = te->symbol;
         }
         else {

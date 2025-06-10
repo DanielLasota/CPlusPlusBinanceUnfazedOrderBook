@@ -8,8 +8,8 @@
 
 struct OrderBookMetricsEntry {
     int64_t timestampOfReceive;
-    Market market;
-    Symbol symbol;
+    uint8_t market;
+    uint8_t symbol;
     double bestAskPrice;
     double bestBidPrice;
     double midPrice;

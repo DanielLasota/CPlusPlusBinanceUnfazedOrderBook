@@ -2,7 +2,11 @@
 
 #include <vector>
 #include <string>
-#include <OrderBookMetricsEntry.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include "OrderBookMetricsEntry.h"
+
+namespace py = pybind11;
 
 class OrderBookMetrics {
 public:
@@ -16,6 +20,8 @@ public:
     void addEntry(const OrderBookMetricsEntry& entry) {
         entries_.push_back(entry);
     }
+
+    py::dict convertToNumpyArrays() const;
 
     const std::vector<OrderBookMetricsEntry>& entries() const {
         return entries_;

@@ -1,14 +1,13 @@
 #include <iostream>
 #include <iomanip>
+#include <pybind11/embed.h>
 
 #include "../include/OrderBook.h"
 #include "../include/OrderBookSessionSimulator.h"
 
-void mainOrderbookEntryLoop(OrderBook &orderbook);
-
-void processOrderbook();
-
 int main() {
+    py::scoped_interpreter guard{};
+
     std::cout << std::fixed << std::setprecision(5);
     OrderBookSessionSimulator orderBookSessionSimulator;
     std::string csvPath = "C:/Users/daniel/Documents/merged_csvs/binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv";
@@ -27,7 +26,7 @@ int main() {
         "gap",
         "isAggressorAsk"
     };
-    orderBookSessionSimulator.computeVariables(csvPath, variables);
+    orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 
     return 0;
 }

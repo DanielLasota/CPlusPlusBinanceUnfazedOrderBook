@@ -28,12 +28,22 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def("compute_backtest", &OrderBookSessionSimulator::computeBacktest,
              py::arg("csv_path"), py::arg("variables"), py::arg("python_callback") = py::none(),
              "Uruchamia backtest; zwraca void")
-        .def("compute_final_depth_snapshot", &OrderBookSessionSimulator::computeFinalDepthSnapshot,
-             py::arg("csv_path"),
-             "Zwraca FinalOrderBookSnapshot")
         .def("compute_variables", &OrderBookSessionSimulator::computeVariables,
              py::arg("csv_path"), py::arg("variables"),
              "Oblicza metryki z pliku CSV i zwraca OrderBookMetrics")
+
+        .def("compute_variables_numpy",
+             &OrderBookSessionSimulator::computeVariablesNumPy,
+             py::arg("csv_path"), py::arg("variables"),
+             "compute_variables_numpy(csv_path, variables) -> dict of numpy arrays")
+        .def("compute_backtest_numpy",
+             &OrderBookSessionSimulator::computeBacktestNumPy,
+             py::arg("csv_path"), py::arg("variables"), py::arg("python_callback") = py::none(),
+             "compute_backtest_numpy(csv_path, variables[, python_callback]) -> dict of numpy arrays")
+
+        .def("compute_final_depth_snapshot", &OrderBookSessionSimulator::computeFinalDepthSnapshot,
+             py::arg("csv_path"),
+             "Zwraca FinalOrderBookSnapshot")
         ;
 
     // ----- GlobalMarketState -----

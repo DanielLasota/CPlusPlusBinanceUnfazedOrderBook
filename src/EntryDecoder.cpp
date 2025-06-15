@@ -6,18 +6,16 @@
 #include "CSVHeader.h"
 
 
-inline int64_t parse_int(std::string_view sv) {
+inline int64_t parse_int(std::string_view sv) noexcept {
     int64_t out = 0;
     auto res = std::from_chars(sv.data(), sv.data() + sv.size(), out);
-    if (res.ec != std::errc()) throw std::runtime_error("parse_int error");
-    return out;
+    return (res.ec == std::errc{}) ? out : 0;
 }
 
-inline double parse_double(std::string_view sv) {
-    double out = 0;
+inline double parse_double(std::string_view sv) noexcept {
+    double out = 0.0;
     auto res = std::from_chars(sv.data(), sv.data() + sv.size(), out);
-    if (res.ec != std::errc()) throw std::runtime_error("parse_double error");
-    return out;
+    return (res.ec == std::errc{}) ? out : 0.0;
 }
 
 DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters &params, std::string_view line) {
@@ -27,11 +25,11 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         if (params.market == Market::SPOT) {
             return TradeEntry(
                 parse_int(tokens[0]),
-                parseSymbol(tokens[1]),
-                parse_double(tokens[2]),
-                parse_double(tokens[3]),
-                tokens[4] == "1",
-                std::string(tokens[5]),
+                parseSymbolFromName(tokens[5]),
+                parse_double(tokens[7]),
+                parse_double(tokens[8]),
+                tokens[9] == "1",
+                std::string(tokens[10]),
                 "",
                 false,
                 Market::SPOT
@@ -40,12 +38,12 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::USD_M_FUTURES || params.market == Market::COIN_M_FUTURES) {
             return TradeEntry(
                 parse_int(tokens[0]),
-                parseSymbol(tokens[1]),
-                parse_double(tokens[2]),
-                parse_double(tokens[3]),
-                tokens[4] == "1",
+                parseSymbolFromName(tokens[5]),
+                parse_double(tokens[7]),
+                parse_double(tokens[8]),
+                tokens[9] == "1",
                 "",
-                std::string(tokens[5]),
+                std::string(tokens[10]),
                 false,
                 params.market
             );
@@ -58,7 +56,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         if (params.market == Market::SPOT) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                parseSymbol(""),
+                parseSymbolFromName(""),
                 (tokens[3] == "1"),
                 parse_double(tokens[4]),
                 parse_double(tokens[5]),
@@ -69,7 +67,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::USD_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                parseSymbol(""), // Symbol
+                parseSymbolFromName(""),
                 (tokens[5] == "1"),
                 parse_double(tokens[6]),
                 parse_double(tokens[7]),
@@ -80,7 +78,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::COIN_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                parseSymbol(tokens[5]),
+                parseSymbolFromName(tokens[5]),
                 (tokens[7] == "1"),
                 parse_double(tokens[8]),
                 parse_double(tokens[9]),
@@ -96,7 +94,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         if (params.market == Market::SPOT) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                parseSymbol(tokens[4]),
+                parseSymbolFromName(tokens[4]),
                 (tokens[7] == "1"),
                 parse_double(tokens[8]),
                 parse_double(tokens[9]),
@@ -107,7 +105,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::USD_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                parseSymbol(tokens[5]),
+                parseSymbolFromName(tokens[5]),
                 (tokens[9] == "1"),
                 parse_double(tokens[10]),
                 parse_double(tokens[11]),
@@ -118,7 +116,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
         else if (params.market == Market::COIN_M_FUTURES) {
             return DifferenceDepthEntry(
                 parse_int(tokens[0]),
-                parseSymbol(tokens[5]),
+                parseSymbolFromName(tokens[5]),
                 (tokens[9] == "1"),
                 parse_double(tokens[10]),
                 parse_double(tokens[11]),

@@ -24,11 +24,9 @@ enum class Symbol : uint16_t {
     SUIUSDT,
 };
 
-// liczbę elementów wyliczamy od najwyższego wartościowego
 static constexpr size_t SymbolEnCount =
     static_cast<size_t>(Symbol::SUIUSDT) + 1;
 
-// tablica musi mieć dokładnie SymbolEnCount elementów
 static constexpr std::array<const char*, SymbolEnCount> symbolEnNames = {{
     "UNKNOWN",
     "BTCUSDT",
@@ -51,7 +49,6 @@ inline std::string to_string(Symbol s) {
     auto idx = static_cast<size_t>(s);
     if (idx < SymbolEnCount)
         return symbolEnNames[idx];
-    // fallback
     return symbolEnNames[0];
 }
 

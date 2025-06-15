@@ -29,7 +29,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
 
     auto finish0 = std::chrono::steady_clock::now();
     auto elapsed_ms0 = std::chrono::duration_cast<std::chrono::milliseconds>(finish0 - start0).count();
-    std::cout << "csv elapsed: " << elapsed_ms0 << " ms" << std::endl;
+    std::cout << "read csv: " << elapsed_ms0 << " ms" << std::endl;
 
     auto start = std::chrono::steady_clock::now();
 

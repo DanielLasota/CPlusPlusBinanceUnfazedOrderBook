@@ -172,16 +172,19 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     // ----- SingleVariableCounter -----
     auto svc = m.def_submodule("single_variable_counter", "Compute single-variable order book metrics");
-    svc.def("calculate_best_ask_price",        &SingleVariableCounter::calculateBestAskPrice,        py::arg("order_book"));
-    svc.def("calculate_best_bid_price",        &SingleVariableCounter::calculateBestBidPrice,        py::arg("order_book"));
-    svc.def("calculate_mid_price",             &SingleVariableCounter::calculateMidPrice,            py::arg("order_book"));
-    svc.def("calculate_best_volume_imbalance", &SingleVariableCounter::calculateBestVolumeImbalance, py::arg("order_book"));
-    svc.def("calculate_queue_imbalance",       &SingleVariableCounter::calculateQueueImbalance,      py::arg("order_book"));
-    svc.def("calculate_volume_imbalance",      &SingleVariableCounter::calculateVolumeImbalance,     py::arg("order_book"));
-    svc.def("calculate_gap",                   &SingleVariableCounter::calculateGap,                 py::arg("order_book"));
-    svc.def("calculate_is_aggressor_ask",
-            [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); },
-            py::arg("trade_entry"));
+    svc.def("calculate_best_ask_price",             &SingleVariableCounter::calculateBestAskPrice,              py::arg("order_book"));
+    svc.def("calculate_best_bid_price",             &SingleVariableCounter::calculateBestBidPrice,              py::arg("order_book"));
+    svc.def("calculate_mid_price",                  &SingleVariableCounter::calculateMidPrice,                  py::arg("order_book"));
+    svc.def("calculate_best_volume_imbalance",      &SingleVariableCounter::calculateBestVolumeImbalance,       py::arg("order_book"));
+    svc.def("calculate_best_depth_volume_ratio",    &SingleVariableCounter::calculateBestVolumeRatio,           py::arg("order_book"));
+    svc.def("calculate_best_two_volume_imbalance",  &SingleVariableCounter::calculateBestTwoVolumeImbalance,    py::arg("order_book"));
+    svc.def("calculate_best_three_volume_imbalance",&SingleVariableCounter::calculateBestThreeVolumeImbalance,  py::arg("order_book"));
+    svc.def("calculate_best_five_volume_imbalance", &SingleVariableCounter::calculateBestFiveVolumeImbalance,   py::arg("order_book"));
+    svc.def("calculate_volume_imbalance",           &SingleVariableCounter::calculateVolumeImbalance,           py::arg("order_book"));
+    svc.def("calculate_queue_imbalance",            &SingleVariableCounter::calculateQueueImbalance,            py::arg("order_book"));
+    svc.def("calculate_gap",                        &SingleVariableCounter::calculateGap,                       py::arg("order_book"));
+    svc.def("calculate_vwap_deviation",             &SingleVariableCounter::calculateVwapDeviation,             py::arg("order_book"));
+    svc.def("calculate_is_aggressor_ask", [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); }, py::arg("trade_entry"));
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
@@ -322,17 +325,22 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
-        .def_readonly("timestampOfReceive",     &OrderBookMetricsEntry::timestampOfReceive)
-        .def_readonly("market",                 &OrderBookMetricsEntry::market)
-        .def_readonly("symbol",                 &OrderBookMetricsEntry::symbol)
-        .def_readonly("bestAskPrice",           &OrderBookMetricsEntry::bestAskPrice)
-        .def_readonly("bestBidPrice",           &OrderBookMetricsEntry::bestBidPrice)
-        .def_readonly("midPrice",               &OrderBookMetricsEntry::midPrice)
-        .def_readonly("bestVolumeImbalance",    &OrderBookMetricsEntry::bestVolumeImbalance)
-        .def_readonly("queueImbalance",         &OrderBookMetricsEntry::queueImbalance)
-        .def_readonly("volumeImbalance",        &OrderBookMetricsEntry::volumeImbalance)
-        .def_readonly("gap",                    &OrderBookMetricsEntry::gap)
-        .def_readonly("isAggressorAsk",         &OrderBookMetricsEntry::isAggressorAsk)
+        .def_readonly("timestampOfReceive",         &OrderBookMetricsEntry::timestampOfReceive)
+        .def_readonly("market",                     &OrderBookMetricsEntry::market)
+        .def_readonly("symbol",                     &OrderBookMetricsEntry::symbol)
+        .def_readonly("bestAskPrice",               &OrderBookMetricsEntry::bestAskPrice)
+        .def_readonly("bestBidPrice",               &OrderBookMetricsEntry::bestBidPrice)
+        .def_readonly("midPrice",                   &OrderBookMetricsEntry::midPrice)
+        .def_readonly("bestVolumeImbalance",        &OrderBookMetricsEntry::bestVolumeImbalance)
+        .def_readonly("bestVolumeRatio",            &OrderBookMetricsEntry::bestVolumeRatio)
+        .def_readonly("bestTwoVolumeImbalance",     &OrderBookMetricsEntry::bestTwoVolumeImbalance)
+        .def_readonly("bestThreeVolumeImbalance",   &OrderBookMetricsEntry::bestThreeVolumeImbalance)
+        .def_readonly("bestFiveVolumeImbalance",    &OrderBookMetricsEntry::bestFiveVolumeImbalance)
+        .def_readonly("volumeImbalance",            &OrderBookMetricsEntry::volumeImbalance)
+        .def_readonly("queueImbalance",             &OrderBookMetricsEntry::queueImbalance)
+        .def_readonly("gap",                        &OrderBookMetricsEntry::gap)
+        .def_readonly("isAggressorAsk",             &OrderBookMetricsEntry::isAggressorAsk)
+        .def_readonly("vwapDeviation",              &OrderBookMetricsEntry::vwapDeviation)
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(5);
@@ -344,10 +352,15 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             << "bestBidPrice: " << entry.bestBidPrice << " "
             << "midPrice: " << entry.midPrice << " "
             << "bestVolumeImbalance: " << entry.bestVolumeImbalance << " "
-            << "queueImbalance: " << entry.queueImbalance << " "
+            << "bestVolumeRatio: " << entry.bestVolumeRatio << " "
+            << "bestTwoVolumeImbalance: " << entry.bestTwoVolumeImbalance << " "
+            << "bestThreeVolumeImbalance: " << entry.bestThreeVolumeImbalance << " "
+            << "bestFiveVolumeImbalance: " << entry.bestFiveVolumeImbalance << " "
             << "volumeImbalance: " << entry.volumeImbalance << " "
+            << "queueImbalance: " << entry.queueImbalance << " "
             << "gap: " << entry.gap << " "
-            << "isAggressorAsk: " << entry.isAggressorAsk << " ";
+            << "isAggressorAsk: " << entry.isAggressorAsk << " "
+            << "vwapDeviation: " << entry.vwapDeviation << " ";
             return oss.str();
         });
 

@@ -11,37 +11,52 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
 
     OrderBookMetricsEntry e{};
     if (mask_ & TimestampOfReceive) {
-        e.timestampOfReceive    = ms.getLastTimestampOfReceive();
+        e.timestampOfReceive = ms.getLastTimestampOfReceive();
     }
     if (mask_ & market) {
-        e.market                = static_cast<uint8_t>(ms.getMarket());
+        e.market = static_cast<uint8_t>(ms.getMarket());
     }
     if (mask_ & symbol) {
-        e.symbol                = static_cast<uint8_t>(ms.getSymbol());
+        e.symbol = static_cast<uint8_t>(ms.getSymbol());
     }
     if (mask_ & BestAskPrice) {
-        e.bestAskPrice          = SingleVariableCounter::calculateBestAskPrice(ms.orderBook);
+        e.bestAskPrice = SingleVariableCounter::calculateBestAskPrice(ms.orderBook);
     }
     if (mask_ & BestBidPrice) {
-        e.bestBidPrice          = SingleVariableCounter::calculateBestBidPrice(ms.orderBook);
+        e.bestBidPrice = SingleVariableCounter::calculateBestBidPrice(ms.orderBook);
     }
     if (mask_ & MidPrice) {
-        e.midPrice              = SingleVariableCounter::calculateMidPrice(ms.orderBook);
+        e.midPrice = SingleVariableCounter::calculateMidPrice(ms.orderBook);
     }
     if (mask_ & BestVolumeImbalance) {
-        e.bestVolumeImbalance   = SingleVariableCounter::calculateBestVolumeImbalance(ms.orderBook);
+        e.bestVolumeImbalance = SingleVariableCounter::calculateBestVolumeImbalance(ms.orderBook);
     }
-    if (mask_ & QueueImbalance) {
-        e.queueImbalance        = SingleVariableCounter::calculateQueueImbalance(ms.orderBook);
+    if (mask_ & BestVolumeRatio) {
+        e.bestVolumeRatio = SingleVariableCounter::calculateBestVolumeRatio(ms.orderBook);
+    }
+    if (mask_ & BestTwoVolumeImbalance){
+        e.bestTwoVolumeImbalance = SingleVariableCounter::calculateBestTwoVolumeImbalance(ms.orderBook);
+    }
+    if (mask_ & BestThreeVolumeImbalance){
+        e.bestThreeVolumeImbalance = SingleVariableCounter::calculateBestThreeVolumeImbalance(ms.orderBook);
+    }
+    if (mask_ & BestFiveVolumeImbalance){
+        e.bestFiveVolumeImbalance = SingleVariableCounter::calculateBestFiveVolumeImbalance(ms.orderBook);
     }
     if (mask_ & VolumeImbalance) {
-        e.volumeImbalance       = SingleVariableCounter::calculateVolumeImbalance(ms.orderBook);
+        e.volumeImbalance = SingleVariableCounter::calculateVolumeImbalance(ms.orderBook);
+    }
+    if (mask_ & QueueImbalance) {
+        e.queueImbalance = SingleVariableCounter::calculateQueueImbalance(ms.orderBook);
     }
     if (mask_ & Gap) {
-        e.gap                   = SingleVariableCounter::calculateGap(ms.orderBook);
+        e.gap = SingleVariableCounter::calculateGap(ms.orderBook);
     }
     if (mask_ & IsAggressorAsk) {
-        e.isAggressorAsk        = SingleVariableCounter::calculateIsAggressorAsk(&ms.getLastTrade());
+        e.isAggressorAsk = SingleVariableCounter::calculateIsAggressorAsk(&ms.getLastTrade());
+    }
+    if (mask_ & VwapDeviation) {
+        e.vwapDeviation = SingleVariableCounter::calculateVwapDeviation(ms.orderBook);
     }
     return e;
 }

@@ -54,6 +54,11 @@ public:
     std::vector<DifferenceDepthEntry> getAsks() const;
     std::vector<DifferenceDepthEntry> getBids() const;
 
+    double sumTopAskQuantity(size_t n) const;
+    double sumTopBidQuantity(size_t n) const;
+
+    double sumPriceQty() const { return sumPriceQty_; }
+
 private:
 
     std::vector<DifferenceDepthEntry> arena;
@@ -71,6 +76,7 @@ private:
 
     size_t askCount_{0}, bidCount_{0};
     double sumAskQty_{0.0}, sumBidQty_{0.0};
+    double sumPriceQty_{0.0};
 
     DifferenceDepthEntry* allocateNode(double price, bool isAsk, double quantity);
     void deallocateNode(DifferenceDepthEntry* node);

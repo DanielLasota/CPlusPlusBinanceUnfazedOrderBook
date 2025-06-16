@@ -23,4 +23,5 @@ struct OrderBookMetricsEntry {
     double gap;
     bool isAggressorAsk;
     double vwapDeviation;
+    double simplifiedSlopeImbalance;
 };

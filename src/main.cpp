@@ -27,7 +27,8 @@ int main() {
         "volumeImbalance",
         "gap",
         "isAggressorAsk",
-        "vwapDeviation"
+        "vwapDeviation",
+        "simplifiedSlopeImbalance"
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 

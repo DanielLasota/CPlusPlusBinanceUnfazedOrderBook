@@ -3,6 +3,7 @@
 #include <variant>
 #include <optional>
 #include <cstdint>
+#include <limits>
 #include <vector>
 #include <unordered_map>
 #include <map>
@@ -34,30 +35,44 @@ struct PriceSideHash {
 
 class OrderBook {
 public:
-    explicit OrderBook(size_t maxLevels = 100'000);
+    explicit OrderBook(size_t maxLevels = 50'000);
 
     void update(DifferenceDepthEntry* entryPtr);
 
     void printOrderBook() const;
 
-    size_t askCount()   const { return askCount_; }
-    size_t bidCount()   const { return bidCount_; }
+    size_t askCount() const { return askCount_; }
+    size_t bidCount() const { return bidCount_; }
     double sumAskQuantity() const { return sumAskQty_; }
     double sumBidQuantity() const { return sumBidQty_; }
-    double bestAskPrice()    const { return askHead_->price; }
-    double bestBidPrice()    const { return bidHead_->price; }
-    double bestAskQuantity()    const { return askHead_->quantity; }
-    double bestBidQuantity()    const { return bidHead_->quantity; }
-    double secondAskPrice()  const { return askHead_->next_->price; }
-    double secondBidPrice()  const { return bidHead_->next_->price; }
+    double bestAskPrice() const { return askHead_->price; }
+    double bestBidPrice() const { return bidHead_->price; }
+    double bestAskQuantity() const { return askHead_->quantity; }
+    double bestBidQuantity() const { return bidHead_->quantity; }
+    double secondAskPrice() const { return askHead_->next_->price; }
+    double secondBidPrice() const { return bidHead_->next_->price; }
 
     std::vector<DifferenceDepthEntry> getAsks() const;
     std::vector<DifferenceDepthEntry> getBids() const;
 
-    double sumTopAskQuantity(size_t n) const;
-    double sumTopBidQuantity(size_t n) const;
+    double cumulativeSumTopNAskQuantity(size_t n) const;
+    double cumulativeSumTopNBidQuantities(size_t n) const;
 
     double sumPriceQty() const { return sumPriceQty_; }
+
+    double askPriceAtDepth(const size_t K) const {
+        const DifferenceDepthEntry* node = askHead_;
+        for (size_t i = 1; i < K && node; ++i)
+            node = node->next_;
+        return node ? node->price : std::numeric_limits<double>::quiet_NaN();
+    }
+
+    double bidPriceAtDepth(const size_t K) const {
+        const DifferenceDepthEntry* node = bidHead_;
+        for (size_t i = 1; i < K && node; ++i)
+            node = node->next_;
+        return node ? node->price : std::numeric_limits<double>::quiet_NaN();
+    }
 
 private:
 

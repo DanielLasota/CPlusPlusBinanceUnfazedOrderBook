@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-enum Metric : uint16_t {
+enum Metric : uint32_t {
     TimestampOfReceive      = 1 << 0,
     market                  = 1 << 1,
     symbol                  = 1 << 2,
@@ -22,8 +22,9 @@ enum Metric : uint16_t {
     Gap                     = 1 << 13,
     IsAggressorAsk          = 1 << 14,
     VwapDeviation           = 1 << 15,
+    simplifiedSlopeImbalance= 1 << 16
 };
-using MetricMask = uint16_t;
+using MetricMask = uint32_t;
 
 inline MetricMask parseMask(const std::vector<std::string>& vars) {
     MetricMask m = 0;
@@ -44,6 +45,7 @@ inline MetricMask parseMask(const std::vector<std::string>& vars) {
         else if (s == "gap")                        m |= Gap;
         else if (s == "isAggressorAsk")             m |= IsAggressorAsk;
         else if (s == "vwapDeviation")              m |= VwapDeviation;
+        else if (s == "simplifiedSlopeImbalance")   m |= simplifiedSlopeImbalance;
         else {
             throw std::invalid_argument("Unknown variable name: " + s);
         }

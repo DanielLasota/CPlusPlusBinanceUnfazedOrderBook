@@ -20,10 +20,14 @@ int main() {
         "bestBidPrice",
         "midPrice",
         "bestVolumeImbalance",
+        "bestTwoVolumeImbalance",
+        "bestThreeVolumeImbalance",
+        "bestFiveVolumeImbalance",
         "queueImbalance",
         "volumeImbalance",
         "gap",
-        "isAggressorAsk"
+        "isAggressorAsk",
+        "vwapDeviation"
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 

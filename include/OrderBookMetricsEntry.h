@@ -14,8 +14,13 @@ struct OrderBookMetricsEntry {
     double bestBidPrice;
     double midPrice;
     double bestVolumeImbalance;
-    double queueImbalance;
+    double bestVolumeRatio;
+    double bestTwoVolumeImbalance;
+    double bestThreeVolumeImbalance;
+    double bestFiveVolumeImbalance;
     double volumeImbalance;
+    double queueImbalance;
     double gap;
     bool isAggressorAsk;
+    double vwapDeviation;
 };

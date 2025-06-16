@@ -168,6 +168,7 @@ py::dict OrderBookSessionSimulator::computeBacktestNumPy(const std::string& csvP
     // auto finish = std::chrono::steady_clock::now();
     // auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
     // std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
+
     return orderBookMetrics.convertToNumpyArrays();
 }
 

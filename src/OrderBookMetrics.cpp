@@ -28,57 +28,78 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
 
     size_t n = entries_.size();
 
-    std::vector<int64_t>   col_ts;    col_ts.reserve(n);
-    std::vector<uint8_t>   col_mk;    col_mk.reserve(n);
-    std::vector<uint8_t>   col_sym;   col_sym.reserve(n);
-    std::vector<double>    col_bap;   col_bap.reserve(n);
-    std::vector<double>    col_bbp;   col_bbp.reserve(n);
-    std::vector<double>    col_mid;   col_mid.reserve(n);
-    std::vector<double>    col_bvi;   col_bvi.reserve(n);
-    std::vector<double>    col_qi;    col_qi.reserve(n);
-    std::vector<double>    col_vi;    col_vi.reserve(n);
-    std::vector<double>    col_gap;   col_gap.reserve(n);
-    std::vector<uint8_t>   col_agg;   col_agg.reserve(n);
+    std::vector<int64_t> col_timestampOfReceive; col_timestampOfReceive.reserve(n);
+    std::vector<uint8_t> col_market; col_market.reserve(n);
+    std::vector<uint8_t> col_symbol; col_symbol.reserve(n);
+    std::vector<double> col_bestAskPrice; col_bestAskPrice.reserve(n);
+    std::vector<double> col_bestBidPrice; col_bestBidPrice.reserve(n);
+    std::vector<double> col_midPrice; col_midPrice.reserve(n);
+    std::vector<double> col_bestVolumeImbalance; col_bestVolumeImbalance.reserve(n);
+    std::vector<double> col_bestVolumeRatio; col_bestVolumeRatio.reserve(n);
+    std::vector<double> col_bestTwoVolumeImbalance; col_bestTwoVolumeImbalance.reserve(n);
+    std::vector<double> col_bestThreeVolumeImbalance; col_bestThreeVolumeImbalance.reserve(n);
+    std::vector<double> col_bestFiveVolumeImbalance; col_bestFiveVolumeImbalance.reserve(n);
+    std::vector<double> col_queueImbalance; col_queueImbalance.reserve(n);
+    std::vector<double> col_volumeImbalance; col_volumeImbalance.reserve(n);
+    std::vector<double> col_gap; col_gap.reserve(n);
+    std::vector<uint8_t> col_isAggressorAsk; col_isAggressorAsk.reserve(n);
+    std::vector<double> col_vwapDeviation; col_vwapDeviation.reserve(n);
+
 
     for (auto const& e : entries_) {
-        col_ts .push_back(e.timestampOfReceive);
-        col_mk .push_back(e.market);
-        col_sym.push_back(e.symbol);
-        col_bap.push_back(e.bestAskPrice);
-        col_bbp.push_back(e.bestBidPrice);
-        col_mid.push_back(e.midPrice);
-        col_bvi.push_back(e.bestVolumeImbalance);
-        col_qi .push_back(e.queueImbalance);
-        col_vi .push_back(e.volumeImbalance);
+        col_timestampOfReceive.push_back(e.timestampOfReceive);
+        col_market.push_back(e.market);
+        col_symbol.push_back(e.symbol);
+        col_bestAskPrice.push_back(e.bestAskPrice);
+        col_bestBidPrice.push_back(e.bestBidPrice);
+        col_midPrice.push_back(e.midPrice);
+        col_bestVolumeImbalance.push_back(e.bestVolumeImbalance);
+        col_bestVolumeRatio.push_back(e.bestVolumeRatio);
+        col_bestTwoVolumeImbalance.push_back(e.bestTwoVolumeImbalance);
+        col_bestThreeVolumeImbalance.push_back(e.bestThreeVolumeImbalance);
+        col_bestFiveVolumeImbalance.push_back(e.bestFiveVolumeImbalance);
+        col_queueImbalance.push_back(e.queueImbalance);
+        col_volumeImbalance.push_back(e.volumeImbalance);
         col_gap.push_back(e.gap);
-        col_agg.push_back(static_cast<uint8_t>(e.isAggressorAsk));
+        col_isAggressorAsk.push_back(static_cast<uint8_t>(e.isAggressorAsk));
+        col_vwapDeviation.push_back(e.vwapDeviation);
     }
 
-    auto arr_ts  = vector_to_numpy<int64_t>(col_ts);
-    auto arr_mk  = vector_to_numpy<uint8_t>(col_mk);
-    auto arr_sym = vector_to_numpy<uint8_t>(col_sym);
-    auto arr_bap = vector_to_numpy<double>(col_bap);
-    auto arr_bbp = vector_to_numpy<double>(col_bbp);
-    auto arr_mid = vector_to_numpy<double>(col_mid);
-    auto arr_bvi = vector_to_numpy<double>(col_bvi);
-    auto arr_qi  = vector_to_numpy<double>(col_qi);
-    auto arr_vi  = vector_to_numpy<double>(col_vi);
+    auto arr_timestampOfReceive = vector_to_numpy<int64_t>(col_timestampOfReceive);
+    auto arr_market = vector_to_numpy<uint8_t>(col_market);
+    auto arr_symbol = vector_to_numpy<uint8_t>(col_symbol);
+    auto arr_bestAskPrice = vector_to_numpy<double>(col_bestAskPrice);
+    auto arr_bestBidPrice = vector_to_numpy<double>(col_bestBidPrice);
+    auto arr_midPrice = vector_to_numpy<double>(col_midPrice);
+    auto arr_bestVolumeImbalance  = vector_to_numpy<double>(col_bestVolumeImbalance);
+    auto arr_bestVolumeRatio = vector_to_numpy<double>(col_bestVolumeRatio);
+    auto arr_bestTwoVolumeImbalance = vector_to_numpy<double>(col_bestTwoVolumeImbalance);
+    auto arr_bestThreeVolumeImbalance = vector_to_numpy<double>(col_bestThreeVolumeImbalance);
+    auto arr_bestFiveVolumeImbalance = vector_to_numpy<double>(col_bestFiveVolumeImbalance);
+    auto arr_queueImbalance = vector_to_numpy<double>(col_queueImbalance);
+    auto arr_volumeImbalance = vector_to_numpy<double>(col_volumeImbalance);
     auto arr_gap = vector_to_numpy<double>(col_gap);
-    auto arr_agg = vector_to_numpy<uint8_t>(col_agg);
+    auto arr_isAggressorAsk = vector_to_numpy<uint8_t>(col_isAggressorAsk);
+    auto arr_vwapDeviation = vector_to_numpy<double>(col_vwapDeviation);
 
     py::dict result;
     for (auto const& var : variables_) {
-        if      (var == "timestampOfReceive")      result["timestampOfReceive"]      = arr_ts;
-        else if (var == "market")                  result["market"]                  = arr_mk;
-        else if (var == "symbol")                  result["symbol"]                  = arr_sym;
-        else if (var == "bestAskPrice")            result["bestAskPrice"]            = arr_bap;
-        else if (var == "bestBidPrice")            result["bestBidPrice"]            = arr_bbp;
-        else if (var == "midPrice")                result["midPrice"]                = arr_mid;
-        else if (var == "bestVolumeImbalance")     result["bestVolumeImbalance"]     = arr_bvi;
-        else if (var == "queueImbalance")          result["queueImbalance"]          = arr_qi;
-        else if (var == "volumeImbalance")         result["volumeImbalance"]         = arr_vi;
-        else if (var == "gap")                     result["gap"]                     = arr_gap;
-        else if (var == "isAggressorAsk")          result["isAggressorAsk"]          = arr_agg;
+        if      (var == "timestampOfReceive") result["timestampOfReceive"] = arr_timestampOfReceive;
+        else if (var == "market") result["market"] = arr_market;
+        else if (var == "symbol") result["symbol"] = arr_symbol;
+        else if (var == "bestAskPrice") result["bestAskPrice"] = arr_bestAskPrice;
+        else if (var == "bestBidPrice") result["bestBidPrice"] = arr_bestBidPrice;
+        else if (var == "midPrice") result["midPrice"] = arr_midPrice;
+        else if (var == "bestVolumeImbalance") result["bestVolumeImbalance"] = arr_bestVolumeImbalance;
+        else if (var == "bestDepthVolumeRatio") result["bestDepthVolumeRatio"] = arr_bestVolumeRatio;
+        else if (var == "bestTwoVolumeImbalance") result["bestTwoVolumeImbalance"] = arr_bestTwoVolumeImbalance;
+        else if (var == "bestThreeVolumeImbalance") result["bestThreeVolumeImbalance"] = arr_bestThreeVolumeImbalance;
+        else if (var == "bestFiveVolumeImbalance") result["bestFiveVolumeImbalance"] = arr_bestFiveVolumeImbalance;
+        else if (var == "queueImbalance") result["queueImbalance"] = arr_queueImbalance;
+        else if (var == "volumeImbalance") result["volumeImbalance"] = arr_volumeImbalance;
+        else if (var == "gap") result["gap"] = arr_gap;
+        else if (var == "isAggressorAsk") result["isAggressorAsk"] = arr_isAggressorAsk;
+        else if (var == "vwapDeviation") result["vwapDeviation"] = arr_vwapDeviation;
     }
 
     auto finish = std::chrono::steady_clock::now();
@@ -104,17 +125,22 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
     for (const auto &e : entries_) {
         for (size_t j = 0; j < variables_.size(); ++j) {
             const auto &var = variables_[j];
-            if      (var == "timestampOfReceive")  file << e.timestampOfReceive;
-            else if (var == "market")              file << static_cast<int>(e.market);
-            else if (var == "symbol")              file << static_cast<int>(e.symbol);
-            else if (var == "bestAskPrice")        file << e.bestAskPrice;
-            else if (var == "bestBidPrice")        file << e.bestBidPrice;
-            else if (var == "midPrice")            file << e.midPrice;
-            else if (var == "bestVolumeImbalance") file << e.bestVolumeImbalance;
-            else if (var == "queueImbalance")      file << e.queueImbalance;
-            else if (var == "volumeImbalance")     file << e.volumeImbalance;
-            else if (var == "gap")                 file << e.gap;
-            else if (var == "isAggressorAsk")      file << (e.isAggressorAsk ? "1" : "0");
+            if      (var == "timestampOfReceive")       file << e.timestampOfReceive;
+            else if (var == "market")                   file << static_cast<int>(e.market);
+            else if (var == "symbol")                   file << static_cast<int>(e.symbol);
+            else if (var == "bestAskPrice")             file << e.bestAskPrice;
+            else if (var == "bestBidPrice")             file << e.bestBidPrice;
+            else if (var == "midPrice")                 file << e.midPrice;
+            else if (var == "bestVolumeImbalance")      file << e.bestVolumeImbalance;
+            else if (var == "bestVolumeRatio")          file << e.bestVolumeImbalance;
+            else if (var == "bestTwoVolumeImbalance")   file << e.bestTwoVolumeImbalance;
+            else if (var == "bestThreeVolumeImbalance") file << e.bestThreeVolumeImbalance;
+            else if (var == "bestFiveVolumeImbalance")  file << e.bestFiveVolumeImbalance;
+            else if (var == "volumeImbalance")          file << e.volumeImbalance;
+            else if (var == "queueImbalance")           file << e.queueImbalance;
+            else if (var == "gap")                      file << e.gap;
+            else if (var == "isAggressorAsk")           file << (e.isAggressorAsk ? "1" : "0");
+            else if (var == "vwapDeviation")            file << e.vwapDeviation;
 
             if (j + 1 < variables_.size()) file << ",";
         }

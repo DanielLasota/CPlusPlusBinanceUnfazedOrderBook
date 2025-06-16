@@ -6,12 +6,12 @@
 inline double round2(double x) {
     double y = x * 100.0;
     y += (y >= 0.0 ?  0.5 : -0.5);
-    int t = static_cast<int>(y);
+    const int t = static_cast<int>(y);
     return t * 0.01;
 }
 
 inline double round8(double x) {
-    double p = 100000000.0; // 8
+    constexpr double p = 100000000.0; // 8
     return std::round(x * p) / p;
 }
 
@@ -30,38 +30,46 @@ namespace SingleVariableCounter {
     }
 
     double calculateBestVolumeImbalance(const OrderBook& orderBook) {
-        const double a = orderBook.bestAskQuantity();
-        const double b = orderBook.bestBidQuantity();
+        const double bestAskQuantity = orderBook.bestAskQuantity();
+        const double bestBidQuantity = orderBook.bestBidQuantity();
         return round2(
-            (b - a) / (b + a)
+            (bestBidQuantity - bestAskQuantity) / (bestBidQuantity + bestAskQuantity)
             );
     }
 
     double calculateBestVolumeRatio(const OrderBook& orderBook) {
-        const double a = orderBook.bestAskQuantity();
-        const double b = orderBook.bestBidQuantity();
-        return round2(b/a);
+        const double bestAskQuantity = orderBook.bestAskQuantity();
+        const double bestBidQuantity = orderBook.bestBidQuantity();
+        return round2(
+            bestBidQuantity/bestAskQuantity
+            );
     }
 
-    double calculateBestTwoVolumeImbalance(const OrderBook& ob) {
-        double sumB = ob.sumTopBidQuantity(2);
-        double sumA = ob.sumTopAskQuantity(2);
-        if (sumB + sumA == 0.0) return 0.0;
-        return round2((sumB - sumA) / (sumB + sumA));
+    double calculateBestTwoVolumeImbalance(const OrderBook& orderBook) {
+        const double cumulativeSumTopTwoBidsQuantities = orderBook.cumulativeSumTopNBidQuantities(2);
+        const double cumulativeSumTopTwoAsksQuantities = orderBook.cumulativeSumTopNAskQuantity(2);
+        return round2(
+            (cumulativeSumTopTwoBidsQuantities - cumulativeSumTopTwoAsksQuantities)
+            / (cumulativeSumTopTwoBidsQuantities + cumulativeSumTopTwoAsksQuantities)
+            );
     }
 
-    double calculateBestThreeVolumeImbalance(const OrderBook& ob) {
-        double sumB = ob.sumTopBidQuantity(3);
-        double sumA = ob.sumTopAskQuantity(3);
-        if (sumB + sumA == 0.0) return 0.0;
-        return round2((sumB - sumA) / (sumB + sumA));
+    double calculateBestThreeVolumeImbalance(const OrderBook& orderBook) {
+        const double cumulativeSumTopThreeBidsQuantities = orderBook.cumulativeSumTopNBidQuantities(3);
+        const double cumulativeSumTopThreeAsksQuantities = orderBook.cumulativeSumTopNAskQuantity(3);
+        return round2(
+            (cumulativeSumTopThreeBidsQuantities - cumulativeSumTopThreeAsksQuantities)
+            / (cumulativeSumTopThreeBidsQuantities + cumulativeSumTopThreeAsksQuantities)
+            );
     }
 
-    double calculateBestFiveVolumeImbalance(const OrderBook& ob) {
-        double sumB = ob.sumTopBidQuantity(5);
-        double sumA = ob.sumTopAskQuantity(5);
-        if (sumB + sumA == 0.0) return 0.0;
-        return round2((sumB - sumA) / (sumB + sumA));
+    double calculateBestFiveVolumeImbalance(const OrderBook& orderBook) {
+        const double cumulativeSumTopFiveBidsQuantities = orderBook.cumulativeSumTopNBidQuantities(5);
+        const double cumulativeSumTopFiveAsksQuantities = orderBook.cumulativeSumTopNAskQuantity(5);
+        return round2(
+            (cumulativeSumTopFiveBidsQuantities - cumulativeSumTopFiveAsksQuantities)
+            / (cumulativeSumTopFiveBidsQuantities + cumulativeSumTopFiveAsksQuantities)
+            );
     }
 
     double calculateVolumeImbalance(const OrderBook& orderBook) {
@@ -88,16 +96,35 @@ namespace SingleVariableCounter {
             );
     }
 
-    bool calculateIsAggressorAsk(const TradeEntry *trade_entry) {
-        return trade_entry->isBuyerMarketMaker;
+    bool calculateIsAggressorAsk(const TradeEntry *tradeEntry) {
+        return tradeEntry->isBuyerMarketMaker;
     }
 
-    double calculateVwapDeviation(const OrderBook& ob) {
-        const double sumQ  = ob.sumAskQuantity() + ob.sumBidQuantity();
-        if (sumQ == 0.0) return 0.0;
-        const double vwap  = ob.sumPriceQty() / sumQ;
-        const double mid   = calculateMidPrice(ob);
-        return (vwap - mid) / mid;
+    double calculateVwapDeviation(const OrderBook& orderBook) {
+        const double sumBidsAsksQuantity = orderBook.sumAskQuantity() + orderBook.sumBidQuantity();
+        const double vwap = orderBook.sumPriceQty() / sumBidsAsksQuantity;
+        const double midPrice = calculateMidPrice(orderBook);
+        return (vwap - midPrice) / midPrice;
+    }
+
+    double calculateSimplifiedSlopeImbalance(const OrderBook& orderBook)
+    {
+        constexpr size_t K = 5;
+
+        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeSumTopNAskQuantity(5);
+        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeSumTopNBidQuantities(5);
+
+        const double bestFifthAskPrice = orderBook.askPriceAtDepth(K);
+        const double bestFifthBidPrice = orderBook.bidPriceAtDepth(K);
+
+        const double midPrice = calculateMidPrice(orderBook);
+
+        const double bidSlope = bestFiveBidsQuantityCumulativeSum / (midPrice - bestFifthBidPrice);
+        const double askSlope = bestFiveAsksQuantityCumulativeSum / (bestFifthAskPrice - midPrice);
+
+        return round2(
+            (bidSlope - askSlope) / (bidSlope + askSlope)
+            );
     }
 
 }

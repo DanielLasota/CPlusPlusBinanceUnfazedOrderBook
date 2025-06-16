@@ -17,6 +17,7 @@ namespace SingleVariableCounter {
     double calculateVolumeImbalance(const OrderBook& orderBook);
     double calculateQueueImbalance(const OrderBook& orderBook);
     double calculateGap(const OrderBook& orderBook);
-    bool calculateIsAggressorAsk(const TradeEntry *trade_entry);
+    bool calculateIsAggressorAsk(const TradeEntry *tradeEntry);
     double calculateVwapDeviation(const OrderBook& orderBook);
+    double calculateSimplifiedSlopeImbalance(const OrderBook& orderBook);
 }

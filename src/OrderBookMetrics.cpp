@@ -44,6 +44,7 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     std::vector<double> col_gap; col_gap.reserve(n);
     std::vector<uint8_t> col_isAggressorAsk; col_isAggressorAsk.reserve(n);
     std::vector<double> col_vwapDeviation; col_vwapDeviation.reserve(n);
+    std::vector<double> col_simplifiedSlopeImbalance; col_simplifiedSlopeImbalance.reserve(n);
 
 
     for (auto const& e : entries_) {
@@ -63,6 +64,7 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         col_gap.push_back(e.gap);
         col_isAggressorAsk.push_back(static_cast<uint8_t>(e.isAggressorAsk));
         col_vwapDeviation.push_back(e.vwapDeviation);
+        col_simplifiedSlopeImbalance.push_back(e.simplifiedSlopeImbalance);
     }
 
     auto arr_timestampOfReceive = vector_to_numpy<int64_t>(col_timestampOfReceive);
@@ -81,6 +83,7 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     auto arr_gap = vector_to_numpy<double>(col_gap);
     auto arr_isAggressorAsk = vector_to_numpy<uint8_t>(col_isAggressorAsk);
     auto arr_vwapDeviation = vector_to_numpy<double>(col_vwapDeviation);
+    auto arr_simplifiedSlopeImbalance = vector_to_numpy<double>(col_simplifiedSlopeImbalance);
 
     py::dict result;
     for (auto const& var : variables_) {
@@ -91,7 +94,7 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         else if (var == "bestBidPrice") result["bestBidPrice"] = arr_bestBidPrice;
         else if (var == "midPrice") result["midPrice"] = arr_midPrice;
         else if (var == "bestVolumeImbalance") result["bestVolumeImbalance"] = arr_bestVolumeImbalance;
-        else if (var == "bestDepthVolumeRatio") result["bestDepthVolumeRatio"] = arr_bestVolumeRatio;
+        else if (var == "bestVolumeRatio") result["bestVolumeRatio"] = arr_bestVolumeRatio;
         else if (var == "bestTwoVolumeImbalance") result["bestTwoVolumeImbalance"] = arr_bestTwoVolumeImbalance;
         else if (var == "bestThreeVolumeImbalance") result["bestThreeVolumeImbalance"] = arr_bestThreeVolumeImbalance;
         else if (var == "bestFiveVolumeImbalance") result["bestFiveVolumeImbalance"] = arr_bestFiveVolumeImbalance;
@@ -100,6 +103,7 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         else if (var == "gap") result["gap"] = arr_gap;
         else if (var == "isAggressorAsk") result["isAggressorAsk"] = arr_isAggressorAsk;
         else if (var == "vwapDeviation") result["vwapDeviation"] = arr_vwapDeviation;
+        else if (var == "simplifiedSlopeImbalance") result["simplifiedSlopeImbalance"] = arr_simplifiedSlopeImbalance;
     }
 
     auto finish = std::chrono::steady_clock::now();
@@ -132,7 +136,7 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
             else if (var == "bestBidPrice")             file << e.bestBidPrice;
             else if (var == "midPrice")                 file << e.midPrice;
             else if (var == "bestVolumeImbalance")      file << e.bestVolumeImbalance;
-            else if (var == "bestVolumeRatio")          file << e.bestVolumeImbalance;
+            else if (var == "bestVolumeRatio")          file << e.bestVolumeRatio;
             else if (var == "bestTwoVolumeImbalance")   file << e.bestTwoVolumeImbalance;
             else if (var == "bestThreeVolumeImbalance") file << e.bestThreeVolumeImbalance;
             else if (var == "bestFiveVolumeImbalance")  file << e.bestFiveVolumeImbalance;
@@ -141,6 +145,7 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
             else if (var == "gap")                      file << e.gap;
             else if (var == "isAggressorAsk")           file << (e.isAggressorAsk ? "1" : "0");
             else if (var == "vwapDeviation")            file << e.vwapDeviation;
+            else if (var == "simplifiedSlopeImbalance") file << e.simplifiedSlopeImbalance;
 
             if (j + 1 < variables_.size()) file << ",";
         }

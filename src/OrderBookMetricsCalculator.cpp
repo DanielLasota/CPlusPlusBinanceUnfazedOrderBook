@@ -58,5 +58,8 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & VwapDeviation) {
         e.vwapDeviation = SingleVariableCounter::calculateVwapDeviation(ms.orderBook);
     }
+    if (mask_ & simplifiedSlopeImbalance) {
+        e.simplifiedSlopeImbalance = SingleVariableCounter::calculateSimplifiedSlopeImbalance(ms.orderBook);
+    }
     return e;
 }

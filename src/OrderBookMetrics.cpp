@@ -45,6 +45,8 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     std::vector<uint8_t> col_isAggressorAsk; col_isAggressorAsk.reserve(n);
     std::vector<double> col_vwapDeviation; col_vwapDeviation.reserve(n);
     std::vector<double> col_simplifiedSlopeImbalance; col_simplifiedSlopeImbalance.reserve(n);
+    std::vector<double> col_tradeCountImbalance1S; col_tradeCountImbalance1S.reserve(n);
+    std::vector<double> col_cumulativeDelta10s; col_cumulativeDelta10s.reserve(n);
 
 
     for (auto const& e : entries_) {
@@ -65,6 +67,8 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         col_isAggressorAsk.push_back(static_cast<uint8_t>(e.isAggressorAsk));
         col_vwapDeviation.push_back(e.vwapDeviation);
         col_simplifiedSlopeImbalance.push_back(e.simplifiedSlopeImbalance);
+        col_tradeCountImbalance1S.push_back(e.tradeCountImbalance1S);
+        col_cumulativeDelta10s.push_back(e.cumulativeDelta10s);
     }
 
     auto arr_timestampOfReceive = vector_to_numpy<int64_t>(col_timestampOfReceive);
@@ -84,6 +88,8 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     auto arr_isAggressorAsk = vector_to_numpy<uint8_t>(col_isAggressorAsk);
     auto arr_vwapDeviation = vector_to_numpy<double>(col_vwapDeviation);
     auto arr_simplifiedSlopeImbalance = vector_to_numpy<double>(col_simplifiedSlopeImbalance);
+    auto arr_tradeCountImbalance1S = vector_to_numpy<double>(col_tradeCountImbalance1S);
+    auto arr_cumulativeDelta10s = vector_to_numpy<double>(col_cumulativeDelta10s);
 
     py::dict result;
     for (auto const& var : variables_) {
@@ -104,6 +110,8 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         else if (var == "isAggressorAsk") result["isAggressorAsk"] = arr_isAggressorAsk;
         else if (var == "vwapDeviation") result["vwapDeviation"] = arr_vwapDeviation;
         else if (var == "simplifiedSlopeImbalance") result["simplifiedSlopeImbalance"] = arr_simplifiedSlopeImbalance;
+        else if (var == "tradeCountImbalance1S") result["tradeCountImbalance1S"] = arr_tradeCountImbalance1S;
+        else if (var == "cumulativeDelta10s") result["cumulativeDelta10s"] = arr_cumulativeDelta10s;
     }
 
     auto finish = std::chrono::steady_clock::now();
@@ -146,6 +154,8 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
             else if (var == "isAggressorAsk")           file << (e.isAggressorAsk ? "1" : "0");
             else if (var == "vwapDeviation")            file << e.vwapDeviation;
             else if (var == "simplifiedSlopeImbalance") file << e.simplifiedSlopeImbalance;
+            else if (var == "tradeCountImbalance1S")    file << e.tradeCountImbalance1S;
+            else if (var == "cumulativeDelta10s")       file << e.cumulativeDelta10s;
 
             if (j + 1 < variables_.size()) file << ",";
         }

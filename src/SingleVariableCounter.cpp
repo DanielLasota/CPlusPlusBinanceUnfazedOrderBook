@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include "SingleVariableCounter.h"
+#include <RollingStatisticsData.h>
 #include "OrderBook.h"
 
 inline double round2(double x) {
@@ -125,6 +126,28 @@ namespace SingleVariableCounter {
         return round2(
             (bidSlope - askSlope) / (bidSlope + askSlope)
             );
+    }
+
+    double calculateTradeCountImbalance(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    {
+        const size_t buy_trade_count_1_s = rollingStatisticsData.buyTradeCount(windowTimeSeconds);
+        const size_t sell_trade_count_1_s = rollingStatisticsData.sellTradeCount(windowTimeSeconds);
+        const size_t trade_count_sum_1_s = buy_trade_count_1_s + sell_trade_count_1_s;
+
+        return trade_count_sum_1_s == 0
+        ? 0.0
+        : round2(
+            static_cast<double>(
+                static_cast<int64_t>(buy_trade_count_1_s) - static_cast<int64_t>(sell_trade_count_1_s))
+            / static_cast<double>(trade_count_sum_1_s)
+            );
+    }
+
+    double calculateCumulativeDelta(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    {
+        const double bid = rollingStatisticsData.buyTradeVolume(windowTimeSeconds);
+        const double ask = rollingStatisticsData.sellTradeVolume(windowTimeSeconds);
+        return round2(bid - ask);
     }
 
 }

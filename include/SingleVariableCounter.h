@@ -2,6 +2,7 @@
 
 #include "enums/TradeEntry.h"
 #include "OrderBook.h"
+#include <RollingStatisticsData.h>
 
 namespace SingleVariableCounter {
 
@@ -20,4 +21,8 @@ namespace SingleVariableCounter {
     bool calculateIsAggressorAsk(const TradeEntry *tradeEntry);
     double calculateVwapDeviation(const OrderBook& orderBook);
     double calculateSimplifiedSlopeImbalance(const OrderBook& orderBook);
+
+    double calculateTradeCountImbalance(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+    double calculateCumulativeDelta(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+
 }

@@ -6,23 +6,25 @@
 #include <string>
 
 enum Metric : uint32_t {
-    TimestampOfReceive      = 1 << 0,
-    market                  = 1 << 1,
-    symbol                  = 1 << 2,
-    BestAskPrice            = 1 << 3,
-    BestBidPrice            = 1 << 4,
-    MidPrice                = 1 << 5,
-    BestVolumeImbalance     = 1 << 6,
-    BestVolumeRatio         = 1 << 7,
-    BestTwoVolumeImbalance  = 1 << 8,
-    BestThreeVolumeImbalance= 1 << 9,
-    BestFiveVolumeImbalance = 1 << 10,
-    VolumeImbalance         = 1 << 11,
-    QueueImbalance          = 1 << 12,
-    Gap                     = 1 << 13,
-    IsAggressorAsk          = 1 << 14,
-    VwapDeviation           = 1 << 15,
-    simplifiedSlopeImbalance= 1 << 16
+    TimestampOfReceive          = 1 << 0,
+    market                      = 1 << 1,
+    symbol                      = 1 << 2,
+    BestAskPrice                = 1 << 3,
+    BestBidPrice                = 1 << 4,
+    MidPrice                    = 1 << 5,
+    BestVolumeImbalance         = 1 << 6,
+    BestVolumeRatio             = 1 << 7,
+    BestTwoVolumeImbalance      = 1 << 8,
+    BestThreeVolumeImbalance    = 1 << 9,
+    BestFiveVolumeImbalance     = 1 << 10,
+    VolumeImbalance             = 1 << 11,
+    QueueImbalance              = 1 << 12,
+    Gap                         = 1 << 13,
+    IsAggressorAsk              = 1 << 14,
+    VwapDeviation               = 1 << 15,
+    simplifiedSlopeImbalance    = 1 << 16,
+    tradeCountImbalance1S       = 1 << 17,
+    cumulativeDelta10s          = 1 << 18,
 };
 using MetricMask = uint32_t;
 
@@ -46,6 +48,8 @@ inline MetricMask parseMask(const std::vector<std::string>& vars) {
         else if (s == "isAggressorAsk")             m |= IsAggressorAsk;
         else if (s == "vwapDeviation")              m |= VwapDeviation;
         else if (s == "simplifiedSlopeImbalance")   m |= simplifiedSlopeImbalance;
+        else if (s == "tradeCountImbalance1S")      m |= tradeCountImbalance1S;
+        else if (s == "cumulativeDelta10s")         m |= cumulativeDelta10s;
         else {
             throw std::invalid_argument("Unknown variable name: " + s);
         }

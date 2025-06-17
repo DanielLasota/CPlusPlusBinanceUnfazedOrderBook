@@ -185,7 +185,9 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     svc.def("calculate_gap",                        &SingleVariableCounter::calculateGap,                       py::arg("order_book"));
     svc.def("calculate_vwap_deviation",             &SingleVariableCounter::calculateVwapDeviation,             py::arg("order_book"));
     svc.def("calculate_is_aggressor_ask", [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); }, py::arg("trade_entry"));
-    svc.def("calculate_simplified_slope_imbalance",  &SingleVariableCounter::calculateSimplifiedSlopeImbalance,  py::arg("order_book"));
+    svc.def("calculate_simplified_slope_imbalance", &SingleVariableCounter::calculateSimplifiedSlopeImbalance,  py::arg("order_book"));
+    svc.def("calculate_trade_count_imbalance",      &SingleVariableCounter::calculateTradeCountImbalance,  py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_cumulative_delta",           &SingleVariableCounter::calculateTradeCountImbalance,  py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
@@ -343,6 +345,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readonly("isAggressorAsk",             &OrderBookMetricsEntry::isAggressorAsk)
         .def_readonly("vwapDeviation",              &OrderBookMetricsEntry::vwapDeviation)
         .def_readonly("simplifiedSlopeImbalance",   &OrderBookMetricsEntry::simplifiedSlopeImbalance)
+        .def_readonly("tradeCountImbalance1S",      &OrderBookMetricsEntry::tradeCountImbalance1S)
+        .def_readonly("cumulativeDelta10s",         &OrderBookMetricsEntry::cumulativeDelta10s)
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(5);
@@ -363,7 +367,9 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             << "gap: " << entry.gap << " "
             << "isAggressorAsk: " << entry.isAggressorAsk << " "
             << "vwapDeviation: " << entry.vwapDeviation << " "
-            << "simplifiedSlopeImbalance: " << entry.simplifiedSlopeImbalance << " ";
+            << "simplifiedSlopeImbalance: " << entry.simplifiedSlopeImbalance << " "
+            << "tradeCountImbalance1S: " << entry.tradeCountImbalance1S << " "
+            << "cumulativeDelta10s: " << entry.cumulativeDelta10s << " ";
             return oss.str();
         });
 

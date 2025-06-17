@@ -24,4 +24,6 @@ struct OrderBookMetricsEntry {
     bool isAggressorAsk;
     double vwapDeviation;
     double simplifiedSlopeImbalance;
+    double tradeCountImbalance1S;
+    double cumulativeDelta10s;
 };

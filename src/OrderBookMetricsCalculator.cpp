@@ -61,5 +61,11 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & simplifiedSlopeImbalance) {
         e.simplifiedSlopeImbalance = SingleVariableCounter::calculateSimplifiedSlopeImbalance(ms.orderBook);
     }
+    if (mask_ & tradeCountImbalance1S) {
+        e.tradeCountImbalance1S = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 1);
+    }
+    if (mask_ & cumulativeDelta10s) {
+        e.cumulativeDelta10s = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 10);
+    }
     return e;
 }

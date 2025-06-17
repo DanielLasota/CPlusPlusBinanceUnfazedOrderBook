@@ -19,6 +19,8 @@ void MarketState::update(DecodedEntry* entry) {
         lastTradePtr = &lastTrade;
         hasLastTrade = true;
     }
+
+    rollingStatisticsData.update(entry);
 }
 
 void MarketState::updateOrderBook(int64_t timestampOfReceive, double price, double quantity, bool isAsk){

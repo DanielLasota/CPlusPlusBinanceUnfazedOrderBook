@@ -150,5 +150,26 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.rateOfReturn60Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 60);
     }
 
+    if (mask_ & differenceDepthVolatilityImbalance1Seconds) {
+        e.differenceDepthVolatilityImbalance1Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 1);
+    }
+    if (mask_ & differenceDepthVolatilityImbalance3Seconds) {
+        e.differenceDepthVolatilityImbalance3Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 3);
+    }
+    if (mask_ & differenceDepthVolatilityImbalance5Seconds) {
+        e.differenceDepthVolatilityImbalance5Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 5);
+    }
+    if (mask_ & differenceDepthVolatilityImbalance10Seconds) {
+        e.differenceDepthVolatilityImbalance10Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 10);
+    }
+    if (mask_ & differenceDepthVolatilityImbalance15Seconds) {
+        e.differenceDepthVolatilityImbalance15Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 15);
+    }
+    if (mask_ & differenceDepthVolatilityImbalance30Seconds) {
+        e.differenceDepthVolatilityImbalance30Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 30);
+    }
+    if (mask_ & differenceDepthVolatilityImbalance60Seconds) {
+        e.differenceDepthVolatilityImbalance60Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 60);
+    }
     return e;
 }

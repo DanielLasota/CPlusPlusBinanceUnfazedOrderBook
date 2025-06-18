@@ -19,6 +19,7 @@ int main() {
         "bestAskPrice",
         "bestBidPrice",
         "midPrice",
+
         "bestVolumeImbalance",
         "bestTwoVolumeImbalance",
         "bestThreeVolumeImbalance",
@@ -61,6 +62,14 @@ int main() {
         "rateOfReturn15Seconds",
         "rateOfReturn30Seconds",
         "rateOfReturn60Seconds",
+
+        "differenceDepthVolatilityImbalance1Seconds",
+        "differenceDepthVolatilityImbalance3Seconds",
+        "differenceDepthVolatilityImbalance5Seconds",
+        "differenceDepthVolatilityImbalance10Seconds",
+        "differenceDepthVolatilityImbalance15Seconds",
+        "differenceDepthVolatilityImbalance30Seconds",
+        "differenceDepthVolatilityImbalance60Seconds",
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 

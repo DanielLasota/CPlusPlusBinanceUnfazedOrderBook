@@ -45,9 +45,38 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     std::vector<uint8_t> col_isAggressorAsk; col_isAggressorAsk.reserve(n);
     std::vector<double> col_vwapDeviation; col_vwapDeviation.reserve(n);
     std::vector<double> col_simplifiedSlopeImbalance; col_simplifiedSlopeImbalance.reserve(n);
-    std::vector<double> col_tradeCountImbalance1S; col_tradeCountImbalance1S.reserve(n);
-    std::vector<double> col_cumulativeDelta10s; col_cumulativeDelta10s.reserve(n);
 
+    std::vector<double> col_tradeCountImbalance1Seconds; col_tradeCountImbalance1Seconds.reserve(n);
+    std::vector<double> col_tradeCountImbalance3Seconds; col_tradeCountImbalance3Seconds.reserve(n);
+    std::vector<double> col_tradeCountImbalance5Seconds; col_tradeCountImbalance5Seconds.reserve(n);
+    std::vector<double> col_tradeCountImbalance10Seconds; col_tradeCountImbalance10Seconds.reserve(n);
+    std::vector<double> col_tradeCountImbalance15Seconds; col_tradeCountImbalance15Seconds.reserve(n);
+    std::vector<double> col_tradeCountImbalance30Seconds; col_tradeCountImbalance30Seconds.reserve(n);
+    std::vector<double> col_tradeCountImbalance60Seconds; col_tradeCountImbalance60Seconds.reserve(n);
+
+    std::vector<double> col_cumulativeDelta1Seconds; col_cumulativeDelta1Seconds.reserve(n);
+    std::vector<double> col_cumulativeDelta3Seconds; col_cumulativeDelta3Seconds.reserve(n);
+    std::vector<double> col_cumulativeDelta5Seconds; col_cumulativeDelta5Seconds.reserve(n);
+    std::vector<double> col_cumulativeDelta10Seconds; col_cumulativeDelta10Seconds.reserve(n);
+    std::vector<double> col_cumulativeDelta15Seconds; col_cumulativeDelta15Seconds.reserve(n);
+    std::vector<double> col_cumulativeDelta30Seconds; col_cumulativeDelta30Seconds.reserve(n);
+    std::vector<double> col_cumulativeDelta60Seconds; col_cumulativeDelta60Seconds.reserve(n);
+
+    std::vector<double> col_priceDifference1Seconds; col_priceDifference1Seconds.reserve(n);
+    std::vector<double> col_priceDifference3Seconds; col_priceDifference3Seconds.reserve(n);
+    std::vector<double> col_priceDifference5Seconds; col_priceDifference5Seconds.reserve(n);
+    std::vector<double> col_priceDifference10Seconds; col_priceDifference10Seconds.reserve(n);
+    std::vector<double> col_priceDifference15Seconds; col_priceDifference15Seconds.reserve(n);
+    std::vector<double> col_priceDifference30Seconds; col_priceDifference30Seconds.reserve(n);
+    std::vector<double> col_priceDifference60Seconds; col_priceDifference60Seconds.reserve(n);
+
+    std::vector<double> col_rateOfReturn1Seconds;   col_rateOfReturn1Seconds.reserve(n);
+    std::vector<double> col_rateOfReturn3Seconds;   col_rateOfReturn3Seconds.reserve(n);
+    std::vector<double> col_rateOfReturn5Seconds;   col_rateOfReturn5Seconds.reserve(n);
+    std::vector<double> col_rateOfReturn10Seconds;  col_rateOfReturn10Seconds.reserve(n);
+    std::vector<double> col_rateOfReturn15Seconds;  col_rateOfReturn15Seconds.reserve(n);
+    std::vector<double> col_rateOfReturn30Seconds;  col_rateOfReturn30Seconds.reserve(n);
+    std::vector<double> col_rateOfReturn60Seconds;  col_rateOfReturn60Seconds.reserve(n);
 
     for (auto const& e : entries_) {
         col_timestampOfReceive.push_back(e.timestampOfReceive);
@@ -67,8 +96,38 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         col_isAggressorAsk.push_back(static_cast<uint8_t>(e.isAggressorAsk));
         col_vwapDeviation.push_back(e.vwapDeviation);
         col_simplifiedSlopeImbalance.push_back(e.simplifiedSlopeImbalance);
-        col_tradeCountImbalance1S.push_back(e.tradeCountImbalance1S);
-        col_cumulativeDelta10s.push_back(e.cumulativeDelta10s);
+
+        col_tradeCountImbalance1Seconds.push_back(e.tradeCountImbalance1Seconds);
+        col_tradeCountImbalance3Seconds.push_back(e.tradeCountImbalance3Seconds);
+        col_tradeCountImbalance5Seconds.push_back(e.tradeCountImbalance5Seconds);
+        col_tradeCountImbalance10Seconds.push_back(e.tradeCountImbalance10Seconds);
+        col_tradeCountImbalance15Seconds.push_back(e.tradeCountImbalance15Seconds);
+        col_tradeCountImbalance30Seconds.push_back(e.tradeCountImbalance30Seconds);
+        col_tradeCountImbalance60Seconds.push_back(e.tradeCountImbalance60Seconds);
+
+        col_cumulativeDelta1Seconds.push_back(e.cumulativeDelta1Seconds);
+        col_cumulativeDelta3Seconds.push_back(e.cumulativeDelta3Seconds);
+        col_cumulativeDelta5Seconds.push_back(e.cumulativeDelta5Seconds);
+        col_cumulativeDelta10Seconds.push_back(e.cumulativeDelta10Seconds);
+        col_cumulativeDelta15Seconds.push_back(e.cumulativeDelta15Seconds);
+        col_cumulativeDelta30Seconds.push_back(e.cumulativeDelta30Seconds);
+        col_cumulativeDelta60Seconds.push_back(e.cumulativeDelta60Seconds);
+
+        col_priceDifference1Seconds.push_back(e.priceDifference1Seconds);
+        col_priceDifference3Seconds.push_back(e.priceDifference3Seconds);
+        col_priceDifference5Seconds.push_back(e.priceDifference5Seconds);
+        col_priceDifference10Seconds.push_back(e.priceDifference10Seconds);
+        col_priceDifference15Seconds.push_back(e.priceDifference15Seconds);
+        col_priceDifference30Seconds.push_back(e.priceDifference30Seconds);
+        col_priceDifference60Seconds.push_back(e.priceDifference60Seconds);
+
+        col_rateOfReturn1Seconds.push_back(e.rateOfReturn1Seconds);
+        col_rateOfReturn3Seconds.push_back(e.rateOfReturn3Seconds);
+        col_rateOfReturn5Seconds.push_back(e.rateOfReturn5Seconds);
+        col_rateOfReturn10Seconds.push_back(e.rateOfReturn10Seconds);
+        col_rateOfReturn15Seconds.push_back(e.rateOfReturn15Seconds);
+        col_rateOfReturn30Seconds.push_back(e.rateOfReturn30Seconds);
+        col_rateOfReturn60Seconds.push_back(e.rateOfReturn60Seconds);
     }
 
     auto arr_timestampOfReceive = vector_to_numpy<int64_t>(col_timestampOfReceive);
@@ -88,30 +147,90 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     auto arr_isAggressorAsk = vector_to_numpy<uint8_t>(col_isAggressorAsk);
     auto arr_vwapDeviation = vector_to_numpy<double>(col_vwapDeviation);
     auto arr_simplifiedSlopeImbalance = vector_to_numpy<double>(col_simplifiedSlopeImbalance);
-    auto arr_tradeCountImbalance1S = vector_to_numpy<double>(col_tradeCountImbalance1S);
-    auto arr_cumulativeDelta10s = vector_to_numpy<double>(col_cumulativeDelta10s);
+
+    auto arr_tradeCountImbalance1Seconds = vector_to_numpy<double>(col_tradeCountImbalance1Seconds);
+    auto arr_tradeCountImbalance3Seconds = vector_to_numpy<double>(col_tradeCountImbalance3Seconds);
+    auto arr_tradeCountImbalance5Seconds = vector_to_numpy<double>(col_tradeCountImbalance5Seconds);
+    auto arr_tradeCountImbalance10Seconds = vector_to_numpy<double>(col_tradeCountImbalance10Seconds);
+    auto arr_tradeCountImbalance15Seconds = vector_to_numpy<double>(col_tradeCountImbalance15Seconds);
+    auto arr_tradeCountImbalance30Seconds = vector_to_numpy<double>(col_tradeCountImbalance30Seconds);
+    auto arr_tradeCountImbalance60Seconds = vector_to_numpy<double>(col_tradeCountImbalance60Seconds);
+
+    auto arr_cumulativeDelta1Seconds = vector_to_numpy<double>(col_cumulativeDelta1Seconds);
+    auto arr_cumulativeDelta3Seconds = vector_to_numpy<double>(col_cumulativeDelta3Seconds);
+    auto arr_cumulativeDelta5Seconds = vector_to_numpy<double>(col_cumulativeDelta5Seconds);
+    auto arr_cumulativeDelta10Seconds = vector_to_numpy<double>(col_cumulativeDelta10Seconds);
+    auto arr_cumulativeDelta15Seconds = vector_to_numpy<double>(col_cumulativeDelta15Seconds);
+    auto arr_cumulativeDelta30Seconds = vector_to_numpy<double>(col_cumulativeDelta30Seconds);
+    auto arr_cumulativeDelta60Seconds = vector_to_numpy<double>(col_cumulativeDelta60Seconds);
+
+    auto arr_priceDifference1Seconds = vector_to_numpy<double>(col_priceDifference1Seconds);
+    auto arr_priceDifference3Seconds = vector_to_numpy<double>(col_priceDifference3Seconds);
+    auto arr_priceDifference5Seconds = vector_to_numpy<double>(col_priceDifference5Seconds);
+    auto arr_priceDifference10Seconds = vector_to_numpy<double>(col_priceDifference10Seconds);
+    auto arr_priceDifference15Seconds = vector_to_numpy<double>(col_priceDifference15Seconds);
+    auto arr_priceDifference30Seconds = vector_to_numpy<double>(col_priceDifference30Seconds);
+    auto arr_priceDifference60Seconds = vector_to_numpy<double>(col_priceDifference60Seconds);
+
+    auto arr_rateOfReturn1Seconds  = vector_to_numpy<double>(col_rateOfReturn1Seconds);
+    auto arr_rateOfReturn3Seconds  = vector_to_numpy<double>(col_rateOfReturn3Seconds);
+    auto arr_rateOfReturn5Seconds  = vector_to_numpy<double>(col_rateOfReturn5Seconds);
+    auto arr_rateOfReturn10Seconds = vector_to_numpy<double>(col_rateOfReturn10Seconds);
+    auto arr_rateOfReturn15Seconds = vector_to_numpy<double>(col_rateOfReturn15Seconds);
+    auto arr_rateOfReturn30Seconds = vector_to_numpy<double>(col_rateOfReturn30Seconds);
+    auto arr_rateOfReturn60Seconds = vector_to_numpy<double>(col_rateOfReturn60Seconds);
 
     py::dict result;
     for (auto const& var : variables_) {
-        if      (var == "timestampOfReceive") result["timestampOfReceive"] = arr_timestampOfReceive;
-        else if (var == "market") result["market"] = arr_market;
-        else if (var == "symbol") result["symbol"] = arr_symbol;
-        else if (var == "bestAskPrice") result["bestAskPrice"] = arr_bestAskPrice;
-        else if (var == "bestBidPrice") result["bestBidPrice"] = arr_bestBidPrice;
-        else if (var == "midPrice") result["midPrice"] = arr_midPrice;
-        else if (var == "bestVolumeImbalance") result["bestVolumeImbalance"] = arr_bestVolumeImbalance;
-        else if (var == "bestVolumeRatio") result["bestVolumeRatio"] = arr_bestVolumeRatio;
-        else if (var == "bestTwoVolumeImbalance") result["bestTwoVolumeImbalance"] = arr_bestTwoVolumeImbalance;
-        else if (var == "bestThreeVolumeImbalance") result["bestThreeVolumeImbalance"] = arr_bestThreeVolumeImbalance;
-        else if (var == "bestFiveVolumeImbalance") result["bestFiveVolumeImbalance"] = arr_bestFiveVolumeImbalance;
-        else if (var == "queueImbalance") result["queueImbalance"] = arr_queueImbalance;
-        else if (var == "volumeImbalance") result["volumeImbalance"] = arr_volumeImbalance;
-        else if (var == "gap") result["gap"] = arr_gap;
-        else if (var == "isAggressorAsk") result["isAggressorAsk"] = arr_isAggressorAsk;
-        else if (var == "vwapDeviation") result["vwapDeviation"] = arr_vwapDeviation;
-        else if (var == "simplifiedSlopeImbalance") result["simplifiedSlopeImbalance"] = arr_simplifiedSlopeImbalance;
-        else if (var == "tradeCountImbalance1S") result["tradeCountImbalance1S"] = arr_tradeCountImbalance1S;
-        else if (var == "cumulativeDelta10s") result["cumulativeDelta10s"] = arr_cumulativeDelta10s;
+        if      (var == "timestampOfReceive") result["timestampOfReceive"]                      = arr_timestampOfReceive;
+        else if (var == "market") result["market"]                                              = arr_market;
+        else if (var == "symbol") result["symbol"]                                              = arr_symbol;
+        else if (var == "bestAskPrice") result["bestAskPrice"]                                  = arr_bestAskPrice;
+        else if (var == "bestBidPrice") result["bestBidPrice"]                                  = arr_bestBidPrice;
+        else if (var == "midPrice") result["midPrice"]                                          = arr_midPrice;
+        else if (var == "bestVolumeImbalance") result["bestVolumeImbalance"]                    = arr_bestVolumeImbalance;
+        else if (var == "bestVolumeRatio") result["bestVolumeRatio"]                            = arr_bestVolumeRatio;
+        else if (var == "bestTwoVolumeImbalance") result["bestTwoVolumeImbalance"]              = arr_bestTwoVolumeImbalance;
+        else if (var == "bestThreeVolumeImbalance") result["bestThreeVolumeImbalance"]          = arr_bestThreeVolumeImbalance;
+        else if (var == "bestFiveVolumeImbalance") result["bestFiveVolumeImbalance"]            = arr_bestFiveVolumeImbalance;
+        else if (var == "queueImbalance") result["queueImbalance"]                              = arr_queueImbalance;
+        else if (var == "volumeImbalance") result["volumeImbalance"]                            = arr_volumeImbalance;
+        else if (var == "gap") result["gap"]                                                    = arr_gap;
+        else if (var == "isAggressorAsk") result["isAggressorAsk"]                              = arr_isAggressorAsk;
+        else if (var == "vwapDeviation") result["vwapDeviation"]                                = arr_vwapDeviation;
+        else if (var == "simplifiedSlopeImbalance") result["simplifiedSlopeImbalance"]          = arr_simplifiedSlopeImbalance;
+
+        else if (var == "tradeCountImbalance1Seconds")  result["tradeCountImbalance1Seconds"]   = arr_tradeCountImbalance1Seconds;
+        else if (var == "tradeCountImbalance3Seconds")  result["tradeCountImbalance3Seconds"]   = arr_tradeCountImbalance3Seconds;
+        else if (var == "tradeCountImbalance5Seconds")  result["tradeCountImbalance5Seconds"]   = arr_tradeCountImbalance5Seconds;
+        else if (var == "tradeCountImbalance10Seconds") result["tradeCountImbalance10Seconds"]  = arr_tradeCountImbalance10Seconds;
+        else if (var == "tradeCountImbalance15Seconds") result["tradeCountImbalance15Seconds"]  = arr_tradeCountImbalance15Seconds;
+        else if (var == "tradeCountImbalance30Seconds") result["tradeCountImbalance30Seconds"]  = arr_tradeCountImbalance30Seconds;
+        else if (var == "tradeCountImbalance60Seconds") result["tradeCountImbalance60Seconds"]  = arr_tradeCountImbalance60Seconds;
+
+        else if (var == "cumulativeDelta1Seconds")     result["cumulativeDelta1Seconds"]        = arr_cumulativeDelta1Seconds;
+        else if (var == "cumulativeDelta3Seconds")     result["cumulativeDelta3Seconds"]        = arr_cumulativeDelta3Seconds;
+        else if (var == "cumulativeDelta5Seconds")     result["cumulativeDelta5Seconds"]        = arr_cumulativeDelta5Seconds;
+        else if (var == "cumulativeDelta10Seconds")    result["cumulativeDelta10Seconds"]       = arr_cumulativeDelta10Seconds;
+        else if (var == "cumulativeDelta15Seconds")    result["cumulativeDelta15Seconds"]       = arr_cumulativeDelta15Seconds;
+        else if (var == "cumulativeDelta30Seconds")    result["cumulativeDelta30Seconds"]       = arr_cumulativeDelta30Seconds;
+        else if (var == "cumulativeDelta60Seconds")    result["cumulativeDelta60Seconds"]       = arr_cumulativeDelta60Seconds;
+
+        else if (var == "priceDifference1Seconds")     result["priceDifference1Seconds"]        = arr_priceDifference1Seconds;
+        else if (var == "priceDifference3Seconds")     result["priceDifference3Seconds"]        = arr_priceDifference3Seconds;
+        else if (var == "priceDifference5Seconds")     result["priceDifference5Seconds"]        = arr_priceDifference5Seconds;
+        else if (var == "priceDifference10Seconds")    result["priceDifference10Seconds"]       = arr_priceDifference10Seconds;
+        else if (var == "priceDifference15Seconds")    result["priceDifference15Seconds"]       = arr_priceDifference15Seconds;
+        else if (var == "priceDifference30Seconds")    result["priceDifference30Seconds"]       = arr_priceDifference30Seconds;
+        else if (var == "priceDifference60Seconds")    result["priceDifference60Seconds"]       = arr_priceDifference60Seconds;
+
+        else if (var == "rateOfReturn1Seconds")   result["rateOfReturn1Seconds"]                = arr_rateOfReturn1Seconds;
+        else if (var == "rateOfReturn3Seconds")   result["rateOfReturn3Seconds"]                = arr_rateOfReturn3Seconds;
+        else if (var == "rateOfReturn5Seconds")   result["rateOfReturn5Seconds"]                = arr_rateOfReturn5Seconds;
+        else if (var == "rateOfReturn10Seconds")  result["rateOfReturn10Seconds"]               = arr_rateOfReturn10Seconds;
+        else if (var == "rateOfReturn15Seconds")  result["rateOfReturn15Seconds"]               = arr_rateOfReturn15Seconds;
+        else if (var == "rateOfReturn30Seconds")  result["rateOfReturn30Seconds"]               = arr_rateOfReturn30Seconds;
+        else if (var == "rateOfReturn60Seconds")  result["rateOfReturn60Seconds"]               = arr_rateOfReturn60Seconds;
     }
 
     auto finish = std::chrono::steady_clock::now();
@@ -137,25 +256,55 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
     for (const auto &e : entries_) {
         for (size_t j = 0; j < variables_.size(); ++j) {
             const auto &var = variables_[j];
-            if      (var == "timestampOfReceive")       file << e.timestampOfReceive;
-            else if (var == "market")                   file << static_cast<int>(e.market);
-            else if (var == "symbol")                   file << static_cast<int>(e.symbol);
-            else if (var == "bestAskPrice")             file << e.bestAskPrice;
-            else if (var == "bestBidPrice")             file << e.bestBidPrice;
-            else if (var == "midPrice")                 file << e.midPrice;
-            else if (var == "bestVolumeImbalance")      file << e.bestVolumeImbalance;
-            else if (var == "bestVolumeRatio")          file << e.bestVolumeRatio;
-            else if (var == "bestTwoVolumeImbalance")   file << e.bestTwoVolumeImbalance;
-            else if (var == "bestThreeVolumeImbalance") file << e.bestThreeVolumeImbalance;
-            else if (var == "bestFiveVolumeImbalance")  file << e.bestFiveVolumeImbalance;
-            else if (var == "volumeImbalance")          file << e.volumeImbalance;
-            else if (var == "queueImbalance")           file << e.queueImbalance;
-            else if (var == "gap")                      file << e.gap;
-            else if (var == "isAggressorAsk")           file << (e.isAggressorAsk ? "1" : "0");
-            else if (var == "vwapDeviation")            file << e.vwapDeviation;
-            else if (var == "simplifiedSlopeImbalance") file << e.simplifiedSlopeImbalance;
-            else if (var == "tradeCountImbalance1S")    file << e.tradeCountImbalance1S;
-            else if (var == "cumulativeDelta10s")       file << e.cumulativeDelta10s;
+            if      (var == "timestampOfReceive")           file << e.timestampOfReceive;
+            else if (var == "market")                       file << static_cast<int>(e.market);
+            else if (var == "symbol")                       file << static_cast<int>(e.symbol);
+            else if (var == "bestAskPrice")                 file << e.bestAskPrice;
+            else if (var == "bestBidPrice")                 file << e.bestBidPrice;
+            else if (var == "midPrice")                     file << e.midPrice;
+            else if (var == "bestVolumeImbalance")          file << e.bestVolumeImbalance;
+            else if (var == "bestVolumeRatio")              file << e.bestVolumeRatio;
+            else if (var == "bestTwoVolumeImbalance")       file << e.bestTwoVolumeImbalance;
+            else if (var == "bestThreeVolumeImbalance")     file << e.bestThreeVolumeImbalance;
+            else if (var == "bestFiveVolumeImbalance")      file << e.bestFiveVolumeImbalance;
+            else if (var == "volumeImbalance")              file << e.volumeImbalance;
+            else if (var == "queueImbalance")               file << e.queueImbalance;
+            else if (var == "gap")                          file << e.gap;
+            else if (var == "isAggressorAsk")               file << (e.isAggressorAsk ? "1" : "0");
+            else if (var == "vwapDeviation")                file << e.vwapDeviation;
+            else if (var == "simplifiedSlopeImbalance")     file << e.simplifiedSlopeImbalance;
+
+            else if (var == "tradeCountImbalance1Seconds")  file << e.tradeCountImbalance1Seconds;
+            else if (var == "tradeCountImbalance3Seconds")  file << e.tradeCountImbalance3Seconds;
+            else if (var == "tradeCountImbalance5Seconds")  file << e.tradeCountImbalance5Seconds;
+            else if (var == "tradeCountImbalance10Seconds") file << e.tradeCountImbalance10Seconds;
+            else if (var == "tradeCountImbalance15Seconds") file << e.tradeCountImbalance15Seconds;
+            else if (var == "tradeCountImbalance30Seconds") file << e.tradeCountImbalance30Seconds;
+            else if (var == "tradeCountImbalance60Seconds") file << e.tradeCountImbalance60Seconds;
+
+            else if (var == "cumulativeDelta1Seconds")      file << e.cumulativeDelta1Seconds;
+            else if (var == "cumulativeDelta3Seconds")      file << e.cumulativeDelta3Seconds;
+            else if (var == "cumulativeDelta5Seconds")      file << e.cumulativeDelta5Seconds;
+            else if (var == "cumulativeDelta10Seconds")     file << e.cumulativeDelta10Seconds;
+            else if (var == "cumulativeDelta15Seconds")     file << e.cumulativeDelta15Seconds;
+            else if (var == "cumulativeDelta30Seconds")     file << e.cumulativeDelta30Seconds;
+            else if (var == "cumulativeDelta60Seconds")     file << e.cumulativeDelta60Seconds;
+
+            else if (var == "priceDifference1Seconds")      file << e.priceDifference1Seconds;
+            else if (var == "priceDifference3Seconds")      file << e.priceDifference3Seconds;
+            else if (var == "priceDifference5Seconds")      file << e.priceDifference5Seconds;
+            else if (var == "priceDifference10Seconds")     file << e.priceDifference10Seconds;
+            else if (var == "priceDifference15Seconds")     file << e.priceDifference15Seconds;
+            else if (var == "priceDifference30Seconds")     file << e.priceDifference30Seconds;
+            else if (var == "priceDifference60Seconds")     file << e.priceDifference60Seconds;
+
+            else if (var == "rateOfReturn1Seconds")         file << e.rateOfReturn1Seconds;
+            else if (var == "rateOfReturn3Seconds")         file << e.rateOfReturn3Seconds;
+            else if (var == "rateOfReturn5Seconds")         file << e.rateOfReturn5Seconds;
+            else if (var == "rateOfReturn10Seconds")        file << e.rateOfReturn10Seconds;
+            else if (var == "rateOfReturn15Seconds")        file << e.rateOfReturn15Seconds;
+            else if (var == "rateOfReturn30Seconds")        file << e.rateOfReturn30Seconds;
+            else if (var == "rateOfReturn60Seconds")        file << e.rateOfReturn60Seconds;
 
             if (j + 1 < variables_.size()) file << ",";
         }

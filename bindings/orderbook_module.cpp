@@ -186,8 +186,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     svc.def("calculate_vwap_deviation",             &SingleVariableCounter::calculateVwapDeviation,             py::arg("order_book"));
     svc.def("calculate_is_aggressor_ask", [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); }, py::arg("trade_entry"));
     svc.def("calculate_simplified_slope_imbalance", &SingleVariableCounter::calculateSimplifiedSlopeImbalance,  py::arg("order_book"));
-    svc.def("calculate_trade_count_imbalance",      &SingleVariableCounter::calculateTradeCountImbalance,  py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_cumulative_delta",           &SingleVariableCounter::calculateTradeCountImbalance,  py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+
+    svc.def("calculate_trade_count_imbalance",      &SingleVariableCounter::calculateTradeCountImbalance,       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_cumulative_delta",           &SingleVariableCounter::calculateCumulativeDelta,           py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_cumulative_delta",           &SingleVariableCounter::calculatePriceDifference,           py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
@@ -328,25 +330,56 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
-        .def_readonly("timestampOfReceive",         &OrderBookMetricsEntry::timestampOfReceive)
-        .def_readonly("market",                     &OrderBookMetricsEntry::market)
-        .def_readonly("symbol",                     &OrderBookMetricsEntry::symbol)
-        .def_readonly("bestAskPrice",               &OrderBookMetricsEntry::bestAskPrice)
-        .def_readonly("bestBidPrice",               &OrderBookMetricsEntry::bestBidPrice)
-        .def_readonly("midPrice",                   &OrderBookMetricsEntry::midPrice)
-        .def_readonly("bestVolumeImbalance",        &OrderBookMetricsEntry::bestVolumeImbalance)
-        .def_readonly("bestVolumeRatio",            &OrderBookMetricsEntry::bestVolumeRatio)
-        .def_readonly("bestTwoVolumeImbalance",     &OrderBookMetricsEntry::bestTwoVolumeImbalance)
-        .def_readonly("bestThreeVolumeImbalance",   &OrderBookMetricsEntry::bestThreeVolumeImbalance)
-        .def_readonly("bestFiveVolumeImbalance",    &OrderBookMetricsEntry::bestFiveVolumeImbalance)
-        .def_readonly("volumeImbalance",            &OrderBookMetricsEntry::volumeImbalance)
-        .def_readonly("queueImbalance",             &OrderBookMetricsEntry::queueImbalance)
-        .def_readonly("gap",                        &OrderBookMetricsEntry::gap)
-        .def_readonly("isAggressorAsk",             &OrderBookMetricsEntry::isAggressorAsk)
-        .def_readonly("vwapDeviation",              &OrderBookMetricsEntry::vwapDeviation)
-        .def_readonly("simplifiedSlopeImbalance",   &OrderBookMetricsEntry::simplifiedSlopeImbalance)
-        .def_readonly("tradeCountImbalance1S",      &OrderBookMetricsEntry::tradeCountImbalance1S)
-        .def_readonly("cumulativeDelta10s",         &OrderBookMetricsEntry::cumulativeDelta10s)
+        .def_readonly("timestampOfReceive",             &OrderBookMetricsEntry::timestampOfReceive)
+        .def_readonly("market",                         &OrderBookMetricsEntry::market)
+        .def_readonly("symbol",                         &OrderBookMetricsEntry::symbol)
+        .def_readonly("bestAskPrice",                   &OrderBookMetricsEntry::bestAskPrice)
+        .def_readonly("bestBidPrice",                   &OrderBookMetricsEntry::bestBidPrice)
+        .def_readonly("midPrice",                       &OrderBookMetricsEntry::midPrice)
+        .def_readonly("bestVolumeImbalance",            &OrderBookMetricsEntry::bestVolumeImbalance)
+        .def_readonly("bestVolumeRatio",                &OrderBookMetricsEntry::bestVolumeRatio)
+        .def_readonly("bestTwoVolumeImbalance",         &OrderBookMetricsEntry::bestTwoVolumeImbalance)
+        .def_readonly("bestThreeVolumeImbalance",       &OrderBookMetricsEntry::bestThreeVolumeImbalance)
+        .def_readonly("bestFiveVolumeImbalance",        &OrderBookMetricsEntry::bestFiveVolumeImbalance)
+        .def_readonly("volumeImbalance",                &OrderBookMetricsEntry::volumeImbalance)
+        .def_readonly("queueImbalance",                 &OrderBookMetricsEntry::queueImbalance)
+        .def_readonly("gap",                            &OrderBookMetricsEntry::gap)
+        .def_readonly("isAggressorAsk",                 &OrderBookMetricsEntry::isAggressorAsk)
+        .def_readonly("vwapDeviation",                  &OrderBookMetricsEntry::vwapDeviation)
+        .def_readonly("simplifiedSlopeImbalance",       &OrderBookMetricsEntry::simplifiedSlopeImbalance)
+
+        .def_readonly("tradeCountImbalance1Seconds",    &OrderBookMetricsEntry::tradeCountImbalance1Seconds)
+        .def_readonly("tradeCountImbalance3Seconds",    &OrderBookMetricsEntry::tradeCountImbalance3Seconds)
+        .def_readonly("tradeCountImbalance5Seconds",    &OrderBookMetricsEntry::tradeCountImbalance5Seconds)
+        .def_readonly("tradeCountImbalance10Seconds",   &OrderBookMetricsEntry::tradeCountImbalance10Seconds)
+        .def_readonly("tradeCountImbalance15Seconds",   &OrderBookMetricsEntry::tradeCountImbalance15Seconds)
+        .def_readonly("tradeCountImbalance30Seconds",   &OrderBookMetricsEntry::tradeCountImbalance30Seconds)
+        .def_readonly("tradeCountImbalance60Seconds",   &OrderBookMetricsEntry::tradeCountImbalance60Seconds)
+
+        .def_readonly("cumulativeDelta1Seconds",        &OrderBookMetricsEntry::cumulativeDelta1Seconds)
+        .def_readonly("cumulativeDelta3Seconds",        &OrderBookMetricsEntry::cumulativeDelta3Seconds)
+        .def_readonly("cumulativeDelta5Seconds",        &OrderBookMetricsEntry::cumulativeDelta5Seconds)
+        .def_readonly("cumulativeDelta10Seconds",       &OrderBookMetricsEntry::cumulativeDelta10Seconds)
+        .def_readonly("cumulativeDelta15Seconds",       &OrderBookMetricsEntry::cumulativeDelta15Seconds)
+        .def_readonly("cumulativeDelta30Seconds",       &OrderBookMetricsEntry::cumulativeDelta30Seconds)
+        .def_readonly("cumulativeDelta60Seconds",       &OrderBookMetricsEntry::cumulativeDelta60Seconds)
+
+        .def_readonly("priceDifference1Seconds",        &OrderBookMetricsEntry::priceDifference1Seconds)
+        .def_readonly("priceDifference3Seconds",        &OrderBookMetricsEntry::priceDifference3Seconds)
+        .def_readonly("priceDifference5Seconds",        &OrderBookMetricsEntry::priceDifference5Seconds)
+        .def_readonly("priceDifference10Seconds",       &OrderBookMetricsEntry::priceDifference10Seconds)
+        .def_readonly("priceDifference15Seconds",       &OrderBookMetricsEntry::priceDifference15Seconds)
+        .def_readonly("priceDifference30Seconds",       &OrderBookMetricsEntry::priceDifference30Seconds)
+        .def_readonly("priceDifference60Seconds",       &OrderBookMetricsEntry::priceDifference60Seconds)
+
+        .def_readonly("rateOfReturn1Seconds",           &OrderBookMetricsEntry::rateOfReturn1Seconds)
+        .def_readonly("rateOfReturn3Seconds",           &OrderBookMetricsEntry::rateOfReturn3Seconds)
+        .def_readonly("rateOfReturn5Seconds",           &OrderBookMetricsEntry::rateOfReturn5Seconds)
+        .def_readonly("rateOfReturn10Seconds",          &OrderBookMetricsEntry::rateOfReturn10Seconds)
+        .def_readonly("rateOfReturn15Seconds",          &OrderBookMetricsEntry::rateOfReturn15Seconds)
+        .def_readonly("rateOfReturn30Seconds",          &OrderBookMetricsEntry::rateOfReturn30Seconds)
+        .def_readonly("rateOfReturn60Seconds",          &OrderBookMetricsEntry::rateOfReturn60Seconds)
+
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(5);
@@ -368,8 +401,38 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             << "isAggressorAsk: " << entry.isAggressorAsk << " "
             << "vwapDeviation: " << entry.vwapDeviation << " "
             << "simplifiedSlopeImbalance: " << entry.simplifiedSlopeImbalance << " "
-            << "tradeCountImbalance1S: " << entry.tradeCountImbalance1S << " "
-            << "cumulativeDelta10s: " << entry.cumulativeDelta10s << " ";
+
+            << "tradeCountImbalance1Seconds: " << entry.tradeCountImbalance1Seconds << " "
+            << "tradeCountImbalance3Seconds: " << entry.tradeCountImbalance3Seconds << " "
+            << "tradeCountImbalance5Seconds: " << entry.tradeCountImbalance5Seconds << " "
+            << "tradeCountImbalance10Seconds: " << entry.tradeCountImbalance10Seconds << " "
+            << "tradeCountImbalance15Seconds: " << entry.tradeCountImbalance15Seconds << " "
+            << "tradeCountImbalance30Seconds: " << entry.tradeCountImbalance30Seconds << " "
+            << "tradeCountImbalance60Seconds: " << entry.tradeCountImbalance60Seconds << " "
+
+            << "cumulativeDelta1Seconds: " << entry.cumulativeDelta1Seconds << " "
+            << "cumulativeDelta3Seconds: " << entry.cumulativeDelta3Seconds << " "
+            << "cumulativeDelta5Seconds: " << entry.cumulativeDelta5Seconds << " "
+            << "cumulativeDelta10Seconds: " << entry.cumulativeDelta10Seconds << " "
+            << "cumulativeDelta15Seconds: " << entry.cumulativeDelta15Seconds << " "
+            << "cumulativeDelta30Seconds: " << entry.cumulativeDelta30Seconds << " "
+            << "cumulativeDelta60Seconds: " << entry.cumulativeDelta60Seconds
+
+            << " priceDifference1Seconds: " << entry.priceDifference1Seconds
+            << " priceDifference3Seconds: " << entry.priceDifference3Seconds
+            << " priceDifference5Seconds: " << entry.priceDifference5Seconds
+            << " priceDifference10Seconds: " << entry.priceDifference10Seconds
+            << " priceDifference15Seconds: " << entry.priceDifference15Seconds
+            << " priceDifference30Seconds: " << entry.priceDifference30Seconds
+            << " priceDifference60Seconds: " << entry.priceDifference60Seconds
+
+            << " rateOfReturn1Seconds: "  << entry.rateOfReturn1Seconds
+            << " rateOfReturn3Seconds: "  << entry.rateOfReturn3Seconds
+            << " rateOfReturn5Seconds: "  << entry.rateOfReturn5Seconds
+            << " rateOfReturn10Seconds: " << entry.rateOfReturn10Seconds
+            << " rateOfReturn15Seconds: " << entry.rateOfReturn15Seconds
+            << " rateOfReturn30Seconds: " << entry.rateOfReturn30Seconds
+            << " rateOfReturn60Seconds: " << entry.rateOfReturn60Seconds;
             return oss.str();
         });
 

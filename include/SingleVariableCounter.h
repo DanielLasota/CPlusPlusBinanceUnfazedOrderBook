@@ -24,5 +24,7 @@ namespace SingleVariableCounter {
 
     double calculateTradeCountImbalance(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
     double calculateCumulativeDelta(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+    double calculatePriceDifference(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+    double calculateRateOfReturn(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
 
 }

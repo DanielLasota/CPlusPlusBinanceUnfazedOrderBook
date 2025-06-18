@@ -1,5 +1,6 @@
 #include "RollingStatisticsData.h"
 #include <algorithm>
+#include <limits>
 
 void RollingStatisticsData::Bucket::reset() {
     buy_count = sell_count = 0;
@@ -15,7 +16,7 @@ size_t RollingStatisticsData::getBucketIndex(int64_t timestamp) const {
 void RollingStatisticsData::advanceToTimestamp(int64_t timestamp) {
     if (timestamp <= last_timestamp_) return;
 
-    int64_t old_bucket_time = last_timestamp_ / BUCKET_SIZE_US;
+    const int64_t old_bucket_time = last_timestamp_ / BUCKET_SIZE_US;
     int64_t new_bucket_time = timestamp / BUCKET_SIZE_US;
 
     if (new_bucket_time > old_bucket_time) {
@@ -62,10 +63,10 @@ void RollingStatisticsData::update(const DecodedEntry* entry) {
     }, *entry);
 }
 
-size_t RollingStatisticsData::buyTradeCount(int window_sec) const {
+size_t RollingStatisticsData::buyTradeCount(int windowDurationSeconds) const {
     if (last_timestamp_ == 0) return 0;
 
-    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(window_sec) * 1'000'000;
+    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(windowDurationSeconds) * 1'000'000;
     size_t total = 0;
 
     for (const auto& bucket : buckets_) {
@@ -76,10 +77,10 @@ size_t RollingStatisticsData::buyTradeCount(int window_sec) const {
     return total;
 }
 
-size_t RollingStatisticsData::sellTradeCount(int window_sec) const {
+size_t RollingStatisticsData::sellTradeCount(int windowDurationSeconds) const {
     if (last_timestamp_ == 0) return 0;
 
-    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(window_sec) * 1'000'000;
+    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(windowDurationSeconds) * 1'000'000;
     size_t total = 0;
 
     for (const auto& bucket : buckets_) {
@@ -90,10 +91,10 @@ size_t RollingStatisticsData::sellTradeCount(int window_sec) const {
     return total;
 }
 
-double RollingStatisticsData::buyTradeVolume(int window_sec) const {
+double RollingStatisticsData::buyTradeVolume(int windowDurationSeconds) const {
     if (last_timestamp_ == 0) return 0.0;
 
-    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(window_sec) * 1'000'000;
+    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(windowDurationSeconds) * 1'000'000;
     double total = 0.0;
 
     for (const auto& bucket : buckets_) {
@@ -104,10 +105,10 @@ double RollingStatisticsData::buyTradeVolume(int window_sec) const {
     return total;
 }
 
-double RollingStatisticsData::sellTradeVolume(int window_sec) const {
+double RollingStatisticsData::sellTradeVolume(int windowDurationSeconds) const {
     if (last_timestamp_ == 0) return 0.0;
 
-    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(window_sec) * 1'000'000;
+    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(windowDurationSeconds) * 1'000'000;
     double total = 0.0;
 
     for (const auto& bucket : buckets_) {
@@ -118,10 +119,10 @@ double RollingStatisticsData::sellTradeVolume(int window_sec) const {
     return total;
 }
 
-double RollingStatisticsData::priceDiff(int window_sec) const {
+double RollingStatisticsData::priceDifference(const int windowDurationSeconds) const {
     if (last_timestamp_ == 0) return 0.0;
 
-    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(window_sec) * 1'000'000;
+    const int64_t cutoff = last_timestamp_ - static_cast<int64_t>(windowDurationSeconds) * 1'000'000;
     double oldest_price = 0.0;
     double newest_price = 0.0;
     int64_t oldest_time = INT64_MAX;
@@ -141,4 +142,26 @@ double RollingStatisticsData::priceDiff(int window_sec) const {
     }
 
     return newest_time > 0 ? newest_price - oldest_price : 0.0;
+}
+
+double RollingStatisticsData::oldestPrice(int windowTimeSeconds) const {
+    if (last_timestamp_ == 0) return 0.0;
+
+    int64_t cutoff = last_timestamp_ - static_cast<int64_t>(windowTimeSeconds) * 1'000'000;
+
+    double oldest_price = 0.0;
+    int64_t oldest_time = std::numeric_limits<int64_t>::max();
+
+    for (const auto& bucket : buckets_) {
+        if (bucket.has_data && bucket.start_time >= cutoff) {
+            if (bucket.start_time < oldest_time) {
+                oldest_time = bucket.start_time;
+                oldest_price = bucket.first_price;
+            }
+        }
+    }
+
+    return oldest_time != std::numeric_limits<int64_t>::max()
+        ? oldest_price
+        : 0.0;
 }

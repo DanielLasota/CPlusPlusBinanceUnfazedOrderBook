@@ -7,11 +7,12 @@ class RollingStatisticsData {
 public:
     void update(const DecodedEntry* entry);
 
-    size_t buyTradeCount(int window_sec) const;
-    size_t sellTradeCount(int window_sec) const;
-    double buyTradeVolume(int window_sec) const;
-    double sellTradeVolume(int window_sec) const;
-    double priceDiff(int window_sec) const;
+    size_t buyTradeCount(int windowDurationSeconds) const;
+    size_t sellTradeCount(int windowDurationSeconds) const;
+    double buyTradeVolume(int windowDurationSeconds) const;
+    double sellTradeVolume(int windowDurationSeconds) const;
+    double priceDifference(int windowDurationSeconds) const;
+    double oldestPrice(int windowTimeSeconds) const;
 
 private:
     static constexpr int64_t BUCKET_SIZE_US = 100'000; // 100ms buckets

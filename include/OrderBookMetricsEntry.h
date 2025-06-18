@@ -24,6 +24,36 @@ struct OrderBookMetricsEntry {
     bool isAggressorAsk;
     double vwapDeviation;
     double simplifiedSlopeImbalance;
-    double tradeCountImbalance1S;
-    double cumulativeDelta10s;
+
+    double tradeCountImbalance1Seconds;
+    double tradeCountImbalance3Seconds;
+    double tradeCountImbalance5Seconds;
+    double tradeCountImbalance10Seconds;
+    double tradeCountImbalance15Seconds;
+    double tradeCountImbalance30Seconds;
+    double tradeCountImbalance60Seconds;
+
+    double cumulativeDelta1Seconds;
+    double cumulativeDelta3Seconds;
+    double cumulativeDelta5Seconds;
+    double cumulativeDelta10Seconds;
+    double cumulativeDelta15Seconds;
+    double cumulativeDelta30Seconds;
+    double cumulativeDelta60Seconds;
+
+    double priceDifference1Seconds;
+    double priceDifference3Seconds;
+    double priceDifference5Seconds;
+    double priceDifference10Seconds;
+    double priceDifference15Seconds;
+    double priceDifference30Seconds;
+    double priceDifference60Seconds;
+
+    double rateOfReturn1Seconds;
+    double rateOfReturn3Seconds;
+    double rateOfReturn5Seconds;
+    double rateOfReturn10Seconds;
+    double rateOfReturn15Seconds;
+    double rateOfReturn30Seconds;
+    double rateOfReturn60Seconds;
 };

@@ -61,11 +61,94 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & simplifiedSlopeImbalance) {
         e.simplifiedSlopeImbalance = SingleVariableCounter::calculateSimplifiedSlopeImbalance(ms.orderBook);
     }
-    if (mask_ & tradeCountImbalance1S) {
-        e.tradeCountImbalance1S = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 1);
+    if (mask_ & tradeCountImbalance1Seconds) {
+        e.tradeCountImbalance1Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 1);
     }
-    if (mask_ & cumulativeDelta10s) {
-        e.cumulativeDelta10s = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 10);
+    if (mask_ & tradeCountImbalance3Seconds) {
+        e.tradeCountImbalance3Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 3);
     }
+    if (mask_ & tradeCountImbalance5Seconds) {
+        e.tradeCountImbalance5Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 5);
+    }
+    if (mask_ & tradeCountImbalance10Seconds) {
+        e.tradeCountImbalance10Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 10);
+    }
+    if (mask_ & tradeCountImbalance15Seconds) {
+        e.tradeCountImbalance15Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 15);
+    }
+    if (mask_ & tradeCountImbalance30Seconds) {
+        e.tradeCountImbalance30Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 30);
+    }
+    if (mask_ & tradeCountImbalance60Seconds) {
+        e.tradeCountImbalance60Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 60);
+    }
+
+
+    if (mask_ & cumulativeDelta1Seconds) {
+        e.cumulativeDelta1Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 1);
+    }
+    if (mask_ & cumulativeDelta3Seconds) {
+        e.cumulativeDelta3Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 3);
+    }
+    if (mask_ & cumulativeDelta5Seconds) {
+        e.cumulativeDelta5Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 5);
+    }
+    if (mask_ & cumulativeDelta10Seconds) {
+        e.cumulativeDelta10Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 10);
+    }
+    if (mask_ & cumulativeDelta15Seconds) {
+        e.cumulativeDelta15Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 15);
+    }
+    if (mask_ & cumulativeDelta30Seconds) {
+        e.cumulativeDelta30Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 30);
+    }
+    if (mask_ & cumulativeDelta60Seconds) {
+        e.cumulativeDelta60Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 60);
+    }
+
+    if (mask_ & priceDifference1Seconds) {
+        e.priceDifference1Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 1);
+    }
+    if (mask_ & priceDifference3Seconds) {
+        e.priceDifference3Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 3);
+    }
+    if (mask_ & priceDifference5Seconds) {
+        e.priceDifference5Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 5);
+    }
+    if (mask_ & priceDifference10Seconds) {
+        e.priceDifference10Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 10);
+    }
+    if (mask_ & priceDifference15Seconds) {
+        e.priceDifference15Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 15);
+    }
+    if (mask_ & priceDifference30Seconds) {
+        e.priceDifference30Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 30);
+    }
+    if (mask_ & priceDifference60Seconds) {
+        e.priceDifference60Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 60);
+    }
+
+    if (mask_ & rateOfReturn1Seconds) {
+        e.rateOfReturn1Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 1);
+    }
+    if (mask_ & rateOfReturn3Seconds) {
+        e.rateOfReturn3Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 3);
+    }
+    if (mask_ & rateOfReturn5Seconds) {
+        e.rateOfReturn5Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 5);
+    }
+    if (mask_ & rateOfReturn10Seconds) {
+        e.rateOfReturn10Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 10);
+    }
+    if (mask_ & rateOfReturn15Seconds) {
+        e.rateOfReturn15Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 15);
+    }
+    if (mask_ & rateOfReturn30Seconds) {
+        e.rateOfReturn30Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 30);
+    }
+    if (mask_ & rateOfReturn60Seconds) {
+        e.rateOfReturn60Seconds = SingleVariableCounter::calculateRateOfReturn(ms.rollingStatisticsData, 60);
+    }
+
     return e;
 }

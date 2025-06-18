@@ -4,14 +4,21 @@
 #include <RollingStatisticsData.h>
 #include "OrderBook.h"
 
-inline double round2(double x) {
+inline double round2(const double x) {
     double y = x * 100.0;
     y += (y >= 0.0 ?  0.5 : -0.5);
     const int t = static_cast<int>(y);
     return t * 0.01;
 }
 
-inline double round8(double x) {
+inline double round5(const double x) {
+    double y = x * 100'000.0;
+    y += (y >= 0.0 ?  0.5 : -0.5);
+    const int t = static_cast<int>(y);
+    return t * 0.00001;
+}
+
+inline double round8(const double x) {
     constexpr double p = 100000000.0; // 8
     return std::round(x * p) / p;
 }
@@ -148,6 +155,20 @@ namespace SingleVariableCounter {
         const double bid = rollingStatisticsData.buyTradeVolume(windowTimeSeconds);
         const double ask = rollingStatisticsData.sellTradeVolume(windowTimeSeconds);
         return round2(bid - ask);
+    }
+
+    double calculatePriceDifference(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    {
+        return rollingStatisticsData.priceDifference(windowTimeSeconds);
+    }
+
+    double calculateRateOfReturn(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds) {
+        const double priceDifference = rollingStatisticsData.priceDifference(windowTimeSeconds);
+
+        const double oldestPrice = rollingStatisticsData.oldestPrice(windowTimeSeconds);
+        if (oldestPrice == 0.0) return 0.0;
+
+        return round5(priceDifference / oldestPrice);
     }
 
 }

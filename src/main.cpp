@@ -29,8 +29,38 @@ int main() {
         "isAggressorAsk",
         "vwapDeviation",
         "simplifiedSlopeImbalance",
-        "tradeCountImbalance1S",
-        "cumulativeDelta10s"
+
+        "tradeCountImbalance1Seconds",
+        "tradeCountImbalance3Seconds",
+        "tradeCountImbalance5Seconds",
+        "tradeCountImbalance10Seconds",
+        "tradeCountImbalance15Seconds",
+        "tradeCountImbalance30Seconds",
+        "tradeCountImbalance60Seconds",
+
+        "cumulativeDelta1Seconds",
+        "cumulativeDelta3Seconds",
+        "cumulativeDelta5Seconds",
+        "cumulativeDelta10Seconds",
+        "cumulativeDelta15Seconds",
+        "cumulativeDelta30Seconds",
+        "cumulativeDelta60Seconds",
+
+        "priceDifference1Seconds",
+        "priceDifference3Seconds",
+        "priceDifference5Seconds",
+        "priceDifference10Seconds",
+        "priceDifference15Seconds",
+        "priceDifference30Seconds",
+        "priceDifference60Seconds",
+
+        "rateOfReturn1Seconds",
+        "rateOfReturn3Seconds",
+        "rateOfReturn5Seconds",
+        "rateOfReturn10Seconds",
+        "rateOfReturn15Seconds",
+        "rateOfReturn30Seconds",
+        "rateOfReturn60Seconds",
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 

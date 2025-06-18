@@ -78,6 +78,14 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     std::vector<double> col_rateOfReturn30Seconds;  col_rateOfReturn30Seconds.reserve(n);
     std::vector<double> col_rateOfReturn60Seconds;  col_rateOfReturn60Seconds.reserve(n);
 
+    std::vector<double> col_differenceDepthVolatilityImbalance1Seconds;   col_differenceDepthVolatilityImbalance1Seconds.reserve(n);
+    std::vector<double> col_differenceDepthVolatilityImbalance3Seconds;   col_differenceDepthVolatilityImbalance3Seconds.reserve(n);
+    std::vector<double> col_differenceDepthVolatilityImbalance5Seconds;   col_differenceDepthVolatilityImbalance5Seconds.reserve(n);
+    std::vector<double> col_differenceDepthVolatilityImbalance10Seconds;  col_differenceDepthVolatilityImbalance10Seconds.reserve(n);
+    std::vector<double> col_differenceDepthVolatilityImbalance15Seconds;  col_differenceDepthVolatilityImbalance15Seconds.reserve(n);
+    std::vector<double> col_differenceDepthVolatilityImbalance30Seconds;  col_differenceDepthVolatilityImbalance30Seconds.reserve(n);
+    std::vector<double> col_differenceDepthVolatilityImbalance60Seconds;  col_differenceDepthVolatilityImbalance60Seconds.reserve(n);
+
     for (auto const& e : entries_) {
         col_timestampOfReceive.push_back(e.timestampOfReceive);
         col_market.push_back(e.market);
@@ -128,6 +136,14 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         col_rateOfReturn15Seconds.push_back(e.rateOfReturn15Seconds);
         col_rateOfReturn30Seconds.push_back(e.rateOfReturn30Seconds);
         col_rateOfReturn60Seconds.push_back(e.rateOfReturn60Seconds);
+
+        col_differenceDepthVolatilityImbalance1Seconds.push_back(e.differenceDepthVolatilityImbalance1Seconds);
+        col_differenceDepthVolatilityImbalance3Seconds.push_back(e.differenceDepthVolatilityImbalance3Seconds);
+        col_differenceDepthVolatilityImbalance5Seconds.push_back(e.differenceDepthVolatilityImbalance5Seconds);
+        col_differenceDepthVolatilityImbalance10Seconds.push_back(e.differenceDepthVolatilityImbalance10Seconds);
+        col_differenceDepthVolatilityImbalance15Seconds.push_back(e.differenceDepthVolatilityImbalance15Seconds);
+        col_differenceDepthVolatilityImbalance30Seconds.push_back(e.differenceDepthVolatilityImbalance30Seconds);
+        col_differenceDepthVolatilityImbalance60Seconds.push_back(e.differenceDepthVolatilityImbalance60Seconds);
     }
 
     auto arr_timestampOfReceive = vector_to_numpy<int64_t>(col_timestampOfReceive);
@@ -180,6 +196,14 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     auto arr_rateOfReturn30Seconds = vector_to_numpy<double>(col_rateOfReturn30Seconds);
     auto arr_rateOfReturn60Seconds = vector_to_numpy<double>(col_rateOfReturn60Seconds);
 
+    auto arr_differenceDepthVolatilityImbalance1Seconds  = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance1Seconds);
+    auto arr_differenceDepthVolatilityImbalance3Seconds  = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance3Seconds);
+    auto arr_differenceDepthVolatilityImbalance5Seconds  = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance5Seconds);
+    auto arr_differenceDepthVolatilityImbalance10Seconds = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance10Seconds);
+    auto arr_differenceDepthVolatilityImbalance15Seconds = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance15Seconds);
+    auto arr_differenceDepthVolatilityImbalance30Seconds = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance30Seconds);
+    auto arr_differenceDepthVolatilityImbalance60Seconds = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance60Seconds);
+
     py::dict result;
     for (auto const& var : variables_) {
         if      (var == "timestampOfReceive") result["timestampOfReceive"]                      = arr_timestampOfReceive;
@@ -231,6 +255,15 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         else if (var == "rateOfReturn15Seconds")  result["rateOfReturn15Seconds"]               = arr_rateOfReturn15Seconds;
         else if (var == "rateOfReturn30Seconds")  result["rateOfReturn30Seconds"]               = arr_rateOfReturn30Seconds;
         else if (var == "rateOfReturn60Seconds")  result["rateOfReturn60Seconds"]               = arr_rateOfReturn60Seconds;
+
+        else if (var == "differenceDepthVolatilityImbalance1Seconds")   result["differenceDepthVolatilityImbalance1Seconds"]                = arr_differenceDepthVolatilityImbalance1Seconds;
+        else if (var == "differenceDepthVolatilityImbalance3Seconds")   result["differenceDepthVolatilityImbalance3Seconds"]                = arr_differenceDepthVolatilityImbalance3Seconds;
+        else if (var == "differenceDepthVolatilityImbalance5Seconds")   result["differenceDepthVolatilityImbalance5Seconds"]                = arr_differenceDepthVolatilityImbalance5Seconds;
+        else if (var == "differenceDepthVolatilityImbalance10Seconds")  result["differenceDepthVolatilityImbalance10Seconds"]               = arr_differenceDepthVolatilityImbalance10Seconds;
+        else if (var == "differenceDepthVolatilityImbalance15Seconds")  result["differenceDepthVolatilityImbalance15Seconds"]               = arr_differenceDepthVolatilityImbalance15Seconds;
+        else if (var == "differenceDepthVolatilityImbalance30Seconds")  result["differenceDepthVolatilityImbalance30Seconds"]               = arr_differenceDepthVolatilityImbalance30Seconds;
+        else if (var == "differenceDepthVolatilityImbalance60Seconds")  result["differenceDepthVolatilityImbalance60Seconds"]               = arr_differenceDepthVolatilityImbalance60Seconds;
+
     }
 
     auto finish = std::chrono::steady_clock::now();
@@ -305,6 +338,14 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
             else if (var == "rateOfReturn15Seconds")        file << e.rateOfReturn15Seconds;
             else if (var == "rateOfReturn30Seconds")        file << e.rateOfReturn30Seconds;
             else if (var == "rateOfReturn60Seconds")        file << e.rateOfReturn60Seconds;
+
+            else if (var == "differenceDepthVolatilityImbalance1Seconds")         file << e.differenceDepthVolatilityImbalance1Seconds;
+            else if (var == "differenceDepthVolatilityImbalance3Seconds")         file << e.differenceDepthVolatilityImbalance3Seconds;
+            else if (var == "differenceDepthVolatilityImbalance5Seconds")         file << e.differenceDepthVolatilityImbalance5Seconds;
+            else if (var == "differenceDepthVolatilityImbalance10Seconds")        file << e.differenceDepthVolatilityImbalance10Seconds;
+            else if (var == "differenceDepthVolatilityImbalance15Seconds")        file << e.differenceDepthVolatilityImbalance15Seconds;
+            else if (var == "differenceDepthVolatilityImbalance30Seconds")        file << e.differenceDepthVolatilityImbalance30Seconds;
+            else if (var == "differenceDepthVolatilityImbalance60Seconds")        file << e.differenceDepthVolatilityImbalance60Seconds;
 
             if (j + 1 < variables_.size()) file << ",";
         }

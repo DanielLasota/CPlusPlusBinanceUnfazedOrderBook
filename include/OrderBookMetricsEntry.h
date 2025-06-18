@@ -56,4 +56,12 @@ struct OrderBookMetricsEntry {
     double rateOfReturn15Seconds;
     double rateOfReturn30Seconds;
     double rateOfReturn60Seconds;
+
+    double differenceDepthVolatilityImbalance1Seconds;
+    double differenceDepthVolatilityImbalance3Seconds;
+    double differenceDepthVolatilityImbalance5Seconds;
+    double differenceDepthVolatilityImbalance10Seconds;
+    double differenceDepthVolatilityImbalance15Seconds;
+    double differenceDepthVolatilityImbalance30Seconds;
+    double differenceDepthVolatilityImbalance60Seconds;
 };

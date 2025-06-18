@@ -171,4 +171,19 @@ namespace SingleVariableCounter {
         return round5(priceDifference / oldestPrice);
     }
 
+    double calculateDifferenceDepthVolatilityImbalance(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    {
+        const size_t bidDifferenceDepthEntryCount = rollingStatisticsData.bidDifferenceDepthEntryCount(windowTimeSeconds);
+        const size_t askDifferenceDepthEntryCount = rollingStatisticsData.askDifferenceDepthEntryCount(windowTimeSeconds);
+        const size_t differenceDepthEntryCount = bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
+
+        return differenceDepthEntryCount == 0
+        ? 0.0
+        : round2(
+            static_cast<double>(
+                static_cast<int64_t>(bidDifferenceDepthEntryCount) - static_cast<int64_t>(askDifferenceDepthEntryCount))
+            / static_cast<double>(differenceDepthEntryCount)
+            );
+    }
+
 }

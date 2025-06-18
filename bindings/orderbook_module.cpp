@@ -380,6 +380,14 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readonly("rateOfReturn30Seconds",          &OrderBookMetricsEntry::rateOfReturn30Seconds)
         .def_readonly("rateOfReturn60Seconds",          &OrderBookMetricsEntry::rateOfReturn60Seconds)
 
+        .def_readonly("differenceDepthVolatilityImbalance1Seconds",           &OrderBookMetricsEntry::differenceDepthVolatilityImbalance1Seconds)
+        .def_readonly("differenceDepthVolatilityImbalance3Seconds",           &OrderBookMetricsEntry::differenceDepthVolatilityImbalance3Seconds)
+        .def_readonly("differenceDepthVolatilityImbalance5Seconds",           &OrderBookMetricsEntry::differenceDepthVolatilityImbalance5Seconds)
+        .def_readonly("differenceDepthVolatilityImbalance10Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance10Seconds)
+        .def_readonly("differenceDepthVolatilityImbalance15Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance15Seconds)
+        .def_readonly("differenceDepthVolatilityImbalance30Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance30Seconds)
+        .def_readonly("differenceDepthVolatilityImbalance60Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance60Seconds)
+
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(5);
@@ -432,7 +440,15 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             << " rateOfReturn10Seconds: " << entry.rateOfReturn10Seconds
             << " rateOfReturn15Seconds: " << entry.rateOfReturn15Seconds
             << " rateOfReturn30Seconds: " << entry.rateOfReturn30Seconds
-            << " rateOfReturn60Seconds: " << entry.rateOfReturn60Seconds;
+            << " rateOfReturn60Seconds: " << entry.rateOfReturn60Seconds
+
+            << " differenceDepthVolatilityImbalance1Seconds: "  << entry.differenceDepthVolatilityImbalance1Seconds
+            << " differenceDepthVolatilityImbalance3Seconds: "  << entry.differenceDepthVolatilityImbalance3Seconds
+            << " differenceDepthVolatilityImbalance5Seconds: "  << entry.differenceDepthVolatilityImbalance5Seconds
+            << " differenceDepthVolatilityImbalance10Seconds: " << entry.differenceDepthVolatilityImbalance10Seconds
+            << " differenceDepthVolatilityImbalance15Seconds: " << entry.differenceDepthVolatilityImbalance15Seconds
+            << " differenceDepthVolatilityImbalance30Seconds: " << entry.differenceDepthVolatilityImbalance30Seconds
+            << " differenceDepthVolatilityImbalance60Seconds: " << entry.differenceDepthVolatilityImbalance60Seconds;
             return oss.str();
         });
 

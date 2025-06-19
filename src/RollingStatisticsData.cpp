@@ -201,3 +201,22 @@ double RollingStatisticsData::oldestPrice(int windowTimeSeconds) const {
         ? oldest_price
         : 0.0;
 }
+
+double RollingStatisticsData::simpleMovingAverage(int windowTimeSeconds) const {
+    if (lastTimestamp_ == 0)
+        return 0.0;
+
+    const int64_t cutoff = lastTimestamp_ - static_cast<int64_t>(windowTimeSeconds) * 1'000'000;
+
+    double sum = 0.0;
+    size_t count = 0;
+
+    for (auto const& bucket : buckets_) {
+        if (bucket.hasData && bucket.start_time >= cutoff) {
+            sum += bucket.lastTradePrice;
+            ++count;
+        }
+    }
+
+    return (count > 0) ? (sum / static_cast<double>(count)) : 0.0;
+}

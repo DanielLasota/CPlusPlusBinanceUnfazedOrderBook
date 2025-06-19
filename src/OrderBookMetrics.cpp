@@ -86,6 +86,9 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     std::vector<double> col_differenceDepthVolatilityImbalance30Seconds;  col_differenceDepthVolatilityImbalance30Seconds.reserve(n);
     std::vector<double> col_differenceDepthVolatilityImbalance60Seconds;  col_differenceDepthVolatilityImbalance60Seconds.reserve(n);
 
+    std::vector<double> col_rsi5Seconds;                                  col_rsi5Seconds.reserve(n);
+    std::vector<double> col_stochRsi5Seconds;                             col_stochRsi5Seconds.reserve(n);
+
     for (auto const& e : entries_) {
         col_timestampOfReceive.push_back(e.timestampOfReceive);
         col_market.push_back(e.market);
@@ -144,6 +147,9 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         col_differenceDepthVolatilityImbalance15Seconds.push_back(e.differenceDepthVolatilityImbalance15Seconds);
         col_differenceDepthVolatilityImbalance30Seconds.push_back(e.differenceDepthVolatilityImbalance30Seconds);
         col_differenceDepthVolatilityImbalance60Seconds.push_back(e.differenceDepthVolatilityImbalance60Seconds);
+
+        col_rsi5Seconds.push_back(e.rsi5Seconds);
+        col_stochRsi5Seconds.push_back(e.stochRsi5Seconds);
     }
 
     auto arr_timestampOfReceive = vector_to_numpy<int64_t>(col_timestampOfReceive);
@@ -204,6 +210,9 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     auto arr_differenceDepthVolatilityImbalance30Seconds = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance30Seconds);
     auto arr_differenceDepthVolatilityImbalance60Seconds = vector_to_numpy<double>(col_differenceDepthVolatilityImbalance60Seconds);
 
+    auto arr_rsi5Seconds                                 = vector_to_numpy<double>(col_rsi5Seconds);
+    auto arr_stochRsi5Seconds                                          = vector_to_numpy<double>(col_stochRsi5Seconds);
+
     py::dict result;
     for (auto const& var : variables_) {
         if      (var == "timestampOfReceive") result["timestampOfReceive"]                      = arr_timestampOfReceive;
@@ -263,6 +272,9 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         else if (var == "differenceDepthVolatilityImbalance15Seconds")  result["differenceDepthVolatilityImbalance15Seconds"]               = arr_differenceDepthVolatilityImbalance15Seconds;
         else if (var == "differenceDepthVolatilityImbalance30Seconds")  result["differenceDepthVolatilityImbalance30Seconds"]               = arr_differenceDepthVolatilityImbalance30Seconds;
         else if (var == "differenceDepthVolatilityImbalance60Seconds")  result["differenceDepthVolatilityImbalance60Seconds"]               = arr_differenceDepthVolatilityImbalance60Seconds;
+
+        else if (var == "rsi5Sseconds")                                 result["rsi5Sseconds"]                                              = arr_rsi5Seconds;
+        else if (var == "stochRsi5Seconds")                             result["stochRsi5Seconds"]                                          = arr_stochRsi5Seconds;
 
     }
 
@@ -346,6 +358,9 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
             else if (var == "differenceDepthVolatilityImbalance15Seconds")        file << e.differenceDepthVolatilityImbalance15Seconds;
             else if (var == "differenceDepthVolatilityImbalance30Seconds")        file << e.differenceDepthVolatilityImbalance30Seconds;
             else if (var == "differenceDepthVolatilityImbalance60Seconds")        file << e.differenceDepthVolatilityImbalance60Seconds;
+
+            else if (var == "rsi5Seconds")                                        file << e.rsi5Seconds;
+            else if (var == "stochRsi5Seconds")                                   file << e.stochRsi5Seconds;
 
             if (j + 1 < variables_.size()) file << ",";
         }

@@ -186,4 +186,53 @@ namespace SingleVariableCounter {
             );
     }
 
+    double calculateRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
+    {
+        const int periods = 14;
+        double gainSum = 0.0, lossSum = 0.0;
+
+        // dla każdego z 14 okresów pobieramy różnicę cen:
+        // diff_i = (price_now - price_i*window) - (price_now - price_(i-1)*window)
+        for (int i = 1; i <= periods; ++i) {
+            double diff_i = rollingStatisticsData.priceDifference(i * windowTimeSeconds)
+                          - rollingStatisticsData.priceDifference((i - 1) * windowTimeSeconds);
+            if (diff_i > 0) gainSum += diff_i;
+            else           lossSum += -diff_i;
+        }
+
+        double avgGain = gainSum / periods;
+        double avgLoss = lossSum / periods;
+
+        if (avgGain + avgLoss == 0.0) {
+            return 50.0;  // brak ruchu ⇒ RSI na poziomie środka skali
+        }
+
+        double rs = (avgLoss == 0.0)
+                  ? std::numeric_limits<double>::infinity()
+                  : (avgGain / avgLoss);
+        double rsi = 100.0 - (100.0 / (1.0 + rs));
+        return round2(rsi);
+    }
+
+    double calculateStochRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
+    {
+        constexpr int periods = 14;
+        double rsi[periods];
+
+        for (int i = 1; i <= periods; ++i) {
+            rsi[i - 1] = calculateRSI(rollingStatisticsData, windowTimeSeconds * i);
+        }
+
+        double mn = rsi[0], mx = rsi[0];
+        for (int i = 1; i < periods; ++i) {
+            if (rsi[i] < mn) mn = rsi[i];
+            if (rsi[i] > mx) mx = rsi[i];
+        }
+
+        const double curr = rsi[periods - 1];
+        return (mx == mn)
+        ? 0.0
+        : round2((curr - mn) / (mx - mn));
+    }
+
 }

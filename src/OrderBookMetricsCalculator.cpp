@@ -171,5 +171,12 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & differenceDepthVolatilityImbalance60Seconds) {
         e.differenceDepthVolatilityImbalance60Seconds = SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance(ms.rollingStatisticsData, 60);
     }
+
+    if (mask_ & rsi5Seconds) {
+        e.rsi5Seconds = SingleVariableCounter::calculateRSI(ms.rollingStatisticsData, 5);
+    }
+    if (mask_ & stochRsi5Seconds) {
+        e.stochRsi5Seconds = SingleVariableCounter::calculateStochRSI(ms.rollingStatisticsData, 5);
+    }
     return e;
 }

@@ -70,6 +70,9 @@ int main() {
         "differenceDepthVolatilityImbalance15Seconds",
         "differenceDepthVolatilityImbalance30Seconds",
         "differenceDepthVolatilityImbalance60Seconds",
+
+        "rsi5Seconds",
+        "stochRsi5Seconds",
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 

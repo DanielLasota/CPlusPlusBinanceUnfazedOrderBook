@@ -388,6 +388,9 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readonly("differenceDepthVolatilityImbalance30Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance30Seconds)
         .def_readonly("differenceDepthVolatilityImbalance60Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance60Seconds)
 
+        .def_readonly("rsi5Seconds",                                          &OrderBookMetricsEntry::rsi5Seconds)
+        .def_readonly("stochRsi5Seconds",                                     &OrderBookMetricsEntry::stochRsi5Seconds)
+
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
             oss << std::fixed << std::setprecision(5);
@@ -448,7 +451,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             << " differenceDepthVolatilityImbalance10Seconds: " << entry.differenceDepthVolatilityImbalance10Seconds
             << " differenceDepthVolatilityImbalance15Seconds: " << entry.differenceDepthVolatilityImbalance15Seconds
             << " differenceDepthVolatilityImbalance30Seconds: " << entry.differenceDepthVolatilityImbalance30Seconds
-            << " differenceDepthVolatilityImbalance60Seconds: " << entry.differenceDepthVolatilityImbalance60Seconds;
+            << " differenceDepthVolatilityImbalance60Seconds: " << entry.differenceDepthVolatilityImbalance60Seconds
+
+            << " rsi5Seconds: "                                 << entry.rsi5Seconds
+            << " stochRsi5Seconds: "                            << entry.stochRsi5Seconds;
             return oss.str();
         });
 

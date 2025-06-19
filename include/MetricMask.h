@@ -64,6 +64,9 @@ enum Metric : uint64_t  {
     differenceDepthVolatilityImbalance30Seconds     = 1ULL << 50,
     differenceDepthVolatilityImbalance60Seconds     = 1ULL << 51,
 
+    rsi5Seconds                                     = 1ULL << 52,
+    stochRsi5Seconds                                = 1ULL << 53
+
 };
 using MetricMask = uint64_t;
 
@@ -127,6 +130,9 @@ inline MetricMask parseMask(const std::vector<std::string>& vars) {
         else if (s == "differenceDepthVolatilityImbalance15Seconds")    m |= differenceDepthVolatilityImbalance15Seconds;
         else if (s == "differenceDepthVolatilityImbalance30Seconds")    m |= differenceDepthVolatilityImbalance30Seconds;
         else if (s == "differenceDepthVolatilityImbalance60Seconds")    m |= differenceDepthVolatilityImbalance60Seconds;
+
+        else if (s == "rsi5Seconds")                                    m |= rsi5Seconds;
+        else if (s == "stochRsi5Seconds")                               m |= stochRsi5Seconds;
 
         else {
             throw std::invalid_argument("Unknown variable name: " + s);

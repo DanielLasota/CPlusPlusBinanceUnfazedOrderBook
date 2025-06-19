@@ -390,6 +390,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
         .def_readonly("rsi5Seconds",                                          &OrderBookMetricsEntry::rsi5Seconds)
         .def_readonly("stochRsi5Seconds",                                     &OrderBookMetricsEntry::stochRsi5Seconds)
+        .def_readonly("macd2Seconds",                                         &OrderBookMetricsEntry::macd2Seconds)
 
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
@@ -454,7 +455,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             << " differenceDepthVolatilityImbalance60Seconds: " << entry.differenceDepthVolatilityImbalance60Seconds
 
             << " rsi5Seconds: "                                 << entry.rsi5Seconds
-            << " stochRsi5Seconds: "                            << entry.stochRsi5Seconds;
+            << " stochRsi5Seconds: "                            << entry.stochRsi5Seconds
+            << " macd2Seconds: "                                << entry.macd2Seconds;
             return oss.str();
         });
 

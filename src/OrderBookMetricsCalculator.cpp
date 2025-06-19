@@ -178,5 +178,8 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & stochRsi5Seconds) {
         e.stochRsi5Seconds = SingleVariableCounter::calculateStochRSI(ms.rollingStatisticsData, 5);
     }
+    if (mask_ & macd2Seconds) {
+        e.macd2Seconds = SingleVariableCounter::calculateMacd(ms.rollingStatisticsData, 5);
+    }
     return e;
 }

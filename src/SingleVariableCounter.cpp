@@ -235,4 +235,9 @@ namespace SingleVariableCounter {
         : round2((curr - mn) / (mx - mn));
     }
 
+    double calculateMacd(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
+    {
+        return 0.0;
+    }
+
 }

@@ -30,5 +30,6 @@ namespace SingleVariableCounter {
 
     double calculateRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
     double calculateStochRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+    double calculateMacd(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
 
 }

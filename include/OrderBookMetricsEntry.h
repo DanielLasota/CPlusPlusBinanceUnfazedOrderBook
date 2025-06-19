@@ -67,4 +67,5 @@ struct OrderBookMetricsEntry {
 
     double rsi5Seconds;
     double stochRsi5Seconds;
+    double macd2Seconds;
 };

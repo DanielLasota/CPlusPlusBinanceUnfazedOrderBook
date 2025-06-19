@@ -73,6 +73,8 @@ int main() {
 
         "rsi5Seconds",
         "stochRsi5Seconds",
+
+        "macd2Seconds",
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 

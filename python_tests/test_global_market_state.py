@@ -785,7 +785,6 @@ class TestGlobalMarketState:
                 (Symbol.ADAUSDT, Market.COIN_M_FUTURES),
             ], key=lambda x: (int(x[0]), int(x[1])))
 
-
         def test_given_last_trade_storage_when_updating_first_trade_is_last_trade_updated_correctly(self):
             variables = [
                 "timestampOfReceive",

@@ -64,4 +64,7 @@ struct OrderBookMetricsEntry {
     double differenceDepthVolatilityImbalance15Seconds;
     double differenceDepthVolatilityImbalance30Seconds;
     double differenceDepthVolatilityImbalance60Seconds;
+
+    double rsi5Seconds;
+    double stochRsi5Seconds;
 };

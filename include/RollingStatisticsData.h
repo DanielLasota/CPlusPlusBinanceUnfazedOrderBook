@@ -17,9 +17,11 @@ public:
     double priceDifference(int windowDurationSeconds) const;
     double oldestPrice(int windowTimeSeconds) const;
 
+    double simpleMovingAverage(int windowTimeSeconds) const;
+
 private:
     static constexpr int64_t BUCKET_SIZE_US = 100'000; // 100ms buckets
-    static constexpr size_t MAX_BUCKETS = 60; // 60s history
+    static constexpr size_t MAX_BUCKETS = 70; // 70s history
 
     struct Bucket {
 

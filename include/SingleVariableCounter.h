@@ -28,4 +28,7 @@ namespace SingleVariableCounter {
     double calculateRateOfReturn(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
     double calculateDifferenceDepthVolatilityImbalance(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
 
+    double calculateRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+    double calculateStochRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+
 }

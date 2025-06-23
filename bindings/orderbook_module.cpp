@@ -20,7 +20,7 @@ namespace py = pybind11;
 using MS = MarketState;
 
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
-    std::cout << std::fixed << std::setprecision(5);
+    // std::cout << std::fixed << std::setprecision(5);
 
     // ----- OrderbookSessionSimulator -----
     py::class_<OrderBookSessionSimulator>(m, "OrderBookSessionSimulator")
@@ -79,10 +79,11 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<MS>(m, "MarketState")
         .def(py::init<>(), "Tworzy nowy MarketState")
         .def_readonly("order_book", &MS::orderBook, py::return_value_policy::reference_internal)
+        .def_readonly("rolling_statistics_data", &MS::rollingStatisticsData, py::return_value_policy::reference_internal)
         .def("update",
-             &MS::update,
-             py::arg("entry"),
-             "Aktualizuje stan rynkowy na podstawie DifferenceDepthEntry lub TradeEntry")
+                 &MS::update,
+                 py::arg("entry"),
+                 "Aktualizuje stan rynkowy na podstawie DifferenceDepthEntry lub TradeEntry")
         .def("update_orderbook",
              &MS::updateOrderBook,
              py::call_guard<py::gil_scoped_release>(),
@@ -139,31 +140,26 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<>())
-        .def("print_order_book", &OrderBook::printOrderBook)
-        .def("asks",          &OrderBook::getAsks,
-             "Return list of all ask levels in the book, in linked-list order")
-        .def("bids",          &OrderBook::getBids,
-             "Return list of all bid levels in the book, in linked-list order")
-        .def("ask_count",           &OrderBook::askCount,
-             "Number of ask levels in the book")
-        .def("bid_count",           &OrderBook::bidCount,
-             "Number of bid levels in the book")
-        .def("sum_ask_quantity",    &OrderBook::sumAskQuantity,
-             "Total quantity on the ask side")
-        .def("sum_bid_quantity",    &OrderBook::sumBidQuantity,
-             "Total quantity on the bid side")
-        .def("best_ask_price",      &OrderBook::bestAskPrice,
-             "Price of the best (lowest) ask")
-        .def("best_bid_price",      &OrderBook::bestBidPrice,
-             "Price of the best (highest) bid")
-        .def("best_ask_quantity",   &OrderBook::bestAskQuantity,
-             "Quantity available at the best ask")
-        .def("best_bid_quantity",   &OrderBook::bestBidQuantity,
-             "Quantity available at the best bid")
-        .def("second_ask_price",    &OrderBook::secondAskPrice,
-             "Price of the second-best ask")
-        .def("second_bid_price",    &OrderBook::secondBidPrice,
-             "Price of the second-best bid")
+        .def("print_order_book",                    &OrderBook::printOrderBook)
+        .def("asks",                                &OrderBook::getAsks, "Return list of all ask levels in the book, in linked-list order")
+        .def("bids",                                &OrderBook::getBids, "Return list of all bid levels in the book, in linked-list order")
+        .def("ask_count",                           &OrderBook::askCount, "Number of ask levels in the book")
+        .def("bid_count",                           &OrderBook::bidCount, "Number of bid levels in the book")
+        .def("sum_ask_quantity",                    &OrderBook::sumAskQuantity, "Total quantity on the ask side")
+        .def("sum_bid_quantity",                    &OrderBook::sumBidQuantity, "Total quantity on the bid side")
+        .def("best_ask_price",                      &OrderBook::bestAskPrice, "Price of the best (lowest) ask")
+        .def("best_bid_price",                      &OrderBook::bestBidPrice, "Price of the best (highest) bid")
+        .def("best_ask_quantity",                   &OrderBook::bestAskQuantity, "Quantity available at the best ask")
+        .def("best_bid_quantity",                   &OrderBook::bestBidQuantity, "Quantity available at the best bid")
+        .def("second_ask_price",                    &OrderBook::secondAskPrice, "Price of the second-best ask")
+        .def("second_bid_price",                    &OrderBook::secondBidPrice, "Price of the second-best bid")
+
+        .def("cumulative_quantity_of_top_n_asks",   &OrderBook::cumulativeQuantityOfTopNAsks, "Price of the second-best bid")
+        .def("cumulative_quantity_of_top_n_bids",   &OrderBook::cumulativeQuantityOfTopNBids, "Price of the second-best bid")
+        .def("sum_of_price_times_quantity",         &OrderBook::sumOfPriceTimesQuantity, "Price of the second-best bid")
+        .def("best_nth_ask_price",                  &OrderBook::bestNthAskPrice, "Price of the second-best bid")
+        .def("best_nth_bid_price",                  &OrderBook::bestNthBidPrice, "Price of the second-best bid")
+
         .def("update",
              &OrderBook::update,
              py::arg("entry"),
@@ -172,24 +168,28 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     // ----- SingleVariableCounter -----
     auto svc = m.def_submodule("single_variable_counter", "Compute single-variable order book metrics");
-    svc.def("calculate_best_ask_price",             &SingleVariableCounter::calculateBestAskPrice,              py::arg("order_book"));
-    svc.def("calculate_best_bid_price",             &SingleVariableCounter::calculateBestBidPrice,              py::arg("order_book"));
-    svc.def("calculate_mid_price",                  &SingleVariableCounter::calculateMidPrice,                  py::arg("order_book"));
-    svc.def("calculate_best_volume_imbalance",      &SingleVariableCounter::calculateBestVolumeImbalance,       py::arg("order_book"));
-    svc.def("calculate_best_depth_volume_ratio",    &SingleVariableCounter::calculateBestVolumeRatio,           py::arg("order_book"));
-    svc.def("calculate_best_two_volume_imbalance",  &SingleVariableCounter::calculateBestTwoVolumeImbalance,    py::arg("order_book"));
-    svc.def("calculate_best_three_volume_imbalance",&SingleVariableCounter::calculateBestThreeVolumeImbalance,  py::arg("order_book"));
-    svc.def("calculate_best_five_volume_imbalance", &SingleVariableCounter::calculateBestFiveVolumeImbalance,   py::arg("order_book"));
-    svc.def("calculate_volume_imbalance",           &SingleVariableCounter::calculateVolumeImbalance,           py::arg("order_book"));
-    svc.def("calculate_queue_imbalance",            &SingleVariableCounter::calculateQueueImbalance,            py::arg("order_book"));
-    svc.def("calculate_gap",                        &SingleVariableCounter::calculateGap,                       py::arg("order_book"));
-    svc.def("calculate_vwap_deviation",             &SingleVariableCounter::calculateVwapDeviation,             py::arg("order_book"));
-    svc.def("calculate_is_aggressor_ask", [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); }, py::arg("trade_entry"));
-    svc.def("calculate_simplified_slope_imbalance", &SingleVariableCounter::calculateSimplifiedSlopeImbalance,  py::arg("order_book"));
+    svc.def("calculate_best_ask_price",                             &SingleVariableCounter::calculateBestAskPrice,                                          py::arg("order_book"));
+    svc.def("calculate_best_bid_price",                             &SingleVariableCounter::calculateBestBidPrice,                                          py::arg("order_book"));
+    svc.def("calculate_mid_price",                                  &SingleVariableCounter::calculateMidPrice,                                              py::arg("order_book"));
+    svc.def("calculate_best_volume_imbalance",                      &SingleVariableCounter::calculateBestVolumeImbalance,                                   py::arg("order_book"));
+    svc.def("calculate_best_depth_volume_ratio",                    &SingleVariableCounter::calculateBestVolumeRatio,                                       py::arg("order_book"));
+    svc.def("calculate_best_n_price_levels_volume_imbalance",       &SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance,                       py::arg("order_book"), py::arg("nPriceLevels"));
+    svc.def("calculate_volume_imbalance",                           &SingleVariableCounter::calculateVolumeImbalance,                                       py::arg("order_book"));
+    svc.def("calculate_queue_imbalance",                            &SingleVariableCounter::calculateQueueImbalance,                                        py::arg("order_book"));
+    svc.def("calculate_gap",                                        &SingleVariableCounter::calculateGap,                                                   py::arg("order_book"));
+    svc.def("calculate_vwap_deviation",                             &SingleVariableCounter::calculateVwapDeviation,                                         py::arg("order_book"));
+    svc.def("calculate_is_aggressor_ask", [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); },                    py::arg("trade_entry"));
+    svc.def("calculate_simplified_slope_imbalance",                 &SingleVariableCounter::calculateSimplifiedSlopeImbalance,                              py::arg("order_book"));
 
-    svc.def("calculate_trade_count_imbalance",      &SingleVariableCounter::calculateTradeCountImbalance,       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_cumulative_delta",           &SingleVariableCounter::calculateCumulativeDelta,           py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_cumulative_delta",           &SingleVariableCounter::calculatePriceDifference,           py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_trade_count_imbalance",                      &SingleVariableCounter::calculateTradeCountImbalance,                                   py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_cumulative_delta",                           &SingleVariableCounter::calculateCumulativeDelta,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_price_difference",                           &SingleVariableCounter::calculatePriceDifference,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_rate_of_return",                             &SingleVariableCounter::calculateRateOfReturn,                                          py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_difference_depth_volatility_imbalance",      &SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance,                    py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+
+    svc.def("calculate_rsi",                                        &SingleVariableCounter::calculateRSI,                                                   py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_stoch_rsi",                                  &SingleVariableCounter::calculateStochRSI,                                              py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_macd",                                       &SingleVariableCounter::calculateMacd,                                                  py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
@@ -220,7 +220,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readwrite("market", &DifferenceDepthEntry::market)
         .def("__str__", [](const DifferenceDepthEntry &entry) {
             std::ostringstream oss;
-            oss << std::fixed << std::setprecision(5);
+            // oss << std::fixed << std::setprecision(5);
             oss
             << "TimestampOfReceive: " << entry.timestampOfReceive << " "
             << "Symbol: " << entry.symbol << " "
@@ -289,7 +289,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readwrite("market",                  &TradeEntry::market)
         .def("__str__", [](const TradeEntry &entry) {
             std::ostringstream oss;
-            oss << std::fixed << std::setprecision(5);
+            // oss << std::fixed << std::setprecision(5);
             oss
             << "TimestampOfReceive: " << entry.timestampOfReceive << " "
             << "Symbol: " << entry.symbol << " "
@@ -326,6 +326,46 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
                 "market"
             };
         })
+    ;
+
+    py::class_<RollingStatisticsData>(m, "RollingStatisticsData")
+    .def(py::init<>())
+    .def("bid_difference_depth_entry_count",
+         &RollingStatisticsData::bidDifferenceDepthEntryCount,
+         py::arg("windowTimeSeconds"),
+         "Liczba bid DifferenceDepthEntry w oknie")
+    .def("ask_difference_depth_entry_count",
+         &RollingStatisticsData::askDifferenceDepthEntryCount,
+         py::arg("windowTimeSeconds"),
+         "Liczba ask DifferenceDepthEntry w oknie")
+    .def("buy_trade_count",
+         &RollingStatisticsData::buyTradeCount,
+         py::arg("windowTimeSeconds"),
+         "Liczba buy TradeEntry w oknie")
+    .def("sell_trade_count",
+         &RollingStatisticsData::sellTradeCount,
+         py::arg("windowTimeSeconds"),
+         "Liczba sell TradeEntry w oknie")
+    .def("buy_trade_volume",
+         &RollingStatisticsData::buyTradeVolume,
+         py::arg("windowTimeSeconds"),
+         "Wolumen buy TradeEntry w oknie")
+    .def("sell_trade_volume",
+         &RollingStatisticsData::sellTradeVolume,
+         py::arg("windowTimeSeconds"),
+         "Wolumen sell TradeEntry w oknie")
+    .def("price_difference",
+         &RollingStatisticsData::priceDifference,
+         py::arg("windowTimeSeconds"),
+         "Różnica ceny w oknie")
+    .def("oldest_price",
+         &RollingStatisticsData::oldestPrice,
+         py::arg("windowTimeSeconds"),
+         "Najstarsza cena w oknie")
+    .def("simple_moving_average",
+         &RollingStatisticsData::simpleMovingAverage,
+         py::arg("windowTimeSeconds"),
+         "Prosta średnia ruchoma ceny w oknie")
     ;
 
     // ----- OrderBookMetricsEntry -----
@@ -394,7 +434,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
-            oss << std::fixed << std::setprecision(5);
+            // oss << std::fixed << std::setprecision(5);
             oss
             << "timestampOfReceive: " << entry.timestampOfReceive << " "
             << "market: " << static_cast<int>(entry.market) << " "

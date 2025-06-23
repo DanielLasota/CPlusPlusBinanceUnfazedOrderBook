@@ -35,13 +35,13 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.bestVolumeRatio = SingleVariableCounter::calculateBestVolumeRatio(ms.orderBook);
     }
     if (mask_ & BestTwoVolumeImbalance){
-        e.bestTwoVolumeImbalance = SingleVariableCounter::calculateBestTwoVolumeImbalance(ms.orderBook);
+        e.bestTwoVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 2);
     }
     if (mask_ & BestThreeVolumeImbalance){
-        e.bestThreeVolumeImbalance = SingleVariableCounter::calculateBestThreeVolumeImbalance(ms.orderBook);
+        e.bestThreeVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 3);
     }
     if (mask_ & BestFiveVolumeImbalance){
-        e.bestFiveVolumeImbalance = SingleVariableCounter::calculateBestFiveVolumeImbalance(ms.orderBook);
+        e.bestFiveVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 5);
     }
     if (mask_ & VolumeImbalance) {
         e.volumeImbalance = SingleVariableCounter::calculateVolumeImbalance(ms.orderBook);
@@ -61,6 +61,8 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & simplifiedSlopeImbalance) {
         e.simplifiedSlopeImbalance = SingleVariableCounter::calculateSimplifiedSlopeImbalance(ms.orderBook);
     }
+
+
     if (mask_ & tradeCountImbalance1Seconds) {
         e.tradeCountImbalance1Seconds = SingleVariableCounter::calculateTradeCountImbalance(ms.rollingStatisticsData, 1);
     }
@@ -110,22 +112,22 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.priceDifference1Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 1);
     }
     if (mask_ & priceDifference3Seconds) {
-        e.priceDifference3Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 3);
+        e.priceDifference3Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 3);
     }
     if (mask_ & priceDifference5Seconds) {
-        e.priceDifference5Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 5);
+        e.priceDifference5Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 5);
     }
     if (mask_ & priceDifference10Seconds) {
-        e.priceDifference10Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 10);
+        e.priceDifference10Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 10);
     }
     if (mask_ & priceDifference15Seconds) {
-        e.priceDifference15Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 15);
+        e.priceDifference15Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 15);
     }
     if (mask_ & priceDifference30Seconds) {
-        e.priceDifference30Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 30);
+        e.priceDifference30Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 30);
     }
     if (mask_ & priceDifference60Seconds) {
-        e.priceDifference60Seconds = SingleVariableCounter::calculateCumulativeDelta(ms.rollingStatisticsData, 60);
+        e.priceDifference60Seconds = SingleVariableCounter::calculatePriceDifference(ms.rollingStatisticsData, 60);
     }
 
     if (mask_ & rateOfReturn1Seconds) {
@@ -179,7 +181,7 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.stochRsi5Seconds = SingleVariableCounter::calculateStochRSI(ms.rollingStatisticsData, 5);
     }
     if (mask_ & macd2Seconds) {
-        e.macd2Seconds = SingleVariableCounter::calculateMacd(ms.rollingStatisticsData, 5);
+        e.macd2Seconds = SingleVariableCounter::calculateMacd(ms.rollingStatisticsData, 2);
     }
     return e;
 }

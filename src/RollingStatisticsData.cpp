@@ -7,7 +7,8 @@ void RollingStatisticsData::Bucket::reset() {
     buyTradesCount = sellTradesCount = 0;
     cumulatedBuyTradesQuantity = cumulatedSellTradesQuantity = 0.0;
     firstTradePrice = lastTradePrice = 0.0;
-    hasData = false;
+    hasDifferenceDepthData = false;
+    hasTradeData = false;
 }
 
 size_t RollingStatisticsData::getBucketIndex(int64_t timestamp) {
@@ -28,8 +29,11 @@ void RollingStatisticsData::advanceToTimestamp(int64_t timestamp) {
 
         for (int64_t i = 1; i <= buckets_to_clear; ++i) {
             const size_t idx = getBucketIndex((old_bucket_time + i) * BUCKET_SIZE_US);
+
+            int64_t bucket_ts = (old_bucket_time + i) * BUCKET_SIZE_US;
+            buckets_[idx].start_time = bucket_ts;
+
             buckets_[idx].reset();
-            buckets_[idx].start_time = (old_bucket_time + i) * BUCKET_SIZE_US;
         }
 
         currentBucketIdx_ = getBucketIndex(timestamp);
@@ -40,16 +44,17 @@ void RollingStatisticsData::advanceToTimestamp(int64_t timestamp) {
 
 void RollingStatisticsData::update(const DecodedEntry* entry) {
     std::visit([this](auto const& e) {
+        int64_t ts = e.timestampOfReceive;
+        advanceToTimestamp(ts);
+
+        size_t idx = getBucketIndex(ts);
+        Bucket& bucket = buckets_[idx];
+        bucket.start_time = (ts / BUCKET_SIZE_US) * BUCKET_SIZE_US;
+
         if constexpr (std::is_same_v<std::decay_t<decltype(e)>, TradeEntry>) {
-            int64_t ts = e.timestampOfReceive;
-            advanceToTimestamp(ts);
-
-            const size_t bucket_idx = getBucketIndex(ts);
-            Bucket& bucket = buckets_[bucket_idx];
-
-            if (!bucket.hasData) {
+            if (!bucket.hasTradeData) {
                 bucket.firstTradePrice = e.price;
-                bucket.hasData = true;
+                bucket.hasTradeData = true;
             }
             bucket.lastTradePrice = e.price;
 
@@ -61,15 +66,14 @@ void RollingStatisticsData::update(const DecodedEntry* entry) {
                 bucket.cumulatedSellTradesQuantity += e.quantity;
             }
         }
-        else if constexpr (std::is_same_v<std::decay_t<decltype(e)>, DifferenceDepthEntry>) {
-            int64_t ts = e.timestampOfReceive;
-            advanceToTimestamp(ts);
-            size_t idx = getBucketIndex(ts);
-            buckets_[idx].hasData = true;
+        else {
+            if (!bucket.hasDifferenceDepthData) {
+                bucket.hasDifferenceDepthData = true;
+            }
             if (e.isAsk) {
-                ++buckets_[idx].askDifferenceDepthEntryCount;
+                ++bucket.askDifferenceDepthEntryCount;
             } else {
-                ++buckets_[idx].bidDifferenceDepthEntryCount;
+                ++bucket.bidDifferenceDepthEntryCount;
             }
         }
     }, *entry);
@@ -80,7 +84,7 @@ size_t RollingStatisticsData::bidDifferenceDepthEntryCount(int windowDurationSec
     int64_t cutoff = lastTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * 1'000'000;
     size_t total = 0;
     for (auto const& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasDifferenceDepthData && bucket.start_time >= cutoff) {
             total += bucket.bidDifferenceDepthEntryCount;
         }
     }
@@ -92,7 +96,7 @@ size_t RollingStatisticsData::askDifferenceDepthEntryCount(int windowDurationSec
     int64_t cutoff = lastTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * 1'000'000;
     size_t total = 0;
     for (auto const& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasDifferenceDepthData && bucket.start_time >= cutoff) {
             total += bucket.askDifferenceDepthEntryCount;
         }
     }
@@ -106,7 +110,7 @@ size_t RollingStatisticsData::buyTradeCount(int windowDurationSeconds) const {
     size_t total = 0;
 
     for (const auto& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
             total += bucket.buyTradesCount;
         }
     }
@@ -120,7 +124,7 @@ size_t RollingStatisticsData::sellTradeCount(int windowDurationSeconds) const {
     size_t total = 0;
 
     for (const auto& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
             total += bucket.sellTradesCount;
         }
     }
@@ -134,7 +138,7 @@ double RollingStatisticsData::buyTradeVolume(int windowDurationSeconds) const {
     double total = 0.0;
 
     for (const auto& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
             total += bucket.cumulatedBuyTradesQuantity;
         }
     }
@@ -148,7 +152,7 @@ double RollingStatisticsData::sellTradeVolume(int windowDurationSeconds) const {
     double total = 0.0;
 
     for (const auto& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
             total += bucket.cumulatedSellTradesQuantity;
         }
     }
@@ -165,7 +169,7 @@ double RollingStatisticsData::priceDifference(const int windowDurationSeconds) c
     int64_t newest_time = 0;
 
     for (const auto& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
             if (bucket.start_time >= newest_time) {
                 newest_time = bucket.start_time;
                 newest_price = bucket.lastTradePrice;
@@ -189,7 +193,7 @@ double RollingStatisticsData::oldestPrice(int windowTimeSeconds) const {
     int64_t oldest_time = std::numeric_limits<int64_t>::max();
 
     for (const auto& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
             if (bucket.start_time < oldest_time) {
                 oldest_time = bucket.start_time;
                 oldest_price = bucket.firstTradePrice;
@@ -212,7 +216,7 @@ double RollingStatisticsData::simpleMovingAverage(int windowTimeSeconds) const {
     size_t count = 0;
 
     for (auto const& bucket : buckets_) {
-        if (bucket.hasData && bucket.start_time >= cutoff) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
             sum += bucket.lastTradePrice;
             ++count;
         }

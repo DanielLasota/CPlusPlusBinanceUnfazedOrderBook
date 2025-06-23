@@ -35,7 +35,8 @@ private:
         double cumulatedSellTradesQuantity = 0.0;
         double firstTradePrice = 0.0;
         double lastTradePrice = 0.0;
-        bool hasData = false;
+        bool hasDifferenceDepthData = false;
+        bool hasTradeData = false;
 
         void reset();
     };
@@ -44,6 +45,6 @@ private:
     size_t currentBucketIdx_ = 0;
     int64_t lastTimestamp_ = 0;
 
-    static size_t getBucketIndex(int64_t timestamp) ;
+    static size_t getBucketIndex(int64_t timestamp);
     void advanceToTimestamp(int64_t timestamp);
 };

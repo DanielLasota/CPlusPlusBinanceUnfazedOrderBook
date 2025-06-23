@@ -53,30 +53,12 @@ namespace SingleVariableCounter {
             );
     }
 
-    double calculateBestTwoVolumeImbalance(const OrderBook& orderBook) {
-        const double cumulativeSumTopTwoBidsQuantities = orderBook.cumulativeSumTopNBidQuantities(2);
-        const double cumulativeSumTopTwoAsksQuantities = orderBook.cumulativeSumTopNAskQuantity(2);
+    double calculateBestNPriceLevelsVolumeImbalance(const OrderBook& orderBook, const int nPriceLevels) {
+        const double cumulativeSumTopNBidsQuantities = orderBook.cumulativeQuantityOfTopNBids(nPriceLevels);
+        const double cumulativeSumTopNAsksQuantities = orderBook.cumulativeQuantityOfTopNAsks(nPriceLevels);
         return round2(
-            (cumulativeSumTopTwoBidsQuantities - cumulativeSumTopTwoAsksQuantities)
-            / (cumulativeSumTopTwoBidsQuantities + cumulativeSumTopTwoAsksQuantities)
-            );
-    }
-
-    double calculateBestThreeVolumeImbalance(const OrderBook& orderBook) {
-        const double cumulativeSumTopThreeBidsQuantities = orderBook.cumulativeSumTopNBidQuantities(3);
-        const double cumulativeSumTopThreeAsksQuantities = orderBook.cumulativeSumTopNAskQuantity(3);
-        return round2(
-            (cumulativeSumTopThreeBidsQuantities - cumulativeSumTopThreeAsksQuantities)
-            / (cumulativeSumTopThreeBidsQuantities + cumulativeSumTopThreeAsksQuantities)
-            );
-    }
-
-    double calculateBestFiveVolumeImbalance(const OrderBook& orderBook) {
-        const double cumulativeSumTopFiveBidsQuantities = orderBook.cumulativeSumTopNBidQuantities(5);
-        const double cumulativeSumTopFiveAsksQuantities = orderBook.cumulativeSumTopNAskQuantity(5);
-        return round2(
-            (cumulativeSumTopFiveBidsQuantities - cumulativeSumTopFiveAsksQuantities)
-            / (cumulativeSumTopFiveBidsQuantities + cumulativeSumTopFiveAsksQuantities)
+            (cumulativeSumTopNBidsQuantities - cumulativeSumTopNAsksQuantities)
+            / (cumulativeSumTopNBidsQuantities + cumulativeSumTopNAsksQuantities)
             );
     }
 
@@ -110,20 +92,22 @@ namespace SingleVariableCounter {
 
     double calculateVwapDeviation(const OrderBook& orderBook) {
         const double sumBidsAsksQuantity = orderBook.sumAskQuantity() + orderBook.sumBidQuantity();
-        const double vwap = orderBook.sumPriceQty() / sumBidsAsksQuantity;
+        const double vwap = orderBook.sumOfPriceTimesQuantity() / sumBidsAsksQuantity;
         const double midPrice = calculateMidPrice(orderBook);
-        return (vwap - midPrice) / midPrice;
+        return round8(
+            (vwap - midPrice) / midPrice
+            );
     }
 
     double calculateSimplifiedSlopeImbalance(const OrderBook& orderBook)
     {
         constexpr size_t K = 5;
 
-        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeSumTopNAskQuantity(5);
-        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeSumTopNBidQuantities(5);
+        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNAsks(5);
+        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNBids(5);
 
-        const double bestFifthAskPrice = orderBook.askPriceAtDepth(K);
-        const double bestFifthBidPrice = orderBook.bidPriceAtDepth(K);
+        const double bestFifthAskPrice = orderBook.bestNthAskPrice(K);
+        const double bestFifthBidPrice = orderBook.bestNthBidPrice(K);
 
         const double midPrice = calculateMidPrice(orderBook);
 
@@ -152,14 +136,14 @@ namespace SingleVariableCounter {
 
     double calculateCumulativeDelta(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
     {
-        const double bid = rollingStatisticsData.buyTradeVolume(windowTimeSeconds);
-        const double ask = rollingStatisticsData.sellTradeVolume(windowTimeSeconds);
-        return round2(bid - ask);
+        const double buyTradeVolume = rollingStatisticsData.buyTradeVolume(windowTimeSeconds);
+        const double sellTradeVolume = rollingStatisticsData.sellTradeVolume(windowTimeSeconds);
+        return buyTradeVolume - sellTradeVolume;
     }
 
     double calculatePriceDifference(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
     {
-        return rollingStatisticsData.priceDifference(windowTimeSeconds);
+        return round8(rollingStatisticsData.priceDifference(windowTimeSeconds));
     }
 
     double calculateRateOfReturn(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds) {
@@ -168,7 +152,7 @@ namespace SingleVariableCounter {
         const double oldestPrice = rollingStatisticsData.oldestPrice(windowTimeSeconds);
         if (oldestPrice == 0.0) return 0.0;
 
-        return round5(priceDifference / oldestPrice);
+        return round2(priceDifference / oldestPrice * 100);
     }
 
     double calculateDifferenceDepthVolatilityImbalance(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
@@ -185,6 +169,7 @@ namespace SingleVariableCounter {
             / static_cast<double>(differenceDepthEntryCount)
             );
     }
+
 
     double calculateRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
     {

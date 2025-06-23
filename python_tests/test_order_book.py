@@ -1,4 +1,5 @@
-from cpp_binance_orderbook import OrderBook, DifferenceDepthEntry
+import cpp_binance_orderbook
+from cpp_binance_orderbook import OrderBook, DifferenceDepthEntry, Symbol, Market
 
 
 class TestOrderBook:
@@ -176,69 +177,311 @@ class TestOrderBook:
     class TestBaseOrderBookVariables:
 
         @staticmethod
-        def get_sample_order_book():
-            # Create an orderbook with known levels:
-            # Asks: 10@2, 11@3, 12@4
-            # Bids: 9@1, 8@2, 7@3
+        def get_sample_order_book(
+                symbol: cpp_binance_orderbook.Symbol,
+                market: cpp_binance_orderbook.Market,
+                price_hash: float,
+                quantity_hash: float
+        ) -> cpp_binance_orderbook.OrderBook:
+
             ob = OrderBook()
-            for price, qty in [
-                (10.0, 2.0), # best ask
-                (12.0, 4.0),
-                (11.0, 3.0), # 2nd best ask
-            ]:
-                e = DifferenceDepthEntry()
-                e.price = price
-                e.quantity = qty
-                e.is_ask = True
-                ob.update(e)
-            for price, qty in [
-                (9.0, 1.0), # best bid
-                (7.0, 3.0),
-                (8.0, 2.0), # 2nd best ask
-            ]:
-                e = DifferenceDepthEntry()
-                e.price = price
-                e.quantity = qty
-                e.is_ask = False
-                ob.update(e)
+
+            expected_data_list = [
+                (1, 1, round((price_hash + 2.1), 5), quantity_hash + 1),    # best ask
+                (2, 1, round((price_hash + 2.5), 5), quantity_hash + 2),
+                (3, 1, round((price_hash + 2.3), 5), quantity_hash + 2),    #           2nd best
+                (4, 1, round((price_hash + 3.1), 5), quantity_hash + 2),
+                (5, 1, round((price_hash + 4.1), 5), quantity_hash + 2),
+
+                (6,  0, round((price_hash + 1.0), 5), quantity_hash + 3),
+                (7,  0, round((price_hash + 2.0), 5), quantity_hash + 3),    # best bid
+                (8,  0, round((price_hash + 0.0), 5), quantity_hash + 2),
+                (9,  0, round((price_hash + 1.5), 5), quantity_hash + 7),    #           2nd best
+                (10, 0, round((price_hash + 1.1), 5), quantity_hash + 9),
+                (11, 0, round((price_hash + 1.2), 5), quantity_hash + 8),
+            ]
+
+            for (timestamp_of_receive, is_ask, price, quantity) in expected_data_list:
+                ob.update(
+                    DifferenceDepthEntry(
+                        timestamp_of_receive=timestamp_of_receive,
+                        symbol=symbol,
+                        is_ask=is_ask,
+                        price=price,
+                        quantity=quantity,
+                        is_last=1,
+                        market=market
+                    )
+                )
+
             return ob
 
         def test_ask_count(self):
-            ob = self.get_sample_order_book()
-            assert ob.ask_count() == 3
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.ask_count() == 5
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=1,
+                    price=5.3,
+                    quantity=1,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.ask_count() == 5
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=1,
+                    price=5.3,
+                    quantity=0,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.ask_count() == 4
 
         def test_bid_count(self):
-            ob = self.get_sample_order_book()
-            assert ob.bid_count() == 3
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.bid_count() == 6
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=0,
+                    price=4.1,
+                    quantity=1,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.bid_count() == 6
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=0,
+                    price=4.1,
+                    quantity=0,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.bid_count() == 5
 
         def test_sum_ask_quantity(self):
-            ob = self.get_sample_order_book()
-            assert ob.sum_ask_quantity() == 9.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.sum_ask_quantity() == 19.0
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=1,
+                    price=5.3,
+                    quantity=1,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.sum_ask_quantity() == 19.0 - 3.0
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=1,
+                    price=5.3,
+                    quantity=0,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.sum_ask_quantity() == 19.0 - 4.0
 
         def test_sum_bid_quantity(self):
-            ob = self.get_sample_order_book()
-            assert ob.sum_bid_quantity() == 6.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.sum_bid_quantity() == 44.0
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=0,
+                    price=4.1,
+                    quantity=1,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.sum_bid_quantity() == 44.0 - 10.0
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=0,
+                    price=4.1,
+                    quantity=0,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.sum_bid_quantity() == 44.0 - 11.0
 
         def test_best_ask_price(self):
-            ob = self.get_sample_order_book()
-            assert ob.best_ask_price() == 10.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.best_ask_price() == 5.1
 
         def test_best_bid_price(self):
-            ob = self.get_sample_order_book()
-            assert ob.best_bid_price() == 9.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.best_bid_price() == 5.0
 
         def test_best_ask_quantity(self):
-            ob = self.get_sample_order_book()
-            assert ob.best_ask_quantity() == 2.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.best_ask_quantity() == 3.0
 
         def test_best_bid_quantity(self):
-            ob = self.get_sample_order_book()
-            assert ob.best_bid_quantity() == 1.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.best_bid_quantity() == 5.0
 
         def test_second_ask_price(self):
-            ob = self.get_sample_order_book()
-            assert ob.second_ask_price() == 11.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.second_ask_price() == 5.3
 
         def test_second_bid_price(self):
-            ob = self.get_sample_order_book()
-            assert ob.second_bid_price() == 8.0
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.second_bid_price() == 4.5
+
+
+        def test_cumulative_sum_of_top_n_asks_quantity(self):
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.cumulative_quantity_of_top_n_asks(4) == 15.0
+
+        def test_cumulative_sum_of_top_n_bids_quantity(self):
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.cumulative_quantity_of_top_n_bids(4) == 35.0
+
+        def test_sum_of_price_times_quantity(self):
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.sum_of_price_times_quantity() == 295.9
+
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=0,
+                    price=4.1,
+                    quantity=1,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.sum_of_price_times_quantity() == 295.9 - (10 * 4.1)
+            ob.update(
+                DifferenceDepthEntry(
+                    timestamp_of_receive=12,
+                    symbol=Symbol.ADAUSDT,
+                    is_ask=0,
+                    price=4.1,
+                    quantity=0,
+                    is_last=1,
+                    market=Market.USD_M_FUTURES
+                )
+            )
+            assert ob.sum_of_price_times_quantity() == 295.9 - (11 * 4.1)
+
+        def test_best_nth_bid_price(self):
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+
+            assert ob.best_nth_bid_price(1) == 5.
+            assert ob.best_nth_bid_price(3) == 4.2
+            assert ob.best_nth_bid_price(6) == 3.
+
+        def test_best_nth_ask_price(self):
+            ob = self.get_sample_order_book(
+                symbol=Symbol.ADAUSDT,
+                market=Market.USD_M_FUTURES,
+                price_hash=3,
+                quantity_hash=2
+            )
+            assert ob.best_nth_ask_price(1) == 5.1
+            assert ob.best_nth_ask_price(3) == 5.5
+            assert ob.best_nth_ask_price(5) == 7.1

@@ -52,27 +52,14 @@ public:
     double secondAskPrice() const { return askHead_->next_->price; }
     double secondBidPrice() const { return bidHead_->next_->price; }
 
+    double cumulativeQuantityOfTopNAsks(size_t n) const;
+    double cumulativeQuantityOfTopNBids(size_t n) const;
+    double sumOfPriceTimesQuantity() const { return sumOfPriceTimesQuantity_; }
+    double bestNthAskPrice(size_t K) const;
+    double bestNthBidPrice(size_t K) const;
+
     std::vector<DifferenceDepthEntry> getAsks() const;
     std::vector<DifferenceDepthEntry> getBids() const;
-
-    double cumulativeSumTopNAskQuantity(size_t n) const;
-    double cumulativeSumTopNBidQuantities(size_t n) const;
-
-    double sumPriceQty() const { return sumPriceQty_; }
-
-    double askPriceAtDepth(const size_t K) const {
-        const DifferenceDepthEntry* node = askHead_;
-        for (size_t i = 1; i < K && node; ++i)
-            node = node->next_;
-        return node ? node->price : std::numeric_limits<double>::quiet_NaN();
-    }
-
-    double bidPriceAtDepth(const size_t K) const {
-        const DifferenceDepthEntry* node = bidHead_;
-        for (size_t i = 1; i < K && node; ++i)
-            node = node->next_;
-        return node ? node->price : std::numeric_limits<double>::quiet_NaN();
-    }
 
 private:
 
@@ -91,7 +78,7 @@ private:
 
     size_t askCount_{0}, bidCount_{0};
     double sumAskQty_{0.0}, sumBidQty_{0.0};
-    double sumPriceQty_{0.0};
+    double sumOfPriceTimesQuantity_{0.0};
 
     DifferenceDepthEntry* allocateNode(double price, bool isAsk, double quantity);
     void deallocateNode(DifferenceDepthEntry* node);

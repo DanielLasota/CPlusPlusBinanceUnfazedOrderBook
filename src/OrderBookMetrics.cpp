@@ -214,7 +214,7 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
 
     auto arr_rsi5Seconds                                 = vector_to_numpy<double>(col_rsi5Seconds);
     auto arr_stochRsi5Seconds                            = vector_to_numpy<double>(col_stochRsi5Seconds);
-    auto arr_macd2Seconds                                = vector_to_numpy<double>(col_stochRsi5Seconds);
+    auto arr_macd2Seconds                                = vector_to_numpy<double>(col_macd2Seconds);
 
     py::dict result;
     for (auto const& var : variables_) {
@@ -276,7 +276,7 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         else if (var == "differenceDepthVolatilityImbalance30Seconds")  result["differenceDepthVolatilityImbalance30Seconds"]               = arr_differenceDepthVolatilityImbalance30Seconds;
         else if (var == "differenceDepthVolatilityImbalance60Seconds")  result["differenceDepthVolatilityImbalance60Seconds"]               = arr_differenceDepthVolatilityImbalance60Seconds;
 
-        else if (var == "rsi5Sseconds")                                 result["rsi5Sseconds"]                                              = arr_rsi5Seconds;
+        else if (var == "rsi5Seconds")                                 result["rsi5Seconds"]                                              = arr_rsi5Seconds;
         else if (var == "stochRsi5Seconds")                             result["stochRsi5Seconds"]                                          = arr_stochRsi5Seconds;
         else if (var == "macd2Seconds")                                 result["macd2Seconds"]                                              = arr_macd2Seconds;
 

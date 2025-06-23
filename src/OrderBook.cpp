@@ -124,7 +124,7 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                 bidMap_.erase(node->price);
                 removeNode(bidHead_, bidTail_, node);
             }
-            sumPriceQty_  -= node->price * node->quantity;
+            sumOfPriceTimesQuantity_  -= node->price * node->quantity;
             index_.erase(it);
             deallocateNode(node);
         }
@@ -139,7 +139,7 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             if (node->isAsk) sumAskQty_ += newQ - oldQ;
             else sumBidQty_ += newQ - oldQ;
 
-            sumPriceQty_ += node->price * (newQ - oldQ);
+            sumOfPriceTimesQuantity_ += node->price * (newQ - oldQ);
 
             node->timestampOfReceive = e->timestampOfReceive;
             node->quantity = e->quantity;
@@ -217,14 +217,14 @@ void OrderBook::update(DifferenceDepthEntry* e) {
                 }
             }
 
-            sumPriceQty_ += node->price * node->quantity;
+            sumOfPriceTimesQuantity_ += node->price * node->quantity;
             index_[key] = node;
         }
     }
 }
 
 void OrderBook::printOrderBook() const {
-    std::cout << std::fixed << std::setprecision(5);
+    // std::cout << std::fixed << std::setprecision(5);
     std::cout << "ORDERBOOK:\n";
     std::cout << "  Asks (lowest→highest):\n";
     for (auto *n = askTail_; n; n = n->prev_) {
@@ -270,7 +270,7 @@ std::vector<DifferenceDepthEntry> OrderBook::getBids() const {
     return result;
 }
 
-double OrderBook::cumulativeSumTopNAskQuantity(size_t n) const {
+double OrderBook::cumulativeQuantityOfTopNAsks(size_t n) const {
     double sum = 0;
     auto *node = askHead_;
     for (size_t i = 0; i < n && node; ++i, node = node->next_) {
@@ -279,11 +279,25 @@ double OrderBook::cumulativeSumTopNAskQuantity(size_t n) const {
     return sum;
 }
 
-double OrderBook::cumulativeSumTopNBidQuantities(size_t n) const {
+double OrderBook::cumulativeQuantityOfTopNBids(size_t n) const {
     double sum = 0;
     auto *node = bidHead_;
     for (size_t i = 0; i < n && node; ++i, node = node->next_) {
         sum += node->quantity;
     }
     return sum;
+}
+
+double OrderBook::bestNthAskPrice(const size_t K) const {
+    const DifferenceDepthEntry* node = askHead_;
+    for (size_t i = 1; i < K && node; ++i)
+        node = node->next_;
+    return node ? node->price : std::numeric_limits<double>::quiet_NaN();
+}
+
+double OrderBook::bestNthBidPrice(const size_t K) const {
+    const DifferenceDepthEntry* node = bidHead_;
+    for (size_t i = 1; i < K && node; ++i)
+        node = node->next_;
+    return node ? node->price : std::numeric_limits<double>::quiet_NaN();
 }

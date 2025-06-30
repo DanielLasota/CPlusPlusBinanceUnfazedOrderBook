@@ -172,7 +172,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     svc.def("calculate_best_bid_price",                             &SingleVariableCounter::calculateBestBidPrice,                                          py::arg("order_book"));
     svc.def("calculate_mid_price",                                  &SingleVariableCounter::calculateMidPrice,                                              py::arg("order_book"));
     svc.def("calculate_best_volume_imbalance",                      &SingleVariableCounter::calculateBestVolumeImbalance,                                   py::arg("order_book"));
-    svc.def("calculate_best_depth_volume_ratio",                    &SingleVariableCounter::calculateBestVolumeRatio,                                       py::arg("order_book"));
+    svc.def("calculate_best_depth_volume_ratio",                    &SingleVariableCounter::calculateBestDepthVolumeRatio,                                  py::arg("order_book"));
     svc.def("calculate_best_n_price_levels_volume_imbalance",       &SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance,                       py::arg("order_book"), py::arg("nPriceLevels"));
     svc.def("calculate_volume_imbalance",                           &SingleVariableCounter::calculateVolumeImbalance,                                       py::arg("order_book"));
     svc.def("calculate_queue_imbalance",                            &SingleVariableCounter::calculateQueueImbalance,                                        py::arg("order_book"));

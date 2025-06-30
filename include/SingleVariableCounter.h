@@ -1,8 +1,9 @@
 #pragma once
 
+#include "RollingDifferenceDepthStatistics.h"
+#include "RollingTradeStatistics.h"
 #include "enums/TradeEntry.h"
 #include "OrderBook.h"
-#include <RollingStatisticsData.h>
 
 namespace SingleVariableCounter {
 
@@ -20,14 +21,14 @@ namespace SingleVariableCounter {
     double calculateVwapDeviation(const OrderBook& orderBook);
     double calculateSimplifiedSlopeImbalance(const OrderBook& orderBook);
 
-    double calculateTradeCountImbalance(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
-    double calculateCumulativeDelta(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
-    double calculatePriceDifference(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
-    double calculateRateOfReturn(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
-    double calculateDifferenceDepthVolatilityImbalance(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+    double calculateTradeCountImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateCumulativeDelta(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculatePriceDifference(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateRateOfReturn(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateDifferenceDepthVolatilityImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
 
-    double calculateRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
-    double calculateStochRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
-    double calculateMacd(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds);
+    double calculateRSI(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateStochRSI(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateMacd(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
 
 }

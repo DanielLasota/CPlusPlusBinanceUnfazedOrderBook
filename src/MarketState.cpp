@@ -12,15 +12,15 @@ void MarketState::update(DecodedEntry* entry) {
 
     if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
         orderBook.update(differenceDepthEntry);
+        rollingDifferenceDepthStatistics.update(*differenceDepthEntry);
     }
 
     if (auto* tradeEntry = std::get_if<TradeEntry>(entry)) {
         lastTrade = *tradeEntry;
         lastTradePtr = &lastTrade;
         hasLastTrade = true;
+        rollingTradeStatistics.update(*tradeEntry);
     }
-
-    rollingStatisticsData.update(entry);
 }
 
 void MarketState::updateOrderBook(int64_t timestampOfReceive, double price, double quantity, bool isAsk){

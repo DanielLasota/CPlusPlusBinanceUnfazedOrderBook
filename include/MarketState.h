@@ -2,14 +2,15 @@
 
 #include "OrderBook.h"
 #include "enums/TradeEntry.h"
-#include <RollingStatisticsData.h>
-
+#include "RollingDifferenceDepthStatistics.h"
+#include "RollingTradeStatistics.h"
 
 class MarketState {
 public:
     MarketState() = default;
 
-    RollingStatisticsData rollingStatisticsData;
+    RollingTradeStatistics rollingTradeStatistics;
+    RollingDifferenceDepthStatistics rollingDifferenceDepthStatistics;
 
     MarketState(const Market market_, Symbol symbol)
         : market(market_), symbol(symbol), lastTrade()

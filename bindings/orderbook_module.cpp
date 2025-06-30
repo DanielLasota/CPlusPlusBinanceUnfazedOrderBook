@@ -79,7 +79,14 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<MS>(m, "MarketState")
         .def(py::init<>(), "Tworzy nowy MarketState")
         .def_readonly("order_book", &MS::orderBook, py::return_value_policy::reference_internal)
-        .def_readonly("rolling_statistics_data", &MS::rollingStatisticsData, py::return_value_policy::reference_internal)
+        .def_readonly("rolling_trade_statistics",
+              &MS::rollingTradeStatistics,
+              py::return_value_policy::reference_internal,
+              "Statystyki obrotu w oknie")
+        .def_readonly("rolling_difference_depth_statistics",
+                  &MS::rollingDifferenceDepthStatistics,
+                  py::return_value_policy::reference_internal,
+                  "Statystyki głębokości w oknie")
         .def("update",
                  &MS::update,
                  py::arg("entry"),
@@ -328,45 +335,59 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         })
     ;
 
-    py::class_<RollingStatisticsData>(m, "RollingStatisticsData")
-    .def(py::init<>())
-    .def("bid_difference_depth_entry_count",
-         &RollingStatisticsData::bidDifferenceDepthEntryCount,
-         py::arg("windowTimeSeconds"),
-         "Liczba bid DifferenceDepthEntry w oknie")
-    .def("ask_difference_depth_entry_count",
-         &RollingStatisticsData::askDifferenceDepthEntryCount,
-         py::arg("windowTimeSeconds"),
-         "Liczba ask DifferenceDepthEntry w oknie")
-    .def("buy_trade_count",
-         &RollingStatisticsData::buyTradeCount,
-         py::arg("windowTimeSeconds"),
-         "Liczba buy TradeEntry w oknie")
-    .def("sell_trade_count",
-         &RollingStatisticsData::sellTradeCount,
-         py::arg("windowTimeSeconds"),
-         "Liczba sell TradeEntry w oknie")
-    .def("buy_trade_volume",
-         &RollingStatisticsData::buyTradeVolume,
-         py::arg("windowTimeSeconds"),
-         "Wolumen buy TradeEntry w oknie")
-    .def("sell_trade_volume",
-         &RollingStatisticsData::sellTradeVolume,
-         py::arg("windowTimeSeconds"),
-         "Wolumen sell TradeEntry w oknie")
-    .def("price_difference",
-         &RollingStatisticsData::priceDifference,
-         py::arg("windowTimeSeconds"),
-         "Różnica ceny w oknie")
-    .def("oldest_price",
-         &RollingStatisticsData::oldestPrice,
-         py::arg("windowTimeSeconds"),
-         "Najstarsza cena w oknie")
-    .def("simple_moving_average",
-         &RollingStatisticsData::simpleMovingAverage,
-         py::arg("windowTimeSeconds"),
-         "Prosta średnia ruchoma ceny w oknie")
-    ;
+    // ----- RollingTradeStatistics -----
+    py::class_<RollingTradeStatistics>(m, "RollingTradeStatistics")
+        .def(py::init<>())
+        .def("update",
+             &RollingTradeStatistics::update,
+             py::arg("trade_entry"),
+             "Dodaje nowy TradeEntry do statystyk")
+        .def("buy_trade_count",
+             &RollingTradeStatistics::buyTradeCount,
+             py::arg("windowTimeSeconds"),
+             "Liczba kupna w oknie [s]")
+        .def("sell_trade_count",
+             &RollingTradeStatistics::sellTradeCount,
+             py::arg("windowTimeSeconds"),
+             "Liczba sprzedaży w oknie [s]")
+        .def("buy_trade_volume",
+             &RollingTradeStatistics::buyTradeVolume,
+             py::arg("windowTimeSeconds"),
+             "Wolumen kupna w oknie [s]")
+        .def("sell_trade_volume",
+             &RollingTradeStatistics::sellTradeVolume,
+             py::arg("windowTimeSeconds"),
+             "Wolumen sprzedaży w oknie [s]")
+        .def("price_difference",
+             &RollingTradeStatistics::priceDifference,
+             py::arg("windowTimeSeconds"),
+             "Różnica ceny w oknie [s]")
+        .def("oldest_price",
+             &RollingTradeStatistics::oldestPrice,
+             py::arg("windowTimeSeconds"),
+             "Najstarsza cena w oknie [s]")
+        .def("simple_moving_average",
+             &RollingTradeStatistics::simpleMovingAverage,
+             py::arg("windowTimeSeconds"),
+             "Prosta średnia ruchoma ceny w oknie [s]")
+        ;
+
+    // ----- RollingDifferenceDepthStatistics -----
+    py::class_<RollingDifferenceDepthStatistics>(m, "RollingDifferenceDepthStatistics")
+        .def(py::init<>())
+        .def("update",
+             &RollingDifferenceDepthStatistics::update,
+             py::arg("depth_entry"),
+             "Dodaje nowy DifferenceDepthEntry do statystyk")
+        .def("bid_difference_depth_entry_count",
+             &RollingDifferenceDepthStatistics::bidDifferenceDepthEntryCount,
+             py::arg("windowTimeSeconds"),
+             "Liczba bid‐entry w oknie [s]")
+        .def("ask_difference_depth_entry_count",
+             &RollingDifferenceDepthStatistics::askDifferenceDepthEntryCount,
+             py::arg("windowTimeSeconds"),
+             "Liczba ask‐entry w oknie [s]")
+        ;
 
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")

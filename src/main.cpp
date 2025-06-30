@@ -26,7 +26,7 @@ int main() {
         "bestFiveVolumeImbalance",
         "queueImbalance",
         "volumeImbalance",
-        "gap",
+        // "gap",
         "isAggressorAsk",
         "vwapDeviation",
         "simplifiedSlopeImbalance",
@@ -73,7 +73,6 @@ int main() {
 
         "rsi5Seconds",
         "stochRsi5Seconds",
-
         "macd2Seconds",
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);

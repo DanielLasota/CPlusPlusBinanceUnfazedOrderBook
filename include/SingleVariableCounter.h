@@ -11,7 +11,7 @@ namespace SingleVariableCounter {
     double calculateMidPrice(const OrderBook& orderBook);
 
     double calculateBestVolumeImbalance(const OrderBook& orderBook);
-    double calculateBestVolumeRatio(const OrderBook& orderBook);
+    double calculateBestDepthVolumeRatio(const OrderBook& orderBook);
     double calculateBestNPriceLevelsVolumeImbalance(const OrderBook& orderBook, int nPriceLevels);
     double calculateVolumeImbalance(const OrderBook& orderBook);
     double calculateQueueImbalance(const OrderBook& orderBook);

@@ -20,8 +20,8 @@ public:
     double simpleMovingAverage(int windowTimeSeconds) const;
 
 private:
-    static constexpr int64_t BUCKET_SIZE_US = 100'000; // 100ms buckets
-    static constexpr size_t MAX_BUCKETS = 70; // 70s history
+    static constexpr int64_t    BUCKET_SIZE_US = 1'000'000; // 1 s
+    static constexpr size_t     MAX_BUCKETS    = 61;        // 60 s of history
 
     struct Bucket {
 
@@ -38,13 +38,17 @@ private:
         bool hasDifferenceDepthData = false;
         bool hasTradeData = false;
 
-        void reset();
+        void resetTradeBucket();
+        void resetDepthBucket();
     };
 
     std::array<Bucket, MAX_BUCKETS> buckets_;
     size_t currentBucketIdx_ = 0;
-    int64_t lastTimestamp_ = 0;
+    int64_t lastDepthTimestamp_ = 0;
+    int64_t lastTradeTimestamp_ = 0;
 
     static size_t getBucketIndex(int64_t timestamp);
-    void advanceToTimestamp(int64_t timestamp);
+
+    void advanceDepthToTimestamp(int64_t timestamp);
+    void advanceTradeToTimestamp(int64_t timestamp);
 };

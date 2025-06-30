@@ -32,7 +32,7 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.bestVolumeImbalance = SingleVariableCounter::calculateBestVolumeImbalance(ms.orderBook);
     }
     if (mask_ & BestVolumeRatio) {
-        e.bestVolumeRatio = SingleVariableCounter::calculateBestVolumeRatio(ms.orderBook);
+        e.bestVolumeRatio = SingleVariableCounter::calculateBestDepthVolumeRatio(ms.orderBook);
     }
     if (mask_ & BestTwoVolumeImbalance){
         e.bestTwoVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 2);

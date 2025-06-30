@@ -8,14 +8,14 @@ inline double round2(const double x) {
     double y = x * 100.0;
     y += (y >= 0.0 ?  0.5 : -0.5);
     const int t = static_cast<int>(y);
-    return t * 0.01;
+    return t / 1e2;
 }
 
 inline double round5(const double x) {
     double y = x * 100'000.0;
     y += (y >= 0.0 ?  0.5 : -0.5);
     const int t = static_cast<int>(y);
-    return t * 0.00001;
+    return t / 1e5;
 }
 
 inline double round8(const double x) {
@@ -45,7 +45,7 @@ namespace SingleVariableCounter {
             );
     }
 
-    double calculateBestVolumeRatio(const OrderBook& orderBook) {
+    double calculateBestDepthVolumeRatio(const OrderBook& orderBook) {
         const double bestAskQuantity = orderBook.bestAskQuantity();
         const double bestBidQuantity = orderBook.bestBidQuantity();
         return round2(
@@ -138,7 +138,7 @@ namespace SingleVariableCounter {
     {
         const double buyTradeVolume = rollingStatisticsData.buyTradeVolume(windowTimeSeconds);
         const double sellTradeVolume = rollingStatisticsData.sellTradeVolume(windowTimeSeconds);
-        return buyTradeVolume - sellTradeVolume;
+        return round8(buyTradeVolume - sellTradeVolume);
     }
 
     double calculatePriceDifference(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
@@ -152,7 +152,8 @@ namespace SingleVariableCounter {
         const double oldestPrice = rollingStatisticsData.oldestPrice(windowTimeSeconds);
         if (oldestPrice == 0.0) return 0.0;
 
-        return round2(priceDifference / oldestPrice * 100);
+        const double result = priceDifference / oldestPrice;
+        return round2(result * 100);
     }
 
     double calculateDifferenceDepthVolatilityImbalance(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
@@ -222,7 +223,13 @@ namespace SingleVariableCounter {
 
     double calculateMacd(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
     {
-        return 0.0;
+        constexpr int shortPeriod = 12;
+        constexpr int longPeriod  = 26;
+
+        const double emaShort = rollingStatisticsData.simpleMovingAverage(windowTimeSeconds * shortPeriod);
+        const double emaLong  = rollingStatisticsData.simpleMovingAverage(windowTimeSeconds * longPeriod);
+
+        return round8(emaShort - emaLong);
     }
 
 }

@@ -3,12 +3,9 @@
 #include <cstdint>
 #include "EntryDecoder.h"
 
-class RollingStatisticsData {
+class RollingTradeStatistics {
 public:
-    void update(const DecodedEntry* entry);
-
-    size_t bidDifferenceDepthEntryCount(int windowDurationSeconds) const;
-    size_t askDifferenceDepthEntryCount(int windowDurationSeconds) const;
+    void update(const TradeEntry& e);
 
     size_t buyTradeCount(int windowDurationSeconds) const;
     size_t sellTradeCount(int windowDurationSeconds) const;
@@ -25,9 +22,6 @@ private:
 
     struct Bucket {
 
-        size_t bidDifferenceDepthEntryCount = 0;
-        size_t askDifferenceDepthEntryCount = 0;
-
         int64_t start_time = 0;
         size_t buyTradesCount = 0;
         size_t sellTradesCount = 0;
@@ -35,20 +29,16 @@ private:
         double cumulatedSellTradesQuantity = 0.0;
         double firstTradePrice = 0.0;
         double lastTradePrice = 0.0;
-        bool hasDifferenceDepthData = false;
         bool hasTradeData = false;
 
         void resetTradeBucket();
-        void resetDepthBucket();
     };
 
     std::array<Bucket, MAX_BUCKETS> buckets_;
     size_t currentBucketIdx_ = 0;
-    int64_t lastDepthTimestamp_ = 0;
     int64_t lastTradeTimestamp_ = 0;
 
     static size_t getBucketIndex(int64_t timestamp);
 
-    void advanceDepthToTimestamp(int64_t timestamp);
     void advanceTradeToTimestamp(int64_t timestamp);
 };

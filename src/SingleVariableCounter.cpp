@@ -1,7 +1,8 @@
 #include <cmath>
 
 #include "SingleVariableCounter.h"
-#include <RollingStatisticsData.h>
+#include "RollingDifferenceDepthStatistics.h"
+#include "RollingTradeStatistics.h"
 #include "OrderBook.h"
 
 inline double round2(const double x) {
@@ -119,10 +120,10 @@ namespace SingleVariableCounter {
             );
     }
 
-    double calculateTradeCountImbalance(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    double calculateTradeCountImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds)
     {
-        const size_t buy_trade_count_1_s = rollingStatisticsData.buyTradeCount(windowTimeSeconds);
-        const size_t sell_trade_count_1_s = rollingStatisticsData.sellTradeCount(windowTimeSeconds);
+        const size_t buy_trade_count_1_s = rollingTradeStatistics.buyTradeCount(windowTimeSeconds);
+        const size_t sell_trade_count_1_s = rollingTradeStatistics.sellTradeCount(windowTimeSeconds);
         const size_t trade_count_sum_1_s = buy_trade_count_1_s + sell_trade_count_1_s;
 
         return trade_count_sum_1_s == 0
@@ -134,32 +135,32 @@ namespace SingleVariableCounter {
             );
     }
 
-    double calculateCumulativeDelta(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    double calculateCumulativeDelta(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds)
     {
-        const double buyTradeVolume = rollingStatisticsData.buyTradeVolume(windowTimeSeconds);
-        const double sellTradeVolume = rollingStatisticsData.sellTradeVolume(windowTimeSeconds);
+        const double buyTradeVolume = rollingTradeStatistics.buyTradeVolume(windowTimeSeconds);
+        const double sellTradeVolume = rollingTradeStatistics.sellTradeVolume(windowTimeSeconds);
         return round8(buyTradeVolume - sellTradeVolume);
     }
 
-    double calculatePriceDifference(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    double calculatePriceDifference(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds)
     {
-        return round8(rollingStatisticsData.priceDifference(windowTimeSeconds));
+        return round8(rollingTradeStatistics.priceDifference(windowTimeSeconds));
     }
 
-    double calculateRateOfReturn(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds) {
-        const double priceDifference = rollingStatisticsData.priceDifference(windowTimeSeconds);
+    double calculateRateOfReturn(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds) {
+        const double priceDifference = rollingTradeStatistics.priceDifference(windowTimeSeconds);
 
-        const double oldestPrice = rollingStatisticsData.oldestPrice(windowTimeSeconds);
+        const double oldestPrice = rollingTradeStatistics.oldestPrice(windowTimeSeconds);
         if (oldestPrice == 0.0) return 0.0;
 
         const double result = priceDifference / oldestPrice;
         return round2(result * 100);
     }
 
-    double calculateDifferenceDepthVolatilityImbalance(const RollingStatisticsData& rollingStatisticsData, const int windowTimeSeconds)
+    double calculateDifferenceDepthVolatilityImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds)
     {
-        const size_t bidDifferenceDepthEntryCount = rollingStatisticsData.bidDifferenceDepthEntryCount(windowTimeSeconds);
-        const size_t askDifferenceDepthEntryCount = rollingStatisticsData.askDifferenceDepthEntryCount(windowTimeSeconds);
+        const size_t bidDifferenceDepthEntryCount = rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(windowTimeSeconds);
+        const size_t askDifferenceDepthEntryCount = rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(windowTimeSeconds);
         const size_t differenceDepthEntryCount = bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
 
         return differenceDepthEntryCount == 0
@@ -171,8 +172,7 @@ namespace SingleVariableCounter {
             );
     }
 
-
-    double calculateRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
+    double calculateRSI(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds)
     {
         const int periods = 14;
         double gainSum = 0.0, lossSum = 0.0;
@@ -180,8 +180,8 @@ namespace SingleVariableCounter {
         // dla każdego z 14 okresów pobieramy różnicę cen:
         // diff_i = (price_now - price_i*window) - (price_now - price_(i-1)*window)
         for (int i = 1; i <= periods; ++i) {
-            double diff_i = rollingStatisticsData.priceDifference(i * windowTimeSeconds)
-                          - rollingStatisticsData.priceDifference((i - 1) * windowTimeSeconds);
+            double diff_i = rollingTradeStatistics.priceDifference(i * windowTimeSeconds)
+                          - rollingTradeStatistics.priceDifference((i - 1) * windowTimeSeconds);
             if (diff_i > 0) gainSum += diff_i;
             else           lossSum += -diff_i;
         }
@@ -200,13 +200,13 @@ namespace SingleVariableCounter {
         return round2(rsi);
     }
 
-    double calculateStochRSI(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
+    double calculateStochRSI(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds)
     {
         constexpr int periods = 14;
         double rsi[periods];
 
         for (int i = 1; i <= periods; ++i) {
-            rsi[i - 1] = calculateRSI(rollingStatisticsData, windowTimeSeconds * i);
+            rsi[i - 1] = calculateRSI(rollingTradeStatistics, windowTimeSeconds * i);
         }
 
         double mn = rsi[0], mx = rsi[0];
@@ -221,13 +221,13 @@ namespace SingleVariableCounter {
         : round2((curr - mn) / (mx - mn));
     }
 
-    double calculateMacd(const RollingStatisticsData& rollingStatisticsData, int windowTimeSeconds)
+    double calculateMacd(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds)
     {
         constexpr int shortPeriod = 12;
         constexpr int longPeriod  = 26;
 
-        const double emaShort = rollingStatisticsData.simpleMovingAverage(windowTimeSeconds * shortPeriod);
-        const double emaLong  = rollingStatisticsData.simpleMovingAverage(windowTimeSeconds * longPeriod);
+        const double emaShort = rollingTradeStatistics.simpleMovingAverage(windowTimeSeconds * shortPeriod);
+        const double emaLong  = rollingTradeStatistics.simpleMovingAverage(windowTimeSeconds * longPeriod);
 
         return round8(emaShort - emaLong);
     }

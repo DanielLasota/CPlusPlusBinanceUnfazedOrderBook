@@ -25,7 +25,8 @@ set(SOURCES
         src/OrderBookMetrics.cpp
         src/OrderBookMetricsCalculator.cpp
         src/GlobalMarketState.cpp
-        src/RollingStatisticsData.cpp
+        src/RollingTradeStatistics.cpp
+        src/RollingDifferenceDepthStatistics.cpp
 #        test/TestSingleVariableCounter.cpp
 #        test/TestOrderBook.cpp
 )

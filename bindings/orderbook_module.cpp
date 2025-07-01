@@ -194,7 +194,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     svc.def("calculate_rate_of_return",                             &SingleVariableCounter::calculateRateOfReturn,                                          py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
     svc.def("calculate_difference_depth_volatility_imbalance",      &SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance,                    py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 
-    svc.def("calculate_rsi",                                        &SingleVariableCounter::calculateRSI,                                                   py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_rsi",                                        &SingleVariableCounter::calculateRSI,                                                   py::arg("rolling_statistics_data"), py::arg("startWindowTimeSeconds"), py::arg("windowTimeSeconds"));
     svc.def("calculate_stoch_rsi",                                  &SingleVariableCounter::calculateStochRSI,                                              py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
     svc.def("calculate_macd",                                       &SingleVariableCounter::calculateMacd,                                                  py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 

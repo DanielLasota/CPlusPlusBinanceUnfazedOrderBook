@@ -30,7 +30,7 @@ if __name__ == '__main__':
         './bindings/',
         './bin/',
         './include/',
-        './include/enums',
+        # './include/enums',
         './src/',
         # './test/',
         # './python_tests/'

@@ -282,9 +282,9 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
 
     }
 
-    auto finish = std::chrono::steady_clock::now();
-    auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start0).count();
-    std::cout << "numpy conversion: " << elapsed_ms << " ms" << std::endl;
+    // auto finish = std::chrono::steady_clock::now();
+    // auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start0).count();
+    // std::cout << "numpy conversion: " << elapsed_ms << " ms" << std::endl;
 
     return result;
 }

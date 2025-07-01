@@ -18,7 +18,7 @@ public:
 
 private:
     static constexpr int64_t    BUCKET_SIZE_US = 1'000'000; // 1 s
-    static constexpr size_t     MAX_BUCKETS    = 61;        // 60 s of history
+    static constexpr size_t     MAX_BUCKETS    = 136;        // 60 s of history
 
     struct Bucket {
 

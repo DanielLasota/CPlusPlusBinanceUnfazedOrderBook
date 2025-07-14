@@ -12,8 +12,6 @@ class TestTradeEntry:
             0.0,  # price
             0.0,  # quantity
             0,    # is_buyer_market_maker (False -> 0)
-            "",   # m_unknown_parameter
-            "",   # x_unknown_parameter
             0,    # is_last (False -> 0),
             Market.UNKNOWN
         ]
@@ -26,8 +24,6 @@ class TestTradeEntry:
         e2.price                  = 2500.55
         e2.quantity               = 0.005
         e2.is_buyer_market_maker  = True
-        e2.m_unknown_parameter    = "alpha"
-        e2.x_unknown_parameter    = "beta"
         e2.is_last                = True
         e2.market                 = Market.COIN_M_FUTURES
 
@@ -37,8 +33,6 @@ class TestTradeEntry:
             2500.55,
             0.005,
             1,        # True -> 1
-            "alpha",
-            "beta",
             1,        # True -> 1
             Market.COIN_M_FUTURES
         ]
@@ -52,8 +46,6 @@ class TestTradeEntry:
             "price",
             "quantity",
             "is_buyer_market_maker",
-            "m_unknown_parameter",
-            "x_unknown_parameter",
             "is_last",
             "market"
         ]
@@ -71,8 +63,6 @@ class TestTradeEntry:
             1.1,
             2.2,
             False,
-            "m",
-            "x",
             False,
             Market.SPOT
         )
@@ -82,8 +72,6 @@ class TestTradeEntry:
             "price",
             "quantity",
             "is_buyer_market_maker",
-            "m_unknown_parameter",
-            "x_unknown_parameter",
             "is_last",
             "market"
         ]

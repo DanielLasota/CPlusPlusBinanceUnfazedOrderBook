@@ -270,8 +270,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             double,
             double,
             bool,
-            const std::string&,
-            const std::string&,
             bool,
             Market
             >(),
@@ -280,8 +278,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             py::arg("price"),
             py::arg("quantity"),
             py::arg("is_buyer_market_maker"),
-            py::arg("m_unknown_parameter"),
-            py::arg("x_unknown_parameter"),
             py::arg("is_last"),
             py::arg("market")
         )
@@ -290,8 +286,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readwrite("price",                   &TradeEntry::price)
         .def_readwrite("quantity",                &TradeEntry::quantity)
         .def_readwrite("is_buyer_market_maker",   &TradeEntry::isBuyerMarketMaker)
-        .def_readwrite("m_unknown_parameter",     &TradeEntry::mUnknownParameter)
-        .def_readwrite("x_unknown_parameter",     &TradeEntry::xUnknownParameter)
         .def_readwrite("is_last",                 &TradeEntry::isLast)
         .def_readwrite("market",                  &TradeEntry::market)
         .def("__str__", [](const TradeEntry &entry) {
@@ -314,8 +308,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             v.append(e.price);
             v.append(e.quantity);
             v.append(e.isBuyerMarketMaker ? 1 : 0);
-            v.append(e.mUnknownParameter);
-            v.append(e.xUnknownParameter);
             v.append(e.isLast ? 1 : 0);
             v.append(e.market);
             return v;
@@ -327,8 +319,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
                 "price",
                 "quantity",
                 "is_buyer_market_maker",
-                "m_unknown_parameter",
-                "x_unknown_parameter",
                 "is_last",
                 "market"
             };

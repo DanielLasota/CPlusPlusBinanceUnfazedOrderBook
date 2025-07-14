@@ -91,8 +91,6 @@ class TestSingleVariableCounter:
                     price=price,
                     quantity=quantity,
                     is_buyer_market_maker=is_buyer_market_maker,
-                    m_unknown_parameter='False',
-                    x_unknown_parameter='False',
                     is_last=1,
                     market=market
                 )

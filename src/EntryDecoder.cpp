@@ -29,8 +29,6 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
                 parse_double(tokens[7]),
                 parse_double(tokens[8]),
                 tokens[9] == "1",
-                std::string(tokens[10]),
-                "",
                 false,
                 Market::SPOT
             );
@@ -42,8 +40,6 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
                 parse_double(tokens[7]),
                 parse_double(tokens[8]),
                 tokens[9] == "1",
-                "",
-                std::string(tokens[10]),
                 false,
                 params.market
             );
@@ -149,8 +145,6 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line,
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
                         (tokens[h[COL_IsBuyerMarketMaker]] == "1"),
-                        std::string(tokens[h[COL_MUnknownParameter]]),
-                        "",
                         (tokens[h[COL_IsLast]] == "1"),
                         Market::SPOT
                     );
@@ -163,8 +157,6 @@ DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line,
                         parse_double(tokens[h[COL_Price]]),
                         parse_double(tokens[h[COL_Quantity]]),
                         (tokens[h[COL_IsBuyerMarketMaker]] == "1"),
-                        "",
-                        std::string(tokens[h[COL_XUnknownParameter]]),
                         (tokens[h[COL_IsLast]] == "1"),
                         market
                     );

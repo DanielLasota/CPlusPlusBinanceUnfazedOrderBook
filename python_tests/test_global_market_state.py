@@ -839,8 +839,6 @@ class TestGlobalMarketState:
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.SPOT
             )
@@ -852,8 +850,6 @@ class TestGlobalMarketState:
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -865,8 +861,6 @@ class TestGlobalMarketState:
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.COIN_M_FUTURES
             )
@@ -878,8 +872,6 @@ class TestGlobalMarketState:
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -896,8 +888,6 @@ class TestGlobalMarketState:
             assert ms_trxusdt.last_trade.price                    == 10.0
             assert ms_trxusdt.last_trade.quantity                 == 1.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 1
-            assert ms_trxusdt.last_trade.m_unknown_parameter      == 'TRUE'
-            assert ms_trxusdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_trxusdt.last_trade.is_last                  == 1
             assert ms_trxusdt.last_trade.market                   == Market.SPOT
 
@@ -907,8 +897,6 @@ class TestGlobalMarketState:
             assert ms_btcusdt.last_trade.price                    == 11.0
             assert ms_btcusdt.last_trade.quantity                 == 2.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 0
-            assert ms_btcusdt.last_trade.m_unknown_parameter      == 'FALSE'
-            assert ms_btcusdt.last_trade.x_unknown_parameter      == ''
             assert ms_btcusdt.last_trade.is_last                  == 1
             assert ms_btcusdt.last_trade.market                   == Market.USD_M_FUTURES
 
@@ -918,8 +906,6 @@ class TestGlobalMarketState:
             assert ms_adausdt.last_trade.price                    == 12.0
             assert ms_adausdt.last_trade.quantity                 == 3.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 1
-            assert ms_adausdt.last_trade.m_unknown_parameter      == 'TRUE'
-            assert ms_adausdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_adausdt.last_trade.is_last                  == 1
             assert ms_adausdt.last_trade.market                   == Market.COIN_M_FUTURES
 
@@ -929,8 +915,6 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 4.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 0
-            assert ms_dogeusdt.last_trade.m_unknown_parameter     == 'FALSE'
-            assert ms_dogeusdt.last_trade.x_unknown_parameter     == ''
             assert ms_dogeusdt.last_trade.is_last                 == 1
             assert ms_dogeusdt.last_trade.market                  == Market.USD_M_FUTURES
 
@@ -1001,8 +985,6 @@ class TestGlobalMarketState:
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.SPOT
             )
@@ -1014,8 +996,6 @@ class TestGlobalMarketState:
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1027,8 +1007,6 @@ class TestGlobalMarketState:
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.COIN_M_FUTURES
             )
@@ -1040,8 +1018,6 @@ class TestGlobalMarketState:
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1058,8 +1034,6 @@ class TestGlobalMarketState:
             assert ms_trxusdt.last_trade.price                    == 10.0
             assert ms_trxusdt.last_trade.quantity                 == 1.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 1
-            assert ms_trxusdt.last_trade.m_unknown_parameter      == 'TRUE'
-            assert ms_trxusdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_trxusdt.last_trade.is_last                  == 1
             assert ms_trxusdt.last_trade.market                   == Market.SPOT
 
@@ -1069,8 +1043,6 @@ class TestGlobalMarketState:
             assert ms_btcusdt.last_trade.price                    == 11.0
             assert ms_btcusdt.last_trade.quantity                 == 2.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 0
-            assert ms_btcusdt.last_trade.m_unknown_parameter      == 'FALSE'
-            assert ms_btcusdt.last_trade.x_unknown_parameter      == ''
             assert ms_btcusdt.last_trade.is_last                  == 1
             assert ms_btcusdt.last_trade.market                   == Market.USD_M_FUTURES
 
@@ -1080,8 +1052,6 @@ class TestGlobalMarketState:
             assert ms_adausdt.last_trade.price                    == 12.0
             assert ms_adausdt.last_trade.quantity                 == 3.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 1
-            assert ms_adausdt.last_trade.m_unknown_parameter      == 'TRUE'
-            assert ms_adausdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_adausdt.last_trade.is_last                  == 1
             assert ms_adausdt.last_trade.market                   == Market.COIN_M_FUTURES
 
@@ -1091,8 +1061,6 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 4.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 0
-            assert ms_dogeusdt.last_trade.m_unknown_parameter     == 'FALSE'
-            assert ms_dogeusdt.last_trade.x_unknown_parameter     == ''
             assert ms_dogeusdt.last_trade.is_last                 == 1
             assert ms_dogeusdt.last_trade.market                  == Market.USD_M_FUTURES
 
@@ -1110,8 +1078,6 @@ class TestGlobalMarketState:
                 price=20.0,
                 quantity=10.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.SPOT
             )
@@ -1123,8 +1089,6 @@ class TestGlobalMarketState:
                 price=21.0,
                 quantity=11.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1136,8 +1100,6 @@ class TestGlobalMarketState:
                 price=22.0,
                 quantity=12.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.COIN_M_FUTURES
             )
@@ -1149,8 +1111,6 @@ class TestGlobalMarketState:
                 price=13.0,
                 quantity=33.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1162,8 +1122,6 @@ class TestGlobalMarketState:
             assert ms_trxusdt.last_trade.price                    == 20.0
             assert ms_trxusdt.last_trade.quantity                 == 10.0
             assert ms_trxusdt.last_trade.is_buyer_market_maker    == 0
-            assert ms_trxusdt.last_trade.m_unknown_parameter      == 'TRUE'
-            assert ms_trxusdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_trxusdt.last_trade.is_last                  == 1
             assert ms_trxusdt.last_trade.market                   == Market.SPOT
 
@@ -1173,8 +1131,6 @@ class TestGlobalMarketState:
             assert ms_btcusdt.last_trade.price                    == 21.0
             assert ms_btcusdt.last_trade.quantity                 == 11.0
             assert ms_btcusdt.last_trade.is_buyer_market_maker    == 1
-            assert ms_btcusdt.last_trade.m_unknown_parameter      == 'FALSE'
-            assert ms_btcusdt.last_trade.x_unknown_parameter      == ''
             assert ms_btcusdt.last_trade.is_last                  == 1
             assert ms_btcusdt.last_trade.market                   == Market.USD_M_FUTURES
 
@@ -1184,8 +1140,6 @@ class TestGlobalMarketState:
             assert ms_adausdt.last_trade.price                    == 22.0
             assert ms_adausdt.last_trade.quantity                 == 12.0
             assert ms_adausdt.last_trade.is_buyer_market_maker    == 0
-            assert ms_adausdt.last_trade.m_unknown_parameter      == 'TRUE'
-            assert ms_adausdt.last_trade.x_unknown_parameter      == 'MARKET'
             assert ms_adausdt.last_trade.is_last                  == 1
             assert ms_adausdt.last_trade.market                   == Market.COIN_M_FUTURES
 
@@ -1195,8 +1149,6 @@ class TestGlobalMarketState:
             assert ms_dogeusdt.last_trade.price                   == 13.0
             assert ms_dogeusdt.last_trade.quantity                == 33.0
             assert ms_dogeusdt.last_trade.is_buyer_market_maker   == 1
-            assert ms_dogeusdt.last_trade.m_unknown_parameter     == 'FALSE'
-            assert ms_dogeusdt.last_trade.x_unknown_parameter     == ''
             assert ms_dogeusdt.last_trade.is_last                 == 1
             assert ms_dogeusdt.last_trade.market                  == Market.USD_M_FUTURES
 
@@ -1316,8 +1268,6 @@ class TestGlobalMarketState:
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.SPOT
             )
@@ -1329,8 +1279,6 @@ class TestGlobalMarketState:
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1342,8 +1290,6 @@ class TestGlobalMarketState:
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.COIN_M_FUTURES
             )
@@ -1355,8 +1301,6 @@ class TestGlobalMarketState:
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1429,8 +1373,6 @@ class TestGlobalMarketState:
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.SPOT
             )
@@ -1442,8 +1384,6 @@ class TestGlobalMarketState:
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1455,8 +1395,6 @@ class TestGlobalMarketState:
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.COIN_M_FUTURES
             )
@@ -1468,8 +1406,6 @@ class TestGlobalMarketState:
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1543,8 +1479,6 @@ class TestGlobalMarketState:
                 price=10.0,
                 quantity=1.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.SPOT
             )
@@ -1556,8 +1490,6 @@ class TestGlobalMarketState:
                 price=11.0,
                 quantity=2.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )
@@ -1569,8 +1501,6 @@ class TestGlobalMarketState:
                 price=12.0,
                 quantity=3.0,
                 is_buyer_market_maker=1,
-                m_unknown_parameter='TRUE',
-                x_unknown_parameter='MARKET',
                 is_last=1,
                 market=Market.COIN_M_FUTURES
             )
@@ -1582,8 +1512,6 @@ class TestGlobalMarketState:
                 price=13.0,
                 quantity=4.0,
                 is_buyer_market_maker=0,
-                m_unknown_parameter='FALSE',
-                x_unknown_parameter='',
                 is_last=1,
                 market=Market.USD_M_FUTURES
             )

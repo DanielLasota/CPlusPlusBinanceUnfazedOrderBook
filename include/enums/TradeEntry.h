@@ -12,8 +12,6 @@ struct TradeEntry {
     double price;
     double quantity;
     bool isBuyerMarketMaker;
-    std::string mUnknownParameter;
-    std::string xUnknownParameter;
     bool isLast;
     Market market;
 
@@ -23,8 +21,6 @@ struct TradeEntry {
         double price,
         double quantity,
         bool isBuyerMarketMaker,
-        const std::string& mUnknownParameter,
-        const std::string& xUnknownParameter,
         bool isLast,
         Market market
     )
@@ -33,8 +29,6 @@ struct TradeEntry {
     , price(price)
     , quantity(quantity)
     , isBuyerMarketMaker(isBuyerMarketMaker)
-    , mUnknownParameter(mUnknownParameter)
-    , xUnknownParameter(xUnknownParameter)
     , isLast(isLast)
     , market(market)
     {}

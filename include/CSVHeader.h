@@ -11,8 +11,6 @@ enum CSVHeader {
     COL_Price,
     COL_Quantity,
     COL_IsBuyerMarketMaker,
-    COL_MUnknownParameter,
-    COL_XUnknownParameter,
     COL_StreamType,
     COL_Market,
     COL_IsLast,
@@ -26,8 +24,6 @@ constexpr std::array<std::string_view, COL_COUNT> CSVHeaderFieldNames = {{
     "Price",
     "Quantity",
     "IsBuyerMarketMaker",
-    "MUnknownParameter",
-    "XUnknownParameter",
     "StreamType",
     "Market",
     "IsLast"

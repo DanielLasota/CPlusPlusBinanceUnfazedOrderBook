@@ -35,7 +35,7 @@ struct PriceSideHash {
 
 class OrderBook {
 public:
-    explicit OrderBook(size_t maxLevels = 50'000);
+    explicit OrderBook(size_t maxLevels = 100'000);
 
     void update(DifferenceDepthEntry* entryPtr);
 
@@ -83,7 +83,6 @@ private:
     DifferenceDepthEntry* allocateNode(double price, bool isAsk, double quantity);
     void deallocateNode(DifferenceDepthEntry* node);
 
-    // Fast operations on doubly-linked list
     void addNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail, DifferenceDepthEntry* node, bool isAsk);
     void removeNode(DifferenceDepthEntry*& head, DifferenceDepthEntry*& tail, DifferenceDepthEntry* node);
 };

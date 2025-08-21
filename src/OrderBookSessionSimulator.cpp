@@ -92,7 +92,7 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeBacktest(co
 }
 
 py::dict OrderBookSessionSimulator::computeVariablesNumPy(const std::string &csvPath, std::vector<std::string> &variables) {
-    auto start0 = std::chrono::steady_clock::now();
+    // auto csvReadStart = std::chrono::steady_clock::now();
 
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptrEntries;
@@ -107,11 +107,11 @@ py::dict OrderBookSessionSimulator::computeVariablesNumPy(const std::string &csv
     OrderBookMetrics orderBookMetrics(variables);
     orderBookMetrics.reserve(ptrEntries.size());
 
-    auto finish0 = std::chrono::steady_clock::now();
-    auto elapsed_ms0 = std::chrono::duration_cast<std::chrono::milliseconds>(finish0 - start0).count();
-    std::cout << "csv elapsed: " << elapsed_ms0 << " ms" << std::endl;
-    auto start = std::chrono::steady_clock::now();
+    // auto csvReadFinish = std::chrono::steady_clock::now();
+    // auto csvReadElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(csvReadFinish - csvReadStart).count();
+    // std::cout << "csv elapsed: " << csvReadElapsed << " ms" << std::endl;
 
+    // auto loopStart = std::chrono::steady_clock::now();
     for (auto* p : ptrEntries) {
         globalMarketState.update(p);
 
@@ -125,11 +125,9 @@ py::dict OrderBookSessionSimulator::computeVariablesNumPy(const std::string &csv
         }
     }
 
-    auto finish = std::chrono::steady_clock::now();
-    auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-    std::cout << "ob loop elapsed: " << elapsed_ms << " ms" << std::endl;
-
-    // orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
+    // auto loopFinish = std::chrono::steady_clock::now();
+    // auto loopElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(loopFinish - loopStart).count();
+    // std::cout << "loop elapsed: " << loopElapsed << " ms" << std::endl;
 
     return orderBookMetrics.convertToNumpyArrays();
 }

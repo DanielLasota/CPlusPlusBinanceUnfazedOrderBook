@@ -455,7 +455,7 @@ class TestOrderBookSessionSimulator:
             # volumeImbalance      # 1<<11  =    2048
             # gap                  # 1<<13  =    8192
             # isAggressorAsk       # 1<<14  =   16384
-            expected_mask =  1 + 8 + 16 + 32 + 64 + 2048 + 4096 + 8192 + 16384  # = 2041
+            expected_mask = 1 + 8 + 16 + 32 + 64 + 65536 + 131072 + 262144 + 524288
 
             assert mask == expected_mask
 
@@ -473,7 +473,7 @@ class TestOrderBookSessionSimulator:
             # timestampOfReceive = 1 << 0  =    1
             # midPrice           = 1 << 5  =   32
             # volumeImbalance    = 1 << 11 = 2048
-            expected_mask = 1 + 32 + 2048  # = 2081
+            expected_mask = 1 + 32 + 65536
 
             assert mask == expected_mask
 

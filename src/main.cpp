@@ -10,7 +10,8 @@ int main() {
 
     std::cout << std::fixed << std::setprecision(5);
     OrderBookSessionSimulator orderBookSessionSimulator;
-    std::string csvPath = "C:/Users/daniel/Documents/merged_csvs/binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv";
+    // std::string csvPath = "C:/Users/daniel/Documents/merged_csvs/binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv";
+    std::string csvPath = "D:/merged_csvs/binance_merged_btcusdt_usd_m_futures_2025-08-14.csv";
 
     std::vector<std::string> variables {
         "timestampOfReceive",
@@ -24,6 +25,11 @@ int main() {
         "bestTwoVolumeImbalance",
         "bestThreeVolumeImbalance",
         "bestFiveVolumeImbalance",
+        "bestTenVolumeImbalance",
+        "bestFifteenVolumeImbalance",
+        "bestTwentyVolumeImbalance",
+        "bestThirtyVolumeImbalance",
+        "bestFiftyVolumeImbalance",
         "queueImbalance",
         "volumeImbalance",
         // "gap",
@@ -71,9 +77,9 @@ int main() {
         "differenceDepthVolatilityImbalance30Seconds",
         "differenceDepthVolatilityImbalance60Seconds",
 
-        "rsi5Seconds",
-        "stochRsi5Seconds",
-        "macd2Seconds",
+        // "rsi5Seconds",
+        // "stochRsi5Seconds",
+        // "macd2Seconds",
     };
     orderBookSessionSimulator.computeVariablesNumPy(csvPath, variables);
 

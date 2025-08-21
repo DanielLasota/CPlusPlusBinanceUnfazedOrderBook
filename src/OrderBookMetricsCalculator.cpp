@@ -43,6 +43,21 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & BestFiveVolumeImbalance){
         e.bestFiveVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 5);
     }
+    if (mask_ & BestTenVolumeImbalance){
+        e.bestTenVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 10);
+    }
+    if (mask_ & BestFifteenVolumeImbalance){
+        e.bestFifteenVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 15);
+    }
+    if (mask_ & BestTwentyVolumeImbalance){
+        e.bestTwentyVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 20);
+    }
+    if (mask_ & BestThirtyVolumeImbalance){
+        e.bestThirtyVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 30);
+    }
+    if (mask_ & BestFiftyVolumeImbalance){
+        e.bestFiftyVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 50);
+    }
     if (mask_ & VolumeImbalance) {
         e.volumeImbalance = SingleVariableCounter::calculateVolumeImbalance(ms.orderBook);
     }

@@ -18,6 +18,11 @@ struct OrderBookMetricsEntry {
     double bestTwoVolumeImbalance;
     double bestThreeVolumeImbalance;
     double bestFiveVolumeImbalance;
+    double bestTenVolumeImbalance;
+    double bestFifteenVolumeImbalance;
+    double bestTwentyVolumeImbalance;
+    double bestThirtyVolumeImbalance;
+    double bestFiftyVolumeImbalance;
     double volumeImbalance;
     double queueImbalance;
     double gap;

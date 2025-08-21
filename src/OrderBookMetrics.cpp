@@ -24,7 +24,7 @@ static py::array_t<T> vector_to_numpy(const std::vector<T>& vec) {
 
 py::dict OrderBookMetrics::convertToNumpyArrays() const {
 
-    auto start0 = std::chrono::steady_clock::now();
+    // auto start0 = std::chrono::steady_clock::now();
 
     size_t n = entries_.size();
 
@@ -39,6 +39,11 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     std::vector<double> col_bestTwoVolumeImbalance; col_bestTwoVolumeImbalance.reserve(n);
     std::vector<double> col_bestThreeVolumeImbalance; col_bestThreeVolumeImbalance.reserve(n);
     std::vector<double> col_bestFiveVolumeImbalance; col_bestFiveVolumeImbalance.reserve(n);
+    std::vector<double> col_bestTenVolumeImbalance; col_bestTenVolumeImbalance.reserve(n);
+    std::vector<double> col_bestFifteenVolumeImbalance; col_bestFifteenVolumeImbalance.reserve(n);
+    std::vector<double> col_bestTwentyVolumeImbalance; col_bestTwentyVolumeImbalance.reserve(n);
+    std::vector<double> col_bestThirtyVolumeImbalance; col_bestThirtyVolumeImbalance.reserve(n);
+    std::vector<double> col_bestFiftyVolumeImbalance; col_bestFiftyVolumeImbalance.reserve(n);
     std::vector<double> col_queueImbalance; col_queueImbalance.reserve(n);
     std::vector<double> col_volumeImbalance; col_volumeImbalance.reserve(n);
     std::vector<double> col_gap; col_gap.reserve(n);
@@ -102,6 +107,11 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         col_bestTwoVolumeImbalance.push_back(e.bestTwoVolumeImbalance);
         col_bestThreeVolumeImbalance.push_back(e.bestThreeVolumeImbalance);
         col_bestFiveVolumeImbalance.push_back(e.bestFiveVolumeImbalance);
+        col_bestTenVolumeImbalance.push_back(e.bestTenVolumeImbalance);
+        col_bestFifteenVolumeImbalance.push_back(e.bestFifteenVolumeImbalance);
+        col_bestTwentyVolumeImbalance.push_back(e.bestTwentyVolumeImbalance);
+        col_bestThirtyVolumeImbalance.push_back(e.bestThirtyVolumeImbalance);
+        col_bestFiftyVolumeImbalance.push_back(e.bestFiftyVolumeImbalance);
         col_queueImbalance.push_back(e.queueImbalance);
         col_volumeImbalance.push_back(e.volumeImbalance);
         col_gap.push_back(e.gap);
@@ -165,6 +175,11 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     auto arr_bestTwoVolumeImbalance = vector_to_numpy<double>(col_bestTwoVolumeImbalance);
     auto arr_bestThreeVolumeImbalance = vector_to_numpy<double>(col_bestThreeVolumeImbalance);
     auto arr_bestFiveVolumeImbalance = vector_to_numpy<double>(col_bestFiveVolumeImbalance);
+    auto arr_bestTenVolumeImbalance = vector_to_numpy<double>(col_bestTenVolumeImbalance);
+    auto arr_bestFifteenVolumeImbalance = vector_to_numpy<double>(col_bestFifteenVolumeImbalance);
+    auto arr_bestTwentyVolumeImbalance = vector_to_numpy<double>(col_bestTwentyVolumeImbalance);
+    auto arr_bestThirtyVolumeImbalance = vector_to_numpy<double>(col_bestThirtyVolumeImbalance);
+    auto arr_bestFiftyVolumeImbalance = vector_to_numpy<double>(col_bestFiftyVolumeImbalance);
     auto arr_queueImbalance = vector_to_numpy<double>(col_queueImbalance);
     auto arr_volumeImbalance = vector_to_numpy<double>(col_volumeImbalance);
     auto arr_gap = vector_to_numpy<double>(col_gap);
@@ -229,6 +244,11 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
         else if (var == "bestTwoVolumeImbalance") result["bestTwoVolumeImbalance"]              = arr_bestTwoVolumeImbalance;
         else if (var == "bestThreeVolumeImbalance") result["bestThreeVolumeImbalance"]          = arr_bestThreeVolumeImbalance;
         else if (var == "bestFiveVolumeImbalance") result["bestFiveVolumeImbalance"]            = arr_bestFiveVolumeImbalance;
+        else if (var == "bestTenVolumeImbalance") result["bestTenVolumeImbalance"]              = arr_bestTenVolumeImbalance;
+        else if (var == "bestFifteenVolumeImbalance") result["bestFifteenVolumeImbalance"]      = arr_bestFifteenVolumeImbalance;
+        else if (var == "bestTwentyVolumeImbalance") result["bestTwentyVolumeImbalance"]        = arr_bestTwentyVolumeImbalance;
+        else if (var == "bestThirtyVolumeImbalance") result["bestThirtyVolumeImbalance"]        = arr_bestThirtyVolumeImbalance;
+        else if (var == "bestFiftyVolumeImbalance") result["bestFiftyVolumeImbalance"]          = arr_bestFiftyVolumeImbalance;
         else if (var == "queueImbalance") result["queueImbalance"]                              = arr_queueImbalance;
         else if (var == "volumeImbalance") result["volumeImbalance"]                            = arr_volumeImbalance;
         else if (var == "gap") result["gap"]                                                    = arr_gap;
@@ -316,6 +336,11 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
             else if (var == "bestTwoVolumeImbalance")       file << e.bestTwoVolumeImbalance;
             else if (var == "bestThreeVolumeImbalance")     file << e.bestThreeVolumeImbalance;
             else if (var == "bestFiveVolumeImbalance")      file << e.bestFiveVolumeImbalance;
+            else if (var == "bestTenVolumeImbalance")       file << e.bestTenVolumeImbalance;
+            else if (var == "bestFifteenVolumeImbalance")   file << e.bestFifteenVolumeImbalance;
+            else if (var == "bestTwentyVolumeImbalance")    file << e.bestTwentyVolumeImbalance;
+            else if (var == "bestThirtyVolumeImbalance")    file << e.bestThirtyVolumeImbalance;
+            else if (var == "bestFiftyVolumeImbalance")     file << e.bestFiftyVolumeImbalance;
             else if (var == "volumeImbalance")              file << e.volumeImbalance;
             else if (var == "queueImbalance")               file << e.queueImbalance;
             else if (var == "gap")                          file << e.gap;

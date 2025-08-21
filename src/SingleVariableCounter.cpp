@@ -7,21 +7,21 @@
 #include "OrderBook.h"
 
 inline double round2(const double x) {
-    double y = x * 100.0;
-    y += (y >= 0.0 ?  0.5 : -0.5);
-    const int t = static_cast<int>(y);
+    const double y = x * 1e2;
+    const double adjusted = y + (y >= 0.0 ? 0.5 : -0.5);
+    const int64_t t = static_cast<int64_t>(adjusted);
     return t / 1e2;
 }
 
 inline double round5(const double x) {
-    double y = x * 100'000.0;
-    y += (y >= 0.0 ?  0.5 : -0.5);
-    const int t = static_cast<int>(y);
+    const double y = x * 1e5;
+    const double adjusted = y + (y >= 0.0 ? 0.5 : -0.5);
+    const int64_t t = static_cast<int64_t>(adjusted);
     return t / 1e5;
 }
 
 inline double round8(const double x) {
-    constexpr double p = 100000000.0; // 8
+    constexpr double p = 1e8; // 8
     return std::round(x * p) / p;
 }
 
@@ -73,8 +73,8 @@ namespace SingleVariableCounter {
 
     double calculateQueueImbalance(const OrderBook& orderBook) {
         return round2(
-            static_cast<double>(orderBook.bidCount() - orderBook.askCount())
-            / static_cast<double>(orderBook.bidCount() + orderBook.askCount())
+            static_cast<double>(static_cast<int>(orderBook.bidCount()) - static_cast<int>(orderBook.askCount()))
+            / static_cast<double>(static_cast<int>(orderBook.bidCount()) + static_cast<int>(orderBook.askCount()))
             );
     }
 

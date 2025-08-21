@@ -17,56 +17,62 @@ enum Metric : uint64_t  {
     BestTwoVolumeImbalance                          = 1ULL << 8,
     BestThreeVolumeImbalance                        = 1ULL << 9,
     BestFiveVolumeImbalance                         = 1ULL << 10,
-    VolumeImbalance                                 = 1ULL << 11,
-    QueueImbalance                                  = 1ULL << 12,
-    Gap                                             = 1ULL << 13,
-    IsAggressorAsk                                  = 1ULL << 14,
-    VwapDeviation                                   = 1ULL << 15,
-    simplifiedSlopeImbalance                        = 1ULL << 16,
+    BestTenVolumeImbalance                          = 1ULL << 11,
+    BestFifteenVolumeImbalance                      = 1ULL << 12,
+    BestTwentyVolumeImbalance                       = 1ULL << 13,
+    BestThirtyVolumeImbalance                       = 1ULL << 14,
+    BestFiftyVolumeImbalance                        = 1ULL << 15,
 
-    tradeCountImbalance1Seconds                     = 1ULL << 17,
-    tradeCountImbalance3Seconds                     = 1ULL << 18,
-    tradeCountImbalance5Seconds                     = 1ULL << 19,
-    tradeCountImbalance10Seconds                    = 1ULL << 20,
-    tradeCountImbalance15Seconds                    = 1ULL << 21,
-    tradeCountImbalance30Seconds                    = 1ULL << 22,
-    tradeCountImbalance60Seconds                    = 1ULL << 23,
+    VolumeImbalance                                 = 1ULL << 16,
+    QueueImbalance                                  = 1ULL << 17,
+    Gap                                             = 1ULL << 18,
+    IsAggressorAsk                                  = 1ULL << 19,
+    VwapDeviation                                   = 1ULL << 20,
+    simplifiedSlopeImbalance                        = 1ULL << 21,
 
-    cumulativeDelta1Seconds                         = 1ULL << 24,
-    cumulativeDelta3Seconds                         = 1ULL << 25,
-    cumulativeDelta5Seconds                         = 1ULL << 26,
-    cumulativeDelta10Seconds                        = 1ULL << 27,
-    cumulativeDelta15Seconds                        = 1ULL << 28,
-    cumulativeDelta30Seconds                        = 1ULL << 29,
-    cumulativeDelta60Seconds                        = 1ULL << 30,
+    tradeCountImbalance1Seconds                     = 1ULL << 22,
+    tradeCountImbalance3Seconds                     = 1ULL << 23,
+    tradeCountImbalance5Seconds                     = 1ULL << 24,
+    tradeCountImbalance10Seconds                    = 1ULL << 25,
+    tradeCountImbalance15Seconds                    = 1ULL << 26,
+    tradeCountImbalance30Seconds                    = 1ULL << 27,
+    tradeCountImbalance60Seconds                    = 1ULL << 28,
 
-    priceDifference1Seconds                         = 1ULL << 31,
-    priceDifference3Seconds                         = 1ULL << 32,
-    priceDifference5Seconds                         = 1ULL << 33,
-    priceDifference10Seconds                        = 1ULL << 34,
-    priceDifference15Seconds                        = 1ULL << 35,
-    priceDifference30Seconds                        = 1ULL << 36,
-    priceDifference60Seconds                        = 1ULL << 37,
+    cumulativeDelta1Seconds                         = 1ULL << 29,
+    cumulativeDelta3Seconds                         = 1ULL << 30,
+    cumulativeDelta5Seconds                         = 1ULL << 31,
+    cumulativeDelta10Seconds                        = 1ULL << 32,
+    cumulativeDelta15Seconds                        = 1ULL << 33,
+    cumulativeDelta30Seconds                        = 1ULL << 34,
+    cumulativeDelta60Seconds                        = 1ULL << 35,
 
-    rateOfReturn1Seconds                            = 1ULL << 38,
-    rateOfReturn3Seconds                            = 1ULL << 39,
-    rateOfReturn5Seconds                            = 1ULL << 40,
-    rateOfReturn10Seconds                           = 1ULL << 41,
-    rateOfReturn15Seconds                           = 1ULL << 42,
-    rateOfReturn30Seconds                           = 1ULL << 43,
-    rateOfReturn60Seconds                           = 1ULL << 44,
+    priceDifference1Seconds                         = 1ULL << 36,
+    priceDifference3Seconds                         = 1ULL << 37,
+    priceDifference5Seconds                         = 1ULL << 38,
+    priceDifference10Seconds                        = 1ULL << 39,
+    priceDifference15Seconds                        = 1ULL << 40,
+    priceDifference30Seconds                        = 1ULL << 41,
+    priceDifference60Seconds                        = 1ULL << 42,
 
-    differenceDepthVolatilityImbalance1Seconds      = 1ULL << 45,
-    differenceDepthVolatilityImbalance3Seconds      = 1ULL << 46,
-    differenceDepthVolatilityImbalance5Seconds      = 1ULL << 47,
-    differenceDepthVolatilityImbalance10Seconds     = 1ULL << 48,
-    differenceDepthVolatilityImbalance15Seconds     = 1ULL << 49,
-    differenceDepthVolatilityImbalance30Seconds     = 1ULL << 50,
-    differenceDepthVolatilityImbalance60Seconds     = 1ULL << 51,
+    rateOfReturn1Seconds                            = 1ULL << 43,
+    rateOfReturn3Seconds                            = 1ULL << 44,
+    rateOfReturn5Seconds                            = 1ULL << 45,
+    rateOfReturn10Seconds                           = 1ULL << 46,
+    rateOfReturn15Seconds                           = 1ULL << 47,
+    rateOfReturn30Seconds                           = 1ULL << 48,
+    rateOfReturn60Seconds                           = 1ULL << 49,
 
-    rsi5Seconds                                     = 1ULL << 52,
-    stochRsi5Seconds                                = 1ULL << 53,
-    macd2Seconds                                    = 1ULL << 54,
+    differenceDepthVolatilityImbalance1Seconds      = 1ULL << 50,
+    differenceDepthVolatilityImbalance3Seconds      = 1ULL << 51,
+    differenceDepthVolatilityImbalance5Seconds      = 1ULL << 52,
+    differenceDepthVolatilityImbalance10Seconds     = 1ULL << 53,
+    differenceDepthVolatilityImbalance15Seconds     = 1ULL << 54,
+    differenceDepthVolatilityImbalance30Seconds     = 1ULL << 55,
+    differenceDepthVolatilityImbalance60Seconds     = 1ULL << 56,
+
+    rsi5Seconds                                     = 1ULL << 57,
+    stochRsi5Seconds                                = 1ULL << 58,
+    macd2Seconds                                    = 1ULL << 59,
 };
 using MetricMask = uint64_t;
 
@@ -84,6 +90,11 @@ inline MetricMask parseMask(const std::vector<std::string>& vars) {
         else if (s == "bestTwoVolumeImbalance")                         m |= BestTwoVolumeImbalance;
         else if (s == "bestThreeVolumeImbalance")                       m |= BestThreeVolumeImbalance;
         else if (s == "bestFiveVolumeImbalance")                        m |= BestFiveVolumeImbalance;
+        else if (s == "bestTenVolumeImbalance")                         m |= BestTenVolumeImbalance;
+        else if (s == "bestFifteenVolumeImbalance")                     m |= BestFifteenVolumeImbalance;
+        else if (s == "bestTwentyVolumeImbalance")                      m |= BestTwentyVolumeImbalance;
+        else if (s == "bestThirtyVolumeImbalance")                      m |= BestThirtyVolumeImbalance;
+        else if (s == "bestFiftyVolumeImbalance")                       m |= BestFiftyVolumeImbalance;
         else if (s == "volumeImbalance")                                m |= VolumeImbalance;
         else if (s == "queueImbalance")                                 m |= QueueImbalance;
         else if (s == "gap")                                            m |= Gap;

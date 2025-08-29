@@ -2,15 +2,12 @@
 #include "SingleVariableCounter.h"
 
 std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStateMetrics(const MarketState& ms) const {
-    if (!ms.getHasLastTrade() ||
-        ms.orderBook.askCount() < 2 ||
-        ms.orderBook.bidCount() < 2)
-    {
+    if (!ms.getHasLastTrade() || ms.orderBook.askCount() < 2 || ms.orderBook.bidCount() < 2){
         return std::nullopt;
     }
 
     OrderBookMetricsEntry e{};
-    if (mask_ & TimestampOfReceive) {
+    if (mask_ & timestampOfReceive) {
         e.timestampOfReceive = ms.getLastTimestampOfReceive();
     }
     if (mask_ & market) {
@@ -19,58 +16,58 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & symbol) {
         e.symbol = static_cast<uint8_t>(ms.getSymbol());
     }
-    if (mask_ & BestAskPrice) {
+    if (mask_ & bestAskPrice) {
         e.bestAskPrice = SingleVariableCounter::calculateBestAskPrice(ms.orderBook);
     }
-    if (mask_ & BestBidPrice) {
+    if (mask_ & bestBidPrice) {
         e.bestBidPrice = SingleVariableCounter::calculateBestBidPrice(ms.orderBook);
     }
-    if (mask_ & MidPrice) {
+    if (mask_ & midPrice) {
         e.midPrice = SingleVariableCounter::calculateMidPrice(ms.orderBook);
     }
-    if (mask_ & BestVolumeImbalance) {
+    if (mask_ & bestVolumeImbalance) {
         e.bestVolumeImbalance = SingleVariableCounter::calculateBestVolumeImbalance(ms.orderBook);
     }
-    if (mask_ & BestVolumeRatio) {
+    if (mask_ & bestVolumeRatio) {
         e.bestVolumeRatio = SingleVariableCounter::calculateBestDepthVolumeRatio(ms.orderBook);
     }
-    if (mask_ & BestTwoVolumeImbalance){
+    if (mask_ & bestTwoVolumeImbalance){
         e.bestTwoVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 2);
     }
-    if (mask_ & BestThreeVolumeImbalance){
+    if (mask_ & bestThreeVolumeImbalance){
         e.bestThreeVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 3);
     }
-    if (mask_ & BestFiveVolumeImbalance){
+    if (mask_ & bestFiveVolumeImbalance){
         e.bestFiveVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 5);
     }
-    if (mask_ & BestTenVolumeImbalance){
+    if (mask_ & bestTenVolumeImbalance){
         e.bestTenVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 10);
     }
-    if (mask_ & BestFifteenVolumeImbalance){
+    if (mask_ & bestFifteenVolumeImbalance){
         e.bestFifteenVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 15);
     }
-    if (mask_ & BestTwentyVolumeImbalance){
+    if (mask_ & bestTwentyVolumeImbalance){
         e.bestTwentyVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 20);
     }
-    if (mask_ & BestThirtyVolumeImbalance){
+    if (mask_ & bestThirtyVolumeImbalance){
         e.bestThirtyVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 30);
     }
-    if (mask_ & BestFiftyVolumeImbalance){
+    if (mask_ & bestFiftyVolumeImbalance){
         e.bestFiftyVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(ms.orderBook, 50);
     }
-    if (mask_ & VolumeImbalance) {
+    if (mask_ & volumeImbalance) {
         e.volumeImbalance = SingleVariableCounter::calculateVolumeImbalance(ms.orderBook);
     }
-    if (mask_ & QueueImbalance) {
+    if (mask_ & queueImbalance) {
         e.queueImbalance = SingleVariableCounter::calculateQueueImbalance(ms.orderBook);
     }
-    if (mask_ & Gap) {
+    if (mask_ & gap) {
         e.gap = SingleVariableCounter::calculateGap(ms.orderBook);
     }
-    if (mask_ & IsAggressorAsk) {
+    if (mask_ & isAggressorAsk) {
         e.isAggressorAsk = SingleVariableCounter::calculateIsAggressorAsk(&ms.getLastTrade());
     }
-    if (mask_ & VwapDeviation) {
+    if (mask_ & vwapDeviation) {
         e.vwapDeviation = SingleVariableCounter::calculateVwapDeviation(ms.orderBook);
     }
     if (mask_ & simplifiedSlopeImbalance) {

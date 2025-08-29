@@ -12,7 +12,6 @@
 OrderBookSessionSimulator::OrderBookSessionSimulator() {}
 
 std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(const std::string &csvPath, std::vector<std::string> &variables) {
-    // auto start0 = std::chrono::steady_clock::now();
 
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptrEntries;
@@ -27,12 +26,6 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
     OrderBookMetrics orderBookMetrics(variables);
     orderBookMetrics.reserve(ptrEntries.size());
 
-    // auto finish0 = std::chrono::steady_clock::now();
-    // auto elapsed_ms0 = std::chrono::duration_cast<std::chrono::milliseconds>(finish0 - start0).count();
-    // std::cout << "read csv: " << elapsed_ms0 << " ms" << std::endl;
-
-    auto start = std::chrono::steady_clock::now();
-
     for (auto* p : ptrEntries) {
         globalMarketState.update(p);
 
@@ -44,12 +37,6 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeVariables(c
             }
         }
     }
-
-    // auto finish = std::chrono::steady_clock::now();
-    // auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-    // std::cout << "ob loop elapsed: " << elapsed_ms << " ms" << std::endl;
-
-    // orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
 
     return orderBookMetrics.entries();
 }
@@ -70,8 +57,6 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeBacktest(co
 
     orderBookMetrics.reserve(ptrEntries.size());
 
-    // auto start = std::chrono::steady_clock::now();
-
     for (auto* p : ptrEntries) {
         globalMarketState.update(p);
 
@@ -85,9 +70,6 @@ std::vector<OrderBookMetricsEntry> OrderBookSessionSimulator::computeBacktest(co
         }
     }
 
-    // auto finish = std::chrono::steady_clock::now();
-    // auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-    // std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
     return orderBookMetrics.entries();
 }
 
@@ -120,7 +102,6 @@ py::dict OrderBookSessionSimulator::computeVariablesNumPy(const std::string &csv
         if (isLast == true) {
             if (auto m = globalMarketState.countMarketStateMetricsByEntry(p)) {
                 orderBookMetrics.addEntry(*m);
-                // std::cout << "bbid: " << m->bestBidPrice << "bask " << m->bestAskPrice << std::endl;
             }
         }
     }
@@ -129,6 +110,7 @@ py::dict OrderBookSessionSimulator::computeVariablesNumPy(const std::string &csv
     // auto loopElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(loopFinish - loopStart).count();
     // std::cout << "loop elapsed: " << loopElapsed << " ms" << std::endl;
 
+    // orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
     return orderBookMetrics.convertToNumpyArrays();
 }
 
@@ -148,8 +130,6 @@ py::dict OrderBookSessionSimulator::computeBacktestNumPy(const std::string& csvP
 
     orderBookMetrics.reserve(ptrEntries.size());
 
-    // auto start = std::chrono::steady_clock::now();
-
     for (auto* p : ptrEntries) {
         globalMarketState.update(p);
 
@@ -162,10 +142,6 @@ py::dict OrderBookSessionSimulator::computeBacktestNumPy(const std::string& csvP
             }
         }
     }
-
-    // auto finish = std::chrono::steady_clock::now();
-    // auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count();
-    // std::cout << "elapsed: " << elapsed_ms << " ms" << std::endl;
 
     return orderBookMetrics.convertToNumpyArrays();
 }

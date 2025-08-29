@@ -9,6 +9,7 @@ add_subdirectory(pybind11)
 include_directories(
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/include/enums
+        ${CMAKE_SOURCE_DIR}/include/detail
 )
 
 set(SOURCES

@@ -14,7 +14,7 @@ ColMap buildColMap(const std::vector<std::string_view>& headerTokens) {
     return colMap;
 }
 
-std::vector<std::string_view> splitLineSV(std::string_view line, char delimiter) {
+std::vector<std::string_view> splitLineSV(std::string_view line, const char delimiter) {
     std::vector<std::string_view> tokens;
     size_t pos = 0;
     while (pos < line.size()) {

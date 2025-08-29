@@ -381,133 +381,31 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     // ----- OrderBookMetricsEntry -----
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
-        .def_readonly("timestampOfReceive",             &OrderBookMetricsEntry::timestampOfReceive)
-        .def_readonly("market",                         &OrderBookMetricsEntry::market)
-        .def_readonly("symbol",                         &OrderBookMetricsEntry::symbol)
-        .def_readonly("bestAskPrice",                   &OrderBookMetricsEntry::bestAskPrice)
-        .def_readonly("bestBidPrice",                   &OrderBookMetricsEntry::bestBidPrice)
-        .def_readonly("midPrice",                       &OrderBookMetricsEntry::midPrice)
-        .def_readonly("bestVolumeImbalance",            &OrderBookMetricsEntry::bestVolumeImbalance)
-        .def_readonly("bestVolumeRatio",                &OrderBookMetricsEntry::bestVolumeRatio)
-        .def_readonly("bestTwoVolumeImbalance",         &OrderBookMetricsEntry::bestTwoVolumeImbalance)
-        .def_readonly("bestThreeVolumeImbalance",       &OrderBookMetricsEntry::bestThreeVolumeImbalance)
-        .def_readonly("bestFiveVolumeImbalance",        &OrderBookMetricsEntry::bestFiveVolumeImbalance)
-        .def_readonly("volumeImbalance",                &OrderBookMetricsEntry::volumeImbalance)
-        .def_readonly("queueImbalance",                 &OrderBookMetricsEntry::queueImbalance)
-        .def_readonly("gap",                            &OrderBookMetricsEntry::gap)
-        .def_readonly("isAggressorAsk",                 &OrderBookMetricsEntry::isAggressorAsk)
-        .def_readonly("vwapDeviation",                  &OrderBookMetricsEntry::vwapDeviation)
-        .def_readonly("simplifiedSlopeImbalance",       &OrderBookMetricsEntry::simplifiedSlopeImbalance)
-
-        .def_readonly("tradeCountImbalance1Seconds",    &OrderBookMetricsEntry::tradeCountImbalance1Seconds)
-        .def_readonly("tradeCountImbalance3Seconds",    &OrderBookMetricsEntry::tradeCountImbalance3Seconds)
-        .def_readonly("tradeCountImbalance5Seconds",    &OrderBookMetricsEntry::tradeCountImbalance5Seconds)
-        .def_readonly("tradeCountImbalance10Seconds",   &OrderBookMetricsEntry::tradeCountImbalance10Seconds)
-        .def_readonly("tradeCountImbalance15Seconds",   &OrderBookMetricsEntry::tradeCountImbalance15Seconds)
-        .def_readonly("tradeCountImbalance30Seconds",   &OrderBookMetricsEntry::tradeCountImbalance30Seconds)
-        .def_readonly("tradeCountImbalance60Seconds",   &OrderBookMetricsEntry::tradeCountImbalance60Seconds)
-
-        .def_readonly("cumulativeDelta1Seconds",        &OrderBookMetricsEntry::cumulativeDelta1Seconds)
-        .def_readonly("cumulativeDelta3Seconds",        &OrderBookMetricsEntry::cumulativeDelta3Seconds)
-        .def_readonly("cumulativeDelta5Seconds",        &OrderBookMetricsEntry::cumulativeDelta5Seconds)
-        .def_readonly("cumulativeDelta10Seconds",       &OrderBookMetricsEntry::cumulativeDelta10Seconds)
-        .def_readonly("cumulativeDelta15Seconds",       &OrderBookMetricsEntry::cumulativeDelta15Seconds)
-        .def_readonly("cumulativeDelta30Seconds",       &OrderBookMetricsEntry::cumulativeDelta30Seconds)
-        .def_readonly("cumulativeDelta60Seconds",       &OrderBookMetricsEntry::cumulativeDelta60Seconds)
-
-        .def_readonly("priceDifference1Seconds",        &OrderBookMetricsEntry::priceDifference1Seconds)
-        .def_readonly("priceDifference3Seconds",        &OrderBookMetricsEntry::priceDifference3Seconds)
-        .def_readonly("priceDifference5Seconds",        &OrderBookMetricsEntry::priceDifference5Seconds)
-        .def_readonly("priceDifference10Seconds",       &OrderBookMetricsEntry::priceDifference10Seconds)
-        .def_readonly("priceDifference15Seconds",       &OrderBookMetricsEntry::priceDifference15Seconds)
-        .def_readonly("priceDifference30Seconds",       &OrderBookMetricsEntry::priceDifference30Seconds)
-        .def_readonly("priceDifference60Seconds",       &OrderBookMetricsEntry::priceDifference60Seconds)
-
-        .def_readonly("rateOfReturn1Seconds",           &OrderBookMetricsEntry::rateOfReturn1Seconds)
-        .def_readonly("rateOfReturn3Seconds",           &OrderBookMetricsEntry::rateOfReturn3Seconds)
-        .def_readonly("rateOfReturn5Seconds",           &OrderBookMetricsEntry::rateOfReturn5Seconds)
-        .def_readonly("rateOfReturn10Seconds",          &OrderBookMetricsEntry::rateOfReturn10Seconds)
-        .def_readonly("rateOfReturn15Seconds",          &OrderBookMetricsEntry::rateOfReturn15Seconds)
-        .def_readonly("rateOfReturn30Seconds",          &OrderBookMetricsEntry::rateOfReturn30Seconds)
-        .def_readonly("rateOfReturn60Seconds",          &OrderBookMetricsEntry::rateOfReturn60Seconds)
-
-        .def_readonly("differenceDepthVolatilityImbalance1Seconds",           &OrderBookMetricsEntry::differenceDepthVolatilityImbalance1Seconds)
-        .def_readonly("differenceDepthVolatilityImbalance3Seconds",           &OrderBookMetricsEntry::differenceDepthVolatilityImbalance3Seconds)
-        .def_readonly("differenceDepthVolatilityImbalance5Seconds",           &OrderBookMetricsEntry::differenceDepthVolatilityImbalance5Seconds)
-        .def_readonly("differenceDepthVolatilityImbalance10Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance10Seconds)
-        .def_readonly("differenceDepthVolatilityImbalance15Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance15Seconds)
-        .def_readonly("differenceDepthVolatilityImbalance30Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance30Seconds)
-        .def_readonly("differenceDepthVolatilityImbalance60Seconds",          &OrderBookMetricsEntry::differenceDepthVolatilityImbalance60Seconds)
-
-        .def_readonly("rsi5Seconds",                                          &OrderBookMetricsEntry::rsi5Seconds)
-        .def_readonly("stochRsi5Seconds",                                     &OrderBookMetricsEntry::stochRsi5Seconds)
-        .def_readonly("macd2Seconds",                                         &OrderBookMetricsEntry::macd2Seconds)
+        #define METRIC(name, ctype) \
+            .def_readonly(#name, &OrderBookMetricsEntry::name)
+        #include "detail/metrics_list.def"
+        #undef METRIC
 
         .def("__str__", [](const OrderBookMetricsEntry &entry) {
             std::ostringstream oss;
-            // oss << std::fixed << std::setprecision(5);
-            oss
-            << "timestampOfReceive: " << entry.timestampOfReceive << " "
-            << "market: " << static_cast<int>(entry.market) << " "
-            << "symbol: " << static_cast<int>(entry.symbol) << " "
-            << "bestAskPrice: " << entry.bestAskPrice << " "
-            << "bestBidPrice: " << entry.bestBidPrice << " "
-            << "midPrice: " << entry.midPrice << " "
-            << "bestVolumeImbalance: " << entry.bestVolumeImbalance << " "
-            << "bestVolumeRatio: " << entry.bestVolumeRatio << " "
-            << "bestTwoVolumeImbalance: " << entry.bestTwoVolumeImbalance << " "
-            << "bestThreeVolumeImbalance: " << entry.bestThreeVolumeImbalance << " "
-            << "bestFiveVolumeImbalance: " << entry.bestFiveVolumeImbalance << " "
-            << "volumeImbalance: " << entry.volumeImbalance << " "
-            << "queueImbalance: " << entry.queueImbalance << " "
-            << "gap: " << entry.gap << " "
-            << "isAggressorAsk: " << entry.isAggressorAsk << " "
-            << "vwapDeviation: " << entry.vwapDeviation << " "
-            << "simplifiedSlopeImbalance: " << entry.simplifiedSlopeImbalance << " "
 
-            << "tradeCountImbalance1Seconds: " << entry.tradeCountImbalance1Seconds << " "
-            << "tradeCountImbalance3Seconds: " << entry.tradeCountImbalance3Seconds << " "
-            << "tradeCountImbalance5Seconds: " << entry.tradeCountImbalance5Seconds << " "
-            << "tradeCountImbalance10Seconds: " << entry.tradeCountImbalance10Seconds << " "
-            << "tradeCountImbalance15Seconds: " << entry.tradeCountImbalance15Seconds << " "
-            << "tradeCountImbalance30Seconds: " << entry.tradeCountImbalance30Seconds << " "
-            << "tradeCountImbalance60Seconds: " << entry.tradeCountImbalance60Seconds << " "
+            auto append_field = [&](auto const& field, const char* nm) {
+                using T = std::decay_t<decltype(field)>;
+                oss << nm << ": ";
+                if constexpr (std::is_same_v<T, bool>) {
+                    oss << (field ? 1 : 0);
+                } else if constexpr (std::is_same_v<T, uint8_t>) {
+                    oss << static_cast<int>(field);
+                } else {
+                    oss << field;
+                }
+                oss << " ";
+            };
 
-            << "cumulativeDelta1Seconds: " << entry.cumulativeDelta1Seconds << " "
-            << "cumulativeDelta3Seconds: " << entry.cumulativeDelta3Seconds << " "
-            << "cumulativeDelta5Seconds: " << entry.cumulativeDelta5Seconds << " "
-            << "cumulativeDelta10Seconds: " << entry.cumulativeDelta10Seconds << " "
-            << "cumulativeDelta15Seconds: " << entry.cumulativeDelta15Seconds << " "
-            << "cumulativeDelta30Seconds: " << entry.cumulativeDelta30Seconds << " "
-            << "cumulativeDelta60Seconds: " << entry.cumulativeDelta60Seconds
+            #define METRIC(name, ctype) append_field(entry.name, #name);
+            #include "detail/metrics_list.def"
+            #undef METRIC
 
-            << " priceDifference1Seconds: " << entry.priceDifference1Seconds
-            << " priceDifference3Seconds: " << entry.priceDifference3Seconds
-            << " priceDifference5Seconds: " << entry.priceDifference5Seconds
-            << " priceDifference10Seconds: " << entry.priceDifference10Seconds
-            << " priceDifference15Seconds: " << entry.priceDifference15Seconds
-            << " priceDifference30Seconds: " << entry.priceDifference30Seconds
-            << " priceDifference60Seconds: " << entry.priceDifference60Seconds
-
-            << " rateOfReturn1Seconds: "  << entry.rateOfReturn1Seconds
-            << " rateOfReturn3Seconds: "  << entry.rateOfReturn3Seconds
-            << " rateOfReturn5Seconds: "  << entry.rateOfReturn5Seconds
-            << " rateOfReturn10Seconds: " << entry.rateOfReturn10Seconds
-            << " rateOfReturn15Seconds: " << entry.rateOfReturn15Seconds
-            << " rateOfReturn30Seconds: " << entry.rateOfReturn30Seconds
-            << " rateOfReturn60Seconds: " << entry.rateOfReturn60Seconds
-
-            << " differenceDepthVolatilityImbalance1Seconds: "  << entry.differenceDepthVolatilityImbalance1Seconds
-            << " differenceDepthVolatilityImbalance3Seconds: "  << entry.differenceDepthVolatilityImbalance3Seconds
-            << " differenceDepthVolatilityImbalance5Seconds: "  << entry.differenceDepthVolatilityImbalance5Seconds
-            << " differenceDepthVolatilityImbalance10Seconds: " << entry.differenceDepthVolatilityImbalance10Seconds
-            << " differenceDepthVolatilityImbalance15Seconds: " << entry.differenceDepthVolatilityImbalance15Seconds
-            << " differenceDepthVolatilityImbalance30Seconds: " << entry.differenceDepthVolatilityImbalance30Seconds
-            << " differenceDepthVolatilityImbalance60Seconds: " << entry.differenceDepthVolatilityImbalance60Seconds
-
-            << " rsi5Seconds: "                                 << entry.rsi5Seconds
-            << " stochRsi5Seconds: "                            << entry.stochRsi5Seconds
-            << " macd2Seconds: "                                << entry.macd2Seconds;
             return oss.str();
         });
 

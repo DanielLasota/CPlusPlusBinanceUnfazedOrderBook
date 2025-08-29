@@ -30,6 +30,6 @@ static constexpr StreamType STREAM_TYPE_MAP[5] = {
     StreamType::FINAL_DEPTH_SNAPSHOT
 };
 
-inline StreamType parseStreamType(char c) noexcept {
+inline StreamType parseStreamType(char c) {
     return STREAM_TYPE_MAP[static_cast<uint8_t>(c - '0')];
 }

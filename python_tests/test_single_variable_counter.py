@@ -782,4 +782,3 @@ class TestSingleVariableCounter:
         # SMA(52s) = (5.5+5.7+5.5+5.6+5.7+5.8+5.9+6.0+6.9)/9 ≈ 5.84444444
         # MACD = 5.91428571 - 5.84444444 ≈ 0.06984127
         assert svc.calculate_macd(market_state.rolling_trade_statistics, 2) == 0.06984127
-

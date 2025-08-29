@@ -17,7 +17,8 @@ ext_modules = [
         sources,
         include_dirs=[
             str(this_dir / 'include'),
-            str(this_dir / 'include' / 'enums')
+            str(this_dir / 'include' / 'enums'),
+            str(this_dir / 'include' / 'detail')
         ],
         language='c++',
     ),

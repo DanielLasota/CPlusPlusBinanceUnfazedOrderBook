@@ -36,3 +36,16 @@ struct TradeEntry {
     TradeEntry() = default;
 
 };
+
+inline std::ostream& operator<<(std::ostream& os, TradeEntry const& t) {
+    os << "Trade{"
+       << "ts=" << t.timestampOfReceive
+       << ", sym=" << int(t.symbol)
+       << ", mkt=" << int(t.market)
+       << ", px=" << t.price
+       << ", qty=" << t.quantity
+       << ", isBuyerMM=" << (t.isBuyerMarketMaker?1:0)
+       << ", isLast=" << (t.isLast?1:0)
+       << "}";
+    return os;
+}

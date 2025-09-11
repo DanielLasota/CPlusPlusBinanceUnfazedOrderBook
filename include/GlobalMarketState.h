@@ -8,11 +8,12 @@
 #include "OrderBookMetricsCalculator.h"
 #include "MarketState.h"
 #include "AssetKey.h"
-#include "EntryDecoder.h"
 
 class GlobalMarketState {
 public:
-    explicit GlobalMarketState(MetricMask mask);
+    explicit GlobalMarketState(const MetricMask& mask);
+
+    explicit GlobalMarketState(const std::vector<std::string>& variables);
 
     void update(DecodedEntry* entry);
 

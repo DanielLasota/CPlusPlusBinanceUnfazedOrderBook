@@ -1,4 +1,5 @@
 import cpp_binance_orderbook
+import pytest
 from cpp_binance_orderbook import OrderBook, DifferenceDepthEntry, Symbol, Market
 
 
@@ -485,3 +486,161 @@ class TestOrderBook:
             assert ob.best_nth_ask_price(1) == 5.1
             assert ob.best_nth_ask_price(3) == 5.5
             assert ob.best_nth_ask_price(5) == 7.1
+
+        def test_sum_total_ask_bid_quantity(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            # sum_ask = 19.0, sum_bid = 44.0
+            assert ob.sum_total_ask_bid_quantity() == pytest.approx(63.0, abs=1e-12)
+
+        def test_delta_bid_count(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=0,
+                price=4.9,
+                quantity=2.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_bid_count() == 1
+            assert ob.delta_sum_bid_quantity() == pytest.approx(2.0, abs=1e-12)
+
+        def test_delta_ask_count(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=1,
+                price=7.2,
+                quantity=1.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_ask_count() == 1
+            assert ob.delta_sum_ask_quantity() == pytest.approx(1.0, abs=1e-12)
+
+        def test_delta_best_ask_quantity(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            # best ask początkowo 5.1 @ 3.0
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=1,
+                price=5.1,
+                quantity=5.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_best_ask_quantity() == pytest.approx(2.0, abs=1e-12)
+            assert ob.delta_best_ask_price() == pytest.approx(0.0, abs=1e-12)
+
+        def test_delta_best_bid_quantity(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            # best bid początkowo 5.0 @ 5.0
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=0,
+                price=5.0,
+                quantity=8.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_best_bid_quantity() == pytest.approx(3.0, abs=1e-12)
+            assert ob.delta_best_bid_price() == pytest.approx(0.0, abs=1e-12)
+
+        def test_delta_best_ask_price(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            # best ask początkowo 5.1 @ 3.0 → zmiana ceny na 5.05
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=1,
+                price=5.05,
+                quantity=3.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_best_ask_price() == pytest.approx(-0.05, abs=1e-12)
+            assert ob.delta_best_ask_quantity() == pytest.approx(0.0, abs=1e-12)
+
+        def test_delta_best_bid_price(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            # best bid początkowo 5.0 @ 5.0 → zmiana ceny na 5.05
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=0,
+                price=5.05,
+                quantity=5.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_best_bid_price() == pytest.approx(0.05, abs=1e-12)
+            assert ob.delta_best_bid_quantity() == pytest.approx(0.0, abs=1e-12)
+
+        def test_delta_sum_ask_quantity(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            # nowy poziom ASK (nie-best)
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=1,
+                price=7.0,
+                quantity=4.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_sum_ask_quantity() == pytest.approx(4.0, abs=1e-12)
+            assert ob.delta_sum_bid_quantity() == pytest.approx(0.0, abs=1e-12)
+
+        def test_delta_sum_bid_quantity(self):
+            ob = TestOrderBook.TestBaseOrderBookVariables.get_sample_order_book(
+                symbol=Symbol.ADAUSDT, market=Market.USD_M_FUTURES,
+                price_hash=3, quantity_hash=2
+            )
+            # nowy poziom BID (nie-best)
+            e = DifferenceDepthEntry(
+                timestamp_of_receive=100,
+                symbol=Symbol.ADAUSDT,
+                is_ask=0,
+                price=4.3,
+                quantity=6.0,
+                is_last=1,
+                market=Market.USD_M_FUTURES
+            )
+            ob.update(e)
+            assert ob.delta_sum_bid_quantity() == pytest.approx(6.0, abs=1e-12)
+            assert ob.delta_sum_ask_quantity() == pytest.approx(0.0, abs=1e-12)

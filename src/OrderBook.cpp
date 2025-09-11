@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <iostream>
-#include <iomanip>
+#include <limits>
 
 #include "OrderBook.h"
 
@@ -115,12 +115,12 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             auto *node = it->second;
             if (node->isAsk) {
                 --askCount_;
-                sumAskQty_ -= node->quantity;
+                sumAskQuantity_ -= node->quantity;
                 askMap_.erase(node->price);
                 removeNode(askHead_, askTail_, node);
             } else {
                 --bidCount_;
-                sumBidQty_ -= node->quantity;
+                sumBidQuantity_ -= node->quantity;
                 bidMap_.erase(node->price);
                 removeNode(bidHead_, bidTail_, node);
             }
@@ -136,8 +136,8 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             double oldQ = node->quantity;
             double newQ = e->quantity;
 
-            if (node->isAsk) sumAskQty_ += newQ - oldQ;
-            else sumBidQty_ += newQ - oldQ;
+            if (node->isAsk) sumAskQuantity_ += newQ - oldQ;
+            else sumBidQuantity_ += newQ - oldQ;
 
             sumOfPriceTimesQuantity_ += node->price * (newQ - oldQ);
 
@@ -156,7 +156,7 @@ void OrderBook::update(DifferenceDepthEntry* e) {
 
             if (node->isAsk) {
                 ++askCount_;
-                sumAskQty_ += node->quantity;
+                sumAskQuantity_ += node->quantity;
 
                 auto [mapIt, inserted] = askMap_.insert({node->price, node});
 
@@ -186,7 +186,7 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             }
             else {
                 ++bidCount_;
-                sumBidQty_ += node->quantity;
+                sumBidQuantity_ += node->quantity;
 
                 auto [mapIt, inserted] = bidMap_.insert({node->price, node});
 
@@ -220,6 +220,29 @@ void OrderBook::update(DifferenceDepthEntry* e) {
             sumOfPriceTimesQuantity_ += node->price * node->quantity;
             index_[key] = node;
         }
+    }
+
+    if (e->isLast){
+        if (!bidHead_ || !askHead_) return;
+        deltaBidCount_ = bidCount_ - prevBidCount_;
+        deltaAskCount_ = askCount_ - prevAskCount_;
+        prevBidCount_ = bidCount_;
+        prevAskCount_ = askCount_;
+
+        deltaBestAskQuantity_ = askHead_->quantity - prevBestAskQuantity_;
+        deltaBestBidQuantity_ = bidHead_->quantity - prevBestBidQuantity_;
+        prevBestAskQuantity_ = askHead_->quantity;
+        prevBestBidQuantity_ = bidHead_->quantity;
+
+        deltaBestAskPrice_ = askHead_->price - prevBestAskPrice_;
+        deltaBestBidPrice_ = bidHead_->price - prevBestBidPrice_;
+        prevBestAskPrice_ = askHead_->price;
+        prevBestBidPrice_ = bidHead_->price;
+
+        deltaSumAskQuantity_ = sumAskQuantity_ - prevSumAskQuantity_;
+        deltaSumBidQuantity_ = sumBidQuantity_ - prevSumBidQuantity_;
+        prevSumAskQuantity_ = sumAskQuantity_;
+        prevSumBidQuantity_ = sumBidQuantity_;
     }
 }
 

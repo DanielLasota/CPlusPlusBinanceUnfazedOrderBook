@@ -42,5 +42,3 @@ void MarketState::updateTradeRegistry(int64_t timestampOfReceive, double price, 
     lastTradePtr = &lastTrade;
     hasLastTrade = true;
 }
-
-void MarketState::doNothing() {}

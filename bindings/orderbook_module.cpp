@@ -11,7 +11,7 @@
 #include "GlobalMarketState.h"
 #include "OrderBook.h"
 #include "OrderBookMetricsEntry.h"
-#include "OrderBookMetrics.h"
+// #include "OrderBookMetrics.h"
 #include "OrderBookSessionSimulator.h"
 #include "OrderBookMetricsCalculator.h"
 #include "enums/Market.h"
@@ -19,27 +19,31 @@
 namespace py = pybind11;
 using MS = MarketState;
 
+static py::int_ parse_mask_py(const std::vector<std::string>& vars) {
+    const MetricMask m = parseMask(vars);
+    std::string bits = m.to_string();
+    const auto pos = bits.find('1');
+    const std::string trimmed = (pos == std::string::npos) ? "0" : bits.substr(pos);
+
+    const py::object pyint = py::module::import("builtins").attr("int")(trimmed, 2);
+    return pyint.cast<py::int_>();
+}
+
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
     // std::cout << std::fixed << std::setprecision(5);
 
     // ----- OrderbookSessionSimulator -----
     py::class_<OrderBookSessionSimulator>(m, "OrderBookSessionSimulator")
         .def(py::init<>())
-        .def("compute_backtest", &OrderBookSessionSimulator::computeBacktest,
-             py::arg("csv_path"), py::arg("variables"), py::arg("python_callback") = py::none(),
-             "Uruchamia backtest; zwraca void")
-        .def("compute_variables", &OrderBookSessionSimulator::computeVariables,
-             py::arg("csv_path"), py::arg("variables"),
-             "Oblicza metryki z pliku CSV i zwraca OrderBookMetrics")
 
-        .def("compute_variables_numpy",
-             &OrderBookSessionSimulator::computeVariablesNumPy,
+        .def("compute_variables",
+             &OrderBookSessionSimulator::computeVariables,
              py::arg("csv_path"), py::arg("variables"),
-             "compute_variables_numpy(csv_path, variables) -> dict of numpy arrays")
-        .def("compute_backtest_numpy",
-             &OrderBookSessionSimulator::computeBacktestNumPy,
+             "compute_variables(csv_path, variables) -> dict of numpy arrays")
+        .def("compute_backtest",
+             &OrderBookSessionSimulator::computeBacktest,
              py::arg("csv_path"), py::arg("variables"), py::arg("python_callback") = py::none(),
-             "compute_backtest_numpy(csv_path, variables[, python_callback]) -> dict of numpy arrays")
+             "compute_backtest(csv_path, variables[, python_callback]) -> dict of numpy arrays")
 
         .def("compute_final_depth_snapshot", &OrderBookSessionSimulator::computeFinalDepthSnapshot,
              py::arg("csv_path"),
@@ -50,6 +54,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<GlobalMarketState>(m, "GlobalMarketState")
         .def(py::init<MetricMask>(), py::arg("mask"),
              "Tworzy GlobalMarketState z podaną maską zmiennych")
+        .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
         .def("update",
              &GlobalMarketState::update,
              py::arg("entry"),
@@ -137,12 +142,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             "market",
             &MS::getMarket,
             "Zwraca market tej MarketState"
-        )
-        .def("do_nothing",
-            &MS::doNothing,
-            "xD it does nothing"
-            )
-        ;
+        );
 
     // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")
@@ -167,6 +167,17 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def("best_nth_ask_price",                  &OrderBook::bestNthAskPrice, "Price of the second-best bid")
         .def("best_nth_bid_price",                  &OrderBook::bestNthBidPrice, "Price of the second-best bid")
 
+        .def("sum_total_ask_bid_quantity",          &OrderBook::sumTotalAskBidQuantity, "Total quantity across both sides")
+
+        .def("delta_ask_count",                     &OrderBook::deltaAskCount, "Change in ask level count since last snapshot")
+        .def("delta_bid_count",                     &OrderBook::deltaBidCount, "Change in bid level count since last snapshot")
+        .def("delta_best_ask_quantity",             &OrderBook::deltaBestAskQuantity, "Change in best ask quantity since last snapshot")
+        .def("delta_best_bid_quantity",             &OrderBook::deltaBestBidQuantity, "Change in best bid quantity since last snapshot")
+        .def("delta_best_ask_price",                &OrderBook::deltaBestAskPrice, "Change in best ask price since last snapshot")
+        .def("delta_best_bid_price",                &OrderBook::deltaBestBidPrice, "Change in best bid price since last snapshot")
+        .def("delta_sum_ask_quantity",              &OrderBook::deltaSumAskQuantity, "Change in total ask-side quantity since last snapshot")
+        .def("delta_sum_bid_quantity",              &OrderBook::deltaSumBidQuantity, "Change in total bid-side quantity since last snapshot")
+
         .def("update",
              &OrderBook::update,
              py::arg("entry"),
@@ -179,7 +190,6 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     svc.def("calculate_best_bid_price",                             &SingleVariableCounter::calculateBestBidPrice,                                          py::arg("order_book"));
     svc.def("calculate_mid_price",                                  &SingleVariableCounter::calculateMidPrice,                                              py::arg("order_book"));
     svc.def("calculate_best_volume_imbalance",                      &SingleVariableCounter::calculateBestVolumeImbalance,                                   py::arg("order_book"));
-    svc.def("calculate_best_depth_volume_ratio",                    &SingleVariableCounter::calculateBestDepthVolumeRatio,                                  py::arg("order_book"));
     svc.def("calculate_best_n_price_levels_volume_imbalance",       &SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance,                       py::arg("order_book"), py::arg("nPriceLevels"));
     svc.def("calculate_volume_imbalance",                           &SingleVariableCounter::calculateVolumeImbalance,                                       py::arg("order_book"));
     svc.def("calculate_queue_imbalance",                            &SingleVariableCounter::calculateQueueImbalance,                                        py::arg("order_book"));
@@ -189,10 +199,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     svc.def("calculate_simplified_slope_imbalance",                 &SingleVariableCounter::calculateSimplifiedSlopeImbalance,                              py::arg("order_book"));
 
     svc.def("calculate_trade_count_imbalance",                      &SingleVariableCounter::calculateTradeCountImbalance,                                   py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_cumulative_delta",                           &SingleVariableCounter::calculateCumulativeDelta,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_cumulative_delta",                           &SingleVariableCounter::calculateTradeVolumeDiff,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
     svc.def("calculate_price_difference",                           &SingleVariableCounter::calculatePriceDifference,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
     svc.def("calculate_rate_of_return",                             &SingleVariableCounter::calculateRateOfReturn,                                          py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_difference_depth_volatility_imbalance",      &SingleVariableCounter::calculateDifferenceDepthVolatilityImbalance,                    py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_difference_depth_volatility_imbalance",      &SingleVariableCounter::calculateDifferenceDepthCountImbalance,                    py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 
     svc.def("calculate_rsi",                                        &SingleVariableCounter::calculateRSI,                                                   py::arg("rolling_statistics_data"), py::arg("startWindowTimeSeconds"), py::arg("windowTimeSeconds"));
     svc.def("calculate_stoch_rsi",                                  &SingleVariableCounter::calculateStochRSI,                                              py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
@@ -410,22 +420,22 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         });
 
     // ----- OrderBookMetrics -----
-    py::class_<OrderBookMetrics>(m, "OrderBookMetrics")
-        .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
-        .def("to_csv", &OrderBookMetrics::toCSV, py::arg("path"),
-             "Zapisuje metryki do pliku CSV")
-        .def_property_readonly("entries", &OrderBookMetrics::entries,
-             "Lista wpisów OrderBookMetricsEntry");
+    // py::class_<OrderBookMetrics>(m, "OrderBookMetrics")
+    //     .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
+    //     .def("to_csv", &OrderBookMetrics::toCSV, py::arg("path"),
+    //          "Zapisuje metryki do pliku CSV")
+    // ;
         // .def_property_readonly("variables", [](const OrderBookMetrics &self) {
         //      return self.variables_;
         // }, "Lista nazw metryk");
 
-    m.def("parse_mask", &parseMask, py::arg("variables"),
+    m.def("parse_mask", &parse_mask_py, py::arg("variables"),
       "Parsuje listę nazw zmiennych na bitową MetricMask");
 
     // ----- OrderBookMetricsCalculator -----
     py::class_<OrderBookMetricsCalculator>(m, "OrderBookMetricsCalculator")
         .def(py::init<MetricMask>(), py::arg("mask"))
+        .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
         .def("count_market_state_metrics",
              &OrderBookMetricsCalculator::countMarketStateMetrics,
              py::arg("market_state"),

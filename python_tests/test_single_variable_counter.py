@@ -134,17 +134,7 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
         # (10.1799 - 3.1799)/(10.1799 + 3.1799) = 0.53846153846 ~= 0.54
-        assert svc.calculate_best_volume_imbalance(market_state.order_book) == 0.52
-
-    def test_calculate_best_volume_ratio(self):
-        market_state = self.get_sample_order_book(
-            symbol=Symbol.ADAUSDT,
-            market=Market.USD_M_FUTURES,
-            price_hash=3,
-            quantity_hash=2.1799
-        )
-        # 10.1799 / 3.1799 = 3.2013270857574136
-        assert svc.calculate_best_depth_volume_ratio(market_state.order_book) == 3.20
+        assert svc.calculate_best_volume_imbalance(market_state.order_book) == 0.5239599395200527
 
     def test_best_n_price_levels_volume_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -155,13 +145,13 @@ class TestSingleVariableCounter:
         )
 
         # 19.3598 - 7.3598 / 19.3598 + 7.3598 = 12 / 26.7196 ~= 0.45
-        assert svc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 2) == 0.45
+        assert svc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 2) == 0.4491085195886166
 
         # 29.5397 - 11.5397 / 29.5397 + 11.5397 = 18 / 41.0794 ~= 0.44
-        assert svc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 3) == 0.44
+        assert svc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 3) == 0.43817582535285327
 
         # 45.8995 - 19.8995 / 45.8995 + 19.8995 = 26 / 65.7990 ~= 0.40
-        assert svc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 5) == 0.40
+        assert svc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 5) == 0.39514278332497454
 
     def test_calculate_volume_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -171,7 +161,7 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
         # (50.0794 - 19.8995) / (50.0794 + 19.8995)
-        assert svc.calculate_volume_imbalance(market_state.order_book) == 0.43
+        assert svc.calculate_volume_imbalance(market_state.order_book) == 0.43127142610129626
 
     def test_calculate_queue_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -181,7 +171,7 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
         # (6-5)/(6+5) = 1/11 ~= 0.09
-        assert svc.calculate_queue_imbalance(market_state.order_book) == 0.09
+        assert svc.calculate_queue_imbalance(market_state.order_book) == 0.09090909090909091
 
     def test_calculate_gap(self):
         market_state = self.get_sample_order_book(
@@ -192,7 +182,7 @@ class TestSingleVariableCounter:
         )
         # (second_bid + second_ask) - (best_bid + best_ask)
         # = (4.5 + 5.3) - (5.0 + 5.1) = 9.8 - 10.1 = -0.3
-        assert svc.calculate_gap(market_state.order_book) == -0.3
+        assert svc.calculate_gap(market_state.order_book) == -0.29999999999999893
 
     def test_calculate_is_aggressor_ask(self):
         t = TradeEntry()
@@ -219,7 +209,7 @@ class TestSingleVariableCounter:
         # = 213.00052
 
         # Razem: 117.59609 + 213.00052 = 330.59661
-        assert svc.calculate_vwap_deviation(market_state.order_book) == -0.06450837
+        assert svc.calculate_vwap_deviation(market_state.order_book) == -0.06450836970108521
 
     def test_calculate_simplified_slope_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -233,7 +223,7 @@ class TestSingleVariableCounter:
         # bestFiveAsksQuantityCumulativeSum / (bestFifthAskPrice - midPrice);
         # (bidSlope - askSlope) / (bidSlope + askSlope)
         # 43.7138 - 9.7076 / 43.7138 + 9.7076 = 34.0062 / 53.4214 ~= 0.64
-        assert svc.calculate_simplified_slope_imbalance(market_state.order_book) == 0.64
+        assert svc.calculate_simplified_slope_imbalance(market_state.order_book) == 0.6365813262114586
 
 
     def test_calculate_trade_count_imbalance_n_seconds(self):
@@ -249,8 +239,8 @@ class TestSingleVariableCounter:
         assert svc.calculate_trade_count_imbalance(market_state.rolling_trade_statistics, 5) == 0
         assert svc.calculate_trade_count_imbalance(market_state.rolling_trade_statistics, 10) == 0.2
         assert svc.calculate_trade_count_imbalance(market_state.rolling_trade_statistics, 15) == 0.0
-        assert svc.calculate_trade_count_imbalance(market_state.rolling_trade_statistics, 30) == 0.33
-        assert svc.calculate_trade_count_imbalance(market_state.rolling_trade_statistics, 60) == 0.45
+        assert svc.calculate_trade_count_imbalance(market_state.rolling_trade_statistics, 30) == 0.3333333333333333
+        assert svc.calculate_trade_count_imbalance(market_state.rolling_trade_statistics, 60) == 0.45454545454545453
 
     def test_calculate_cumulative_delta_n_seconds(self):
         market_state = self.get_sample_order_book(
@@ -276,12 +266,12 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
 
-        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 1) == 0.9
+        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 1) == 0.9000000000000004
         assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 3) == 1.0
-        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 5) == 1.1
-        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 10) == 1.3
-        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 15) == 1.4
-        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 30) == 1.2
+        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 5) == 1.1000000000000005
+        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 10) == 1.3000000000000007
+        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 15) == 1.4000000000000004
+        assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 30) == 1.2000000000000002
         assert svc.calculate_price_difference(market_state.rolling_trade_statistics, 60) == -3
 
 
@@ -293,21 +283,21 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
 
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 1) == round(0.9/6.0 * 100, 2)
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 3) == round(1.0/5.9 * 100, 2)
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 5) == round(1.1/5.8 * 100, 2)
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 10) == round(1.3/5.6 * 100, 2)
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 15) == round(1.4/5.5 * 100, 2)
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 30) == round(1.2/5.7 * 100, 2)
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 60) == round(-3.0/9.9 * 100, 2)
+        # assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 1) == 0.9/6.0 * 100
+        # assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 3) == 1.0/5.9 * 100
+        # assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 5) == 1.1/5.8 * 100
+        # assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 10) == 1.3/5.6 * 100
+        # assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 15) == 1.4/5.5 * 100
+        # assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 30) == 1.2/5.7 * 100
+        # assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 60) == -3.0/9.9 * 100
 
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 1)  == 15.00
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 3)  == 16.95
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 5)  == 18.97
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 10) == 23.21
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 15) == 25.45
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 30) == 21.05
-        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 60) == -30.30
+        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 1)  == 15.000000000000005
+        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 3)  == 16.94915254237288
+        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 5)  == 18.96551724137932
+        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 10) == 23.214285714285726
+        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 15) == 25.45454545454546
+        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 30) == 21.05263157894737
+        assert svc.calculate_rate_of_return(market_state.rolling_trade_statistics, 60) == -30.3030303030303
 
     def test_calculate_difference_depth_volatility_imbalance_n_seconds(self):
         market_state = self.get_sample_order_book(
@@ -321,9 +311,9 @@ class TestSingleVariableCounter:
         assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 3) == 0.0
         assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 5) == 0.0
         assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 10) == -0.2
-        assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 15) == -0.33
-        assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 30) == 0.11
-        assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 60) == 0.27
+        assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 15) == -0.3333333333333333
+        assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 30) == 0.1111111111111111
+        assert svc.calculate_difference_depth_volatility_imbalance(market_state.rolling_difference_depth_statistics, 60) == 0.2727272727272727
 
     def test_calculate_rsi_5_seconds(self):
         market_state = self.get_sample_order_book(
@@ -358,7 +348,7 @@ class TestSingleVariableCounter:
             rs = 1.38667
             rsi = 100-(100/1+rs) = 58.10061...
         '''
-        assert svc.calculate_rsi(market_state.rolling_trade_statistics, 0, 5) == 58.1
+        assert svc.calculate_rsi(market_state.rolling_trade_statistics, 0, 5) == 58.100558659217874
         '''
             diff_i: (gainSum += diff_i): 4 0.1
             diff_i: (gainSum += diff_i): 6 0.2
@@ -379,7 +369,7 @@ class TestSingleVariableCounter:
             rs = 7
             rsi = 100-(100/1+rs) = 87.5
         '''
-        assert svc.calculate_rsi(market_state.rolling_trade_statistics, 0, 2) == 87.5
+        assert svc.calculate_rsi(market_state.rolling_trade_statistics, 0, 2) == 87.49999999999999
 
     def test_calculate_stoch_rsi_5_seconds(self):
         market_state = self.get_sample_order_book(
@@ -769,7 +759,7 @@ class TestSingleVariableCounter:
             df['stoch_rsi_raw'] = stoch.stochrsi()
             df
         '''
-        assert svc.calculate_stoch_rsi(market_state.rolling_trade_statistics, 5) == 0.33
+        assert svc.calculate_stoch_rsi(market_state.rolling_trade_statistics, 5) == 0.32530043004702375
 
     def test_calculate_macd_2_seconds(self):
         market_state = self.get_sample_order_book(

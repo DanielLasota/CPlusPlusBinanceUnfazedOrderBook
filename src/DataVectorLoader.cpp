@@ -69,15 +69,12 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersC
 }
 
 std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCSV(const std::string &csvPath) {
-    // auto start0 = std::chrono::steady_clock::now();
+    // const auto start = std::chrono::steady_clock::now();
 
     MMapData mm = mmap_file(csvPath);
-    std::string_view file_view(mm.data, mm.size);
-    // auto start1 = std::chrono::steady_clock::now();
+    const std::string_view file_view(mm.data, mm.size);
 
-    auto lines = split_sv_by_newline(file_view);
-
-    // auto start2 = std::chrono::steady_clock::now();
+    const auto lines = split_sv_by_newline(file_view);
 
     std::string_view headerLine;
     size_t headerIdx = 0;
@@ -87,11 +84,11 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
             break;
         }
     }
-    if (headerLine.empty())
-        throw std::runtime_error("Header not found in file: " + csvPath);
 
-    std::vector<std::string_view> headerTokens = splitLineSV(headerLine, ',');
-    ColMap colMap = buildColMap(headerTokens);
+    if (headerLine.empty()) throw std::runtime_error("Header not found in file: " + csvPath);
+
+    const std::vector<std::string_view> headerTokens = splitLineSV(headerLine, ',');
+    const ColMap colMap = buildColMap(headerTokens);
 
     std::vector<DecodedEntry> entries;
     entries.reserve(lines.size());
@@ -104,19 +101,12 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
             entries.push_back(std::move(entry));
         }
         catch (const std::exception &e) {
-            std::cerr << "Error processing line: " << std::string(line_sv)
-                      << " - " << e.what() << std::endl;
+            std::cerr << "Error processing line: " << std::string(line_sv) << " - " << e.what() << std::endl;
         }
     }
 
-    // auto start3 = std::chrono::steady_clock::now();
-    // auto elapsed_ms1 = std::chrono::duration_cast<std::chrono::milliseconds>(start1 - start0).count();
-    // auto elapsed_ms2 = std::chrono::duration_cast<std::chrono::milliseconds>(start2 - start1).count();
-    // auto elapsed_ms3 = std::chrono::duration_cast<std::chrono::milliseconds>(start3 - start2).count();
-    // std::cout << "mmap: " << elapsed_ms1 << " ms" << std::endl;
-    // std::cout << "split_sv_by_newline: " << elapsed_ms2 << " ms" << std::endl;
-    // std::cout << "decodeMultiAssetParameterEntry loop: " << elapsed_ms3 << " ms" << std::endl;
-
     munmap_file(mm);
+    // const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+    // std::cout << "getEntriesFromMultiAssetParametersCSV elapsed: " << elapsed << " ms" << std::endl;
     return entries;
 }

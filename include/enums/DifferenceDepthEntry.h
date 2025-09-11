@@ -41,3 +41,16 @@ struct DifferenceDepthEntry {
     DifferenceDepthEntry() = default;
 
 };
+
+inline std::ostream& operator<<(std::ostream& os, DifferenceDepthEntry const& e) {
+    os << "DiffDepth{"
+       << "ts=" << e.timestampOfReceive
+       << ", sym=" << int(e.symbol)
+       << ", mkt=" << int(e.market)
+       << ", isAsk=" << (e.isAsk?1:0)
+       << ", px=" << e.price
+       << ", qty=" << e.quantity
+       << ", isLast=" << (e.isLast?1:0)
+       << "}";
+    return os;
+}

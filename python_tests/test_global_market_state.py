@@ -5,9 +5,8 @@ import pytest
 
 from cpp_binance_orderbook import (
     GlobalMarketState,
-    DifferenceDepthEntry,
-    parse_mask,
     Market,
+    DifferenceDepthEntry,
     TradeEntry,
     OrderBookMetricsEntry,
     Symbol
@@ -71,8 +70,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -201,8 +199,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -506,8 +503,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -797,8 +793,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -943,8 +938,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -1179,8 +1173,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             with pytest.raises(RuntimeError, match="no specified market"):
                 x = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
@@ -1197,8 +1190,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -1259,8 +1251,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             trxusdt_trade = TradeEntry(
                 timestamp_of_receive=20,
@@ -1331,8 +1322,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -1437,8 +1427,7 @@ class TestGlobalMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
-            gms = GlobalMarketState(mask)
+            gms = GlobalMarketState(variables)
 
             sample_trxusdt_spot_order_list = sample_order_list(
                 symbol=Symbol.TRXUSDT,
@@ -1550,8 +1539,8 @@ class TestGlobalMarketState:
             assert x1.midPrice == 12.29589
             assert x1.bestVolumeImbalance == 0.5
             assert x1.queueImbalance == 0.0
-            assert x1.volumeImbalance == 0.45
-            assert x1.gap == -0.3
+            assert x1.volumeImbalance == 0.45454545454545453
+            assert x1.gap == -0.3000000000000007
             assert x1.isAggressorAsk == 1
 
             # === x2 (BTCUSDT) ===
@@ -1559,10 +1548,10 @@ class TestGlobalMarketState:
             assert x2.bestAskPrice == 22.1
             assert x2.bestBidPrice == 22.0
             assert x2.midPrice == 22.05
-            assert x2.bestVolumeImbalance == 0.08
+            assert x2.bestVolumeImbalance == 0.08333333333333333
             assert x2.queueImbalance == 0.0
-            assert x2.volumeImbalance == 0.11
-            assert x2.gap == -0.3
+            assert x2.volumeImbalance == 0.11278195488721804
+            assert x2.gap == -0.30000000000000426
             assert x2.isAggressorAsk == 0
 
             # === x3 (ADAUSDT) ===
@@ -1570,10 +1559,10 @@ class TestGlobalMarketState:
             assert x3.bestAskPrice == 32.1
             assert x3.bestBidPrice == 32.0
             assert x3.midPrice == 32.05
-            assert x3.bestVolumeImbalance == 0.05
+            assert x3.bestVolumeImbalance == 0.045454545454545456
             assert x3.queueImbalance == 0.0
-            assert x3.volumeImbalance == 0.06
-            assert x3.gap == -0.3
+            assert x3.volumeImbalance == 0.06437768240343347
+            assert x3.gap == -0.30000000000000426
             assert x3.isAggressorAsk == 1
 
             # === x4 (DOGEUSDT) ===
@@ -1581,8 +1570,8 @@ class TestGlobalMarketState:
             assert x4.bestAskPrice == 42.1
             assert x4.bestBidPrice == 42.0
             assert x4.midPrice == 42.05
-            assert x4.bestVolumeImbalance == 0.03
+            assert x4.bestVolumeImbalance == 0.03125
             assert x4.queueImbalance == 0.0
-            assert x4.volumeImbalance == 0.05
-            assert x4.gap == -0.3
+            assert x4.volumeImbalance == 0.04504504504504504
+            assert x4.gap == -0.30000000000000426
             assert x4.isAggressorAsk == 0

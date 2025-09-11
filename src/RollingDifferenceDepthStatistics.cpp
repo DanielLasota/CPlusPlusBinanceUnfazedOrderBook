@@ -26,8 +26,8 @@ void RollingDifferenceDepthStatistics::advanceDepthToTimestamp(const int64_t tim
     lastDepthTimestamp_ = timestamp;
 }
 
-void RollingDifferenceDepthStatistics::update(const DifferenceDepthEntry& e) {
-    const int64_t ts = e.timestampOfReceive;
+void RollingDifferenceDepthStatistics::update(const DifferenceDepthEntry& entry) {
+    const int64_t ts = entry.timestampOfReceive;
 
     advanceDepthToTimestamp(ts);
 
@@ -36,13 +36,13 @@ void RollingDifferenceDepthStatistics::update(const DifferenceDepthEntry& e) {
     bucket.start_time = (ts / BUCKET_SIZE_US) * BUCKET_SIZE_US;
 
     bucket.hasDifferenceDepthData = true;
-    if (e.isAsk) ++bucket.askDifferenceDepthEntryCount;
+    if (entry.isAsk) ++bucket.askDifferenceDepthEntryCount;
     else         ++bucket.bidDifferenceDepthEntryCount;
 }
 
-size_t RollingDifferenceDepthStatistics::bidDifferenceDepthEntryCount(int windowDurationSeconds) const {
+size_t RollingDifferenceDepthStatistics::bidDifferenceDepthEntryCount(const int windowDurationSeconds) const {
     if (lastDepthTimestamp_ == 0) return 0;
-    int64_t cutoff = lastDepthTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
+    const int64_t cutoff = lastDepthTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
     size_t total = 0;
     for (auto const& bucket : buckets_) {
         if (bucket.hasDifferenceDepthData && bucket.start_time >= cutoff) {
@@ -52,9 +52,9 @@ size_t RollingDifferenceDepthStatistics::bidDifferenceDepthEntryCount(int window
     return total;
 }
 
-size_t RollingDifferenceDepthStatistics::askDifferenceDepthEntryCount(int windowDurationSeconds) const {
+size_t RollingDifferenceDepthStatistics::askDifferenceDepthEntryCount(const int windowDurationSeconds) const {
     if (lastDepthTimestamp_ == 0) return 0;
-    int64_t cutoff = lastDepthTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
+    const int64_t cutoff = lastDepthTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
     size_t total = 0;
     for (auto const& bucket : buckets_) {
         if (bucket.hasDifferenceDepthData && bucket.start_time >= cutoff) {

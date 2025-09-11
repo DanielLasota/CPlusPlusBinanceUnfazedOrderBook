@@ -2,8 +2,7 @@ from cpp_binance_orderbook import (
     MarketState,
     DifferenceDepthEntry,
     TradeEntry,
-    OrderBookMetricsCalculator,
-    parse_mask
+    OrderBookMetricsCalculator
 )
 
 
@@ -686,9 +685,9 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
+
             ms = MarketState()
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             variables = obmc.count_market_state_metrics(ms)
 
             assert variables is None
@@ -705,7 +704,6 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
             # wstawiamy dwa poziomy ask i dwa poziomy bid
             for price, qty in [(10.0, 1), (11.0, 2)]:
@@ -722,8 +720,8 @@ class TestMarketState:
                 e.quantity = qty
                 e.is_ask = False
                 ms.update(e)
-            # nie było jeszcze żadnego trade
-            obmc = OrderBookMetricsCalculator(mask)
+
+            obmc = OrderBookMetricsCalculator(variables)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
@@ -739,9 +737,8 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
-            # tylko trade, zero poziomów w orderbooku
+
             t = TradeEntry()
             t.timestamp_of_receive = 100
             t.price = 5.0
@@ -749,7 +746,7 @@ class TestMarketState:
             t.is_buyer_market_maker = True
             ms.update(t)
 
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
@@ -765,7 +762,6 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
             # dokładnie po jednym poziomie na każdej stronie
             a = DifferenceDepthEntry()
@@ -790,7 +786,7 @@ class TestMarketState:
             t.is_buyer_market_maker = False
             ms.update(t)
 
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
@@ -807,7 +803,6 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
 
             ms = MarketState()
             # dwa poziomy ask (10@1, 11@1)
@@ -835,7 +830,7 @@ class TestMarketState:
             t.is_buyer_market_maker = True
             ms.update(t)
 
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             entry = obmc.count_market_state_metrics(ms)
             assert entry is not None
 
@@ -869,9 +864,8 @@ class TestMarketState:
                 "bestVolumeImbalance",
                 "gap"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
@@ -887,7 +881,6 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
             # wstawiamy dwa poziomy ask i dwa poziomy bid
             for price, qty in [(10.0, 1), (11.0, 2)]:
@@ -895,7 +888,7 @@ class TestMarketState:
             for price, qty in [(9.0, 1), (8.0, 2)]:
                 ms.update_orderbook(2, price, qty, False)
             # nie było jeszcze żadnego trade
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
@@ -911,11 +904,10 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
             # tylko trade, zero poziomów w orderbooku
             ms.update_trade_registry(100, 5.0, 1.5, True)
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
@@ -931,14 +923,13 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
             # dokładnie po jednym poziomie na każdej stronie
             ms.update_orderbook(1, 10.0, 2.0, True)
             ms.update_orderbook(2,  9.0, 3.0, False)
             # jeden trade
             ms.update_trade_registry(200, 9.5, 1.0, False)
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             result = obmc.count_market_state_metrics(ms)
             assert result is None
 
@@ -954,7 +945,6 @@ class TestMarketState:
                 "gap",
                 "isAggressorAsk"
             ]
-            mask = parse_mask(variables)
             ms = MarketState()
             # dwa poziomy ask (10@1, 11@1)
             ms.update_orderbook(1, 10.0, 1.0, True)
@@ -966,7 +956,7 @@ class TestMarketState:
             trade_ts = 100
             ms.update_trade_registry(trade_ts, 7.7, 0.5, True)
 
-            obmc = OrderBookMetricsCalculator(mask)
+            obmc = OrderBookMetricsCalculator(variables)
             entry = obmc.count_market_state_metrics(ms)
             assert entry is not None
 

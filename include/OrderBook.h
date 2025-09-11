@@ -2,8 +2,6 @@
 
 #include <variant>
 #include <optional>
-#include <cstdint>
-#include <limits>
 #include <vector>
 #include <unordered_map>
 #include <map>
@@ -24,18 +22,17 @@ struct PriceSide {
 
 struct PriceSideHash {
     size_t operator()(PriceSide const& ps) const noexcept {
-        // double+bool byte representation
-        auto h1 = std::hash<uint64_t>{}(
+        const auto h1 = std::hash<uint64_t>{}(
             *reinterpret_cast<uint64_t const*>(&ps.price)
         );
-        auto h2 = std::hash<bool>{}(ps.isAsk);
+        const auto h2 = std::hash<bool>{}(ps.isAsk);
         return h1 ^ (h2 << 1);
     }
 };
 
 class OrderBook {
 public:
-    explicit OrderBook(size_t maxLevels = 100'000);
+    explicit OrderBook(size_t maxLevels = 150'000);
 
     void update(DifferenceDepthEntry* entryPtr);
 
@@ -43,14 +40,25 @@ public:
 
     size_t askCount() const { return askCount_; }
     size_t bidCount() const { return bidCount_; }
-    double sumAskQuantity() const { return sumAskQty_; }
-    double sumBidQuantity() const { return sumBidQty_; }
+
+    double sumAskQuantity() const { return sumAskQuantity_; }
+    double sumBidQuantity() const { return sumBidQuantity_; }
+    double sumTotalAskBidQuantity() const { return sumAskQuantity_ + sumBidQuantity_; }
     double bestAskPrice() const { return askHead_->price; }
     double bestBidPrice() const { return bidHead_->price; }
     double bestAskQuantity() const { return askHead_->quantity; }
     double bestBidQuantity() const { return bidHead_->quantity; }
     double secondAskPrice() const { return askHead_->next_->price; }
     double secondBidPrice() const { return bidHead_->next_->price; }
+
+    size_t deltaAskCount() const { return deltaAskCount_; }
+    size_t deltaBidCount() const { return deltaBidCount_; }
+    double deltaBestAskQuantity() const { return deltaBestAskQuantity_; }
+    double deltaBestBidQuantity() const { return deltaBestBidQuantity_; }
+    double deltaBestAskPrice() const { return deltaBestAskPrice_; }
+    double deltaBestBidPrice() const { return deltaBestBidPrice_; }
+    double deltaSumAskQuantity() const { return deltaSumAskQuantity_; }
+    double deltaSumBidQuantity() const { return deltaSumBidQuantity_; }
 
     double cumulativeQuantityOfTopNAsks(size_t n) const;
     double cumulativeQuantityOfTopNBids(size_t n) const;
@@ -76,9 +84,30 @@ private:
 
     std::unordered_map<PriceSide, DifferenceDepthEntry*, PriceSideHash> index_;
 
-    size_t askCount_{0}, bidCount_{0};
-    double sumAskQty_{0.0}, sumBidQty_{0.0};
+    size_t askCount_{0};
+    size_t bidCount_{0};
+
+    double sumAskQuantity_{0.0};
+    double sumBidQuantity_{0.0};
     double sumOfPriceTimesQuantity_{0.0};
+
+    double prevBestAskPrice_{0.0};
+    double prevBestBidPrice_{0.0};
+    double prevBestAskQuantity_{0.0};
+    double prevBestBidQuantity_{0.0};
+    double prevSumAskQuantity_{0.0};
+    double prevSumBidQuantity_{0.0};
+    size_t prevAskCount_{0};
+    size_t prevBidCount_{0};
+
+    double deltaBestAskPrice_{0.0};
+    double deltaBestBidPrice_{0.0};
+    double deltaBestAskQuantity_{0.0};
+    double deltaBestBidQuantity_{0.0};
+    double deltaSumAskQuantity_{0.0};
+    double deltaSumBidQuantity_{0.0};
+    size_t deltaAskCount_{0};
+    size_t deltaBidCount_{0};
 
     DifferenceDepthEntry* allocateNode(double price, bool isAsk, double quantity);
     void deallocateNode(DifferenceDepthEntry* node);

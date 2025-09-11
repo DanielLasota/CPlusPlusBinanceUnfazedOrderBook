@@ -9,6 +9,8 @@ void RollingTradeStatistics::Bucket::resetTradeBucket() {
     cumulatedSellTradesQuantity = 0.0;
     firstTradePrice             = 0.0;
     lastTradePrice              = 0.0;
+    biggestBuyTrade             = 0.0;
+    biggestSellTrade            = 0.0;
     hasTradeData                = false;
 }
 
@@ -31,6 +33,8 @@ void RollingTradeStatistics::advanceTradeToTimestamp(const int64_t timestamp) {
 }
 
 void RollingTradeStatistics::update(const TradeEntry& e) {
+    lastTradePrice_ = e.price;
+
     const int64_t ts = e.timestampOfReceive;
     advanceTradeToTimestamp(ts);
 
@@ -46,9 +50,11 @@ void RollingTradeStatistics::update(const TradeEntry& e) {
     if (!e.isBuyerMarketMaker) {
         ++bucket.buyTradesCount;
         bucket.cumulatedBuyTradesQuantity += e.quantity;
+        bucket.biggestBuyTrade = std::max(bucket.biggestBuyTrade, e.quantity);
     } else {
         ++bucket.sellTradesCount;
         bucket.cumulatedSellTradesQuantity += e.quantity;
+        bucket.biggestSellTrade = std::max(bucket.biggestSellTrade, e.quantity);
     }
 }
 
@@ -160,6 +166,34 @@ double RollingTradeStatistics::oldestPrice(const int windowTimeSeconds) const {
     }
 
     return priceAtCutoff;
+}
+
+double RollingTradeStatistics::biggestBuyTradeNSeconds(const int windowSeconds) const {
+    if (lastTradeTimestamp_ == 0) return 0.0;
+
+    const int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowSeconds) * BUCKET_SIZE_US;
+    double biggest = 0.0;
+
+    for (auto const& bucket : buckets_) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
+            biggest = std::max(biggest, bucket.biggestBuyTrade);
+        }
+    }
+    return biggest;
+}
+
+double RollingTradeStatistics::biggestSellTradeNSeconds(const int windowSeconds) const {
+    if (lastTradeTimestamp_ == 0) return 0.0;
+
+    const int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowSeconds) * BUCKET_SIZE_US;
+    double biggest = 0.0;
+
+    for (auto const& bucket : buckets_) {
+        if (bucket.hasTradeData && bucket.start_time >= cutoff) {
+            biggest = std::max(biggest, bucket.biggestSellTrade);
+        }
+    }
+    return biggest;
 }
 
 double RollingTradeStatistics::simpleMovingAverage(const int windowTimeSeconds) const {

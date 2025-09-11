@@ -4,7 +4,6 @@ from cpp_binance_orderbook import DifferenceDepthEntry, Market, Symbol
 class TestDifferenceDepthEntry:
 
     def test_given_default_order_book_entry_when_to_list_then_list_matches_all_fields(self):
-        # default case
         e = DifferenceDepthEntry()
 
         print(e)

@@ -9,16 +9,14 @@ class MarketState {
 public:
     MarketState() = default;
 
-    RollingTradeStatistics rollingTradeStatistics;
-    RollingDifferenceDepthStatistics rollingDifferenceDepthStatistics;
-
-    MarketState(const Market market_, Symbol symbol)
+    MarketState(const Market market_, const Symbol symbol)
         : market(market_), symbol(symbol), lastTrade()
     {}
 
-    Market getMarket() const { return market; }
+    RollingTradeStatistics rollingTradeStatistics;
+    RollingDifferenceDepthStatistics rollingDifferenceDepthStatistics;
 
-    Symbol getSymbol() const { return symbol; }
+    OrderBook orderBook;
 
     void update(DecodedEntry* entry);
 
@@ -26,11 +24,13 @@ public:
 
     void updateTradeRegistry(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM);
 
-    void doNothing();
-
-    OrderBook orderBook;
-
     bool getHasLastTrade() const {return hasLastTrade;}
+
+    uint64_t getLastTimestampOfReceive() const {return lastTimestampOfReceive;}
+
+    Market getMarket() const { return market; }
+
+    Symbol getSymbol() const { return symbol; }
 
     const TradeEntry& getLastTrade() const {
         if (!hasLastTrade || lastTradePtr == nullptr) {
@@ -39,7 +39,6 @@ public:
         return *lastTradePtr;
     }
 
-    uint64_t getLastTimestampOfReceive() const {return lastTimestampOfReceive;}
 
 private:
     Market market;
@@ -50,6 +49,4 @@ private:
     TradeEntry   lastTrade;
     TradeEntry*  lastTradePtr{nullptr};
     bool         hasLastTrade{false};
-
-    void reserveMemory(size_t size);
 };

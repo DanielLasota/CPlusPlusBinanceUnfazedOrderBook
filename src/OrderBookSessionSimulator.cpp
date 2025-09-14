@@ -44,7 +44,7 @@ py::dict OrderBookSessionSimulator::computeVariables(const std::string &csvPath,
     std::vector<DecodedEntry>().swap(entries);
     std::vector<DecodedEntry*>().swap(ptrEntries);
 
-    orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
+    // orderBookMetrics.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
     return orderBookMetrics.convertToNumpyArrays();
 }
 

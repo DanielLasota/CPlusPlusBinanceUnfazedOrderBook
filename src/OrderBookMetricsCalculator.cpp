@@ -643,25 +643,25 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     }
 
     if (mask_ & biggestSingleSellTradeVolume1Seconds) {
-        e.biggestSingleSellTradeVolume1Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 1);
+        e.biggestSingleSellTradeVolume1Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 1);
     }
     if (mask_ & biggestSingleSellTradeVolume3Seconds) {
-        e.biggestSingleSellTradeVolume3Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 3);
+        e.biggestSingleSellTradeVolume3Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 3);
     }
     if (mask_ & biggestSingleSellTradeVolume5Seconds) {
-        e.biggestSingleSellTradeVolume5Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 5);
+        e.biggestSingleSellTradeVolume5Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 5);
     }
     if (mask_ & biggestSingleSellTradeVolume10Seconds) {
-        e.biggestSingleSellTradeVolume10Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 10);
+        e.biggestSingleSellTradeVolume10Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 10);
     }
     if (mask_ & biggestSingleSellTradeVolume15Seconds) {
-        e.biggestSingleSellTradeVolume15Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 15);
+        e.biggestSingleSellTradeVolume15Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 15);
     }
     if (mask_ & biggestSingleSellTradeVolume30Seconds) {
-        e.biggestSingleSellTradeVolume30Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 30);
+        e.biggestSingleSellTradeVolume30Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 30);
     }
     if (mask_ & biggestSingleSellTradeVolume60Seconds) {
-        e.biggestSingleSellTradeVolume60Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 60);
+        e.biggestSingleSellTradeVolume60Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 60);
     }
 
 

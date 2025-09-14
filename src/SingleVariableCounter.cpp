@@ -546,18 +546,15 @@ namespace SingleVariableCounter {
         return std::log((avgTradeSizeBid + eps) / (avgTradeSizeAsk + eps));
     }
 
-    double calculateBiggestSingleBuyTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds)
-    {
+    double calculateBiggestSingleBuyTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         return rollingTradeStatistics.biggestBuyTradeNSeconds(windowTimeSeconds);
     }
 
-    double calculateBiggestSingleSellTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds)
-    {
+    double calculateBiggestSingleSellTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         return rollingTradeStatistics.biggestSellTradeNSeconds(windowTimeSeconds);
     }
 
-    double calculatePriceDifference(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds)
-    {
+    double calculatePriceDifference(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         return rollingTradeStatistics.priceDifference(windowTimeSeconds);
     }
 

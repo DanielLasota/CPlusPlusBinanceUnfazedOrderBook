@@ -33,9 +33,7 @@ public:
     Symbol getSymbol() const { return symbol; }
 
     const TradeEntry& getLastTrade() const {
-        if (!hasLastTrade || lastTradePtr == nullptr) {
-            throw std::runtime_error("missing lastTradeEntry");
-        }
+        if (!hasLastTrade || lastTradePtr == nullptr) { throw std::runtime_error("missing lastTradeEntry"); }
         return *lastTradePtr;
     }
 

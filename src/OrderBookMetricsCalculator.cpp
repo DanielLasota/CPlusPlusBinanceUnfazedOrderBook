@@ -129,6 +129,21 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & bestFiftyVolumeDiff){
         e.bestFiftyVolumeDiff = SingleVariableCounter::calculateBestNPriceLevelsVolumeDiff(marketState.orderBook, 50);
     }
+    if (mask_ & bestHundredVolumeDiff){
+        e.bestHundredVolumeDiff = SingleVariableCounter::calculateBestNPriceLevelsVolumeDiff(marketState.orderBook, 100);
+    }
+    if (mask_ & bestThreeHundredVolumeDiff){
+        e.bestThreeHundredVolumeDiff = SingleVariableCounter::calculateBestNPriceLevelsVolumeDiff(marketState.orderBook, 300);
+    }
+    if (mask_ & bestFiveHundredVolumeDiff){
+        e.bestFiveHundredVolumeDiff = SingleVariableCounter::calculateBestNPriceLevelsVolumeDiff(marketState.orderBook, 500);
+    }
+    if (mask_ & bestSevenHundredVolumeDiff){
+        e.bestSevenHundredVolumeDiff = SingleVariableCounter::calculateBestNPriceLevelsVolumeDiff(marketState.orderBook, 700);
+    }
+    if (mask_ & bestThousandVolumeDiff){
+        e.bestThousandVolumeDiff = SingleVariableCounter::calculateBestNPriceLevelsVolumeDiff(marketState.orderBook, 1000);
+    }
 
     if (mask_ & bestTwoVolumeImbalance){
         e.bestTwoVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(marketState.orderBook, 2);
@@ -153,6 +168,21 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     }
     if (mask_ & bestFiftyVolumeImbalance){
         e.bestFiftyVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(marketState.orderBook, 50);
+    }
+    if (mask_ & bestHundredVolumeImbalance){
+        e.bestHundredVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(marketState.orderBook, 100);
+    }
+    if (mask_ & bestThreeHundredVolumeImbalance){
+        e.bestThreeHundredVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(marketState.orderBook, 300);
+    }
+    if (mask_ & bestFiveHundredVolumeImbalance){
+        e.bestFiveHundredVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(marketState.orderBook, 500);
+    }
+    if (mask_ & bestSevenHundredVolumeImbalance){
+        e.bestSevenHundredVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(marketState.orderBook, 700);
+    }
+    if (mask_ & bestThousandVolumeImbalance){
+        e.bestThousandVolumeImbalance = SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance(marketState.orderBook, 1000);
     }
 
     if (mask_ & bestTwoVolumeLogRatio){
@@ -179,12 +209,36 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & bestFiftyVolumeLogRatio){
         e.bestFiftyVolumeLogRatio = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatio(marketState.orderBook, 50);
     }
+    if (mask_ & bestHundredVolumeLogRatio){
+        e.bestHundredVolumeLogRatio = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatio(marketState.orderBook, 100);
+    }
+    if (mask_ & bestThreeHundredVolumeLogRatio){
+        e.bestThreeHundredVolumeLogRatio = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatio(marketState.orderBook, 300);
+    }
+    if (mask_ & bestFiveHundredVolumeLogRatio){
+        e.bestFiveHundredVolumeLogRatio = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatio(marketState.orderBook, 500);
+    }
+    if (mask_ & bestSevenHundredVolumeLogRatio){
+        e.bestSevenHundredVolumeLogRatio = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatio(marketState.orderBook, 700);
+    }
+    if (mask_ & bestThousandVolumeLogRatio){
+        e.bestThousandVolumeLogRatio = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatio(marketState.orderBook, 1000);
+    }
 
     if (mask_ & bestFiveVolumeLogRatioXVolume){
         e.bestFiveVolumeLogRatioXVolume = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatioXVolume(marketState.orderBook, 5);
     }
     if (mask_ & bestFiftyVolumeLogRatioXVolume){
         e.bestFiftyVolumeLogRatioXVolume = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatioXVolume(marketState.orderBook, 50);
+    }
+    if (mask_ & bestHundredVolumeLogRatioXVolume){
+        e.bestHundredVolumeLogRatioXVolume = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatioXVolume(marketState.orderBook, 100);
+    }
+    if (mask_ & bestFiveHundredVolumeLogRatioXVolume){
+        e.bestFiveHundredVolumeLogRatioXVolume = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatioXVolume(marketState.orderBook, 500);
+    }
+    if (mask_ & bestThousandVolumeLogRatioXVolume){
+        e.bestThousandVolumeLogRatioXVolume = SingleVariableCounter::calculateBestNPriceLevelsVolumeLogRatioXVolume(marketState.orderBook, 1000);
     }
 
     if (mask_ & volumeDiff) {

@@ -15,7 +15,7 @@ int main() {
 
     OrderBookSessionSimulator orderBookSessionSimulator;
     // std::string csvPath = "C:/Users/daniel/Documents/merged_csvs/binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv";
-    std::string csvPath = "D:/merged_csvs/binance_merged_btcusdt_usd_m_futures_2025-09-03.csv";
+    std::string csvPath = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-09-03.csv";
 
     std::vector<std::string> variables {
         "timestampOfReceive",
@@ -61,6 +61,11 @@ int main() {
         "bestTwentyVolumeDiff",
         "bestThirtyVolumeDiff",
         "bestFiftyVolumeDiff",
+        "bestHundredVolumeDiff",
+        "bestThreeHundredVolumeDiff",
+        "bestFiveHundredVolumeDiff",
+        "bestSevenHundredVolumeDiff",
+        "bestThousandVolumeDiff",
 
         "bestTwoVolumeImbalance",
         "bestThreeVolumeImbalance",
@@ -70,6 +75,11 @@ int main() {
         "bestTwentyVolumeImbalance",
         "bestThirtyVolumeImbalance",
         "bestFiftyVolumeImbalance",
+        "bestHundredVolumeImbalance",
+        "bestThreeHundredVolumeImbalance",
+        "bestFiveHundredVolumeImbalance",
+        "bestSevenHundredVolumeImbalance",
+        "bestThousandVolumeImbalance",
 
         "bestTwoVolumeLogRatio",
         "bestThreeVolumeLogRatio",
@@ -79,9 +89,17 @@ int main() {
         "bestTwentyVolumeLogRatio",
         "bestThirtyVolumeLogRatio",
         "bestFiftyVolumeLogRatio",
+        "bestHundredVolumeLogRatio",
+        "bestThreeHundredVolumeLogRatio",
+        "bestFiveHundredVolumeLogRatio",
+        "bestSevenHundredVolumeLogRatio",
+        "bestThousandVolumeLogRatio",
 
         "bestFiveVolumeLogRatioXVolume",
         "bestFiftyVolumeLogRatioXVolume",
+        "bestHundredVolumeLogRatioXVolume",
+        "bestFiveHundredVolumeLogRatioXVolume",
+        "bestThousandVolumeLogRatioXVolume",
 
         "volumeDiff",
         "volumeImbalance",

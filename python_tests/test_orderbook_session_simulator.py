@@ -59,6 +59,7 @@ ALL_ORDERBOOK_VARIABLES = [
 
     "bestVolumeDiff",
     "bestVolumeImbalance",
+    "bestVolumeFisherImbalance",
     "bestVolumeLogRatio",
     "bestVolumeSignedLogRatioXVolume",
 
@@ -70,6 +71,11 @@ ALL_ORDERBOOK_VARIABLES = [
     "bestTwentyVolumeDiff",
     "bestThirtyVolumeDiff",
     "bestFiftyVolumeDiff",
+    "bestHundredVolumeDiff",
+    "bestThreeHundredVolumeDiff",
+    "bestFiveHundredVolumeDiff",
+    "bestSevenHundredVolumeDiff",
+    "bestThousandVolumeDiff",
 
     "bestTwoVolumeImbalance",
     "bestThreeVolumeImbalance",
@@ -79,6 +85,11 @@ ALL_ORDERBOOK_VARIABLES = [
     "bestTwentyVolumeImbalance",
     "bestThirtyVolumeImbalance",
     "bestFiftyVolumeImbalance",
+    "bestHundredVolumeImbalance",
+    "bestThreeHundredVolumeImbalance",
+    "bestFiveHundredVolumeImbalance",
+    "bestSevenHundredVolumeImbalance",
+    "bestThousandVolumeImbalance",
 
     "bestTwoVolumeLogRatio",
     "bestThreeVolumeLogRatio",
@@ -88,9 +99,17 @@ ALL_ORDERBOOK_VARIABLES = [
     "bestTwentyVolumeLogRatio",
     "bestThirtyVolumeLogRatio",
     "bestFiftyVolumeLogRatio",
+    "bestHundredVolumeLogRatio",
+    "bestThreeHundredVolumeLogRatio",
+    "bestFiveHundredVolumeLogRatio",
+    "bestSevenHundredVolumeLogRatio",
+    "bestThousandVolumeLogRatio",
 
     "bestFiveVolumeLogRatioXVolume",
     "bestFiftyVolumeLogRatioXVolume",
+    "bestHundredVolumeLogRatioXVolume",
+    "bestFiveHundredVolumeLogRatioXVolume",
+    "bestThousandVolumeLogRatioXVolume",
 
     "volumeDiff",
     "volumeImbalance",
@@ -250,6 +269,22 @@ ALL_ORDERBOOK_VARIABLES = [
     "avgTradeSizeLogRatio15Seconds",
     "avgTradeSizeLogRatio30Seconds",
     "avgTradeSizeLogRatio60Seconds",
+
+    "biggestSingleBuyTradeVolume1Seconds",
+    "biggestSingleBuyTradeVolume3Seconds",
+    "biggestSingleBuyTradeVolume5Seconds",
+    "biggestSingleBuyTradeVolume10Seconds",
+    "biggestSingleBuyTradeVolume15Seconds",
+    "biggestSingleBuyTradeVolume30Seconds",
+    "biggestSingleBuyTradeVolume60Seconds",
+
+    "biggestSingleSellTradeVolume1Seconds",
+    "biggestSingleSellTradeVolume3Seconds",
+    "biggestSingleSellTradeVolume5Seconds",
+    "biggestSingleSellTradeVolume10Seconds",
+    "biggestSingleSellTradeVolume15Seconds",
+    "biggestSingleSellTradeVolume30Seconds",
+    "biggestSingleSellTradeVolume60Seconds",
 
     "priceDifference1Seconds",
     "priceDifference3Seconds",
@@ -495,31 +530,30 @@ class TestOrderBookSessionSimulator:
             from cpp_binance_orderbook import parse_mask
 
             variables_list = [
-                'timestampOfReceive',
-                'bestAskPrice',
-                'bestBidPrice',
-                'midPrice',
-                'bestVolumeImbalance',
-                'queueImbalance',
-                'volumeImbalance',
-                'gap',
-                'isAggressorAsk'
+                'timestampOfReceive',   # bit 0
+                'bestAskPrice',         # bit 3
+                'bestBidPrice',         # bit 4
+                'midPrice',             # bit 5
+                'bestVolumeImbalance',  # bit 26
+                'queueImbalance',       # bit 79
+                'volumeImbalance',      # bit 75
+                'gap',                  # bit 82
+                'isAggressorAsk',       # bit 83
             ]
 
             mask = parse_mask(variables_list)
 
             expected_mask = (
-                    (1 << 0)  |
-                    (1 << 3)  |
-                    (1 << 4)  |
-                    (1 << 5)  |
-                    (1 << 26) |
-                    (1 << 61) |
-                    (1 << 57) |
-                    (1 << 64) |
-                    (1 << 65)
+                    (1 << 0)  |  # timestampOfReceive
+                    (1 << 3)  |  # bestAskPrice
+                    (1 << 4)  |  # bestBidPrice
+                    (1 << 5)  |  # midPrice
+                    (1 << 26) |  # bestVolumeImbalance
+                    (1 << 79) |  # queueImbalance
+                    (1 << 75) |  # volumeImbalance
+                    (1 << 82) |  # gap
+                    (1 << 83)    # isAggressorAsk
             )
-            assert mask == expected_mask
 
             assert mask == expected_mask
 
@@ -527,20 +561,20 @@ class TestOrderBookSessionSimulator:
             from cpp_binance_orderbook import parse_mask
 
             variables_list = [
-                'timestampOfReceive',
-                'midPrice',
-                'volumeImbalance'
+                'timestampOfReceive',   # bit 0
+                'midPrice',             # bit 5
+                'volumeImbalance',      # bit 75
             ]
 
             mask = parse_mask(variables_list)
 
-            # timestampOfReceive = 1 << 0  =    1
-            # midPrice           = 1 << 5  =   32
-            # volumeImbalance    = 1 << 11 = 2048
+            # timestampOfReceive = 1 << 0
+            # midPrice           = 1 << 5
+            # volumeImbalance    = 1 << 75  (UWAGA: po rozbudowie listy to jest 75)
             expected_mask = (
                     (1 << 0) |
                     (1 << 5) |
-                    (1 << 57)
+                    (1 << 75)
             )
 
             assert mask == expected_mask

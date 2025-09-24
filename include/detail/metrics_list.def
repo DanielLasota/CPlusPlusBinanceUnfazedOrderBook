@@ -11,6 +11,7 @@
 METRIC(timestampOfReceive,                              int64_t)
 METRIC(market,                                          uint8_t)
 METRIC(symbol,                                          uint8_t)
+METRIC(streamType,                                      uint8_t)
 METRIC(bestAskPrice,                                    double)
 METRIC(bestBidPrice,                                    double)
 METRIC(midPrice,                                        double)

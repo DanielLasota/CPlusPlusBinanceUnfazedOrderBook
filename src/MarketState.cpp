@@ -13,6 +13,7 @@ void MarketState::update(DecodedEntry* entry) {
     if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
         orderBook.update(differenceDepthEntry);
         rollingDifferenceDepthStatistics.update(*differenceDepthEntry);
+        lastStreamType = StreamType::DIFFERENCE_DEPTH_STREAM;
     }
 
     if (auto* tradeEntry = std::get_if<TradeEntry>(entry)) {
@@ -20,6 +21,7 @@ void MarketState::update(DecodedEntry* entry) {
         lastTradePtr = &lastTrade;
         hasLastTrade = true;
         rollingTradeStatistics.update(*tradeEntry);
+        lastStreamType = StreamType::TRADE_STREAM;
     }
 }
 

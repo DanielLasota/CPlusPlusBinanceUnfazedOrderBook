@@ -31,6 +31,7 @@ ALL_ORDERBOOK_VARIABLES = [
     "timestampOfReceive",
     "market",
     "symbol",
+    "streamType",
     "bestAskPrice",
     "bestBidPrice",
     "midPrice",
@@ -545,14 +546,14 @@ class TestOrderBookSessionSimulator:
 
             expected_mask = (
                     (1 << 0)  |  # timestampOfReceive
-                    (1 << 3)  |  # bestAskPrice
-                    (1 << 4)  |  # bestBidPrice
-                    (1 << 5)  |  # midPrice
-                    (1 << 26) |  # bestVolumeImbalance
-                    (1 << 79) |  # queueImbalance
-                    (1 << 75) |  # volumeImbalance
-                    (1 << 82) |  # gap
-                    (1 << 83)    # isAggressorAsk
+                    (1 << 4)  |  # bestAskPrice
+                    (1 << 5)  |  # bestBidPrice
+                    (1 << 6)  |  # midPrice
+                    (1 << 27) |  # bestVolumeImbalance
+                    (1 << 80) |  # queueImbalance
+                    (1 << 76) |  # volumeImbalance
+                    (1 << 83) |  # gap
+                    (1 << 84)    # isAggressorAsk
             )
 
             assert mask == expected_mask
@@ -573,8 +574,8 @@ class TestOrderBookSessionSimulator:
             # volumeImbalance    = 1 << 75  (UWAGA: po rozbudowie listy to jest 75)
             expected_mask = (
                     (1 << 0) |
-                    (1 << 5) |
-                    (1 << 75)
+                    (1 << 6) |
+                    (1 << 76)
             )
 
             assert mask == expected_mask

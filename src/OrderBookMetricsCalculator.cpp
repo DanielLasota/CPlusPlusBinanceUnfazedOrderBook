@@ -16,6 +16,9 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & symbol) {
         e.symbol = static_cast<uint8_t>(marketState.getSymbol());
     }
+    if (mask_ & streamType) {
+        e.streamType = static_cast<uint8_t>(marketState.getLastStreamType());
+    }
     if (mask_ & bestAskPrice) {
         e.bestAskPrice = SingleVariableCounter::calculateBestAskPrice(marketState.orderBook);
     }

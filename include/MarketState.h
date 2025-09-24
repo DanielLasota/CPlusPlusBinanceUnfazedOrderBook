@@ -24,13 +24,15 @@ public:
 
     void updateTradeRegistry(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM);
 
-    bool getHasLastTrade() const {return hasLastTrade;}
+    bool getHasLastTrade() const { return hasLastTrade; }
 
-    uint64_t getLastTimestampOfReceive() const {return lastTimestampOfReceive;}
+    uint64_t getLastTimestampOfReceive() const { return lastTimestampOfReceive; }
 
     Market getMarket() const { return market; }
 
     Symbol getSymbol() const { return symbol; }
+
+    StreamType getLastStreamType() const { return lastStreamType; }
 
     const TradeEntry& getLastTrade() const {
         if (!hasLastTrade || lastTradePtr == nullptr) { throw std::runtime_error("missing lastTradeEntry"); }
@@ -41,6 +43,7 @@ public:
 private:
     Market market;
     Symbol symbol;
+    StreamType lastStreamType;
 
     uint64_t lastTimestampOfReceive{0};
 

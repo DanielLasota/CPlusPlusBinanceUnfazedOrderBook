@@ -21,6 +21,7 @@ int main() {
         "timestampOfReceive",
         "market",
         "symbol",
+        "streamType",
         "bestAskPrice",
         "bestBidPrice",
         "midPrice",

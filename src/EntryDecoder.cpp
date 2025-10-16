@@ -6,8 +6,8 @@
 #include "CSVHeader.h"
 
 
-[[nodiscard]] inline int64_t parse_int(std::string_view sv) {
-    int64_t out = 0;
+[[nodiscard]] inline uint64_t parse_int(std::string_view sv) {
+    uint64_t out = 0;
     auto res = std::from_chars(sv.data(), sv.data() + sv.size(), out, 10);
     if (res.ec == std::errc{}) return out;
     throw std::runtime_error(std::string("parse_int failed for '") + std::string(sv) + "'");

@@ -212,7 +212,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
         .def(py::init<>())
         .def(py::init<
-            int64_t,
+            uint64_t,
             Symbol,
             bool,
             double,
@@ -275,7 +275,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<TradeEntry>(m, "TradeEntry")
         .def(py::init<>())
         .def(py::init<
-            int64_t,
+            uint64_t,
             Symbol,
             double,
             double,

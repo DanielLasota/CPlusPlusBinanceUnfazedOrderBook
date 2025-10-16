@@ -8,7 +8,7 @@
 #include "enums/Market.h"
 
 struct TradeEntry {
-    int64_t timestampOfReceive;
+    uint64_t timestampOfReceive;
     Symbol symbol;
     double price;
     double quantity;
@@ -17,7 +17,7 @@ struct TradeEntry {
     Market market;
 
     TradeEntry(
-        int64_t timestampOfReceive,
+        uint64_t timestampOfReceive,
         Symbol symbol,
         double price,
         double quantity,

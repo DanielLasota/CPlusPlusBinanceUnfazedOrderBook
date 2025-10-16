@@ -17,10 +17,11 @@ public:
     double biggestBuyTradeNSeconds(int windowSeconds) const;
     double biggestSellTradeNSeconds(int windowSeconds) const;
     double simpleMovingAverage(int windowTimeSeconds) const;
+    double hlc3t(int windowTimeSeconds) const;
 
 private:
     static constexpr uint64_t    BUCKET_SIZE_US = 1'000'000; // 1 s
-    static constexpr size_t     MAX_BUCKETS    = 136;       // 136 s of history
+    static constexpr size_t     MAX_BUCKETS    = 1'200;       // 136 s of history
 
     struct Bucket {
 
@@ -29,12 +30,11 @@ private:
         size_t sellTradesCount = 0;
         double cumulatedBuyTradesQuantity = 0.0;
         double cumulatedSellTradesQuantity = 0.0;
-        double firstTradePrice = 0.0;
         double lastTradePrice = 0.0;
-
         double biggestBuyTrade = 0.0;
         double biggestSellTrade = 0.0;
-
+        double highestTradePrice = 0.0;
+        double lowestTradePrice = 0.0;
         bool hasTradeData = false;
 
         void resetTradeBucket();

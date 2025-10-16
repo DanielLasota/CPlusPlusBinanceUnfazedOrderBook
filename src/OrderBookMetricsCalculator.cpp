@@ -6,7 +6,7 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         return std::nullopt;
     }
 
-    OrderBookMetricsEntry e{};
+    OrderBookMetricsEntry e;
     if (mask_ & timestampOfReceive) {
         e.timestampOfReceive = marketState.getLastTimestampOfReceive();
     }

@@ -1,8 +1,6 @@
 #pragma once
 
 #include <variant>
-#include <cstdint>
-#include <stdexcept>
 #include "enums/DifferenceDepthEntry.h"
 #include "enums/TradeEntry.h"
 #include "enums/symbol.h"
@@ -14,16 +12,16 @@ struct AssetKey {
     Market market;
     Symbol symbol;
 
-    AssetKey(Market m, Symbol s) noexcept
+    AssetKey(const Market m, const Symbol s) noexcept
       : market(m), symbol(s)
     {}
 
-    AssetKey(const DecodedEntry &d) noexcept {
-        if (auto dd = std::get_if<DifferenceDepthEntry>(&d)) {
+    explicit AssetKey(const DecodedEntry &d) noexcept {
+        if (const auto dd = std::get_if<DifferenceDepthEntry>(&d)) {
             market = dd->market;
             symbol = dd->symbol;
         }
-        else if (auto te = std::get_if<TradeEntry>(&d)) {
+        else if (const auto te = std::get_if<TradeEntry>(&d)) {
             market = te->market;
             symbol = te->symbol;
         }

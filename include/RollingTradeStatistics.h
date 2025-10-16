@@ -18,6 +18,8 @@ public:
     double biggestSellTradeNSeconds(int windowSeconds) const;
     double simpleMovingAverage(int windowTimeSeconds) const;
     double hlc3t(int windowTimeSeconds) const;
+    double rollingMeanTradePrice(int windowTimeSeconds) const;
+    double rollingStdTradePrice(int windowTimeSeconds) const;
 
 private:
     static constexpr uint64_t    BUCKET_SIZE_US = 1'000'000; // 1 s
@@ -35,6 +37,8 @@ private:
         double biggestSellTrade = 0.0;
         double highestTradePrice = 0.0;
         double lowestTradePrice = 0.0;
+        double sumTradePrice = 0.0;
+        double sumSqTradePrice = 0.0;
         bool hasTradeData = false;
 
         void resetTradeBucket();

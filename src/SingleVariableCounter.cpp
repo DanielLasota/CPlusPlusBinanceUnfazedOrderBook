@@ -596,6 +596,14 @@ namespace SingleVariableCounter {
         return std::log((lastPrice + eps) / (hlc3t + eps));
     }
 
+    double calculateBollingerBandsDistance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        const double meanTradePrice = rollingTradeStatistics.rollingMeanTradePrice(windowTimeSeconds);
+        const double std = rollingTradeStatistics.rollingStdTradePrice(windowTimeSeconds);
+        const double lastPrice = rollingTradeStatistics.lastTradePrice();
+        constexpr double eps = 1e-12;
+        return (lastPrice - meanTradePrice) / (std + eps);
+    }
+
     double calculateRSI(const RollingTradeStatistics& rollingTradeStatistics, const int startWindowTimeSeconds, const int windowTimeSeconds)
     {
         const int periods = 14;

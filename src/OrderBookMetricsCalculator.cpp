@@ -820,6 +820,16 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.hlc3tLogRatio1200Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 1200);
     }
 
+    if (mask_ & bollingerBandsDistance300Seconds) {
+        e.bollingerBandsDistance300Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.rollingTradeStatistics, 300);
+    }
+    if (mask_ & bollingerBandsDistance600Seconds) {
+        e.bollingerBandsDistance600Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.rollingTradeStatistics, 600);
+    }
+    if (mask_ & bollingerBandsDistance1200Seconds) {
+        e.bollingerBandsDistance1200Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.rollingTradeStatistics, 1200);
+    }
+
     if (mask_ & rsi5Seconds) {
         e.rsi5Seconds = SingleVariableCounter::calculateRSI(marketState.rollingTradeStatistics, 0, 5);
     }

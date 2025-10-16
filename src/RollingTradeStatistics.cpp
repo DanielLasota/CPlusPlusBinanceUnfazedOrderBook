@@ -1,5 +1,6 @@
 #include "RollingTradeStatistics.h"
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
 void RollingTradeStatistics::Bucket::resetTradeBucket() {
@@ -12,6 +13,8 @@ void RollingTradeStatistics::Bucket::resetTradeBucket() {
     biggestSellTrade            = 0.0;
     highestTradePrice           = 0.0;
     lowestTradePrice            = 0.0;
+    sumTradePrice               = 0.0;
+    sumSqTradePrice             = 0.0;
     hasTradeData                = false;
 }
 
@@ -52,6 +55,9 @@ void RollingTradeStatistics::update(const TradeEntry& e) {
     bucket.lastTradePrice = e.price;
     bucket.highestTradePrice = std::max(bucket.highestTradePrice, e.price);
     bucket.lowestTradePrice = std::min(bucket.lowestTradePrice, e.price);
+
+    bucket.sumTradePrice   += e.price;
+    bucket.sumSqTradePrice += e.price * e.price;
 
     if (!e.isBuyerMarketMaker) {
         ++bucket.buyTradesCount;
@@ -241,4 +247,38 @@ double RollingTradeStatistics::hlc3t(const int windowTimeSeconds) const {
 
     const double C = lastTradePrice_;
     return (H + L + C) / 3.0;
+}
+
+double RollingTradeStatistics::rollingMeanTradePrice(const int windowTimeSeconds) const {
+    if (lastTradeTimestamp_ == 0) return 0.0;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
+
+    long double S = 0.0L;
+    long double N = 0.0L;
+
+    for (auto const& b : buckets_) {
+        if (b.hasTradeData && b.start_time >= cutoff) {
+            S += b.sumTradePrice;
+            N += static_cast<long double>(b.buyTradesCount + b.sellTradesCount);
+        }
+    }
+    return (N > 0.0L) ? static_cast<double>(S / N) : 0.0;
+}
+
+double RollingTradeStatistics::rollingStdTradePrice(const int windowTimeSeconds) const {
+    if (lastTradeTimestamp_ == 0) return 0.0;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
+
+    long double S = 0.0L, SS = 0.0L, N = 0.0L;
+    for (auto const& b : buckets_) {
+        if (b.hasTradeData && b.start_time >= cutoff) {
+            S  += b.sumTradePrice;
+            SS += b.sumSqTradePrice;
+            N  += static_cast<long double>(b.buyTradesCount + b.sellTradesCount);
+        }
+    }
+    if (N <= 0.0L) return 0.0;
+    const long double mu  = S / N;
+    const long double var = std::max<long double>(0.0L, SS / N - mu * mu); // ddof=0
+    return static_cast<double>(std::sqrt(var));
 }

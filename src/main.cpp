@@ -309,9 +309,13 @@ int main() {
         "logKylesLambda30Seconds",
         "logKylesLambda60Seconds",
 
+        "hlc3tLogRatio300Seconds",
         "hlc3tLogRatio600Seconds",
-        "hlc3tLogRatio600Seconds",
-        "hlc3tLogRatio1200Seconds"
+        "hlc3tLogRatio1200Seconds",
+        "bollingerBandsDistance300Seconds",
+        "bollingerBandsDistance600Seconds",
+        "bollingerBandsDistance1200Seconds"
+
         //"rsi5Seconds",
         //"stochRsi5Seconds",
         //"macd2Seconds"

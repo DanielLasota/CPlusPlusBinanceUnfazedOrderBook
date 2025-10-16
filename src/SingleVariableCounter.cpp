@@ -587,6 +587,15 @@ namespace SingleVariableCounter {
         return std::log((priceChange + eps) / (totalVolume + eps));
     }
 
+    double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        const double hlc3t = rollingTradeStatistics.hlc3t(windowTimeSeconds);
+        const double lastPrice = rollingTradeStatistics.lastTradePrice();
+
+        constexpr double eps = 1e-12;
+
+        return std::log((lastPrice + eps) / (hlc3t + eps));
+    }
+
     double calculateRSI(const RollingTradeStatistics& rollingTradeStatistics, const int startWindowTimeSeconds, const int windowTimeSeconds)
     {
         const int periods = 14;

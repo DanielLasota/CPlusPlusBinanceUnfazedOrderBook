@@ -7,10 +7,11 @@ void RollingTradeStatistics::Bucket::resetTradeBucket() {
     sellTradesCount             = 0;
     cumulatedBuyTradesQuantity  = 0.0;
     cumulatedSellTradesQuantity = 0.0;
-    firstTradePrice             = 0.0;
     lastTradePrice              = 0.0;
     biggestBuyTrade             = 0.0;
     biggestSellTrade            = 0.0;
+    highestTradePrice           = 0.0;
+    lowestTradePrice            = 0.0;
     hasTradeData                = false;
 }
 
@@ -42,11 +43,16 @@ void RollingTradeStatistics::update(const TradeEntry& e) {
     Bucket& bucket = buckets_[idx];
     bucket.start_time = (ts / BUCKET_SIZE_US) * BUCKET_SIZE_US;
 
-    if (!bucket.hasTradeData) {
-        bucket.firstTradePrice = e.price;
+    if (!bucket.hasTradeData){
         bucket.hasTradeData = true;
+        bucket.highestTradePrice = e.price;
+        bucket.lowestTradePrice  = e.price;
     }
+
     bucket.lastTradePrice = e.price;
+    bucket.highestTradePrice = std::max(bucket.highestTradePrice, e.price);
+    bucket.lowestTradePrice = std::min(bucket.lowestTradePrice, e.price);
+
     if (!e.isBuyerMarketMaker) {
         ++bucket.buyTradesCount;
         bucket.cumulatedBuyTradesQuantity += e.quantity;
@@ -213,4 +219,26 @@ double RollingTradeStatistics::simpleMovingAverage(const int windowTimeSeconds) 
     }
 
     return (count > 0) ? (sum / static_cast<double>(count)) : 0.0;
+}
+
+double RollingTradeStatistics::hlc3t(const int windowTimeSeconds) const {
+    if (lastTradeTimestamp_ == 0) return 0.0;
+
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
+
+    bool have = false;
+    double H = std::numeric_limits<double>::lowest();
+    double L = std::numeric_limits<double>::max();
+
+    for (const auto& b : buckets_) {
+        if (b.hasTradeData && b.start_time >= cutoff) {
+            H = std::max(H, b.highestTradePrice);
+            L = std::min(L, b.lowestTradePrice);
+            have = true;
+        }
+    }
+    if (!have) return 0.0;
+
+    const double C = lastTradePrice_;
+    return (H + L + C) / 3.0;
 }

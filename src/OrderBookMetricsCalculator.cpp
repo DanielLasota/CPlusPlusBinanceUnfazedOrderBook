@@ -810,6 +810,16 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.logKylesLambda60Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 60);
     }
 
+    if (mask_ & hlc3tLogRatio300Seconds) {
+        e.hlc3tLogRatio300Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 300);
+    }
+    if (mask_ & hlc3tLogRatio600Seconds) {
+        e.hlc3tLogRatio600Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 600);
+    }
+    if (mask_ & hlc3tLogRatio1200Seconds) {
+        e.hlc3tLogRatio1200Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 1200);
+    }
+
     if (mask_ & rsi5Seconds) {
         e.rsi5Seconds = SingleVariableCounter::calculateRSI(marketState.rollingTradeStatistics, 0, 5);
     }

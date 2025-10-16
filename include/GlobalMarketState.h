@@ -17,7 +17,7 @@ public:
 
     void update(DecodedEntry* entry);
 
-    std::optional<OrderBookMetricsEntry> countMarketStateMetricsByEntry(DecodedEntry* entry);
+    std::optional<OrderBookMetricsEntry> countMarketStateMetricsByEntry(const DecodedEntry* entry);
 
     std::optional<OrderBookMetricsEntry> countMarketStateMetrics(Symbol symbol, const Market& market);
 

@@ -14,14 +14,14 @@ void GlobalMarketState::update(DecodedEntry* entry) {
     it->second.update(entry);
 }
 
-std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetricsByEntry(DecodedEntry* entry) {
+std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetricsByEntry(const DecodedEntry* entry) {
     const AssetKey key{*entry};
     return calculator_.countMarketStateMetrics(marketStates_[key]);
 }
 
-std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetrics(Symbol symbol, const Market& market) {
-    AssetKey key{ market, symbol };
-    auto it = marketStates_.find(key);
+std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetrics(const Symbol symbol, const Market& market) {
+    const AssetKey key{ market, symbol };
+    const auto it = marketStates_.find(key);
     if (it == marketStates_.end()) {
         throw std::runtime_error("no specified market");
     }

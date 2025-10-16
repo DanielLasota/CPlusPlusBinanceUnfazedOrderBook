@@ -92,8 +92,8 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
                 +[](bool b)->uint8_t { return b ? 1u : 0u; }));
         } else if constexpr (std::is_same_v<MemberT, uint8_t>) {
             cols.emplace_back(std::make_unique<MemberColumn<uint8_t, uint8_t>>(std::string(key), member_ptr, n));
-        } else if constexpr (std::is_same_v<MemberT, int64_t>) {
-            cols.emplace_back(std::make_unique<MemberColumn<int64_t, int64_t>>(std::string(key), member_ptr, n));
+        } else if constexpr (std::is_same_v<MemberT, uint64_t>) {
+            cols.emplace_back(std::make_unique<MemberColumn<uint64_t, uint64_t>>(std::string(key), member_ptr, n));
         } else if constexpr (std::is_same_v<MemberT, double>) {
             cols.emplace_back(std::make_unique<MemberColumn<double, double>>(std::string(key), member_ptr, n));
         } else {

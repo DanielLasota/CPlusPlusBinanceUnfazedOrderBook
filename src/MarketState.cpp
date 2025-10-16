@@ -16,7 +16,7 @@ void MarketState::update(DecodedEntry* entry) {
         lastStreamType = StreamType::DIFFERENCE_DEPTH_STREAM;
     }
 
-    if (auto* tradeEntry = std::get_if<TradeEntry>(entry)) {
+    if (const auto* tradeEntry = std::get_if<TradeEntry>(entry)) {
         lastTrade = *tradeEntry;
         lastTradePtr = &lastTrade;
         hasLastTrade = true;
@@ -25,7 +25,7 @@ void MarketState::update(DecodedEntry* entry) {
     }
 }
 
-void MarketState::updateOrderBook(int64_t timestampOfReceive, double price, double quantity, bool isAsk){
+void MarketState::updateOrderBook(const uint64_t timestampOfReceive, const double price, const double quantity, const bool isAsk){
     lastTimestampOfReceive = timestampOfReceive;
     DifferenceDepthEntry e;
     e.timestampOfReceive = timestampOfReceive;
@@ -35,7 +35,7 @@ void MarketState::updateOrderBook(int64_t timestampOfReceive, double price, doub
     orderBook.update(&e);
 }
 
-void MarketState::updateTradeRegistry(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM) {
+void MarketState::updateTradeRegistry(const uint64_t timestampOfReceive, const double price, const double quantity, const bool isBuyerMM) {
     lastTimestampOfReceive = timestampOfReceive;
     lastTrade.timestampOfReceive = timestampOfReceive;
     lastTrade.price              = price;

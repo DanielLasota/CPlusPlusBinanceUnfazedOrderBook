@@ -6,7 +6,7 @@
 #include "enums/Market.h"
 
 struct DifferenceDepthEntry {
-    int64_t timestampOfReceive;
+    uint64_t timestampOfReceive;
     Symbol symbol;
     bool isAsk;
     double price;
@@ -17,7 +17,7 @@ struct DifferenceDepthEntry {
     DifferenceDepthEntry* next_;
 
     DifferenceDepthEntry(
-        int64_t timestampOfReceive,
+        uint64_t timestampOfReceive,
         Symbol symbol,
         bool isAsk,
         double price,

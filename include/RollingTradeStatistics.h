@@ -19,12 +19,12 @@ public:
     double simpleMovingAverage(int windowTimeSeconds) const;
 
 private:
-    static constexpr int64_t    BUCKET_SIZE_US = 1'000'000; // 1 s
+    static constexpr uint64_t    BUCKET_SIZE_US = 1'000'000; // 1 s
     static constexpr size_t     MAX_BUCKETS    = 136;       // 136 s of history
 
     struct Bucket {
 
-        int64_t start_time = 0;
+        uint64_t start_time = 0;
         size_t buyTradesCount = 0;
         size_t sellTradesCount = 0;
         double cumulatedBuyTradesQuantity = 0.0;
@@ -42,10 +42,10 @@ private:
 
     std::array<Bucket, MAX_BUCKETS> buckets_;
     size_t currentBucketIdx_ = 0;
-    int64_t lastTradeTimestamp_ = 0;
+    uint64_t lastTradeTimestamp_ = 0;
     double lastTradePrice_ = 0.0;
 
-    static size_t getBucketIndex(int64_t timestamp);
+    static size_t getBucketIndex(uint64_t timestamp);
 
-    void advanceTradeToTimestamp(int64_t timestamp);
+    void advanceTradeToTimestamp(uint64_t timestamp);
 };

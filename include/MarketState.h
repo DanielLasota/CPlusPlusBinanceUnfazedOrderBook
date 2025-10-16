@@ -20,9 +20,9 @@ public:
 
     void update(DecodedEntry* entry);
 
-    void updateOrderBook(int64_t timestampOfReceive, double price, double quantity, bool isAsk);
+    void updateOrderBook(uint64_t timestampOfReceive, double price, double quantity, bool isAsk);
 
-    void updateTradeRegistry(int64_t timestampOfReceive, double price, double quantity, bool isBuyerMM);
+    void updateTradeRegistry(uint64_t timestampOfReceive, double price, double quantity, bool isBuyerMM);
 
     bool getHasLastTrade() const { return hasLastTrade; }
 

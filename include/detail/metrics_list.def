@@ -8,7 +8,7 @@
 // metrics_list.def
 // usage: #define METRIC(name, ctype) ...  #include "metrics_list.def"  #undef METRIC
 
-METRIC(timestampOfReceive,                              int64_t)
+METRIC(timestampOfReceive,                              uint64_t)
 METRIC(market,                                          uint8_t)
 METRIC(symbol,                                          uint8_t)
 METRIC(streamType,                                      uint8_t)

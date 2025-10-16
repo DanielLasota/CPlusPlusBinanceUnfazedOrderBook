@@ -14,16 +14,16 @@ void RollingTradeStatistics::Bucket::resetTradeBucket() {
     hasTradeData                = false;
 }
 
-size_t RollingTradeStatistics::getBucketIndex(const int64_t timestamp) {
+size_t RollingTradeStatistics::getBucketIndex(const uint64_t timestamp) {
     return (timestamp / BUCKET_SIZE_US) % MAX_BUCKETS;
 }
 
-void RollingTradeStatistics::advanceTradeToTimestamp(const int64_t timestamp) {
+void RollingTradeStatistics::advanceTradeToTimestamp(const uint64_t timestamp) {
     if (timestamp <= lastTradeTimestamp_) return;
-    const int64_t old_bucket_time = lastTradeTimestamp_ / BUCKET_SIZE_US;
-    const int64_t new_bucket_time = timestamp / BUCKET_SIZE_US;
-    const int64_t buckets_to_clear = std::min(new_bucket_time - old_bucket_time, static_cast<int64_t>(MAX_BUCKETS));
-    for (int64_t i = 1; i <= buckets_to_clear; ++i) {
+    const uint64_t old_bucket_time = lastTradeTimestamp_ / BUCKET_SIZE_US;
+    const uint64_t new_bucket_time = timestamp / BUCKET_SIZE_US;
+    const uint64_t buckets_to_clear = std::min(new_bucket_time - old_bucket_time, MAX_BUCKETS);
+    for (uint64_t i = 1; i <= buckets_to_clear; ++i) {
         const size_t idx = getBucketIndex((old_bucket_time + i) * BUCKET_SIZE_US);
         buckets_[idx].start_time = (old_bucket_time + i) * BUCKET_SIZE_US;
         buckets_[idx].resetTradeBucket();
@@ -35,7 +35,7 @@ void RollingTradeStatistics::advanceTradeToTimestamp(const int64_t timestamp) {
 void RollingTradeStatistics::update(const TradeEntry& e) {
     lastTradePrice_ = e.price;
 
-    const int64_t ts = e.timestampOfReceive;
+    const uint64_t ts = e.timestampOfReceive;
     advanceTradeToTimestamp(ts);
 
     const size_t idx = getBucketIndex(ts);
@@ -61,7 +61,7 @@ void RollingTradeStatistics::update(const TradeEntry& e) {
 size_t RollingTradeStatistics::buyTradeCount(const int windowDurationSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0;
 
-    int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
     size_t total = 0;
 
     for (const auto& bucket : buckets_) {
@@ -75,7 +75,7 @@ size_t RollingTradeStatistics::buyTradeCount(const int windowDurationSeconds) co
 size_t RollingTradeStatistics::sellTradeCount(const int windowDurationSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0;
 
-    int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
     size_t total = 0;
 
     for (const auto& bucket : buckets_) {
@@ -89,7 +89,7 @@ size_t RollingTradeStatistics::sellTradeCount(const int windowDurationSeconds) c
 double RollingTradeStatistics::buyTradeVolume(const int windowDurationSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0.0;
 
-    int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
     double total = 0.0;
 
     for (const auto& bucket : buckets_) {
@@ -103,7 +103,7 @@ double RollingTradeStatistics::buyTradeVolume(const int windowDurationSeconds) c
 double RollingTradeStatistics::sellTradeVolume(const int windowDurationSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0.0;
 
-    int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
     double total = 0.0;
 
     for (const auto& bucket : buckets_) {
@@ -117,13 +117,13 @@ double RollingTradeStatistics::sellTradeVolume(const int windowDurationSeconds) 
 double RollingTradeStatistics::priceDifference(const int windowDurationSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0.0;
 
-    const int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowDurationSeconds) * BUCKET_SIZE_US;
 
     double price_at_cutoff = 0.0;
-    int64_t best_cutoff_time = std::numeric_limits<int64_t>::min();
+    uint64_t best_cutoff_time = std::numeric_limits<uint64_t>::min();
 
     double current_price = 0.0;
-    int64_t best_current_time = std::numeric_limits<int64_t>::min();
+    uint64_t best_current_time = std::numeric_limits<uint64_t>::min();
 
     for (const auto& bucket : buckets_) {
         if (!bucket.hasTradeData) continue;
@@ -139,8 +139,8 @@ double RollingTradeStatistics::priceDifference(const int windowDurationSeconds) 
         }
     }
 
-    if (best_current_time == std::numeric_limits<int64_t>::min() ||
-        best_cutoff_time == std::numeric_limits<int64_t>::min()) {
+    if (best_current_time == std::numeric_limits<uint64_t>::min() ||
+        best_cutoff_time == std::numeric_limits<uint64_t>::min()) {
         return 0.0;
         }
 
@@ -150,10 +150,10 @@ double RollingTradeStatistics::priceDifference(const int windowDurationSeconds) 
 double RollingTradeStatistics::oldestPrice(const int windowTimeSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0.0;
 
-    const int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
 
     double priceAtCutoff     = 0.0;
-    int64_t bestCutoffBucket = std::numeric_limits<int64_t>::min();
+    uint64_t bestCutoffBucket = std::numeric_limits<uint64_t>::min();
 
     for (auto const& bucket : buckets_) {
         if (!bucket.hasTradeData) continue;
@@ -171,7 +171,7 @@ double RollingTradeStatistics::oldestPrice(const int windowTimeSeconds) const {
 double RollingTradeStatistics::biggestBuyTradeNSeconds(const int windowSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0.0;
 
-    const int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowSeconds) * BUCKET_SIZE_US;
     double biggest = 0.0;
 
     for (auto const& bucket : buckets_) {
@@ -185,7 +185,7 @@ double RollingTradeStatistics::biggestBuyTradeNSeconds(const int windowSeconds) 
 double RollingTradeStatistics::biggestSellTradeNSeconds(const int windowSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0.0;
 
-    const int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowSeconds) * BUCKET_SIZE_US;
     double biggest = 0.0;
 
     for (auto const& bucket : buckets_) {
@@ -200,7 +200,7 @@ double RollingTradeStatistics::simpleMovingAverage(const int windowTimeSeconds) 
     if (lastTradeTimestamp_ == 0)
         return 0.0;
 
-    const int64_t cutoff = lastTradeTimestamp_ - static_cast<int64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
 
     double sum = 0.0;
     size_t count = 0;

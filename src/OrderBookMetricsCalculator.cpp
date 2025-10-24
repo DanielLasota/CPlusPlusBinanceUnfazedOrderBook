@@ -810,6 +810,25 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.logKylesLambda60Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 60);
     }
 
+    if (mask_ & sinTime24h) {
+        e.sinTime24h = SingleVariableCounter::calculateSinTime24h(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & longSinTime24h) {
+        e.longSinTime24h = SingleVariableCounter::calculateLongSinTime24h(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & cosTime24h) {
+        e.cosTime24h = SingleVariableCounter::calculateCosTime24h(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & isAsiaTime) {
+        e.isAsiaTime = SingleVariableCounter::calculateIsAsiaTime(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & isEuropeTime) {
+        e.isEuropeTime = SingleVariableCounter::calculateIsEuropeTime(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & isUSATime) {
+        e.isUSATime = SingleVariableCounter::calculateIsUSATime(marketState.getLastTimestampOfReceive());
+    }
+
     if (mask_ & hlc3tLogRatio300Seconds) {
         e.hlc3tLogRatio300Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 300);
     }

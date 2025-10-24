@@ -98,6 +98,13 @@ namespace SingleVariableCounter {
 
     double calculateLogKylesLambda(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
 
+    double calculateSinTime24h(uint64_t lastTimestampOfReceive);
+    double calculateLongSinTime24h(uint64_t lastTimestampOfReceive);
+    double calculateCosTime24h(uint64_t lastTimestampOfReceive);
+    double calculateIsAsiaTime(uint64_t lastTimestampOfReceive);
+    double calculateIsEuropeTime(uint64_t lastTimestampOfReceive);
+    double calculateIsUSATime(uint64_t lastTimestampOfReceive);
+
     double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateBollingerBandsDistance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateRSI(const RollingTradeStatistics& rollingTradeStatistics, int startWindowTimeSeconds, int windowTimeSeconds);

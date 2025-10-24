@@ -299,6 +299,13 @@ METRIC(logKylesLambda15Seconds,                         double)
 METRIC(logKylesLambda30Seconds,                         double)
 METRIC(logKylesLambda60Seconds,                         double)
 
+METRIC(sinTime24h,                                      double)
+METRIC(longSinTime24h,                                  double)
+METRIC(cosTime24h,                                      double)
+METRIC(isAsiaTime,                                      double)
+METRIC(isEuropeTime,                                    double)
+METRIC(isUSATime,                                       double)
+
 METRIC(hlc3tLogRatio300Seconds,                         double)
 METRIC(hlc3tLogRatio600Seconds,                         double)
 METRIC(hlc3tLogRatio1200Seconds,                        double)

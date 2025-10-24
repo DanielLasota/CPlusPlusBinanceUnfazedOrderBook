@@ -587,6 +587,51 @@ namespace SingleVariableCounter {
         return std::log((priceChange + eps) / (totalVolume + eps));
     }
 
+    double calculateSinTime24h(const uint64_t lastTimestampOfReceive){
+        constexpr double PI = 3.14159265358979323846;
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
+        return std::sin(2.0 * PI * frac_of_day);
+    }
+
+    double calculateLongSinTime24h(const uint64_t lastTimestampOfReceive){
+        constexpr double PI = 3.14159265358979323846;
+        constexpr double PI_2 = 1.57079632679489661923;
+        constexpr double DAY_US = 86'400'000'000.0;
+
+        const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
+
+        return std::sin(PI * frac_of_day - PI_2);
+    }
+
+    double calculateCosTime24h(const uint64_t lastTimestampOfReceive){
+        constexpr double PI = 3.14159265358979323846;
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
+        return std::cos(2.0 * PI * frac_of_day);
+    }
+
+    double calculateIsAsiaTime(const uint64_t lastTimestampOfReceive) {
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double seconds_in_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / 1e6;
+        const double hours = seconds_in_day / 3600.0;
+        return hours >= 0.0 && hours < 8.0 ? 1.0 : 0.0;
+    }
+
+    double calculateIsEuropeTime(const uint64_t lastTimestampOfReceive) {
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double seconds_in_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / 1e6;
+        const double hours = seconds_in_day / 3600.0;
+        return hours >= 8.0 && hours < 16.0 ? 1.0 : 0.0;
+    }
+
+    double calculateIsUSATime(const uint64_t lastTimestampOfReceive) {
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double seconds_in_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / 1e6;
+        const double hours = seconds_in_day / 3600.0;
+        return hours >= 16.0 && hours < 24.0 ? 1.0 : 0.0;
+    }
+
     double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         const double hlc3t = rollingTradeStatistics.hlc3t(windowTimeSeconds);
         const double lastPrice = rollingTradeStatistics.lastTradePrice();

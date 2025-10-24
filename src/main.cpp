@@ -309,6 +309,13 @@ int main() {
         "logKylesLambda30Seconds",
         "logKylesLambda60Seconds",
 
+        "sinTime24h",
+        "longSinTime24h",
+        "cosTime24h",
+        "isAsiaTime",
+        "isEuropeTime",
+        "isUSATime",
+
         "hlc3tLogRatio300Seconds",
         "hlc3tLogRatio600Seconds",
         "hlc3tLogRatio1200Seconds",

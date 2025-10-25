@@ -570,7 +570,7 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.tradeVolumeSum600Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 600);
     }
     if (mask_ & tradeVolumeSum1200Seconds) {
-        e.tradeVolumeSum600Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 1200);
+        e.tradeVolumeSum1200Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 1200);
     }
 
     if (mask_ & tradeVolumeDiff1Seconds) {

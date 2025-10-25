@@ -545,6 +545,34 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.tradeCountLogRatio60Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 60);
     }
 
+    if (mask_ & tradeVolumeSum1Seconds) {
+        e.tradeVolumeSum1Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 1);
+    }
+    if (mask_ & tradeVolumeSum3Seconds) {
+        e.tradeVolumeSum3Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 3);
+    }
+    if (mask_ & tradeVolumeSum5Seconds) {
+        e.tradeVolumeSum5Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 5);
+    }
+    if (mask_ & tradeVolumeSum10Seconds) {
+        e.tradeVolumeSum10Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 10);
+    }
+    if (mask_ & tradeVolumeSum15Seconds) {
+        e.tradeVolumeSum15Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 15);
+    }
+    if (mask_ & tradeVolumeSum30Seconds) {
+        e.tradeVolumeSum30Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 30);
+    }
+    if (mask_ & tradeVolumeSum60Seconds) {
+        e.tradeVolumeSum60Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 60);
+    }
+    if (mask_ & tradeVolumeSum600Seconds) {
+        e.tradeVolumeSum600Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 600);
+    }
+    if (mask_ & tradeVolumeSum1200Seconds) {
+        e.tradeVolumeSum600Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 1200);
+    }
+
     if (mask_ & tradeVolumeDiff1Seconds) {
         e.tradeVolumeDiff1Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 1);
     }
@@ -743,6 +771,12 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & priceDifference60Seconds) {
         e.priceDifference60Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 60);
     }
+    if (mask_ & priceDifference600Seconds) {
+        e.priceDifference600Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 600);
+    }
+    if (mask_ & priceDifference1200Seconds) {
+        e.priceDifference1200Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 1200);
+    }
 
     if (mask_ & rateOfReturn1Seconds) {
         e.rateOfReturn1Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 1);
@@ -765,6 +799,12 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     if (mask_ & rateOfReturn60Seconds) {
         e.rateOfReturn60Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 60);
     }
+    if (mask_ & rateOfReturn600Seconds) {
+        e.rateOfReturn600Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 600);
+    }
+    if (mask_ & rateOfReturn1200Seconds) {
+        e.rateOfReturn1200Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 1200);
+    }
 
     if (mask_ & logReturnRatio1Seconds) {
         e.logReturnRatio1Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 1);
@@ -786,6 +826,12 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     }
     if (mask_ & logReturnRatio60Seconds) {
         e.logReturnRatio60Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 60);
+    }
+    if (mask_ & logReturnRatio600Seconds) {
+        e.logReturnRatio600Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 600);
+    }
+    if (mask_ & logReturnRatio1200Seconds) {
+        e.logReturnRatio1200Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 1200);
     }
 
     if (mask_ & logKylesLambda1Seconds) {

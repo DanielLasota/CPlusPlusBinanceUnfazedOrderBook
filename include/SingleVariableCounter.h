@@ -81,6 +81,7 @@ namespace SingleVariableCounter {
     double calculateTradeCountFisherImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateTradeCountLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
 
+    double calculateTradeVolumeSum(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateTradeVolumeDiff(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateTradeVolumeImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateTradeVolumeLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);

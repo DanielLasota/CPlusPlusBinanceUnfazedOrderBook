@@ -213,6 +213,16 @@ int main() {
         "tradeCountLogRatio30Seconds",
         "tradeCountLogRatio60Seconds",
 
+        "tradeVolumeSum1Seconds",
+        "tradeVolumeSum3Seconds",
+        "tradeVolumeSum5Seconds",
+        "tradeVolumeSum10Seconds",
+        "tradeVolumeSum15Seconds",
+        "tradeVolumeSum30Seconds",
+        "tradeVolumeSum60Seconds",
+        "tradeVolumeSum600Seconds",
+        "tradeVolumeSum1200Seconds",
+
         "tradeVolumeDiff1Seconds",
         "tradeVolumeDiff3Seconds",
         "tradeVolumeDiff5Seconds",
@@ -284,6 +294,8 @@ int main() {
         "priceDifference15Seconds",
         "priceDifference30Seconds",
         "priceDifference60Seconds",
+        "priceDifference600Seconds",
+        "priceDifference1200Seconds",
 
         "rateOfReturn1Seconds",
         "rateOfReturn3Seconds",
@@ -292,6 +304,8 @@ int main() {
         "rateOfReturn15Seconds",
         "rateOfReturn30Seconds",
         "rateOfReturn60Seconds",
+        "rateOfReturn600Seconds",
+        "rateOfReturn1200Seconds",
 
         "logReturnRatio1Seconds",
         "logReturnRatio3Seconds",
@@ -300,6 +314,8 @@ int main() {
         "logReturnRatio15Seconds",
         "logReturnRatio30Seconds",
         "logReturnRatio60Seconds",
+        "logReturnRatio600Seconds",
+        "logReturnRatio1200Seconds",
 
         "logKylesLambda1Seconds",
         "logKylesLambda3Seconds",

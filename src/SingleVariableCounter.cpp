@@ -484,6 +484,12 @@ namespace SingleVariableCounter {
         return std::log((buys + eps) / (sells + eps));
     }
 
+    double calculateTradeVolumeSum(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        const double buyTradeVolume = rollingTradeStatistics.buyTradeVolume(windowTimeSeconds);
+        const double sellTradeVolume = rollingTradeStatistics.sellTradeVolume(windowTimeSeconds);
+        return buyTradeVolume + sellTradeVolume;
+    }
+
     double calculateTradeVolumeDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         const double buyTradeVolume = rollingTradeStatistics.buyTradeVolume(windowTimeSeconds);
         const double sellTradeVolume = rollingTradeStatistics.sellTradeVolume(windowTimeSeconds);

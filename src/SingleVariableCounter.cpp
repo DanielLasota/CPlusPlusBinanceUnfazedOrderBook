@@ -592,15 +592,15 @@ namespace SingleVariableCounter {
         return std::log((priceChange + eps) / (totalVolume + eps));
     }
 
+    double calculateDeltaPVT(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        return calculateRateOfReturn(rollingTradeStatistics, windowTimeSeconds) * calculateTradeVolumeSum(rollingTradeStatistics, windowTimeSeconds);
+    }
+
     double calculateSinTime24h(const uint64_t lastTimestampOfReceive){
         constexpr double PI = 3.14159265358979323846;
         constexpr double DAY_US = 86'400'000'000.0;
         const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
         return std::sin(2.0 * PI * frac_of_day);
-    }
-
-    double calculateDeltaPVT(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return calculateRateOfReturn(rollingTradeStatistics, windowTimeSeconds) * calculateTradeVolumeSum(rollingTradeStatistics, windowTimeSeconds);
     }
 
     double calculateLongSinTime24h(const uint64_t lastTimestampOfReceive){
@@ -639,6 +639,14 @@ namespace SingleVariableCounter {
         const double seconds_in_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / 1e6;
         const double hours = seconds_in_day / 3600.0;
         return hours >= 16.0 && hours < 24.0 ? 1.0 : 0.0;
+    }
+
+    double calculateSMALogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        constexpr double eps = 1e-12;
+        const double sma = rollingTradeStatistics.simpleMovingAverage(windowTimeSeconds);
+        const double lastPrice = rollingTradeStatistics.lastTradePrice();
+
+        return std::log((lastPrice + eps) / (sma + eps));
     }
 
     double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){

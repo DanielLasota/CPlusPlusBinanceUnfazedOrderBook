@@ -341,6 +341,16 @@ int main() {
         "isEuropeTime",
         "isUSATime",
 
+        "smaLogRatio1Seconds",
+        "smaLogRatio3Seconds",
+        "smaLogRatio5Seconds",
+        "smaLogRatio10Seconds",
+        "smaLogRatio15Seconds",
+        "smaLogRatio30Seconds",
+        "smaLogRatio60Seconds",
+        "smaLogRatio300Seconds",
+        "smaLogRatio600Seconds",
+
         "hlc3tLogRatio300Seconds",
         "hlc3tLogRatio600Seconds",
         "hlc3tLogRatio1200Seconds",

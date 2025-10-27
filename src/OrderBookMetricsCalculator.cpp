@@ -900,6 +900,34 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.isUSATime = SingleVariableCounter::calculateIsUSATime(marketState.getLastTimestampOfReceive());
     }
 
+    if (mask_ & smaLogRatio1Seconds) {
+        e.smaLogRatio1Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 1);
+    }
+    if (mask_ & smaLogRatio3Seconds) {
+        e.smaLogRatio3Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 3);
+    }
+    if (mask_ & smaLogRatio5Seconds) {
+        e.smaLogRatio5Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 5);
+    }
+    if (mask_ & smaLogRatio10Seconds) {
+        e.smaLogRatio10Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 10);
+    }
+    if (mask_ & smaLogRatio15Seconds) {
+        e.smaLogRatio15Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 15);
+    }
+    if (mask_ & smaLogRatio30Seconds) {
+        e.smaLogRatio30Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 30);
+    }
+    if (mask_ & smaLogRatio60Seconds) {
+        e.smaLogRatio60Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 60);
+    }
+    if (mask_ & smaLogRatio300Seconds) {
+        e.smaLogRatio300Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 300);
+    }
+    if (mask_ & smaLogRatio600Seconds) {
+        e.smaLogRatio600Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 600);
+    }
+
     if (mask_ & hlc3tLogRatio300Seconds) {
         e.hlc3tLogRatio300Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 300);
     }

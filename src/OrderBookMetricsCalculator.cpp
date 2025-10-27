@@ -856,6 +856,31 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.logKylesLambda60Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 60);
     }
 
+    if (mask_ & deltaPVT1Seconds) {
+        e.deltaPVT1Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 1);
+    }
+    if (mask_ & deltaPVT3Seconds) {
+        e.deltaPVT3Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 3);
+    }
+    if (mask_ & deltaPVT5Seconds) {
+        e.deltaPVT5Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 5);
+    }
+    if (mask_ & deltaPVT10Seconds) {
+        e.deltaPVT10Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 10);
+    }
+    if (mask_ & deltaPVT15Seconds) {
+        e.deltaPVT15Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 15);
+    }
+    if (mask_ & deltaPVT30Seconds) {
+        e.deltaPVT30Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 30);
+    }
+    if (mask_ & deltaPVT60Seconds) {
+        e.deltaPVT60Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 60);
+    }
+    if (mask_ & deltaPVT600Seconds) {
+        e.deltaPVT600Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 600);
+    }
+
     if (mask_ & sinTime24h) {
         e.sinTime24h = SingleVariableCounter::calculateSinTime24h(marketState.getLastTimestampOfReceive());
     }

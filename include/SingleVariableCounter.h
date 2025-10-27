@@ -99,6 +99,8 @@ namespace SingleVariableCounter {
 
     double calculateLogKylesLambda(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
 
+    double calculateDeltaPVT(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+
     double calculateSinTime24h(uint64_t lastTimestampOfReceive);
     double calculateLongSinTime24h(uint64_t lastTimestampOfReceive);
     double calculateCosTime24h(uint64_t lastTimestampOfReceive);

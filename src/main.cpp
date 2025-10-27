@@ -341,6 +341,16 @@ int main() {
         "isEuropeTime",
         "isUSATime",
 
+        "priceDistance1Seconds",
+        "priceDistance3Seconds",
+        "priceDistance5Seconds",
+        "priceDistance10Seconds",
+        "priceDistance15Seconds",
+        "priceDistance30Seconds",
+        "priceDistance60Seconds",
+        "priceDistance300Seconds",
+        "priceDistance600Seconds",
+
         "smaLogRatio1Seconds",
         "smaLogRatio3Seconds",
         "smaLogRatio5Seconds",

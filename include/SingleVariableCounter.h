@@ -108,6 +108,7 @@ namespace SingleVariableCounter {
     double calculateIsEuropeTime(uint64_t lastTimestampOfReceive);
     double calculateIsUSATime(uint64_t lastTimestampOfReceive);
 
+    double calculatePriceDistance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateSMALogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateBollingerBandsDistance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);

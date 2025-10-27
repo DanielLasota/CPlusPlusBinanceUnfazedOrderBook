@@ -641,6 +641,10 @@ namespace SingleVariableCounter {
         return hours >= 16.0 && hours < 24.0 ? 1.0 : 0.0;
     }
 
+    double calculatePriceDistance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        return rollingTradeStatistics.priceDistance(windowTimeSeconds);
+    }
+
     double calculateSMALogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         constexpr double eps = 1e-12;
         const double sma = rollingTradeStatistics.simpleMovingAverage(windowTimeSeconds);

@@ -9,6 +9,8 @@ public:
 
     size_t buyTradeCount(int windowDurationSeconds) const;
     size_t sellTradeCount(int windowDurationSeconds) const;
+    double getLowestPriceNSeconds(int windowTimeSeconds) const;
+    double getHighestPriceNSeconds(int windowTimeSeconds) const;
     double buyTradeVolume(int windowDurationSeconds) const;
     double sellTradeVolume(int windowDurationSeconds) const;
     double priceDifference(int windowDurationSeconds) const;
@@ -18,6 +20,7 @@ public:
     double biggestSellTradeNSeconds(int windowSeconds) const;
     double simpleMovingAverage(int windowTimeSeconds) const;
     double hlc3t(int windowTimeSeconds) const;
+    double priceDistance(int windowTimeSeconds) const;
     double rollingMeanTradePrice(int windowTimeSeconds) const;
     double rollingStdTradePrice(int windowTimeSeconds) const;
 

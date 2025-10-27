@@ -900,6 +900,34 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.isUSATime = SingleVariableCounter::calculateIsUSATime(marketState.getLastTimestampOfReceive());
     }
 
+    if (mask_ & priceDistance1Seconds) {
+        e.priceDistance1Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 1);
+    }
+    if (mask_ & priceDistance3Seconds) {
+        e.priceDistance3Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 3);
+    }
+    if (mask_ & priceDistance5Seconds) {
+        e.priceDistance5Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 5);
+    }
+    if (mask_ & priceDistance10Seconds) {
+        e.priceDistance10Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 10);
+    }
+    if (mask_ & priceDistance15Seconds) {
+        e.priceDistance15Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 15);
+    }
+    if (mask_ & priceDistance30Seconds) {
+        e.priceDistance30Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 30);
+    }
+    if (mask_ & priceDistance60Seconds) {
+        e.priceDistance60Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 60);
+    }
+    if (mask_ & priceDistance300Seconds) {
+        e.priceDistance300Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 300);
+    }
+    if (mask_ & priceDistance600Seconds) {
+        e.priceDistance600Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 600);
+    }
+
     if (mask_ & smaLogRatio1Seconds) {
         e.smaLogRatio1Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 1);
     }

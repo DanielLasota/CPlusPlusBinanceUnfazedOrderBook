@@ -98,6 +98,40 @@ size_t RollingTradeStatistics::sellTradeCount(const int windowDurationSeconds) c
     return total;
 }
 
+double RollingTradeStatistics::getLowestPriceNSeconds(const int windowTimeSeconds) const {
+    if (lastTradeTimestamp_ == 0) return 0.0;
+
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
+
+    double lowest = std::numeric_limits<double>::max();
+    bool have = false;
+
+    for (const auto& b : buckets_) {
+        if (b.hasTradeData && b.start_time >= cutoff) {
+            lowest = std::min(lowest, b.lowestTradePrice);
+            have = true;
+        }
+    }
+    return have ? lowest : 0.0;
+}
+
+double RollingTradeStatistics::getHighestPriceNSeconds(const int windowTimeSeconds) const {
+    if (lastTradeTimestamp_ == 0) return 0.0;
+
+    const uint64_t cutoff = lastTradeTimestamp_ - static_cast<uint64_t>(windowTimeSeconds) * BUCKET_SIZE_US;
+
+    double highest = std::numeric_limits<double>::lowest();
+    bool have = false;
+
+    for (const auto& b : buckets_) {
+        if (b.hasTradeData && b.start_time >= cutoff) {
+            highest = std::max(highest, b.highestTradePrice);
+            have = true;
+        }
+    }
+    return have ? highest : 0.0;
+}
+
 double RollingTradeStatistics::buyTradeVolume(const int windowDurationSeconds) const {
     if (lastTradeTimestamp_ == 0) return 0.0;
 
@@ -247,6 +281,17 @@ double RollingTradeStatistics::hlc3t(const int windowTimeSeconds) const {
 
     const double C = lastTradePrice_;
     return (H + L + C) / 3.0;
+}
+
+double RollingTradeStatistics::priceDistance(const int windowTimeSeconds) const {
+    const double H = getHighestPriceNSeconds(windowTimeSeconds);
+    const double L = getLowestPriceNSeconds(windowTimeSeconds);
+    const double O = oldestPrice(windowTimeSeconds);
+    const double C = lastTradePrice();
+
+    const double C_prev = oldestPrice(2 * windowTimeSeconds);
+
+    return 2.0 * (H - L) - std::abs(C - O) + std::abs(O - C_prev);
 }
 
 double RollingTradeStatistics::rollingMeanTradePrice(const int windowTimeSeconds) const {

@@ -565,13 +565,12 @@ namespace SingleVariableCounter {
     }
 
     double calculateRateOfReturn(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds) {
-        const double priceDifference = rollingTradeStatistics.priceDifference(windowTimeSeconds);
-
+        const double lastTradePrice = rollingTradeStatistics.lastTradePrice();
         const double oldestPrice = rollingTradeStatistics.oldestPrice(windowTimeSeconds);
 
         if (oldestPrice == 0.0) return 0.0;
 
-        return priceDifference * 100 / oldestPrice;
+        return (lastTradePrice - oldestPrice) / oldestPrice;
     }
 
     double calculateLogReturnRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
@@ -598,6 +597,10 @@ namespace SingleVariableCounter {
         constexpr double DAY_US = 86'400'000'000.0;
         const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
         return std::sin(2.0 * PI * frac_of_day);
+    }
+
+    double calculateDeltaPVT(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        return calculateRateOfReturn(rollingTradeStatistics, windowTimeSeconds) * calculateTradeVolumeSum(rollingTradeStatistics, windowTimeSeconds);
     }
 
     double calculateLongSinTime24h(const uint64_t lastTimestampOfReceive){

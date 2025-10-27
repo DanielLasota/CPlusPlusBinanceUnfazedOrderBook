@@ -325,6 +325,15 @@ int main() {
         "logKylesLambda30Seconds",
         "logKylesLambda60Seconds",
 
+        "deltaPVT1Seconds",
+        "deltaPVT3Seconds",
+        "deltaPVT5Seconds",
+        "deltaPVT10Seconds",
+        "deltaPVT15Seconds",
+        "deltaPVT30Seconds",
+        "deltaPVT60Seconds",
+        "deltaPVT600Seconds",
+
         "sinTime24h",
         "longSinTime24h",
         "cosTime24h",

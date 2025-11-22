@@ -357,7 +357,3 @@ METRIC(hlc3tLogRatio1200Seconds,                        double)
 METRIC(bollingerBandsDistance300Seconds,                double)
 METRIC(bollingerBandsDistance600Seconds,                double)
 METRIC(bollingerBandsDistance1200Seconds,               double)
-
-METRIC(rsi5Seconds,                                     double)
-METRIC(stochRsi5Seconds,                                double)
-METRIC(macd2Seconds,                                    double)

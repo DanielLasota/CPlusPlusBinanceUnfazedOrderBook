@@ -28,7 +28,7 @@ py::dict OrderBookSessionSimulator::computeVariables(const std::string &csvPath,
     OrderBookMetrics orderBookMetrics(variables, countOrderBookMetricsSize(entries));
 
     // const auto loopStart = std::chrono::steady_clock::now();
-
+    // std::cout << std::fixed << std::setprecision(5);
     for (DecodedEntry* p : ptrEntries) {
         globalMarketState.update(p);
         if (std::visit([](auto const& entry){return entry.isLast;}, *p)) {

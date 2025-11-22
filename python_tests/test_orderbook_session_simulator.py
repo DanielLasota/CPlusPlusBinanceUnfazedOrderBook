@@ -318,10 +318,6 @@ ALL_ORDERBOOK_VARIABLES = [
     "logKylesLambda15Seconds",
     "logKylesLambda30Seconds",
     "logKylesLambda60Seconds",
-
-    "rsi5Seconds",
-    "stochRsi5Seconds",
-    "macd2Seconds"
 ]
 
 

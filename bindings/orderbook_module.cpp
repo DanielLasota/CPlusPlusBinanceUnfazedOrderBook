@@ -199,14 +199,11 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     svc.def("calculate_simplified_slope_imbalance",                 &SingleVariableCounter::calculateSimplifiedSlopeImbalance,                              py::arg("order_book"));
 
     svc.def("calculate_trade_count_imbalance",                      &SingleVariableCounter::calculateTradeCountImbalance,                                   py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_cumulative_delta",                           &SingleVariableCounter::calculateTradeVolumeDiff,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_trade_volume_diff",                          &SingleVariableCounter::calculateTradeVolumeDiff,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
     svc.def("calculate_price_difference",                           &SingleVariableCounter::calculatePriceDifference,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
     svc.def("calculate_rate_of_return",                             &SingleVariableCounter::calculateRateOfReturn,                                          py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_difference_depth_volatility_imbalance",      &SingleVariableCounter::calculateDifferenceDepthCountImbalance,                    py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+    svc.def("calculate_difference_depth_count_imbalance",      &SingleVariableCounter::calculateDifferenceDepthCountImbalance,                    py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 
-    svc.def("calculate_rsi",                                        &SingleVariableCounter::calculateRSI,                                                   py::arg("rolling_statistics_data"), py::arg("startWindowTimeSeconds"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_stoch_rsi",                                  &SingleVariableCounter::calculateStochRSI,                                              py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_macd",                                       &SingleVariableCounter::calculateMacd,                                                  py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
 
     // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
@@ -343,31 +340,31 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
              py::arg("trade_entry"),
              "Dodaje nowy TradeEntry do statystyk")
         .def("buy_trade_count",
-             &RollingTradeStatistics::buyTradeCount,
+             &RollingTradeStatistics::getBuyTradeCount,
              py::arg("windowTimeSeconds"),
              "Liczba kupna w oknie [s]")
         .def("sell_trade_count",
-             &RollingTradeStatistics::sellTradeCount,
+             &RollingTradeStatistics::getSellTradeCount,
              py::arg("windowTimeSeconds"),
              "Liczba sprzedaży w oknie [s]")
         .def("buy_trade_volume",
-             &RollingTradeStatistics::buyTradeVolume,
+             &RollingTradeStatistics::getCumulatedBuyTradeVolume,
              py::arg("windowTimeSeconds"),
              "Wolumen kupna w oknie [s]")
         .def("sell_trade_volume",
-             &RollingTradeStatistics::sellTradeVolume,
+             &RollingTradeStatistics::getCumulatedSellTradeVolume,
              py::arg("windowTimeSeconds"),
              "Wolumen sprzedaży w oknie [s]")
         .def("price_difference",
-             &RollingTradeStatistics::priceDifference,
+             &RollingTradeStatistics::getPriceDifference,
              py::arg("windowTimeSeconds"),
              "Różnica ceny w oknie [s]")
         .def("oldest_price",
-             &RollingTradeStatistics::oldestPrice,
+             &RollingTradeStatistics::getOldestPrice,
              py::arg("windowTimeSeconds"),
              "Najstarsza cena w oknie [s]")
         .def("simple_moving_average",
-             &RollingTradeStatistics::simpleMovingAverage,
+             &RollingTradeStatistics::getSMA,
              py::arg("windowTimeSeconds"),
              "Prosta średnia ruchoma ceny w oknie [s]")
         ;

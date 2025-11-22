@@ -112,8 +112,4 @@ namespace SingleVariableCounter {
     double calculateSMALogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateBollingerBandsDistance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateRSI(const RollingTradeStatistics& rollingTradeStatistics, int startWindowTimeSeconds, int windowTimeSeconds);
-    double calculateStochRSI(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateMacd(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-
 }

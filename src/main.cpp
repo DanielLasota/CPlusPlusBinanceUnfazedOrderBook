@@ -367,10 +367,6 @@ int main() {
         "bollingerBandsDistance300Seconds",
         "bollingerBandsDistance600Seconds",
         "bollingerBandsDistance1200Seconds"
-
-        //"rsi5Seconds",
-        //"stochRsi5Seconds",
-        //"macd2Seconds"
     };
 
     orderBookSessionSimulator.computeVariables(csvPath, variables);

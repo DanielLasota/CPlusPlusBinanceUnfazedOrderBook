@@ -14,7 +14,7 @@ include_directories(
 
 set(SOURCES
         bindings/orderbook_module.cpp
-        src/main.cpp
+#        src/main.cpp
         src/OrderBook.cpp
         src/OrderBookSessionSimulator.cpp
         src/MarketState.cpp
@@ -36,6 +36,11 @@ pybind11_add_module(cpp_binance_orderbook ${SOURCES})
 
 set_target_properties(cpp_binance_orderbook PROPERTIES SUFFIX ".pyd")
 
+add_executable(ringbuffer_tests
+        test/TestRollingTradeStatistics.cpp
+        include/RollingTradeStatistics.h
+        src/RollingTradeStatistics.cpp
+)
 
 #1
 

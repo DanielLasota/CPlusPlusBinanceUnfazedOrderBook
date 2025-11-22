@@ -976,15 +976,5 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.bollingerBandsDistance1200Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.rollingTradeStatistics, 1200);
     }
 
-    if (mask_ & rsi5Seconds) {
-        e.rsi5Seconds = SingleVariableCounter::calculateRSI(marketState.rollingTradeStatistics, 0, 5);
-    }
-    if (mask_ & stochRsi5Seconds) {
-        e.stochRsi5Seconds = SingleVariableCounter::calculateStochRSI(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & macd2Seconds) {
-        e.macd2Seconds = SingleVariableCounter::calculateMacd(marketState.rollingTradeStatistics, 2);
-    }
-
     return e;
 }

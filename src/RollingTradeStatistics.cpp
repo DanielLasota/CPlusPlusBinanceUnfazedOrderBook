@@ -1,70 +1,103 @@
-#include "RollingTradeStatistics.h"
 #include <algorithm>
-#include <cmath>
+#include <iostream>
 
-void RollingTradeStatistics::Bucket::resetTradeBucket() {
+#include "RollingTradeStatistics.h"
+
+void RollingTradeStatistics::Bucket::reset() {
     buyCount                = 0;
     sellCount               = 0;
-    cumulatedBuyVolume      = 0.0;
-    cumulatedSellVolume     = 0.0;
+    cumBuyQuantity          = 0.0;
+    cumSellQuantity         = 0.0;
     openPrice               = 0.0;
     closePrice              = 0.0;
-    biggestBuyVolume        = 0.0;
-    biggestSellVolume       = 0.0;
+    biggestBuyQuantity      = 0.0;
+    biggestSellQuantity     = 0.0;
     highestPrice            = 0.0;
-    lowestPrice             = 0.0;
+    lowestPrice             = std::numeric_limits<double>::infinity();
     hasData                 = false;
 }
 
-void RollingTradeStatistics::update(const TradeEntry& tradeEntry) {
-    const uint64_t timestampOfReceiveUS = tradeEntry.timestampOfReceive;
+void RollingTradeStatistics::update(const TradeEntry& trade) {
+    const uint64_t timestampOfReceiveUS = trade.timestampOfReceive;
     const uint64_t timestampOfReceiveS = timestampOfReceiveUS / 1'000'000;
     if (timestampOfReceiveUS < lastTradeTimestampUS) [[unlikely]] return;
 
-    rewindRingBufferTape(timestampOfReceiveS);
+    rewind(timestampOfReceiveS);
 
     lastTradeTimestampUS = timestampOfReceiveUS;
-    lastTradePrice = tradeEntry.price;
-    currentBucketId = getBucketIndex(timestampOfReceiveS);
+    newestPrice = trade.price;
+    currentBucketId = getBucketId(timestampOfReceiveS);
 
     Bucket& bucket = buckets[currentBucketId];
     bucket.startTimeSeconds = timestampOfReceiveS;
 
     if (!bucket.hasData){
         bucket.hasData = true;
-        bucket.openPrice = tradeEntry.price;
-        bucket.highestPrice = tradeEntry.price;
-        bucket.lowestPrice  = tradeEntry.price;
+        bucket.openPrice = trade.price;
+        bucket.highestPrice = trade.price;
+        bucket.lowestPrice = trade.price;
     }
 
-    bucket.closePrice = tradeEntry.price;
-    bucket.highestPrice = std::max(bucket.highestPrice, tradeEntry.price);
-    bucket.lowestPrice = std::min(bucket.lowestPrice, tradeEntry.price);
+    bucket.closePrice = trade.price;
+    bucket.highestPrice = std::max(bucket.highestPrice, trade.price);
+    bucket.lowestPrice = std::min(bucket.lowestPrice, trade.price);
 
-    if (!tradeEntry.isBuyerMarketMaker) {
+    if (!trade.isBuyerMarketMaker) {
         ++bucket.buyCount;
-        bucket.cumulatedBuyVolume += tradeEntry.quantity;
-        bucket.biggestBuyVolume = std::max(bucket.biggestBuyVolume, tradeEntry.quantity);
+        bucket.cumBuyQuantity += trade.quantity;
+        bucket.biggestBuyQuantity = std::max(bucket.biggestBuyQuantity, trade.quantity);
     } else {
         ++bucket.sellCount;
-        bucket.cumulatedSellVolume += tradeEntry.quantity;
-        bucket.biggestSellVolume = std::max(bucket.biggestSellVolume, tradeEntry.quantity);
+        bucket.cumSellQuantity += trade.quantity;
+        bucket.biggestSellQuantity = std::max(bucket.biggestSellQuantity, trade.quantity);
     }
+
+    // std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
+    // std::cout << trade << std::endl;
+    // for (size_t i = 0; i < MAX_BUCKETS; ++i) {
+    //     const Bucket& b = buckets[i];
+    //     // if (!b.hasData) {
+    //     //     std::cout << "(empty)\n";
+    //     //     continue;
+    //     // }
+    //     std::cout
+    //         << "Bucket[" << i << "] "
+    //         << "start=" << b.startTimeSeconds << "s | "
+    //         << " data=" << b.hasData
+    //         << " o=" << b.openPrice
+    //         << " h=" << b.highestPrice
+    //         << " l=" << b.lowestPrice
+    //         << " c=" << b.closePrice
+    //         << " buyCount=" << b.buyCount
+    //         << " sellCount=" << b.sellCount
+    //         << "\n";
+    // }
+    // std::cout << "CurrentBucketId: " << currentBucketId << "\n";
+    // std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n";
 }
 
-void RollingTradeStatistics::rewindRingBufferTape(const uint64_t newTimestampS) {
+void RollingTradeStatistics::rewind(const uint64_t newTimestampS) {
     if (newTimestampS <= lastBucketTimestampS) [[unlikely]] return;
+    if (lastBucketTimestampS == 0) [[unlikely]] {
+        lastBucketTimestampS = newTimestampS;
+        return;
+    }
 
     const uint64_t bucketsToOverride = std::min(newTimestampS - lastBucketTimestampS, MAX_BUCKETS);
     for (uint64_t i = 1; i <= bucketsToOverride; ++i) {
-        const size_t idOfBufferToBeOverride = getBucketIndex(lastBucketTimestampS + i);
-        buckets[idOfBufferToBeOverride].resetTradeBucket();
-        buckets[idOfBufferToBeOverride].startTimeSeconds = lastBucketTimestampS + i;
+        const size_t id = getBucketId(lastBucketTimestampS + i);
+        buckets[id].reset();
+        buckets[id].startTimeSeconds = lastBucketTimestampS + i;
+
+        buckets[id].openPrice = newestPrice;
+        buckets[id].highestPrice = newestPrice;
+        buckets[id].lowestPrice = newestPrice;
+        buckets[id].closePrice = newestPrice;
     }
     lastBucketTimestampS = newTimestampS;
 }
 
-size_t RollingTradeStatistics::getBucketIndex(const uint64_t timestampS) {
+size_t RollingTradeStatistics::getBucketId(const uint64_t timestampS) {
     return timestampS & MASK;
 }
 
@@ -73,411 +106,123 @@ uint64_t RollingTradeStatistics::getLastTradeTimestamp() const {
     return lastTradeTimestampUS;
 }
 
-double RollingTradeStatistics::getLastTradePrice() const {
-    return lastTradePrice;
+double RollingTradeStatistics::getNewestPrice() const {
+    return newestPrice;
 }
 
-size_t RollingTradeStatistics::getBuyTradeCount(const size_t windowDurationSeconds) const {
-    const size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    size_t totalBuyTradesCount = 0;
+RollingTradeStatistics::BuySellCount RollingTradeStatistics::getBuySellTradeCount(const size_t seconds) const {
+    size_t buy = 0;
+    size_t sell = 0;
 
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            totalBuyTradesCount += bucket.buyCount;
-        }
+    for (size_t i = 0; i < seconds; ++i) {
+        const Bucket& b = buckets[currentBucketId - i & MASK];
+        buy += b.buyCount;
+        sell += b.sellCount;
     }
 
-    return totalBuyTradesCount;
+    return {buy, sell};
 }
 
-size_t RollingTradeStatistics::getSellTradeCount(const size_t windowDurationSeconds) const {
-    const size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    size_t totalSellTradesCount = 0;
+RollingTradeStatistics::HiLo RollingTradeStatistics::getHiLoPrice(const size_t seconds) const{
+    double hi = 0.0;
+    double lo = std::numeric_limits<double>::infinity();
 
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            totalSellTradesCount += bucket.sellCount;
-        }
+    for (size_t i = 0; i < seconds; ++i) {
+        const Bucket& b = buckets[currentBucketId - i & MASK];
+        hi = std::max(hi, b.highestPrice);
+        lo = std::min(lo, b.lowestPrice);
     }
 
-    return totalSellTradesCount;
+    return {hi, lo};
 }
 
-double RollingTradeStatistics::getLowestPrice(const size_t windowDurationSeconds) const {
-    size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    double lowestPrice = std::numeric_limits<double>::max();
+RollingTradeStatistics::BuySell RollingTradeStatistics::getCumBuySellQuantity(const size_t seconds) const {
+    double buy = 0;
+    double sell = 0;
 
-    const Bucket& targetBucket = buckets[currentBucketId - bucketsToScan + 1 & MASK];
-
-    if (!targetBucket.hasData) [[unlikely]] {
-        for (size_t i = bucketsToScan; i < MAX_BUCKETS; ++i) {
-            const size_t idx = (currentBucketId - i) & MASK;
-            const Bucket& bucket = buckets[idx];
-
-            if (bucket.hasData) [[likely]] {
-                lowestPrice = bucket.closePrice;
-                break;
-            }
-        }
+    for (size_t i = 0; i < seconds; ++i) {
+        const Bucket& b = buckets[currentBucketId - i & MASK];
+        buy += b.cumBuyQuantity;
+        sell += b.cumSellQuantity;
     }
 
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            lowestPrice = std::min(lowestPrice, bucket.lowestPrice);
-        }
-    }
-
-    return lowestPrice != std::numeric_limits<double>::max() ? lowestPrice : 0.0;
+    return {buy, sell};
 }
 
-double RollingTradeStatistics::getHighestPrice(const size_t windowDurationSeconds) const {
-    const size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    double highestPrice = 0.0;
-
-    const Bucket& targetBucket = buckets[currentBucketId - bucketsToScan + 1 & MASK];
-
-    if (!targetBucket.hasData) [[unlikely]] {
-        for (size_t i = bucketsToScan; i < MAX_BUCKETS; ++i) {
-            const size_t idx = (currentBucketId - i) & MASK;
-            const Bucket& bucket = buckets[idx];
-
-            if (bucket.hasData) [[likely]] {
-                highestPrice = bucket.highestPrice;
-                break;
-            }
-        }
-    }
-
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            highestPrice = std::max(highestPrice, bucket.highestPrice);
-        }
-    }
-
-    return highestPrice;
+double RollingTradeStatistics::getOldestPrice(const size_t seconds) const {
+    const Bucket& b = buckets[currentBucketId - seconds + 1 & MASK];
+    return b.openPrice;
 }
 
-double RollingTradeStatistics::getCumulatedBuyTradeVolume(const size_t windowDurationSeconds) const {
-    const uint64_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    double cumulatedBuyTradeVolume = 0;
-
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = currentBucketId - i & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            cumulatedBuyTradeVolume += bucket.cumulatedBuyVolume;
-        }
-    }
-
-    return cumulatedBuyTradeVolume;
+double RollingTradeStatistics::getPriceDifference(const size_t seconds) const {
+    const Bucket& b = buckets[currentBucketId - seconds + 1 & MASK];
+    return newestPrice - b.openPrice;
 }
 
-double RollingTradeStatistics::getCumulatedSellTradeVolume(const size_t windowDurationSeconds) const {
-    const uint64_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    double cumulatedSellTradeVolume = 0;
-
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = currentBucketId - i & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            cumulatedSellTradeVolume += bucket.cumulatedSellVolume;
-        }
-    }
-
-    return cumulatedSellTradeVolume;
+double RollingTradeStatistics::getClosePrice(const size_t seconds) const {
+    const size_t offset = std::min(seconds, MASK);
+    const Bucket& b = buckets[currentBucketId - offset & MASK];
+    return b.closePrice;
 }
 
-double RollingTradeStatistics::getOldestPrice(const size_t windowDurationSeconds) const {
-    const size_t offset = std::min(windowDurationSeconds - 1, MASK);
+RollingTradeStatistics::BuySell RollingTradeStatistics::getBiggestBuySell(const size_t seconds) const {
+    double biggestBuyQuantity = 0.0;
+    double biggestSellQuantity = 0.0;
 
-    const Bucket& targetBucket = buckets[(currentBucketId - offset) & MASK];
-    if (targetBucket.hasData) [[likely]] {
-        return targetBucket.openPrice;
+    for (size_t i = 0; i < seconds; ++i) {
+        const Bucket& b = buckets[currentBucketId - i & MASK];
+
+        biggestBuyQuantity = std::max(biggestBuyQuantity, b.biggestBuyQuantity);
+        biggestSellQuantity = std::max(biggestSellQuantity, b.biggestSellQuantity);
     }
 
-    for (size_t i = offset; i < MAX_BUCKETS; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            return bucket.closePrice;
-        }
-    }
-
-    for (size_t i = offset; i > 0; --i) {
-        const size_t idx = (currentBucketId - i + 1) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            return bucket.openPrice;
-        }
-    }
-
-    return lastTradePrice;
+    return {biggestBuyQuantity, biggestSellQuantity};
 }
 
-double RollingTradeStatistics::getPriceDifference(const size_t windowDurationSeconds) const {
-    const size_t offset = std::min(windowDurationSeconds - 1, MASK);
-
-    const Bucket& targetBucket = buckets[(currentBucketId - offset) & MASK];
-    if (targetBucket.hasData) [[likely]] {
-        return lastTradePrice - targetBucket.openPrice;
-    }
-
-    for (size_t i = offset; i < MAX_BUCKETS; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            return lastTradePrice - bucket.closePrice;
-        }
-    }
-
-    for (size_t i = offset; i > 0; --i) {
-        const size_t idx = (currentBucketId - i + 1) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            return lastTradePrice - bucket.openPrice;
-        }
-    }
-
-    return 0.0;
-}
-
-double RollingTradeStatistics::getClosePrice(const size_t windowDurationSeconds) const {
-    const size_t offset = std::min(windowDurationSeconds, MASK);
-
-    const Bucket& targetBucket = buckets[currentBucketId - offset & MASK];
-    if (targetBucket.hasData) [[likely]] {
-        return targetBucket.closePrice;
-    }
-
-    for (size_t i = offset + 1; i < MAX_BUCKETS; ++i) {
-        const size_t idx = currentBucketId - i & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            return bucket.closePrice;
-        }
-    }
-
-    for (size_t i = offset; i > 0; --i) {
-        const size_t idx = currentBucketId - i + 1 & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            return bucket.openPrice;
-        }
-    }
-
-    return lastTradePrice;
-}
-
-double RollingTradeStatistics::getBiggestBuyTrade(const size_t windowDurationSeconds) const {
-    const size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    double biggestBuyVolume = 0.0;
-
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            biggestBuyVolume = std::max(biggestBuyVolume, bucket.biggestBuyVolume);
-        }
-    }
-
-    return biggestBuyVolume;
-}
-
-double RollingTradeStatistics::getBiggestSellTrade(const size_t windowDurationSeconds) const {
-    const size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    double biggestSellVolume = 0.0;
-
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            biggestSellVolume = std::max(biggestSellVolume, bucket.biggestSellVolume);
-        }
-    }
-
-    return biggestSellVolume;
-}
-
-double RollingTradeStatistics::getSMA(const size_t windowDurationSeconds) const {
-    const size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
+double RollingTradeStatistics::getSMA(const size_t seconds) const {
     double sumPrices = 0.0;
-    size_t count = 0;
-    double lastKnownBucketPrice = 0.0;
 
-    const Bucket& targetBucket = buckets[currentBucketId - bucketsToScan + 1 & MASK];
-    if (!targetBucket.hasData) [[unlikely]] {
-        for (size_t i = bucketsToScan; i < MAX_BUCKETS; ++i) {
-            const size_t idx = (currentBucketId - i) & MASK;
-            const Bucket& bucket = buckets[idx];
-
-            if (bucket.hasData) [[likely]] {
-                lastKnownBucketPrice = bucket.closePrice;
-                break;
-            }
-        }
+    for (size_t i = 0; i < seconds; ++i) {
+        const Bucket& bucket = buckets[currentBucketId - i & MASK];
+        sumPrices += bucket.closePrice;
     }
 
-    for (size_t i = bucketsToScan; i > 0; --i) {
-        const size_t idx = (currentBucketId - i + 1) & MASK;
-
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            lastKnownBucketPrice = bucket.closePrice;
-            sumPrices += bucket.closePrice;
-            ++count;
-        } else if (lastKnownBucketPrice != 0.0) [[unlikely]] {
-            sumPrices += lastKnownBucketPrice;
-            ++count;
-        }
-    }
-
-    if (count == 0) return lastTradePrice;
-    return sumPrices / static_cast<double>(count);
+    return sumPrices / static_cast<double>(seconds);
 }
 
-double RollingTradeStatistics::getHLC3(const size_t windowDurationSeconds) const {
-    const size_t bucketsToScan = std::min(windowDurationSeconds, MAX_BUCKETS);
-    double lowestPrice = std::numeric_limits<double>::infinity();
-    double highestPrice = 0.0;
-
-    const Bucket& targetBucket = buckets[currentBucketId - bucketsToScan + 1 & MASK];
-
-    if (!targetBucket.hasData) [[unlikely]] {
-        for (size_t i = bucketsToScan; i < MAX_BUCKETS; ++i) {
-            const size_t idx = (currentBucketId - i) & MASK;
-            const Bucket& bucket = buckets[idx];
-
-            if (bucket.hasData) [[likely]] {
-                lowestPrice = bucket.closePrice;
-                highestPrice = bucket.closePrice;
-                break;
-            }
-        }
-    }
-
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const size_t idx = (currentBucketId - i) & MASK;
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            lowestPrice = std::min(lowestPrice, bucket.lowestPrice);
-            highestPrice = std::max(highestPrice, bucket.highestPrice);
-        }
-    }
-
-    return lastTradePrice == 0.0
-        ? 0.0
-        : (highestPrice + lowestPrice + lastTradePrice) / 3.0;
+double RollingTradeStatistics::getHLC3(const size_t seconds) const {
+    const HiLo hl = getHiLoPrice(seconds);
+    return (hl.h + hl.l + newestPrice) / 3.0;
 }
 
 double RollingTradeStatistics::getPriceDistance(const size_t seconds) const {
-    // if seconds = max - earliest ohlc bucket     = one before the oldest
-    // if seconds = max - earliest cPrevious       = oldest
-
     const size_t bucketsToScan = std::min(seconds, MASK);
-
+    const HiLo hl = getHiLoPrice(bucketsToScan);
     const double o = getOldestPrice(bucketsToScan);
-    double h = 0.0;
-    double l = std::numeric_limits<double>::infinity();
-    const double c = lastTradePrice;
     const double cPrevious = getClosePrice(seconds);
 
-    const Bucket& targetBucket = buckets[currentBucketId - bucketsToScan + 1 & MASK];
-
-    if (!targetBucket.hasData) [[unlikely]] {
-        for (size_t i = bucketsToScan; i < MAX_BUCKETS; ++i) {
-            const Bucket& bucket = buckets[currentBucketId - i & MASK];
-
-            if (bucket.hasData) [[likely]] {
-                l = bucket.lowestPrice;
-                h = bucket.highestPrice;
-                break;
-            }
-        }
-    }
-
-    for (size_t i = 0; i < bucketsToScan; ++i) {
-        const Bucket& bucket = buckets[currentBucketId - i & MASK];
-        if (bucket.hasData) [[likely]] {
-            l = std::min(l, bucket.lowestPrice);
-            h = std::max(h, bucket.highestPrice);
-        }
-    }
-
-    return l == std::numeric_limits<double>::infinity()
-               ? 0.0
-               : 2.0 * (h - l) - std::abs(c - o) + std::abs(o - cPrevious);
+    return 2.0 * (hl.h - hl.l) - std::abs(newestPrice - o) + std::abs(o - cPrevious);
 }
 
-double RollingTradeStatistics::getBollingerBandsDistance(const size_t windowDurationSeconds) const {
-    const size_t offset = std::min(windowDurationSeconds, MAX_BUCKETS);
-
+double RollingTradeStatistics::getBollingerBandsDistance(const size_t seconds) const {
     double sumPrices = 0.0;
     double sumSquares = 0.0;
-    size_t count = 0;
-    double lastKnownBucketPrice = 0.0;
     constexpr double eps = 1e-12;
 
-    const Bucket& targetBucket = buckets[currentBucketId - offset + 1 & MASK];
-    if (!targetBucket.hasData) [[unlikely]] {
-        for (size_t i = offset; i < MAX_BUCKETS; ++i) {
-            const size_t idx = (currentBucketId - i) & MASK;
-            const Bucket& bucket = buckets[idx];
+    for (size_t i = 0; i < seconds; ++i) {
+        const Bucket& b = buckets[currentBucketId - i & MASK];
 
-            if (bucket.hasData) [[likely]] {
-                lastKnownBucketPrice = bucket.closePrice;
-                break;
-            }
-        }
+        const double p = b.closePrice;
+
+        sumPrices += p;
+        sumSquares += p*p;
     }
 
-    for (size_t i = offset; i > 0; --i) {
-        const size_t idx = currentBucketId - i + 1 & MASK;
+    const double invN = 1.0 / static_cast<double>(seconds);
+    const double mean = sumPrices * invN;
+    double variance = sumSquares * invN - mean * mean;
+    if (variance < 0.0) [[unlikely]] variance = 0.0;
+    const double sd = std::sqrt(variance);
 
-        const Bucket& bucket = buckets[idx];
-
-        if (bucket.hasData) [[likely]] {
-            const double px = bucket.closePrice;
-            lastKnownBucketPrice = px;
-            sumPrices += px;
-            sumSquares += px*px;
-            ++count;
-
-        } else if (lastKnownBucketPrice != 0.0) [[unlikely]] {
-            sumPrices += lastKnownBucketPrice;
-            sumSquares += lastKnownBucketPrice*lastKnownBucketPrice;
-            ++count;
-        }
-    }
-
-    if (count == 0) { return 0.0; }
-    const double mean = sumPrices / static_cast<double>(count);
-    double variance = sumSquares / static_cast<double>(count) - mean * mean;
-    if (variance < 0.0) variance = 0.0;
-    const double std = std::sqrt(variance);
-
-    return (lastTradePrice - mean) / (std + eps);
+    return (newestPrice - mean) / (sd + eps);
 }

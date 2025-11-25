@@ -11,7 +11,6 @@
 #include "GlobalMarketState.h"
 #include "OrderBook.h"
 #include "OrderBookMetricsEntry.h"
-// #include "OrderBookMetrics.h"
 #include "OrderBookSessionSimulator.h"
 #include "OrderBookMetricsCalculator.h"
 #include "enums/Market.h"
@@ -19,7 +18,8 @@
 namespace py = pybind11;
 using MS = MarketState;
 
-static py::int_ parse_mask_py(const std::vector<std::string>& vars) {
+static py::int_ parse_mask_py(const std::vector<std::string>& vars)
+{
     const MetricMask m = parseMask(vars);
     std::string bits = m.to_string();
     const auto pos = bits.find('1');
@@ -29,194 +29,262 @@ static py::int_ parse_mask_py(const std::vector<std::string>& vars) {
     return pyint.cast<py::int_>();
 }
 
-PYBIND11_MODULE(cpp_binance_orderbook, m) {
-    // std::cout << std::fixed << std::setprecision(5);
-
-    // ----- OrderbookSessionSimulator -----
+PYBIND11_MODULE(cpp_binance_orderbook, m)
+{
     py::class_<OrderBookSessionSimulator>(m, "OrderBookSessionSimulator")
         .def(py::init<>())
+        .def(
+            "compute_variables",
+            &OrderBookSessionSimulator::computeVariables,
+            py::arg("csv_path"),
+            py::arg("variables"))
+        .def(
+            "compute_backtest",
+            &OrderBookSessionSimulator::computeBacktest,
+            py::arg("csv_path"),
+            py::arg("variables"),
+            py::arg("python_callback") = py::none()
+        )
+        .def(
+            "compute_final_depth_snapshot",
+            &OrderBookSessionSimulator::computeFinalDepthSnapshot,
+            py::arg("csv_path")
+        );
 
-        .def("compute_variables",
-             &OrderBookSessionSimulator::computeVariables,
-             py::arg("csv_path"), py::arg("variables"),
-             "compute_variables(csv_path, variables) -> dict of numpy arrays")
-        .def("compute_backtest",
-             &OrderBookSessionSimulator::computeBacktest,
-             py::arg("csv_path"), py::arg("variables"), py::arg("python_callback") = py::none(),
-             "compute_backtest(csv_path, variables[, python_callback]) -> dict of numpy arrays")
-
-        .def("compute_final_depth_snapshot", &OrderBookSessionSimulator::computeFinalDepthSnapshot,
-             py::arg("csv_path"),
-             "Zwraca FinalOrderBookSnapshot")
-        ;
-
-    // ----- GlobalMarketState -----
     py::class_<GlobalMarketState>(m, "GlobalMarketState")
-        .def(py::init<MetricMask>(), py::arg("mask"),
-             "Tworzy GlobalMarketState z podaną maską zmiennych")
-        .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
-        .def("update",
-             &GlobalMarketState::update,
-             py::arg("entry"),
-             "Aktualizuje stan rynkowy na podstawie DifferenceDepthEntry lub TradeEntry")
-        .def("count_market_state_metrics_by_entry",
-             &GlobalMarketState::countMarketStateMetricsByEntry,
-             py::arg("entry"),
-             "Stara wersja: liczy metryki dla podanego DecodedEntry")
-        .def("count_market_state_metrics",
-             &GlobalMarketState::countMarketStateMetrics,
-             py::arg("symbol"), py::arg("market"),
-             "Stara wersja: liczy metryki dla podanego DecodedEntry")
-        .def("get_market_state",
-             &GlobalMarketState::getMarketState,
-             py::arg("symbol"), py::arg("market"),
-             py::return_value_policy::reference_internal,
-             "Zwraca obiekt MarketState dla danego symbolu i rynku")
-            .def("get_market_state_count", &GlobalMarketState::getMarketStateCount,
-                 "Liczba przechowywanych (symbol, market)")
-            .def("__len__", &GlobalMarketState::getMarketStateCount)
-            .def("get_market_state_list", &GlobalMarketState::getMarketStateList,
-                 "Zwraca listę (symbol, market) dostępnych w GlobalMarketState")
-        ;
+        .def(
+            py::init<MetricMask>(),
+            py::arg("mask")
+        )
+        .def(
+            py::init<const std::vector<std::string>&>(),
+            py::arg("variables")
+        )
+        .def(
+            "update",
+            &GlobalMarketState::update,
+            py::arg("entry")
+        )
+        .def(
+            "count_market_state_metrics_by_entry",
+            &GlobalMarketState::countMarketStateMetricsByEntry,
+            py::arg("entry")
+        )
+        .def(
+            "count_market_state_metrics",
+            &GlobalMarketState::countMarketStateMetrics,
+            py::arg("symbol"),
+            py::arg("market")
+        )
+        .def(
+            "get_market_state",
+            &GlobalMarketState::getMarketState,
+            py::arg("symbol"),
+            py::arg("market"),
+            py::return_value_policy::reference_internal
+        )
+        .def(
+            "get_market_state_count",
+            &GlobalMarketState::getMarketStateCount
+        )
+        .def(
+            "__len__",
+            &GlobalMarketState::getMarketStateCount
+        )
+        .def(
+            "get_market_state_list",
+            &GlobalMarketState::getMarketStateList
+        );
 
-
-    // ----- MarketState -----
     py::class_<MS>(m, "MarketState")
-        .def(py::init<>(), "Tworzy nowy MarketState")
-        .def_readonly("order_book", &MS::orderBook, py::return_value_policy::reference_internal)
-        .def_readonly("rolling_trade_statistics",
-              &MS::rollingTradeStatistics,
-              py::return_value_policy::reference_internal,
-              "Statystyki obrotu w oknie")
-        .def_readonly("rolling_difference_depth_statistics",
-                  &MS::rollingDifferenceDepthStatistics,
-                  py::return_value_policy::reference_internal,
-                  "Statystyki głębokości w oknie")
+        .def(py::init<>())
+        .def_readonly(
+            "order_book",
+            &MS::orderBook,
+            py::return_value_policy::reference_internal
+        )
+        .def_readonly(
+            "rolling_trade_statistics",
+            &MS::rollingTradeStatistics,
+            py::return_value_policy::reference_internal
+        )
+        .def_readonly(
+            "rolling_difference_depth_statistics",
+            &MS::rollingDifferenceDepthStatistics,
+            py::return_value_policy::reference_internal
+        )
         .def("update",
-                 &MS::update,
-                 py::arg("entry"),
-                 "Aktualizuje stan rynkowy na podstawie DifferenceDepthEntry lub TradeEntry")
-        .def("update_orderbook",
-             &MS::updateOrderBook,
-             py::call_guard<py::gil_scoped_release>(),
-             py::arg("timestamp_of_receive"),
-             py::arg("price"),
-             py::arg("quantity"),
-             py::arg("is_ask"),
-             "Bardzo szybka aktualizacja DifferenceDepthEntry")
+             &MS::update,
+             py::arg("entry")
+        )
+        .def(
+            "update_orderbook",
+            &MS::updateOrderBook,
+            py::call_guard<py::gil_scoped_release>(),
+            py::arg("timestamp_of_receive"),
+            py::arg("price"),
+            py::arg("quantity"),
+            py::arg("is_ask")
+        )
         .def("update_trade_registry",
              &MS::updateTradeRegistry,
              py::call_guard<py::gil_scoped_release>(),
              py::arg("timestamp_of_receive"),
              py::arg("price"),
              py::arg("quantity"),
-             py::arg("is_buyer_market_maker"),
-             "Bardzo szybka aktualizacja TradeEntry")
+             py::arg("is_buyer_market_maker")
+        )
         .def_property_readonly(
             "has_last_trade",
-            &MS::getHasLastTrade,
-            "Czy jest w pamięci ostatni TradeEntry?"
-        )
+            &MS::getHasLastTrade)
         .def_property_readonly(
             "last_trade",
             &MS::getLastTrade,
-            py::return_value_policy::reference_internal,
-            "Ostatni TradeEntry (rzuca, jeśli nie ma żadnego)"
+            py::return_value_policy::reference_internal
         )
         .def_property_readonly(
             "last_timestamp_of_receive",
-            &MS::getLastTimestampOfReceive,
-            "Ostatni użyty timestampOfReceive"
+            &MS::getLastTimestampOfReceive
         )
         .def("print_order_book",
-             [](MS &self) {
-                 self.orderBook.printOrderBook();
-             },
-             "Wypisuje stan orderbooka")
+             [](MS& self) { self.orderBook.printOrderBook(); }
+        )
         .def_property_readonly(
             "symbol",
-            &MS::getSymbol,
-            "Zwraca symbol tej MarketState"
+            &MS::getSymbol
         )
         .def_property_readonly(
             "market",
-            &MS::getMarket,
-            "Zwraca market tej MarketState"
+            &MS::getMarket
         );
 
-    // ----- OrderBook -----
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<>())
-        .def("print_order_book",                    &OrderBook::printOrderBook)
-        .def("asks",                                &OrderBook::getAsks, "Return list of all ask levels in the book, in linked-list order")
-        .def("bids",                                &OrderBook::getBids, "Return list of all bid levels in the book, in linked-list order")
-        .def("ask_count",                           &OrderBook::askCount, "Number of ask levels in the book")
-        .def("bid_count",                           &OrderBook::bidCount, "Number of bid levels in the book")
-        .def("sum_ask_quantity",                    &OrderBook::sumAskQuantity, "Total quantity on the ask side")
-        .def("sum_bid_quantity",                    &OrderBook::sumBidQuantity, "Total quantity on the bid side")
-        .def("best_ask_price",                      &OrderBook::bestAskPrice, "Price of the best (lowest) ask")
-        .def("best_bid_price",                      &OrderBook::bestBidPrice, "Price of the best (highest) bid")
-        .def("best_ask_quantity",                   &OrderBook::bestAskQuantity, "Quantity available at the best ask")
-        .def("best_bid_quantity",                   &OrderBook::bestBidQuantity, "Quantity available at the best bid")
-        .def("second_ask_price",                    &OrderBook::secondAskPrice, "Price of the second-best ask")
-        .def("second_bid_price",                    &OrderBook::secondBidPrice, "Price of the second-best bid")
+        .def("print_order_book", &OrderBook::printOrderBook)
+        .def("asks", &OrderBook::getAsks)
+        .def("bids", &OrderBook::getBids)
+        .def("ask_count", &OrderBook::askCount)
+        .def("bid_count", &OrderBook::bidCount)
+        .def("sum_ask_quantity", &OrderBook::sumAskQuantity)
+        .def("sum_bid_quantity", &OrderBook::sumBidQuantity)
+        .def("best_ask_price", &OrderBook::bestAskPrice)
+        .def("best_bid_price", &OrderBook::bestBidPrice)
+        .def("best_ask_quantity", &OrderBook::bestAskQuantity)
+        .def("best_bid_quantity", &OrderBook::bestBidQuantity)
+        .def("second_ask_price", &OrderBook::secondAskPrice)
+        .def("second_bid_price", &OrderBook::secondBidPrice)
 
-        .def("cumulative_quantity_of_top_n_asks",   &OrderBook::cumulativeQuantityOfTopNAsks, "Price of the second-best bid")
-        .def("cumulative_quantity_of_top_n_bids",   &OrderBook::cumulativeQuantityOfTopNBids, "Price of the second-best bid")
-        .def("sum_of_price_times_quantity",         &OrderBook::sumOfPriceTimesQuantity, "Price of the second-best bid")
-        .def("best_nth_ask_price",                  &OrderBook::bestNthAskPrice, "Price of the second-best bid")
-        .def("best_nth_bid_price",                  &OrderBook::bestNthBidPrice, "Price of the second-best bid")
+        .def("cumulative_quantity_of_top_n_asks", &OrderBook::cumulativeQuantityOfTopNAsks)
+        .def("cumulative_quantity_of_top_n_bids", &OrderBook::cumulativeQuantityOfTopNBids)
+        .def("sum_of_price_times_quantity", &OrderBook::sumOfPriceTimesQuantity)
+        .def("best_nth_ask_price", &OrderBook::bestNthAskPrice)
+        .def("best_nth_bid_price", &OrderBook::bestNthBidPrice)
 
-        .def("sum_total_ask_bid_quantity",          &OrderBook::sumTotalAskBidQuantity, "Total quantity across both sides")
+        .def("sum_total_ask_bid_quantity", &OrderBook::sumTotalAskBidQuantity)
 
-        .def("delta_ask_count",                     &OrderBook::deltaAskCount, "Change in ask level count since last snapshot")
-        .def("delta_bid_count",                     &OrderBook::deltaBidCount, "Change in bid level count since last snapshot")
-        .def("delta_best_ask_quantity",             &OrderBook::deltaBestAskQuantity, "Change in best ask quantity since last snapshot")
-        .def("delta_best_bid_quantity",             &OrderBook::deltaBestBidQuantity, "Change in best bid quantity since last snapshot")
-        .def("delta_best_ask_price",                &OrderBook::deltaBestAskPrice, "Change in best ask price since last snapshot")
-        .def("delta_best_bid_price",                &OrderBook::deltaBestBidPrice, "Change in best bid price since last snapshot")
-        .def("delta_sum_ask_quantity",              &OrderBook::deltaSumAskQuantity, "Change in total ask-side quantity since last snapshot")
-        .def("delta_sum_bid_quantity",              &OrderBook::deltaSumBidQuantity, "Change in total bid-side quantity since last snapshot")
+        .def("delta_ask_count", &OrderBook::deltaAskCount)
+        .def("delta_bid_count", &OrderBook::deltaBidCount)
+        .def("delta_best_ask_quantity", &OrderBook::deltaBestAskQuantity)
+        .def("delta_best_bid_quantity", &OrderBook::deltaBestBidQuantity)
+        .def("delta_best_ask_price", &OrderBook::deltaBestAskPrice)
+        .def("delta_best_bid_price", &OrderBook::deltaBestBidPrice)
+        .def("delta_sum_ask_quantity", &OrderBook::deltaSumAskQuantity)
+        .def("delta_sum_bid_quantity", &OrderBook::deltaSumBidQuantity)
 
-        .def("update",
-             &OrderBook::update,
-             py::arg("entry"),
-             "Apply a single DifferenceDepthEntry update to this order book")
-        ;
-
-    // ----- SingleVariableCounter -----
-    auto svc = m.def_submodule("single_variable_counter", "Compute single-variable order book metrics");
-    svc.def("calculate_best_ask_price",                             &SingleVariableCounter::calculateBestAskPrice,                                          py::arg("order_book"));
-    svc.def("calculate_best_bid_price",                             &SingleVariableCounter::calculateBestBidPrice,                                          py::arg("order_book"));
-    svc.def("calculate_mid_price",                                  &SingleVariableCounter::calculateMidPrice,                                              py::arg("order_book"));
-    svc.def("calculate_best_volume_imbalance",                      &SingleVariableCounter::calculateBestVolumeImbalance,                                   py::arg("order_book"));
-    svc.def("calculate_best_n_price_levels_volume_imbalance",       &SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance,                       py::arg("order_book"), py::arg("nPriceLevels"));
-    svc.def("calculate_volume_imbalance",                           &SingleVariableCounter::calculateVolumeImbalance,                                       py::arg("order_book"));
-    svc.def("calculate_queue_imbalance",                            &SingleVariableCounter::calculateQueueImbalance,                                        py::arg("order_book"));
-    svc.def("calculate_gap",                                        &SingleVariableCounter::calculateGap,                                                   py::arg("order_book"));
-    svc.def("calculate_vwap_deviation",                             &SingleVariableCounter::calculateVwapDeviation,                                         py::arg("order_book"));
-    svc.def("calculate_is_aggressor_ask", [](const TradeEntry &t){ return SingleVariableCounter::calculateIsAggressorAsk(&t); },                    py::arg("trade_entry"));
-    svc.def("calculate_simplified_slope_imbalance",                 &SingleVariableCounter::calculateSimplifiedSlopeImbalance,                              py::arg("order_book"));
-
-    svc.def("calculate_trade_count_imbalance",                      &SingleVariableCounter::calculateTradeCountImbalance,                                   py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_trade_volume_diff",                          &SingleVariableCounter::calculateTradeVolumeDiff,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_price_difference",                           &SingleVariableCounter::calculatePriceDifference,                                       py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_rate_of_return",                             &SingleVariableCounter::calculateRateOfReturn,                                          py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
-    svc.def("calculate_difference_depth_count_imbalance",      &SingleVariableCounter::calculateDifferenceDepthCountImbalance,                    py::arg("rolling_statistics_data"), py::arg("windowTimeSeconds"));
+        .def("update", &OrderBook::update, py::arg("entry")
+    );
 
 
-    // ----- DifferenceDepthEntry (DifferenceDepthEntry) -----
+    auto svc = m.def_submodule("single_variable_counter");
+    svc.def(
+        "calculate_best_ask_price",
+        &SingleVariableCounter::calculateBestAskPrice,
+        py::arg("order_book")
+    );
+    svc.def(
+        "calculate_best_bid_price",
+        &SingleVariableCounter::calculateBestBidPrice,
+        py::arg("order_book")
+    );
+    svc.def(
+        "calculate_mid_price",
+        &SingleVariableCounter::calculateMidPrice,
+        py::arg("order_book"));
+    svc.def(
+        "calculate_best_volume_imbalance",
+        &SingleVariableCounter::calculateBestVolumeImbalance,
+        py::arg("order_book")
+    );
+    svc.def(
+        "calculate_best_n_price_levels_volume_imbalance",
+        &SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance,
+        py::arg("order_book"),
+        py::arg("nPriceLevels")
+    );
+    svc.def(
+        "calculate_volume_imbalance",
+        &SingleVariableCounter::calculateVolumeImbalance,
+        py::arg("order_book")
+    );
+    svc.def(
+        "calculate_queue_imbalance",
+        &SingleVariableCounter::calculateQueueImbalance,
+        py::arg("order_book")
+    );
+    svc.def(
+        "calculate_gap",
+        &SingleVariableCounter::calculateGap,
+        py::arg("order_book")
+    );
+    svc.def(
+        "calculate_vwap_deviation",
+        &SingleVariableCounter::calculateVwapDeviation,
+        py::arg("order_book")
+    );
+    svc.def(
+        "calculate_is_aggressor_ask",
+        [](const TradeEntry& t) { return SingleVariableCounter::calculateIsAggressorAsk(&t); },
+        py::arg("trade_entry"));
+    svc.def(
+        "calculate_simplified_slope_imbalance",
+        &SingleVariableCounter::calculateSimplifiedSlopeImbalance,
+        py::arg("order_book")
+    );
+
+    svc.def(
+        "calculate_trade_count_imbalance",
+        &SingleVariableCounter::calculateTradeCountImbalance,
+        py::arg("rolling_statistics_data"),
+        py::arg("windowTimeSeconds")
+    );
+    svc.def(
+        "calculate_trade_volume_diff",
+        &SingleVariableCounter::calculateTradeVolumeDiff,
+        py::arg("rolling_statistics_data"),
+        py::arg("windowTimeSeconds"));
+    svc.def(
+        "calculate_price_difference",
+        &SingleVariableCounter::calculatePriceDifference,
+        py::arg("rolling_statistics_data"),
+        py::arg("windowTimeSeconds")
+    );
+    svc.def(
+        "calculate_rate_of_return",
+        &SingleVariableCounter::calculateRateOfReturn,
+        py::arg("rolling_statistics_data"),
+        py::arg("windowTimeSeconds")
+    );
+    svc.def(
+        "calculate_difference_depth_count_imbalance",
+        &SingleVariableCounter::calculateDifferenceDepthCountImbalance,
+        py::arg("rolling_statistics_data"),
+        py::arg("windowTimeSeconds")
+    );
+
     py::class_<DifferenceDepthEntry>(m, "DifferenceDepthEntry")
         .def(py::init<>())
-        .def(py::init<
-            uint64_t,
-            Symbol,
-            bool,
-            double,
-            double,
-            bool,
-            Market
-            >(),
+        .def(
+            py::init<uint64_t, Symbol, bool, double, double, bool, Market>(),
             py::arg("timestamp_of_receive"),
             py::arg("symbol"),
             py::arg("is_ask"),
@@ -232,20 +300,21 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .def_readwrite("quantity", &DifferenceDepthEntry::quantity)
         .def_readwrite("is_last", &DifferenceDepthEntry::isLast)
         .def_readwrite("market", &DifferenceDepthEntry::market)
-        .def("__str__", [](const DifferenceDepthEntry &entry) {
+        .def("__str__", [](const DifferenceDepthEntry& entry)
+        {
             std::ostringstream oss;
-            // oss << std::fixed << std::setprecision(5);
             oss
-            << "TimestampOfReceive: " << entry.timestampOfReceive << " "
-            << "Symbol: " << entry.symbol << " "
-            << "IsAsk: " << entry.isAsk << " "
-            << "Price: " << entry.price << " "
-            << "Quantity: " << entry.quantity << " "
-            << "IsLast: " << entry.isLast << " "
-            << "Market_: " << entry.market << " ";
+                << "TimestampOfReceive: " << entry.timestampOfReceive << " "
+                << "Symbol: " << entry.symbol << " "
+                << "IsAsk: " << entry.isAsk << " "
+                << "Price: " << entry.price << " "
+                << "Quantity: " << entry.quantity << " "
+                << "IsLast: " << entry.isLast << " "
+                << "Market_: " << entry.market << " ";
             return oss.str();
         })
-        .def("to_list", [](const DifferenceDepthEntry &e) {
+        .def("to_list", [](const DifferenceDepthEntry& e)
+        {
             py::list v;
             v.append(e.timestampOfReceive);
             v.append(e.symbol);
@@ -256,7 +325,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             v.append(e.market);
             return v;
         })
-        .def_static("field_names", []() {
+        .def_static("field_names", []()
+        {
             return std::vector<std::string>{
                 "timestamp_of_receive",
                 "symbol",
@@ -268,18 +338,10 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             };
         });
 
-    // ----- TradeEntry -----
     py::class_<TradeEntry>(m, "TradeEntry")
         .def(py::init<>())
-        .def(py::init<
-            uint64_t,
-            Symbol,
-            double,
-            double,
-            bool,
-            bool,
-            Market
-            >(),
+        .def(
+            py::init<uint64_t, Symbol, double, double, bool, bool, Market>(),
             py::arg("timestamp_of_receive"),
             py::arg("symbol"),
             py::arg("price"),
@@ -288,27 +350,28 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             py::arg("is_last"),
             py::arg("market")
         )
-        .def_readwrite("timestamp_of_receive",    &TradeEntry::timestampOfReceive)
-        .def_readwrite("symbol",                  &TradeEntry::symbol)
-        .def_readwrite("price",                   &TradeEntry::price)
-        .def_readwrite("quantity",                &TradeEntry::quantity)
-        .def_readwrite("is_buyer_market_maker",   &TradeEntry::isBuyerMarketMaker)
-        .def_readwrite("is_last",                 &TradeEntry::isLast)
-        .def_readwrite("market",                  &TradeEntry::market)
-        .def("__str__", [](const TradeEntry &entry) {
+        .def_readwrite("timestamp_of_receive", &TradeEntry::timestampOfReceive)
+        .def_readwrite("symbol", &TradeEntry::symbol)
+        .def_readwrite("price", &TradeEntry::price)
+        .def_readwrite("quantity", &TradeEntry::quantity)
+        .def_readwrite("is_buyer_market_maker", &TradeEntry::isBuyerMarketMaker)
+        .def_readwrite("is_last", &TradeEntry::isLast)
+        .def_readwrite("market", &TradeEntry::market)
+        .def("__str__", [](const TradeEntry& entry)
+        {
             std::ostringstream oss;
-            // oss << std::fixed << std::setprecision(5);
             oss
-            << "TimestampOfReceive: " << entry.timestampOfReceive << " "
-            << "Symbol: " << entry.symbol << " "
-            << "Price: " << entry.price << " "
-            << "Quantity: " << entry.quantity << " "
-            << "IsBuyerMarketMaker: " << entry.isBuyerMarketMaker << " "
-            << "IsLast: " << entry.isLast << " "
-            << "Market_: " << entry.market << " ";
+                << "TimestampOfReceive: " << entry.timestampOfReceive << " "
+                << "Symbol: " << entry.symbol << " "
+                << "Price: " << entry.price << " "
+                << "Quantity: " << entry.quantity << " "
+                << "IsBuyerMarketMaker: " << entry.isBuyerMarketMaker << " "
+                << "IsLast: " << entry.isLast << " "
+                << "Market_: " << entry.market << " ";
             return oss.str();
         })
-        .def("to_list", [](const TradeEntry &e) {
+        .def("to_list", [](const TradeEntry& e)
+        {
             py::list v;
             v.append(e.timestampOfReceive);
             v.append(e.symbol);
@@ -319,7 +382,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             v.append(e.market);
             return v;
         })
-        .def_static("field_names", []() {
+        .def_static("field_names", []()
+        {
             return std::vector<std::string>{
                 "timestamp_of_receive",
                 "symbol",
@@ -329,146 +393,91 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
                 "is_last",
                 "market"
             };
-        })
-    ;
-
-    // ----- RollingTradeStatistics -----
-    py::class_<RollingTradeStatistics>(m, "RollingTradeStatistics")
-        .def(py::init<>())
-        .def("update",
-             &RollingTradeStatistics::update,
-             py::arg("trade_entry"),
-             "Dodaje nowy TradeEntry do statystyk")
-        .def("buy_trade_count",
-             &RollingTradeStatistics::getBuyTradeCount,
-             py::arg("windowTimeSeconds"),
-             "Liczba kupna w oknie [s]")
-        .def("sell_trade_count",
-             &RollingTradeStatistics::getSellTradeCount,
-             py::arg("windowTimeSeconds"),
-             "Liczba sprzedaży w oknie [s]")
-        .def("buy_trade_volume",
-             &RollingTradeStatistics::getCumulatedBuyTradeVolume,
-             py::arg("windowTimeSeconds"),
-             "Wolumen kupna w oknie [s]")
-        .def("sell_trade_volume",
-             &RollingTradeStatistics::getCumulatedSellTradeVolume,
-             py::arg("windowTimeSeconds"),
-             "Wolumen sprzedaży w oknie [s]")
-        .def("price_difference",
-             &RollingTradeStatistics::getPriceDifference,
-             py::arg("windowTimeSeconds"),
-             "Różnica ceny w oknie [s]")
-        .def("oldest_price",
-             &RollingTradeStatistics::getOldestPrice,
-             py::arg("windowTimeSeconds"),
-             "Najstarsza cena w oknie [s]")
-        .def("simple_moving_average",
-             &RollingTradeStatistics::getSMA,
-             py::arg("windowTimeSeconds"),
-             "Prosta średnia ruchoma ceny w oknie [s]")
-        ;
-
-    // ----- RollingDifferenceDepthStatistics -----
-    py::class_<RollingDifferenceDepthStatistics>(m, "RollingDifferenceDepthStatistics")
-        .def(py::init<>())
-        .def("update",
-             &RollingDifferenceDepthStatistics::update,
-             py::arg("depth_entry"),
-             "Dodaje nowy DifferenceDepthEntry do statystyk")
-        .def("bid_difference_depth_entry_count",
-             &RollingDifferenceDepthStatistics::bidDifferenceDepthEntryCount,
-             py::arg("windowTimeSeconds"),
-             "Liczba bid‐entry w oknie [s]")
-        .def("ask_difference_depth_entry_count",
-             &RollingDifferenceDepthStatistics::askDifferenceDepthEntryCount,
-             py::arg("windowTimeSeconds"),
-             "Liczba ask‐entry w oknie [s]")
-        ;
-
-    // ----- OrderBookMetricsEntry -----
-    py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
-        #define METRIC(name, ctype) \
-            .def_readonly(#name, &OrderBookMetricsEntry::name)
-        #include "detail/metrics_list.def"
-        #undef METRIC
-
-        .def("__str__", [](const OrderBookMetricsEntry &entry) {
-            std::ostringstream oss;
-
-            auto append_field = [&](auto const& field, const char* nm) {
-                using T = std::decay_t<decltype(field)>;
-                oss << nm << ": ";
-                if constexpr (std::is_same_v<T, bool>) {
-                    oss << (field ? 1 : 0);
-                } else if constexpr (std::is_same_v<T, uint8_t>) {
-                    oss << static_cast<int>(field);
-                } else {
-                    oss << field;
-                }
-                oss << " ";
-            };
-
-            #define METRIC(name, ctype) append_field(entry.name, #name);
-            #include "detail/metrics_list.def"
-            #undef METRIC
-
-            return oss.str();
         });
 
-    // ----- OrderBookMetrics -----
-    // py::class_<OrderBookMetrics>(m, "OrderBookMetrics")
-    //     .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
-    //     .def("to_csv", &OrderBookMetrics::toCSV, py::arg("path"),
-    //          "Zapisuje metryki do pliku CSV")
-    // ;
-        // .def_property_readonly("variables", [](const OrderBookMetrics &self) {
-        //      return self.variables_;
-        // }, "Lista nazw metryk");
+    py::class_<RollingTradeStatistics>(m, "RollingTradeStatistics")
+        .def(py::init<>());
 
-    m.def("parse_mask", &parse_mask_py, py::arg("variables"),
-      "Parsuje listę nazw zmiennych na bitową MetricMask");
+    py::class_<RollingDifferenceDepthStatistics>(m, "RollingDifferenceDepthStatistics")
+        .def(py::init<>())
+        .def(
+            "update",
+            &RollingDifferenceDepthStatistics::update,
+            py::arg("depth_entry")
+        )
+        .def("bid_difference_depth_entry_count",
+             &RollingDifferenceDepthStatistics::bidDifferenceDepthEntryCount,
+             py::arg("windowTimeSeconds"))
+        .def("ask_difference_depth_entry_count",
+             &RollingDifferenceDepthStatistics::askDifferenceDepthEntryCount,
+             py::arg("windowTimeSeconds")
+        );
 
-    // ----- OrderBookMetricsCalculator -----
+    py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
+
+#define METRIC(name, ctype) .def_readonly(#name, &OrderBookMetricsEntry::name)
+#include "detail/metrics_list.def"
+
+
+#undef METRIC
+        .def("__str__", [](const OrderBookMetricsEntry& entry)
+             {
+                 std::ostringstream oss;
+                 auto append_field = [&](auto const& field, const char* nm)
+                 {
+                     using T = std::decay_t<decltype(field)>;
+                     oss << nm << ": ";
+                     if constexpr (std::is_same_v<T, bool>) oss << (field ? 1 : 0);
+                     else if constexpr (std::is_same_v<T, uint8_t>) oss << static_cast<int>(field);
+                     else oss << field;
+                     oss << " ";
+                 };
+                #define METRIC(name, ctype) append_field(entry.name, #name);
+                #include "detail/metrics_list.def"
+                #undef METRIC return oss.str();
+             }
+        );
+
+    m.def("parse_mask", &parse_mask_py, py::arg("variables"));
+
     py::class_<OrderBookMetricsCalculator>(m, "OrderBookMetricsCalculator")
         .def(py::init<MetricMask>(), py::arg("mask"))
         .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
-        .def("count_market_state_metrics",
-             &OrderBookMetricsCalculator::countMarketStateMetrics,
-             py::arg("market_state"),
-             "Oblicza OrderBookMetricsEntry dla podanego MarketState i maski");
+        .def(
+            "count_market_state_metrics",
+            &OrderBookMetricsCalculator::countMarketStateMetrics,
+            py::arg("market_state")
+        );
 
-    // ----- Market -----
     py::enum_<Market>(m, "Market")
-        .value("SPOT",          Market::SPOT)
+        .value("UNKNOWN", Market::UNKNOWN)
+        .value("SPOT", Market::SPOT)
         .value("USD_M_FUTURES", Market::USD_M_FUTURES)
-        .value("COIN_M_FUTURES",Market::COIN_M_FUTURES)
-        .value("UNKNOWN",       Market::UNKNOWN)
+        .value("COIN_M_FUTURES", Market::COIN_M_FUTURES)
         .export_values();
 
     py::enum_<Symbol>(m, "Symbol")
-        .value("UNKNOWN",   Symbol::UNKNOWN)
-        .value("BTCUSDT",   Symbol::BTCUSDT)
-        .value("ETHUSDT",   Symbol::ETHUSDT)
-        .value("BNBUSDT",   Symbol::BNBUSDT)
-        .value("SOLUSDT",   Symbol::SOLUSDT)
-        .value("XRPUSDT",   Symbol::XRPUSDT)
-        .value("DOGEUSDT",  Symbol::DOGEUSDT)
-        .value("ADAUSDT",   Symbol::ADAUSDT)
-        .value("SHIBUSDT",  Symbol::SHIBUSDT)
-        .value("LTCUSDT",   Symbol::LTCUSDT)
-        .value("AVAXUSDT",  Symbol::AVAXUSDT)
-        .value("TRXUSDT",   Symbol::TRXUSDT)
-        .value("DOTUSDT",   Symbol::DOTUSDT)
-        .value("BCHUSDT",   Symbol::BCHUSDT)
-        .value("SUIUSDT",   Symbol::SUIUSDT)
+        .value("UNKNOWN", Symbol::UNKNOWN)
+        .value("BTCUSDT", Symbol::BTCUSDT)
+        .value("ETHUSDT", Symbol::ETHUSDT)
+        .value("BNBUSDT", Symbol::BNBUSDT)
+        .value("SOLUSDT", Symbol::SOLUSDT)
+        .value("XRPUSDT", Symbol::XRPUSDT)
+        .value("DOGEUSDT", Symbol::DOGEUSDT)
+        .value("ADAUSDT", Symbol::ADAUSDT)
+        .value("SHIBUSDT", Symbol::SHIBUSDT)
+        .value("LTCUSDT", Symbol::LTCUSDT)
+        .value("AVAXUSDT", Symbol::AVAXUSDT)
+        .value("TRXUSDT", Symbol::TRXUSDT)
+        .value("DOTUSDT", Symbol::DOTUSDT)
+        .value("BCHUSDT", Symbol::BCHUSDT)
+        .value("SUIUSDT", Symbol::SUIUSDT)
         .export_values();
 
     py::enum_<StreamType>(m, "StreamType")
         .value("DIFFERENCE_DEPTH_STREAM", StreamType::DIFFERENCE_DEPTH_STREAM)
-        .value("TRADE_STREAM",            StreamType::TRADE_STREAM)
-        .value("DEPTH_SNAPSHOT",          StreamType::DEPTH_SNAPSHOT)
-        .value("FINAL_DEPTH_SNAPSHOT",    StreamType::FINAL_DEPTH_SNAPSHOT)
+        .value("TRADE_STREAM", StreamType::TRADE_STREAM)
+        .value("DEPTH_SNAPSHOT", StreamType::DEPTH_SNAPSHOT)
+        .value("FINAL_DEPTH_SNAPSHOT", StreamType::FINAL_DEPTH_SNAPSHOT)
         .export_values();
-
 }

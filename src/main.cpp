@@ -351,7 +351,6 @@ int main() {
         "priceDistance300Seconds",
         "priceDistance600Seconds",
 
-        "smaLogRatio1Seconds",
         "smaLogRatio3Seconds",
         "smaLogRatio5Seconds",
         "smaLogRatio10Seconds",

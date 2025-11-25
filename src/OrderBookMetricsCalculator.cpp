@@ -928,9 +928,6 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.priceDistance600Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 600);
     }
 
-    if (mask_ & smaLogRatio1Seconds) {
-        e.smaLogRatio1Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 1);
-    }
     if (mask_ & smaLogRatio3Seconds) {
         e.smaLogRatio3Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 3);
     }

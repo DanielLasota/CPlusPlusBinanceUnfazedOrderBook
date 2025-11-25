@@ -320,6 +320,20 @@ ALL_ORDERBOOK_VARIABLES = [
     "logKylesLambda60Seconds",
 ]
 
+"""
+most important:
+TestOrderBookSessionSimulatorComputeFinalDepthSnapshot
+    we check whether depth from 09.04.2025 == snapshot from 10.04.2025.
+    
+    for cpp_binance_orderbook.OrderBook we verify bid/ask sorting + price values
+    
+    in the last test we check whether, when we process the original full snapshot through the orderbook,
+    the returned value contains all 2k price levels
+    
+for computeBacktest & computeVariables:
+    here we check whether, when we process the entire 14-04-2025.csv, the sum of IsLast from the csv
+    equals the sum of IsLast in the returned output
+"""
 
 class TestOrderBookSessionSimulator:
 

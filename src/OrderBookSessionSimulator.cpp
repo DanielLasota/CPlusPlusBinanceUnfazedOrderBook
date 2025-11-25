@@ -1,6 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include <pybind11/pybind11.h>
+// #include <windows.h>
 
 #include "GlobalMarketState.h"
 #include "DataVectorLoader.h"
@@ -19,6 +20,8 @@ size_t OrderBookSessionSimulator::countOrderBookMetricsSize(const std::vector<De
 }
 
 py::dict OrderBookSessionSimulator::computeVariables(const std::string &csvPath, const std::vector<std::string> &variables) {
+    // SetThreadAffinityMask(GetCurrentThread(), 0x0000FFFF);
+
     std::vector<DecodedEntry> entries = DataVectorLoader::getEntriesFromMultiAssetParametersCSV(csvPath);
     std::vector<DecodedEntry*> ptrEntries;
     ptrEntries.reserve(entries.size());
@@ -28,7 +31,6 @@ py::dict OrderBookSessionSimulator::computeVariables(const std::string &csvPath,
     OrderBookMetrics orderBookMetrics(variables, countOrderBookMetricsSize(entries));
 
     // const auto loopStart = std::chrono::steady_clock::now();
-    // std::cout << std::fixed << std::setprecision(5);
     for (DecodedEntry* p : ptrEntries) {
         globalMarketState.update(p);
         if (std::visit([](auto const& entry){return entry.isLast;}, *p)) {

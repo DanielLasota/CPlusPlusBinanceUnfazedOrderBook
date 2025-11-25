@@ -409,9 +409,8 @@ namespace SingleVariableCounter {
     }
 
     double calculateTradeCount(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto buyTradeCount  = static_cast<double>(rollingTradeStatistics.getBuyTradeCount(windowTimeSeconds));
-        const auto sellTradeCount = static_cast<double>(rollingTradeStatistics.getSellTradeCount(windowTimeSeconds));
-        return buyTradeCount + sellTradeCount;
+        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+        return static_cast<double>(buy) + static_cast<double>(sell);
     }
 
     double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds){
@@ -455,109 +454,117 @@ namespace SingleVariableCounter {
     }
 
     double calculateTradeCountDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto buyTradeCount  = static_cast<double>(rollingTradeStatistics.getBuyTradeCount(windowTimeSeconds));
-        const auto sellTradeCount = static_cast<double>(rollingTradeStatistics.getSellTradeCount(windowTimeSeconds));
-
-        return buyTradeCount - sellTradeCount;
+        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+        return static_cast<double>(buy) - static_cast<double>(sell);
     }
 
     double calculateTradeCountImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto buys  = static_cast<double>(rollingTradeStatistics.getBuyTradeCount(windowTimeSeconds));
-        const auto sells = static_cast<double>(rollingTradeStatistics.getSellTradeCount(windowTimeSeconds));
+        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
 
-        const double total = buys + sells;
-        if (total <= 0.0) return 0.0;
+        const auto buyD  = static_cast<double>(buy);
+        const auto sellD = static_cast<double>(sell);
+        const double sum = buyD + sellD;
 
-        return (buys - sells) / total;
+        if (sum == 0.0) [[unlikely]] return 0.0;
+
+        return (buyD - sellD) / sum;
     }
 
     double calculateTradeCountFisherImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return finiteAtanh(calculateTradeCountImbalance(rollingTradeStatistics, windowTimeSeconds));
+        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+
+        const auto buyD  = static_cast<double>(buy);
+        const auto sellD = static_cast<double>(sell);
+        const double sum = buyD + sellD;
+
+        if (sum == 0.0) [[unlikely]] return 0.0;
+
+        return finiteAtanh((buyD - sellD) / sum);
     }
 
     double calculateTradeCountLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto buys  = static_cast<double>(rollingTradeStatistics.getBuyTradeCount(windowTimeSeconds));
-        const auto sells = static_cast<double>(rollingTradeStatistics.getSellTradeCount(windowTimeSeconds));
+        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
 
+        const auto buyD  = static_cast<double>(buy);
+        const auto sellD = static_cast<double>(sell);
         constexpr double eps = 1e-12;
 
-        return std::log((buys + eps) / (sells + eps));
+        return std::log((buyD + eps) / (sellD + eps));
     }
 
     double calculateTradeVolumeSum(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double buyTradeVolume = rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds);
-        const double sellTradeVolume = rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds);
-        return buyTradeVolume + sellTradeVolume;
+        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+        return buy + sell;
     }
 
     double calculateTradeVolumeDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double buyTradeVolume = rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds);
-        const double sellTradeVolume = rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds);
-        return buyTradeVolume - sellTradeVolume;
+        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+        return buy - sell;
     }
 
     double calculateTradeVolumeImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto buyTradeVolume  = rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds);
-        const auto sellTradeVolume = rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds);
+        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+        const double sum = buy + sell;
 
-        const double total = buyTradeVolume + sellTradeVolume;
-        if (total <= 0.0) return 0.0;
+        if (sum == 0.0) [[unlikely]] return 0.0;
 
-        return (buyTradeVolume - sellTradeVolume) / total;
+        return (buy - sell) / sum;
     }
 
     double calculateTradeVolumeLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
         constexpr double eps = 1e-12;
-        const double buyTradeVolume = rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds);
-        const double sellTradeVolume = rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds);
 
-        return std::log((buyTradeVolume + eps) / (sellTradeVolume + eps));
+        return std::log((buy + eps) / (sell + eps));
     }
 
     double calculateAvgTradeSizeDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double buyTradeVolume = rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds);
-        const double sellTradeVolume = rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds);
+        const auto [buyQuantity, sellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+        const auto [buyCount, sellCount] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
 
-        const auto buyTradeCount  = static_cast<double>(rollingTradeStatistics.getBuyTradeCount(windowTimeSeconds));
-        const auto sellTradeCount = static_cast<double>(rollingTradeStatistics.getSellTradeCount(windowTimeSeconds));
-        const double avgTradeSizeBid = buyTradeCount > 0.0 ? buyTradeVolume / buyTradeCount : 0.0;
-        const double avgTradeSizeAsk = sellTradeCount > 0.0 ? sellTradeVolume / sellTradeCount : 0.0;
+        if (buyCount == 0 && sellCount == 0) [[unlikely]] return 0.0;
 
-        return avgTradeSizeBid - avgTradeSizeAsk;
+        const double avgBuyQuantity  = buyCount  > 0 ? buyQuantity  / static_cast<double>(buyCount)  : 0.0;
+        const double avgSellQuantity = sellCount > 0 ? sellQuantity / static_cast<double>(sellCount) : 0.0;
+
+        return avgBuyQuantity - avgSellQuantity;
     }
 
     double calculateAvgTradeSizeImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double buyTradeVolume = rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds);
-        const double sellTradeVolume = rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds);
+        const auto [buyQuantity, sellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+        const auto [buyCount, sellCount] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
 
-        const auto buyTradeCount  = static_cast<double>(rollingTradeStatistics.getBuyTradeCount(windowTimeSeconds));
-        const auto sellTradeCount = static_cast<double>(rollingTradeStatistics.getSellTradeCount(windowTimeSeconds));
-        const double avgTradeSizeBid = buyTradeCount > 0.0 ? buyTradeVolume / buyTradeCount : 0.0;
-        const double avgTradeSizeAsk = sellTradeCount > 0.0 ? sellTradeVolume / sellTradeCount : 0.0;
+        if (buyCount == 0 && sellCount == 0) [[unlikely]] return 0.0;
 
-        const double den = avgTradeSizeAsk + avgTradeSizeBid;
-        return den == 0.0 ? 0.0 : (avgTradeSizeBid - avgTradeSizeAsk) / den;
+        const double avgBuyQuantity  = buyCount  > 0 ? buyQuantity  / static_cast<double>(buyCount)  : 0.0;
+        const double avgSellQuantity = sellCount > 0 ? sellQuantity / static_cast<double>(sellCount) : 0.0;
+
+        const double sum = buyQuantity + sellQuantity;
+        if (sum == 0.0) [[unlikely]] return 0.0;
+
+        return (avgBuyQuantity - avgSellQuantity) / sum;
     }
 
     double calculateAvgTradeSizeLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double buyTradeVolume = rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds);
-        const double sellTradeVolume = rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds);
+        const auto [buyQuantity, sellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+        const auto [buyCount, sellCount] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
 
-        const auto buyTradeCount  = static_cast<double>(rollingTradeStatistics.getBuyTradeCount(windowTimeSeconds));
-        const auto sellTradeCount = static_cast<double>(rollingTradeStatistics.getSellTradeCount(windowTimeSeconds));
-        const double avgTradeSizeBid = buyTradeCount > 0.0 ? buyTradeVolume / buyTradeCount : 0.0;
-        const double avgTradeSizeAsk = sellTradeCount > 0.0 ? sellTradeVolume / sellTradeCount : 0.0;
+        if (buyCount == 0 && sellCount == 0) [[unlikely]] return 0.0;
+
+        const double avgBuyQuantity  = buyCount  > 0 ? buyQuantity  / static_cast<double>(buyCount)  : 0.0;
+        const double avgSellQuantity = sellCount > 0 ? sellQuantity / static_cast<double>(sellCount) : 0.0;
 
         constexpr double eps = 1e-12;
-        return std::log((avgTradeSizeBid + eps) / (avgTradeSizeAsk + eps));
+
+        return std::log((avgBuyQuantity + eps) / (avgSellQuantity + eps));
     }
 
     double calculateBiggestSingleBuyTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return rollingTradeStatistics.getBiggestBuyTrade(windowTimeSeconds);
+        return rollingTradeStatistics.getBiggestBuySell(windowTimeSeconds).buy;
     }
 
     double calculateBiggestSingleSellTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return rollingTradeStatistics.getBiggestSellTrade(windowTimeSeconds);
+        return rollingTradeStatistics.getBiggestBuySell(windowTimeSeconds).sell;
     }
 
     double calculatePriceDifference(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
@@ -565,31 +572,30 @@ namespace SingleVariableCounter {
     }
 
     double calculateRateOfReturn(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds) {
-        const double lastTradePrice = rollingTradeStatistics.getLastTradePrice();
+        const double newestPrice = rollingTradeStatistics.getNewestPrice();
         const double oldestPrice = rollingTradeStatistics.getOldestPrice(windowTimeSeconds);
 
-        if (oldestPrice == 0.0) return 0.0;
+        if (oldestPrice == 0.0) [[unlikely]] return 0.0;
 
-        return (lastTradePrice - oldestPrice) / oldestPrice;
+        return (newestPrice - oldestPrice) / oldestPrice;
     }
 
     double calculateLogReturnRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        constexpr double eps = 1e-12;
         const double oldestPrice = rollingTradeStatistics.getOldestPrice(windowTimeSeconds);
-        const double lastTradePrice = rollingTradeStatistics.getLastTradePrice();
+        const double newestPrice = rollingTradeStatistics.getNewestPrice();
 
-        return std::log((lastTradePrice + eps)/(oldestPrice + eps));
+        constexpr double eps = 1e-12;
+
+        return std::log((newestPrice + eps)/(oldestPrice + eps));
     }
 
     double calculateLogKylesLambda(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds) {
         constexpr double eps = 1e-12;
         const double priceChange = std::abs(rollingTradeStatistics.getPriceDifference(windowTimeSeconds));
-        const double totalVolume = std::abs(
-            rollingTradeStatistics.getCumulatedBuyTradeVolume(windowTimeSeconds) -
-            rollingTradeStatistics.getCumulatedSellTradeVolume(windowTimeSeconds)
-            );
+        const auto [cumBuyQuantity, cumSellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+        const double cumQuantityAbsDiff = std::abs(cumBuyQuantity - cumSellQuantity);
 
-        return std::log((priceChange + eps) / (totalVolume + eps));
+        return std::log((priceChange + eps) / (cumQuantityAbsDiff + eps));
     }
 
     double calculateDeltaPVT(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
@@ -648,18 +654,18 @@ namespace SingleVariableCounter {
     double calculateSMALogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         constexpr double eps = 1e-12;
         const double sma = rollingTradeStatistics.getSMA(windowTimeSeconds);
-        const double lastPrice = rollingTradeStatistics.getLastTradePrice();
+        const double newestPrice = rollingTradeStatistics.getNewestPrice();
 
-        return std::log((lastPrice + eps) / (sma + eps));
+        return std::log((newestPrice + eps) / (sma + eps));
     }
 
     double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double hlc3t = rollingTradeStatistics.getHLC3(windowTimeSeconds);
-        const double lastPrice = rollingTradeStatistics.getLastTradePrice();
+        const double hlc3 = rollingTradeStatistics.getHLC3(windowTimeSeconds);
+        const double newestPrice = rollingTradeStatistics.getNewestPrice();
 
         constexpr double eps = 1e-12;
 
-        return std::log((lastPrice + eps) / (hlc3t + eps));
+        return std::log((newestPrice + eps) / (hlc3 + eps));
     }
 
     double calculateBollingerBandsDistance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){

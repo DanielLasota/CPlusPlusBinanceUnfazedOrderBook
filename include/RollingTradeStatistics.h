@@ -16,8 +16,8 @@ public:
     };
 
     struct BuySellCount {
-        size_t buy;
-        size_t sell;
+        int buy;
+        int sell;
     };
 
     struct BuySell {
@@ -53,8 +53,8 @@ private:
         uint64_t startTimeSeconds = 0;
         double openPrice = 0.0;
         double closePrice = 0.0;
-        size_t buyCount = 0;
-        size_t sellCount = 0;
+        int buyCount = 0;
+        int sellCount = 0;
         double cumBuyQuantity = 0.0;
         double cumSellQuantity = 0.0;
         double biggestBuyQuantity = 0.0;

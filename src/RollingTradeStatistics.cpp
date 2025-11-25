@@ -51,29 +51,6 @@ void RollingTradeStatistics::update(const TradeEntry& trade) {
         bucket.cumSellQuantity += trade.quantity;
         bucket.biggestSellQuantity = std::max(bucket.biggestSellQuantity, trade.quantity);
     }
-
-    // std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
-    // std::cout << trade << std::endl;
-    // for (size_t i = 0; i < MAX_BUCKETS; ++i) {
-    //     const Bucket& b = buckets[i];
-    //     // if (!b.hasData) {
-    //     //     std::cout << "(empty)\n";
-    //     //     continue;
-    //     // }
-    //     std::cout
-    //         << "Bucket[" << i << "] "
-    //         << "start=" << b.startTimeSeconds << "s | "
-    //         << " data=" << b.hasData
-    //         << " o=" << b.openPrice
-    //         << " h=" << b.highestPrice
-    //         << " l=" << b.lowestPrice
-    //         << " c=" << b.closePrice
-    //         << " buyCount=" << b.buyCount
-    //         << " sellCount=" << b.sellCount
-    //         << "\n";
-    // }
-    // std::cout << "CurrentBucketId: " << currentBucketId << "\n";
-    // std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n";
 }
 
 void RollingTradeStatistics::rewind(const uint64_t newTimestampS) {
@@ -111,8 +88,8 @@ double RollingTradeStatistics::getNewestPrice() const {
 }
 
 RollingTradeStatistics::BuySellCount RollingTradeStatistics::getBuySellTradeCount(const size_t seconds) const {
-    size_t buy = 0;
-    size_t sell = 0;
+    int buy = 0;
+    int sell = 0;
 
     for (size_t i = 0; i < seconds; ++i) {
         const Bucket& b = buckets[currentBucketId - i & MASK];

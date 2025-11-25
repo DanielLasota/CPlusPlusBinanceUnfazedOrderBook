@@ -68,7 +68,7 @@ namespace SingleVariableCounter {
     double calculateBgcSlopeLogRatio(const OrderBook& orderBook);
 
     double calculateDifferenceDepthCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
-    double calculateTradeCount(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    int calculateTradeCount(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
 
     double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
     double calculateDifferenceDepthCountImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
@@ -76,7 +76,7 @@ namespace SingleVariableCounter {
     double calculateDifferenceDepthCountLogRatio(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
     double calculateDifferenceDepthCountLogRatioXEventCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
 
-    double calculateTradeCountDiff(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    int calculateTradeCountDiff(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateTradeCountImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateTradeCountFisherImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
     double calculateTradeCountLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);

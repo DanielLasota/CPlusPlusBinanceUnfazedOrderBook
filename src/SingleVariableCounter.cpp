@@ -408,9 +408,9 @@ namespace SingleVariableCounter {
         return bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
     }
 
-    double calculateTradeCount(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+    int calculateTradeCount(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
-        return static_cast<double>(buy) + static_cast<double>(sell);
+        return buy + sell;
     }
 
     double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds){
@@ -453,9 +453,9 @@ namespace SingleVariableCounter {
         return std::log((bidDifferenceDepthEntryCount + eps) / (askDifferenceDepthEntryCount + eps)) * total;
     }
 
-    double calculateTradeCountDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
+    int calculateTradeCountDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
         const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
-        return static_cast<double>(buy) - static_cast<double>(sell);
+        return buy - sell;
     }
 
     double calculateTradeCountImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){

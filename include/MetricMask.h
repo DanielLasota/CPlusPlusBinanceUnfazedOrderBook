@@ -35,40 +35,30 @@ inline const std::array<std::string_view, METRICS_COUNT>& allMetricNames() {
     return kNames;
 }
 
-[[nodiscard]] inline constexpr bool has(MetricMask const& mask, Metric m) noexcept {
-    return mask.test(static_cast<size_t>(m));
-}
-inline constexpr void set(MetricMask& mask, Metric m) noexcept {
-    mask.set(static_cast<size_t>(m));
-}
-inline constexpr void clear(MetricMask& mask, Metric m) noexcept {
-    mask.reset(static_cast<size_t>(m));
-}
+[[nodiscard]] inline bool has(MetricMask const& mask, Metric m) noexcept { return mask.test(m); }
+inline void set(MetricMask& mask, Metric m) noexcept { mask.set(m); }
+inline void clear(MetricMask& mask, Metric m) noexcept { mask.reset(m); }
 
-[[nodiscard]] inline constexpr bool operator&(MetricMask const& mask, Metric m) noexcept {
-    return has(mask, m);
-}
+[[nodiscard]] inline bool operator&(MetricMask const& mask, Metric m) noexcept { return has(mask, m); }
 
 [[nodiscard]] inline std::vector<std::string_view> expandMetricNames(const MetricMask& mask) {
     std::vector<std::string_view> out;
     out.reserve(mask.count());
     const auto& names = allMetricNames();
-    for (size_t bit = 0; bit < names.size(); ++bit) {
-        if (mask.test(bit)) out.push_back(names[bit]);
-    }
+    for (size_t bit = 0; bit < names.size(); ++bit) { if (mask.test(bit)) out.push_back(names[bit]); }
     return out;
 }
 
-[[nodiscard]] inline constexpr MetricMask makeMask(std::initializer_list<Metric> ms) noexcept {
+[[nodiscard]] inline MetricMask makeMask(std::initializer_list<Metric> ms) noexcept {
     MetricMask m;
     m.reset();
-    for (Metric x : ms) m.set(static_cast<size_t>(x));
+    for (Metric x : ms) m.set(x);
     return m;
 }
 
 namespace detail {
     inline const std::unordered_map<std::string_view, Metric>& lutNameToMetric() {
-        static const std::unordered_map<std::string_view, Metric> map = []{
+        static const std::unordered_map<std::string_view, Metric> map = [] {
             std::unordered_map<std::string_view, Metric> m;
             m.reserve(METRICS_COUNT * 2);
             #define METRIC(name, ctype) m.emplace(std::string_view{#name}, Metric(name));
@@ -88,11 +78,8 @@ namespace detail {
     unknowns.reserve(4);
 
     for (const auto& s : vars) {
-        if (auto it = lut.find(std::string_view{s}); it != lut.end()) {
-            mask.set(static_cast<size_t>(it->second));
-        } else {
-            unknowns.push_back(s);
-        }
+        if (auto it = lut.find(std::string_view{s}); it != lut.end()) { mask.set(it->second); }
+        else { unknowns.push_back(s); }
     }
 
     if (!unknowns.empty()) {

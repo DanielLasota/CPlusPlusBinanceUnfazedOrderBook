@@ -32,7 +32,7 @@ namespace SingleVariableCounter {
     double calculateOrderFlowImbalance(const OrderBook &ob);
     double calculateOrderFlowFisherImbalance(const OrderBook &ob);
 
-    double calculateQueueCountFlowDelta(const OrderBook &ob);
+    int calculateQueueCountFlowDiff(const OrderBook& ob);
     double calculateQueueCountFlowImbalance(const OrderBook &ob);
     double calculateQueueCountFlowFisherImbalance(const OrderBook &ob);
 
@@ -51,7 +51,7 @@ namespace SingleVariableCounter {
     double calculateVolumeLogRatio(const OrderBook &ob);
     double calculateVolumeLogRatioXVolume(const OrderBook &ob);
 
-    double calculateQueueDiff(const OrderBook &ob);
+    int calculateQueueDiff(const OrderBook& ob);
     double calculateQueueImbalance(const OrderBook &ob);
     double calculateQueueLogRatio(const OrderBook &ob);
     double calculateQueueLogRatioXVolume(const OrderBook &ob);

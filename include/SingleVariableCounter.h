@@ -1,115 +1,113 @@
 #pragma once
 
-#include "RollingDifferenceDepthStatistics.h"
-#include "RollingTradeStatistics.h"
-#include "enums/TradeEntry.h"
 #include "OrderBook.h"
+#include "RollingDifferenceDepthStatistics.h"
+#include "TradeRoll.h"
+#include "enums/TradeEntry.h"
 
 namespace SingleVariableCounter {
 
-    double calculateBestAskPrice(const OrderBook& orderBook);
-    double calculateBestBidPrice(const OrderBook& orderBook);
-    double calculateMidPrice(const OrderBook& orderBook);
+    double calculateBestAskPrice(const OrderBook &ob);
+    double calculateBestBidPrice(const OrderBook &ob);
+    double calculateMidPrice(const OrderBook &ob);
 
-    double calculateMicroPriceDiff(const OrderBook& orderBook);
-    double calculateMicroPriceImbalance(const OrderBook& orderBook);
-    double calculateMicroPriceFisherImbalance(const OrderBook& orderBook);
-    double calculateMicroPriceDeviation(const OrderBook& orderBook);
-    double calculateMicroPriceLogRatio(const OrderBook& orderBook);
+    double calculateMicroPriceDiff(const OrderBook &ob);
+    double calculateMicroPriceImbalance(const OrderBook &ob);
+    double calculateMicroPriceFisherImbalance(const OrderBook &ob);
+    double calculateMicroPriceDeviation(const OrderBook &ob);
+    double calculateMicroPriceLogRatio(const OrderBook &ob);
 
-    double calculateBestBidQuantity(const OrderBook& orderBook);
-    double calculateBestAskQuantity(const OrderBook& orderBook);
+    double calculateBestBidQuantity(const OrderBook &ob);
+    double calculateBestAskQuantity(const OrderBook &ob);
 
-    double calculateBestOrderFlowDiff(const OrderBook& orderBook);
-    double calculateBestOrderFlowImbalance(const OrderBook& orderBook);
-    double calculateBestOrderFlowFisherImbalance(const OrderBook& orderBook);
+    double calculateBestOrderFlowDiff(const OrderBook &ob);
+    double calculateBestOrderFlowImbalance(const OrderBook &ob);
+    double calculateBestOrderFlowFisherImbalance(const OrderBook &ob);
 
-    double calculateBestOrderFlowCKSDiff(const OrderBook& orderBook);
-    double calculateBestOrderFlowCKSImbalance(const OrderBook& orderBook);
-    double calculateBestOrderFlowCKSFisherImbalance(const OrderBook& orderBook);
+    double calculateBestOrderFlowCKSDiff(const OrderBook &ob);
+    double calculateBestOrderFlowCKSImbalance(const OrderBook &ob);
+    double calculateBestOrderFlowCKSFisherImbalance(const OrderBook &ob);
 
-    double calculateOrderFlowDiff(const OrderBook& orderBook);
-    double calculateOrderFlowImbalance(const OrderBook& orderBook);
-    double calculateOrderFlowFisherImbalance(const OrderBook& orderBook);
+    double calculateOrderFlowDiff(const OrderBook &ob);
+    double calculateOrderFlowImbalance(const OrderBook &ob);
+    double calculateOrderFlowFisherImbalance(const OrderBook &ob);
 
-    double calculateQueueCountFlowDelta(const OrderBook& orderBook);
-    double calculateQueueCountFlowImbalance(const OrderBook& orderBook);
-    double calculateQueueCountFlowFisherImbalance(const OrderBook& orderBook);
+    double calculateQueueCountFlowDelta(const OrderBook &ob);
+    double calculateQueueCountFlowImbalance(const OrderBook &ob);
+    double calculateQueueCountFlowFisherImbalance(const OrderBook &ob);
 
-    double calculateBestVolumeDiff(const OrderBook& orderBook);
-    double calculateBestVolumeImbalance(const OrderBook& orderBook);
-    double calculateBestVolumeFisherImbalance(const OrderBook& orderBook);
-    double calculateBestVolumeLogRatio(const OrderBook& orderBook);
-    double calculateBestVolumeSignedLogRatioXVolume(const OrderBook& orderBook);
-    double calculateBestNPriceLevelsVolumeDiff(const OrderBook& orderBook, int nPriceLevels);
-    double calculateBestNPriceLevelsVolumeImbalance(const OrderBook& orderBook, int nPriceLevels);
-    double calculateBestNPriceLevelsVolumeLogRatio(const OrderBook& orderBook, int nPriceLevels);
-    double calculateBestNPriceLevelsVolumeLogRatioXVolume(const OrderBook& orderBook, int nPriceLevels);
+    double calculateBestVolumeDiff(const OrderBook &ob);
+    double calculateBestVolumeImbalance(const OrderBook &ob);
+    double calculateBestVolumeFisherImbalance(const OrderBook &ob);
+    double calculateBestVolumeLogRatio(const OrderBook &ob);
+    double calculateBestVolumeSignedLogRatioXVolume(const OrderBook &ob);
+    double calculateBestNPriceLevelsVolumeDiff(const OrderBook &ob, int n);
+    double calculateBestNPriceLevelsVolumeImbalance(const OrderBook &ob, int n);
+    double calculateBestNPriceLevelsVolumeLogRatio(const OrderBook &ob, int n);
+    double calculateBestNPriceLevelsVolumeLogRatioXVolume(const OrderBook &ob, int n);
 
-    double calculateVolumeDiff(const OrderBook& orderBook);
-    double calculateVolumeImbalance(const OrderBook& orderBook);
-    double calculateVolumeLogRatio(const OrderBook& orderBook);
-    double calculateVolumeLogRatioXVolume(const OrderBook& orderBook);
+    double calculateVolumeDiff(const OrderBook &ob);
+    double calculateVolumeImbalance(const OrderBook &ob);
+    double calculateVolumeLogRatio(const OrderBook &ob);
+    double calculateVolumeLogRatioXVolume(const OrderBook &ob);
 
-    double calculateQueueDiff(const OrderBook& orderBook);
-    double calculateQueueImbalance(const OrderBook& orderBook);
-    double calculateQueueLogRatio(const OrderBook& orderBook);
-    double calculateQueueLogRatioXVolume(const OrderBook& orderBook);
+    double calculateQueueDiff(const OrderBook &ob);
+    double calculateQueueImbalance(const OrderBook &ob);
+    double calculateQueueLogRatio(const OrderBook &ob);
+    double calculateQueueLogRatioXVolume(const OrderBook &ob);
 
-    double calculateGap(const OrderBook& orderBook);
-    bool calculateIsAggressorAsk(const TradeEntry *tradeEntry);
-    double calculateVwapDeviation(const OrderBook& orderBook);
-    double calculateVwapLogRatio(const OrderBook& orderBook);
-    double calculateSimplifiedSlopeImbalance(const OrderBook& orderBook);
-    double calculateSimplifiedSlopeDiff(const OrderBook& orderBook);
-    double calculateSimplifiedSlopeLogRatio(const OrderBook& orderBook);
-    double calculateBgcSlopeImbalance(const OrderBook& orderBook);
-    double calculateBgcSlopeDiff(const OrderBook& orderBook);
-    double calculateBgcSlopeLogRatio(const OrderBook& orderBook);
+    double calculateGap(const OrderBook &ob);
+    bool calculateIsAggressorAsk(const TradeEntry *te);
+    double calculateVwapDeviation(const OrderBook &ob);
+    double calculateVwapLogRatio(const OrderBook &ob);
+    double calculateSimplifiedSlopeImbalance(const OrderBook &ob);
+    double calculateSimplifiedSlopeDiff(const OrderBook &ob);
+    double calculateSimplifiedSlopeLogRatio(const OrderBook &ob);
+    double calculateBgcSlopeImbalance(const OrderBook &ob);
+    double calculateBgcSlopeDiff(const OrderBook &ob);
+    double calculateBgcSlopeLogRatio(const OrderBook &ob);
 
-    double calculateDifferenceDepthCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
-    int calculateTradeCount(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateSinTime24h(uint64_t timestamp);
+    double calculateLongSinTime24h(uint64_t timestamp);
+    double calculateCosTime24h(uint64_t timestamp);
+    double calculateIsAsiaTime(uint64_t timestamp);
+    double calculateIsEuropeTime(uint64_t timestamp);
+    double calculateIsUSATime(uint64_t timestamp);
 
-    double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
-    double calculateDifferenceDepthCountImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
-    double calculateDifferenceDepthCountFisherImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
-    double calculateDifferenceDepthCountLogRatio(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
-    double calculateDifferenceDepthCountLogRatioXEventCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, int windowTimeSeconds);
+    double calculateDifferenceDepthCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
+    double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
+    double calculateDifferenceDepthCountImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
+    double calculateDifferenceDepthCountFisherImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
+    double calculateDifferenceDepthCountLogRatio(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
+    double calculateDifferenceDepthCountLogRatioXEventCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
 
-    int calculateTradeCountDiff(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateTradeCountImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateTradeCountFisherImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateTradeCountLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    int calculateTradeCount(const TradeRoll &tr, size_t seconds);
+    int calculateTradeCountDiff(const TradeRoll &tr, size_t seconds);
+    double calculateTradeCountImbalance(const TradeRoll &tr, size_t seconds);
+    double calculateTradeCountFisherImbalance(const TradeRoll &tr, size_t seconds);
+    double calculateTradeCountLogRatio(const TradeRoll &tr, size_t seconds);
 
-    double calculateTradeVolumeSum(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateTradeVolumeDiff(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateTradeVolumeImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateTradeVolumeLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateTradeVolumeSum(const TradeRoll &tr, size_t seconds);
+    double calculateTradeVolumeDiff(const TradeRoll &tr, size_t seconds);
+    double calculateTradeVolumeImbalance(const TradeRoll &tr, size_t seconds);
+    double calculateTradeVolumeLogRatio(const TradeRoll &tr, size_t seconds);
 
-    double calculateAvgTradeSizeDiff(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateAvgTradeSizeImbalance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateAvgTradeSizeLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateBiggestSingleBuyTradeVolume(const TradeRoll &tr, size_t seconds);
+    double calculateBiggestSingleSellTradeVolume(const TradeRoll &tr, size_t seconds);
 
-    double calculateBiggestSingleBuyTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateBiggestSingleSellTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateAvgTradeSizeDiff(const TradeRoll &tr, size_t seconds);
+    double calculateAvgTradeSizeImbalance(const TradeRoll &tr, size_t seconds);
+    double calculateAvgTradeSizeLogRatio(const TradeRoll &tr, size_t seconds);
 
-    double calculatePriceDifference(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateRateOfReturn(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateLogReturnRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculatePriceDifference(const TradeRoll &tr, size_t seconds);
+    double calculateRateOfReturn(const TradeRoll &tr, size_t seconds);
+    double calculateLogReturnRatio(const TradeRoll &tr, size_t seconds);
 
-    double calculateLogKylesLambda(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculateSMALogRatio(const TradeRoll &tr, size_t seconds);
+    double calculateHLC3TLogRatio(const TradeRoll &tr, size_t seconds);
+    double calculateBollingerBandsDistance(const TradeRoll &tr, size_t seconds);
 
-    double calculateDeltaPVT(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-
-    double calculateSinTime24h(uint64_t lastTimestampOfReceive);
-    double calculateLongSinTime24h(uint64_t lastTimestampOfReceive);
-    double calculateCosTime24h(uint64_t lastTimestampOfReceive);
-    double calculateIsAsiaTime(uint64_t lastTimestampOfReceive);
-    double calculateIsEuropeTime(uint64_t lastTimestampOfReceive);
-    double calculateIsUSATime(uint64_t lastTimestampOfReceive);
-
-    double calculatePriceDistance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateSMALogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
-    double calculateBollingerBandsDistance(const RollingTradeStatistics& rollingTradeStatistics, int windowTimeSeconds);
+    double calculatePriceDistance(const TradeRoll &tr, size_t seconds);
+    double calculateLogKylesLambda(const TradeRoll &tr, size_t seconds);
+    double calculateDeltaPVT(const TradeRoll &tr, size_t seconds);
 }

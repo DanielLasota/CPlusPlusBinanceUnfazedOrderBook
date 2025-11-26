@@ -1,14 +1,14 @@
 #pragma once
 #include <array>
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 
 #include "EntryDecoder.h"
 
-class RollingTradeStatistics {
+class TradeRoll {
 public:
 
-    void update(const TradeEntry& trade);
+    void update(const TradeEntry &trade);
 
     struct HiLo {
         double h;
@@ -30,13 +30,13 @@ public:
     [[nodiscard]] BuySellCount getBuySellTradeCount(size_t seconds) const;
     [[nodiscard]] HiLo getHiLoPrice(size_t seconds) const;
     [[nodiscard]] BuySell getCumBuySellQuantity(size_t seconds) const;
+    [[nodiscard]] BuySell getBiggestBuySell(size_t seconds) const;
     [[nodiscard]] double getOldestPrice(size_t seconds) const;
     [[nodiscard]] double getPriceDifference(size_t seconds) const;
     [[nodiscard]] double getClosePrice(size_t seconds) const;
-    [[nodiscard]] BuySell getBiggestBuySell(size_t seconds) const;
+    [[nodiscard]] double getPriceDistance(size_t seconds) const;
     [[nodiscard]] double getSMA(size_t seconds) const;
     [[nodiscard]] double getHLC3(size_t seconds) const;
-    [[nodiscard]] double getPriceDistance(size_t seconds) const;
     [[nodiscard]] double getBollingerBandsDistance(size_t seconds) const;
 
 private:
@@ -45,8 +45,8 @@ private:
     static constexpr size_t MASK = MAX_BUCKETS - 1;
 
     static_assert(MAX_BUCKETS != 0);
-    static_assert((MAX_BUCKETS & MAX_BUCKETS - 1) == 0);
-    static_assert((MAX_BUCKETS & MASK) == 0);
+    static_assert((MAX_BUCKETS &MAX_BUCKETS - 1) == 0);
+    static_assert((MAX_BUCKETS &MASK) == 0);
     static_assert(MAX_BUCKETS == 1024);
 
     struct Bucket {

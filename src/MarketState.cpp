@@ -20,7 +20,7 @@ void MarketState::update(DecodedEntry* entry) {
         lastTrade = *tradeEntry;
         lastTradePtr = &lastTrade;
         hasLastTrade = true;
-        rollingTradeStatistics.update(*tradeEntry);
+        tradeRoll.update(*tradeEntry);
         lastStreamType = StreamType::TRADE_STREAM;
     }
 }

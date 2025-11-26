@@ -3,6 +3,11 @@
 
 std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStateMetrics(const MarketState& marketState) const {
     if (!marketState.getHasLastTrade() || marketState.orderBook.askCount() < 2 || marketState.orderBook.bidCount() < 2){
+        // std::cout
+        // << "marketState.getHasLastTrade()=" << marketState.getHasLastTrade()
+        // << " marketState.orderBook.askCount()=" << marketState.orderBook.askCount()
+        // << " marketState.orderBook.bidCount()=" << marketState.orderBook.bidCount()
+        // << std::endl;
         return std::nullopt;
     }
 
@@ -83,7 +88,7 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     }
 
     if (mask_ & queueCountFlowDiff){
-        e.queueCountFlowDiff = SingleVariableCounter::calculateQueueCountFlowDelta(marketState.orderBook);
+        e.queueCountFlowDiff = SingleVariableCounter::calculateQueueCountFlowDiff(marketState.orderBook);
     }
     if (mask_ & queueCountFlowImbalance){
         e.queueCountFlowImbalance = SingleVariableCounter::calculateQueueCountFlowImbalance(marketState.orderBook);

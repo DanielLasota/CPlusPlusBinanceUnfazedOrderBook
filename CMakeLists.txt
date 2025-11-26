@@ -26,7 +26,7 @@ set(SOURCES
         src/OrderBookMetrics.cpp
         src/OrderBookMetricsCalculator.cpp
         src/GlobalMarketState.cpp
-        src/RollingTradeStatistics.cpp
+        src/TradeRoll.cpp
         src/RollingDifferenceDepthStatistics.cpp
 #        test/TestSingleVariableCounter.cpp
 #        test/TestOrderBook.cpp
@@ -37,9 +37,9 @@ pybind11_add_module(cpp_binance_orderbook ${SOURCES})
 set_target_properties(cpp_binance_orderbook PROPERTIES SUFFIX ".pyd")
 
 add_executable(ringbuffer_tests
-        test/TestRollingTradeStatistics.cpp
-        include/RollingTradeStatistics.h
-        src/RollingTradeStatistics.cpp
+        test/TestTradeRoll.cpp
+        include/TradeRoll.h
+        src/TradeRoll.cpp
 )
 
 #1

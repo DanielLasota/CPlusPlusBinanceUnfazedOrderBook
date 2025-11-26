@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <iostream>
 
-#include "RollingTradeStatistics.h"
+#include "TradeRoll.h"
 
-void RollingTradeStatistics::Bucket::reset() {
+void TradeRoll::Bucket::reset() {
     buyCount                = 0;
     sellCount               = 0;
     cumBuyQuantity          = 0.0;
@@ -17,7 +17,7 @@ void RollingTradeStatistics::Bucket::reset() {
     hasData                 = false;
 }
 
-void RollingTradeStatistics::update(const TradeEntry& trade) {
+void TradeRoll::update(const TradeEntry &trade) {
     const uint64_t timestampOfReceiveUS = trade.timestampOfReceive;
     const uint64_t timestampOfReceiveS = timestampOfReceiveUS / 1'000'000;
     if (timestampOfReceiveUS < lastTradeTimestampUS) [[unlikely]] return;
@@ -28,7 +28,7 @@ void RollingTradeStatistics::update(const TradeEntry& trade) {
     newestPrice = trade.price;
     currentBucketId = getBucketId(timestampOfReceiveS);
 
-    Bucket& bucket = buckets[currentBucketId];
+    Bucket &bucket = buckets[currentBucketId];
     bucket.startTimeSeconds = timestampOfReceiveS;
 
     if (!bucket.hasData){
@@ -53,7 +53,7 @@ void RollingTradeStatistics::update(const TradeEntry& trade) {
     }
 }
 
-void RollingTradeStatistics::rewind(const uint64_t newTimestampS) {
+void TradeRoll::rewind(const uint64_t newTimestampS) {
     if (newTimestampS <= lastBucketTimestampS) [[unlikely]] return;
     if (lastBucketTimestampS == 0) [[unlikely]] {
         lastBucketTimestampS = newTimestampS;
@@ -74,25 +74,25 @@ void RollingTradeStatistics::rewind(const uint64_t newTimestampS) {
     lastBucketTimestampS = newTimestampS;
 }
 
-size_t RollingTradeStatistics::getBucketId(const uint64_t timestampS) {
+size_t TradeRoll::getBucketId(const uint64_t timestampS) {
     return timestampS & MASK;
 }
 
 
-uint64_t RollingTradeStatistics::getLastTradeTimestamp() const {
+uint64_t TradeRoll::getLastTradeTimestamp() const {
     return lastTradeTimestampUS;
 }
 
-double RollingTradeStatistics::getNewestPrice() const {
+double TradeRoll::getNewestPrice() const {
     return newestPrice;
 }
 
-RollingTradeStatistics::BuySellCount RollingTradeStatistics::getBuySellTradeCount(const size_t seconds) const {
+TradeRoll::BuySellCount TradeRoll::getBuySellTradeCount(const size_t seconds) const {
     int buy = 0;
     int sell = 0;
 
     for (size_t i = 0; i < seconds; ++i) {
-        const Bucket& b = buckets[currentBucketId - i & MASK];
+        const Bucket &b = buckets[currentBucketId - i & MASK];
         buy += b.buyCount;
         sell += b.sellCount;
     }
@@ -100,12 +100,12 @@ RollingTradeStatistics::BuySellCount RollingTradeStatistics::getBuySellTradeCoun
     return {buy, sell};
 }
 
-RollingTradeStatistics::HiLo RollingTradeStatistics::getHiLoPrice(const size_t seconds) const{
+TradeRoll::HiLo TradeRoll::getHiLoPrice(const size_t seconds) const{
     double hi = 0.0;
     double lo = std::numeric_limits<double>::infinity();
 
     for (size_t i = 0; i < seconds; ++i) {
-        const Bucket& b = buckets[currentBucketId - i & MASK];
+        const Bucket &b = buckets[currentBucketId - i & MASK];
         hi = std::max(hi, b.highestPrice);
         lo = std::min(lo, b.lowestPrice);
     }
@@ -113,12 +113,12 @@ RollingTradeStatistics::HiLo RollingTradeStatistics::getHiLoPrice(const size_t s
     return {hi, lo};
 }
 
-RollingTradeStatistics::BuySell RollingTradeStatistics::getCumBuySellQuantity(const size_t seconds) const {
+TradeRoll::BuySell TradeRoll::getCumBuySellQuantity(const size_t seconds) const {
     double buy = 0;
     double sell = 0;
 
     for (size_t i = 0; i < seconds; ++i) {
-        const Bucket& b = buckets[currentBucketId - i & MASK];
+        const Bucket &b = buckets[currentBucketId - i & MASK];
         buy += b.cumBuyQuantity;
         sell += b.cumSellQuantity;
     }
@@ -126,28 +126,12 @@ RollingTradeStatistics::BuySell RollingTradeStatistics::getCumBuySellQuantity(co
     return {buy, sell};
 }
 
-double RollingTradeStatistics::getOldestPrice(const size_t seconds) const {
-    const Bucket& b = buckets[currentBucketId - seconds + 1 & MASK];
-    return b.openPrice;
-}
-
-double RollingTradeStatistics::getPriceDifference(const size_t seconds) const {
-    const Bucket& b = buckets[currentBucketId - seconds + 1 & MASK];
-    return newestPrice - b.openPrice;
-}
-
-double RollingTradeStatistics::getClosePrice(const size_t seconds) const {
-    const size_t offset = std::min(seconds, MASK);
-    const Bucket& b = buckets[currentBucketId - offset & MASK];
-    return b.closePrice;
-}
-
-RollingTradeStatistics::BuySell RollingTradeStatistics::getBiggestBuySell(const size_t seconds) const {
+TradeRoll::BuySell TradeRoll::getBiggestBuySell(const size_t seconds) const {
     double biggestBuyQuantity = 0.0;
     double biggestSellQuantity = 0.0;
 
     for (size_t i = 0; i < seconds; ++i) {
-        const Bucket& b = buckets[currentBucketId - i & MASK];
+        const Bucket &b = buckets[currentBucketId - i & MASK];
 
         biggestBuyQuantity = std::max(biggestBuyQuantity, b.biggestBuyQuantity);
         biggestSellQuantity = std::max(biggestSellQuantity, b.biggestSellQuantity);
@@ -156,38 +140,54 @@ RollingTradeStatistics::BuySell RollingTradeStatistics::getBiggestBuySell(const 
     return {biggestBuyQuantity, biggestSellQuantity};
 }
 
-double RollingTradeStatistics::getSMA(const size_t seconds) const {
+double TradeRoll::getOldestPrice(const size_t seconds) const {
+    const Bucket &b = buckets[currentBucketId - seconds + 1 & MASK];
+    return b.openPrice;
+}
+
+double TradeRoll::getPriceDifference(const size_t seconds) const {
+    const Bucket &b = buckets[currentBucketId - seconds + 1 & MASK];
+    return newestPrice - b.openPrice;
+}
+
+double TradeRoll::getClosePrice(const size_t seconds) const {
+    const size_t offset = std::min(seconds, MASK);
+    const Bucket &b = buckets[currentBucketId - offset & MASK];
+    return b.closePrice;
+}
+
+double TradeRoll::getPriceDistance(const size_t seconds) const {
+    const size_t bucketsToScan = std::min(seconds, MASK);
+    const auto [h, l] = getHiLoPrice(bucketsToScan);
+    const double o = getOldestPrice(bucketsToScan);
+    const double cPrevious = getClosePrice(seconds);
+
+    return 2.0 * (h - l) - std::abs(newestPrice - o) + std::abs(o - cPrevious);
+}
+
+double TradeRoll::getSMA(const size_t seconds) const {
     double sumPrices = 0.0;
 
     for (size_t i = 0; i < seconds; ++i) {
-        const Bucket& bucket = buckets[currentBucketId - i & MASK];
+        const Bucket &bucket = buckets[currentBucketId - i & MASK];
         sumPrices += bucket.closePrice;
     }
 
     return sumPrices / static_cast<double>(seconds);
 }
 
-double RollingTradeStatistics::getHLC3(const size_t seconds) const {
-    const HiLo hl = getHiLoPrice(seconds);
-    return (hl.h + hl.l + newestPrice) / 3.0;
+double TradeRoll::getHLC3(const size_t seconds) const {
+    const auto [h, l] = getHiLoPrice(seconds);
+    return (h + l + newestPrice) / 3.0;
 }
 
-double RollingTradeStatistics::getPriceDistance(const size_t seconds) const {
-    const size_t bucketsToScan = std::min(seconds, MASK);
-    const HiLo hl = getHiLoPrice(bucketsToScan);
-    const double o = getOldestPrice(bucketsToScan);
-    const double cPrevious = getClosePrice(seconds);
-
-    return 2.0 * (hl.h - hl.l) - std::abs(newestPrice - o) + std::abs(o - cPrevious);
-}
-
-double RollingTradeStatistics::getBollingerBandsDistance(const size_t seconds) const {
+double TradeRoll::getBollingerBandsDistance(const size_t seconds) const {
     double sumPrices = 0.0;
     double sumSquares = 0.0;
     constexpr double eps = 1e-12;
 
     for (size_t i = 0; i < seconds; ++i) {
-        const Bucket& b = buckets[currentBucketId - i & MASK];
+        const Bucket &b = buckets[currentBucketId - i & MASK];
 
         const double p = b.closePrice;
 

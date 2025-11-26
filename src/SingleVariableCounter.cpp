@@ -143,10 +143,8 @@ namespace SingleVariableCounter {
         return finiteAtanh(calculateOrderFlowImbalance(ob));
     }
 
-    double calculateQueueCountFlowDelta(const OrderBook &ob) {
-        const auto bidQueueCount = static_cast<double>(ob.deltaBidCount());
-        const auto askQueueCount = static_cast<double>(ob.deltaAskCount());
-        return bidQueueCount - askQueueCount;
+    int calculateQueueCountFlowDiff(const OrderBook& ob) {
+        return ob.deltaBidCount() - ob.deltaAskCount();
     }
 
     double calculateQueueCountFlowImbalance(const OrderBook &ob) {
@@ -164,9 +162,7 @@ namespace SingleVariableCounter {
     }
 
     double calculateBestVolumeDiff(const OrderBook &ob) {
-        const double bestAskQuantity = ob.bestAskQuantity();
-        const double bestBidQuantity = ob.bestBidQuantity();
-        return bestBidQuantity - bestAskQuantity;
+        return ob.bestAskQuantity() - ob.bestBidQuantity();
     }
 
     double calculateBestVolumeImbalance(const OrderBook &ob) {
@@ -203,9 +199,7 @@ namespace SingleVariableCounter {
     }
 
     double calculateBestNPriceLevelsVolumeLogRatio(const OrderBook &ob, const int n) {
-        return std::log(
-            ob.cumulativeQuantityOfTopNBids(n) / ob.cumulativeQuantityOfTopNAsks(n)
-            );
+        return std::log(ob.cumulativeQuantityOfTopNBids(n) / ob.cumulativeQuantityOfTopNAsks(n));
     }
 
     double calculateBestNPriceLevelsVolumeLogRatioXVolume(const OrderBook &ob, const int n) {
@@ -215,8 +209,7 @@ namespace SingleVariableCounter {
     }
 
     double calculateVolumeImbalance(const OrderBook &ob) {
-        return (ob.sumBidQuantity() - ob.sumAskQuantity())
-            / (ob.sumBidQuantity() + ob.sumAskQuantity());
+        return (ob.sumBidQuantity() - ob.sumAskQuantity()) / (ob.sumBidQuantity() + ob.sumAskQuantity());
     }
 
     double calculateVolumeDiff(const OrderBook &ob) {
@@ -224,31 +217,25 @@ namespace SingleVariableCounter {
     }
 
     double calculateVolumeLogRatio(const OrderBook &ob) {
-        return std::log(
-            ob.sumBidQuantity() / ob.sumAskQuantity()
-            );
+        return std::log(ob.sumBidQuantity() / ob.sumAskQuantity());
     }
 
     double calculateVolumeLogRatioXVolume(const OrderBook &ob) {
         return calculateVolumeLogRatio(ob) * ob.sumTotalAskBidQuantity();
     }
 
-    double calculateQueueImbalance(const OrderBook &ob) {
-        const double bid = static_cast<double>(ob.bidCount());
-        const double ask = static_cast<double>(ob.askCount());
-        const double sum = bid + ask;
-        if (sum == 0.0) [[unlikely]] return 0.0;
-        return (bid - ask) / sum;
+    int calculateQueueDiff(const OrderBook& ob) {
+        return ob.bidCount() - ob.askCount();
     }
 
-    double calculateQueueDiff(const OrderBook &ob) {
-        return static_cast<int>(ob.bidCount()) - static_cast<int>(ob.askCount());
+    double calculateQueueImbalance(const OrderBook &ob) {
+        const auto bid = static_cast<double>(ob.bidCount());
+        const auto ask = static_cast<double>(ob.askCount());
+        return (bid - ask) / (bid + ask);
     }
 
     double calculateQueueLogRatio(const OrderBook &ob) {
-        return std::log(
-            static_cast<double>(ob.bidCount()) / static_cast<double>(ob.askCount())
-            );
+        return std::log(static_cast<double>(ob.bidCount()) / static_cast<double>(ob.askCount()));
     }
 
     double calculateQueueLogRatioXVolume(const OrderBook &ob) {

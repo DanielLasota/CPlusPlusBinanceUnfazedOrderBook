@@ -38,8 +38,8 @@ public:
 
     void printOrderBook() const;
 
-    size_t askCount() const { return askCount_; }
-    size_t bidCount() const { return bidCount_; }
+    int askCount() const { return askCount_; }
+    int bidCount() const { return bidCount_; }
 
     double sumAskQuantity() const { return sumAskQuantity_; }
     double sumBidQuantity() const { return sumBidQuantity_; }
@@ -51,8 +51,8 @@ public:
     double secondAskPrice() const { return askHead_->next_->price; }
     double secondBidPrice() const { return bidHead_->next_->price; }
 
-    size_t deltaAskCount() const { return deltaAskCount_; }
-    size_t deltaBidCount() const { return deltaBidCount_; }
+    int deltaAskCount() const { return deltaAskCount_; }
+    int deltaBidCount() const { return deltaBidCount_; }
     double deltaBestAskQuantity() const { return deltaBestAskQuantity_; }
     double deltaBestBidQuantity() const { return deltaBestBidQuantity_; }
     double deltaBestAskPrice() const { return deltaBestAskPrice_; }
@@ -84,8 +84,8 @@ private:
 
     std::unordered_map<PriceSide, DifferenceDepthEntry*, PriceSideHash> index_;
 
-    size_t askCount_{0};
-    size_t bidCount_{0};
+    int askCount_{0};
+    int bidCount_{0};
 
     double sumAskQuantity_{0.0};
     double sumBidQuantity_{0.0};
@@ -97,8 +97,8 @@ private:
     double prevBestBidQuantity_{0.0};
     double prevSumAskQuantity_{0.0};
     double prevSumBidQuantity_{0.0};
-    size_t prevAskCount_{0};
-    size_t prevBidCount_{0};
+    int prevAskCount_{0};
+    int prevBidCount_{0};
 
     double deltaBestAskPrice_{0.0};
     double deltaBestBidPrice_{0.0};
@@ -106,8 +106,8 @@ private:
     double deltaBestBidQuantity_{0.0};
     double deltaSumAskQuantity_{0.0};
     double deltaSumBidQuantity_{0.0};
-    size_t deltaAskCount_{0};
-    size_t deltaBidCount_{0};
+    int deltaAskCount_{0};
+    int deltaBidCount_{0};
 
     DifferenceDepthEntry* allocateNode(double price, bool isAsk, double quantity);
     void deallocateNode(DifferenceDepthEntry* node);

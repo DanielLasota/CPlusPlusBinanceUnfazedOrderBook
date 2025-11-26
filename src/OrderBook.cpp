@@ -13,9 +13,7 @@ OrderBook::OrderBook(const size_t maxLevels) {
     freeListHead_ = &arena[0];
 }
 
-auto OrderBook::allocateNode(double price, bool isAsk, double quantity)
-    -> DifferenceDepthEntry*
-{
+auto OrderBook::allocateNode(double price, bool isAsk, double quantity) -> DifferenceDepthEntry* {
     if (!freeListHead_) throw std::runtime_error("Pool exhausted");
     auto *node = freeListHead_;
     freeListHead_ = freeListHead_->next_;
@@ -293,7 +291,7 @@ std::vector<DifferenceDepthEntry> OrderBook::getBids() const {
     return result;
 }
 
-double OrderBook::cumulativeQuantityOfTopNAsks(size_t n) const {
+double OrderBook::cumulativeQuantityOfTopNAsks(const size_t n) const {
     double sum = 0;
     auto *node = askHead_;
     for (size_t i = 0; i < n && node; ++i, node = node->next_) {
@@ -302,7 +300,7 @@ double OrderBook::cumulativeQuantityOfTopNAsks(size_t n) const {
     return sum;
 }
 
-double OrderBook::cumulativeQuantityOfTopNBids(size_t n) const {
+double OrderBook::cumulativeQuantityOfTopNBids(const size_t n) const {
     double sum = 0;
     auto *node = bidHead_;
     for (size_t i = 0; i < n && node; ++i, node = node->next_) {

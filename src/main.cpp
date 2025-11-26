@@ -4,17 +4,8 @@
 #include "../include/OrderBookSessionSimulator.h"
 
 int main() {
-
-    // #ifdef NDEBUG
-    //     std::cerr << "Build: Release-like (NDEBUG)\n";
-    // #else
-    //     std::cerr << "Build: Debug-like (no NDEBUG)\n";
-    // #endif
-
     py::scoped_interpreter guard{};
-
     OrderBookSessionSimulator orderBookSessionSimulator;
-    // std::string csvPath = "C:/Users/daniel/Documents/merged_csvs/binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv";
     std::string csvPath = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-10-14.csv";
 
     std::vector<std::string> variables {

@@ -1,29 +1,10 @@
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #include "SingleVariableCounter.h"
-#include "RollingDifferenceDepthStatistics.h"
-#include "RollingTradeStatistics.h"
 #include "OrderBook.h"
-
-inline double round2(const double x) {
-    const double y = x * 1e2;
-    const double adjusted = y + (y >= 0.0 ? 0.5 : -0.5);
-    const int64_t t = static_cast<int64_t>(adjusted);
-    return t / 1e2;
-}
-
-inline double round5(const double x) {
-    const double y = x * 1e5;
-    const double adjusted = y + (y >= 0.0 ? 0.5 : -0.5);
-    const int64_t t = static_cast<int64_t>(adjusted);
-    return t / 1e5;
-}
-
-inline double round8(const double x) {
-    constexpr double p = 1e8; // 8
-    return std::round(x * p) / p;
-}
+#include "RollingDifferenceDepthStatistics.h"
+#include "TradeRoll.h"
 
 inline double finiteAtanh(double x) {
     constexpr double eps = 1e-12;
@@ -31,144 +12,146 @@ inline double finiteAtanh(double x) {
     return std::atanh(x);
 }
 
-
 namespace SingleVariableCounter {
 
-    double calculateBestAskPrice(const OrderBook& orderBook) {
-        return orderBook.bestAskPrice();
+    double calculateBestAskPrice(const OrderBook &ob) {
+        return ob.bestAskPrice();
     }
 
-    double calculateBestBidPrice(const OrderBook& orderBook) {
-        return orderBook.bestBidPrice();
+    double calculateBestBidPrice(const OrderBook &ob) {
+        return ob.bestBidPrice();
     }
 
-    double calculateMidPrice(const OrderBook& orderBook) {
-        return (orderBook.bestBidPrice() + orderBook.bestAskPrice()) * 0.5;
+    double calculateMidPrice(const OrderBook &ob) {
+        return (ob.bestBidPrice() + ob.bestAskPrice()) * 0.5;
     }
 
-    double calculateMicroPriceDiff(const OrderBook& orderBook){
+    double calculateMicroPriceDiff(const OrderBook &ob){
         const double microPrice =
-            (orderBook.bestAskPrice() * orderBook.bestBidQuantity() + orderBook.bestBidPrice() * orderBook.bestAskQuantity()) / (orderBook.bestBidQuantity() + orderBook.bestAskQuantity());
-        const double midPrice = calculateMidPrice(orderBook);
+            (ob.bestAskPrice() * ob.bestBidQuantity() + ob.bestBidPrice() * ob.bestAskQuantity()) / (ob.bestBidQuantity() + ob.bestAskQuantity());
+        const double midPrice = calculateMidPrice(ob);
         return microPrice - midPrice;
     }
 
-    double calculateMicroPriceImbalance(const OrderBook& orderBook){
+    double calculateMicroPriceImbalance(const OrderBook &ob){
         const double microPrice =
-            (orderBook.bestAskPrice() * orderBook.bestBidQuantity() + orderBook.bestBidPrice() * orderBook.bestAskQuantity()) / (orderBook.bestBidQuantity() + orderBook.bestAskQuantity());
-        const double midPrice = calculateMidPrice(orderBook);
+            (ob.bestAskPrice() * ob.bestBidQuantity() + ob.bestBidPrice() * ob.bestAskQuantity())
+            / (ob.bestBidQuantity() + ob.bestAskQuantity());
+        const double midPrice = calculateMidPrice(ob);
         return (microPrice - midPrice) / (microPrice + midPrice);
     }
 
-    double calculateMicroPriceFisherImbalance(const OrderBook& orderBook){
-        return std::atanh(calculateMicroPriceImbalance(orderBook));
+    double calculateMicroPriceFisherImbalance(const OrderBook &ob){
+        return finiteAtanh(calculateMicroPriceImbalance(ob));
     }
 
-    double calculateMicroPriceDeviation(const OrderBook& orderBook){
+    double calculateMicroPriceDeviation(const OrderBook &ob){
         const double microPrice =
-            (orderBook.bestAskPrice() * orderBook.bestBidQuantity() + orderBook.bestBidPrice() * orderBook.bestAskQuantity()) / (orderBook.bestBidQuantity() + orderBook.bestAskQuantity());
-        const double midPrice = calculateMidPrice(orderBook);
+            (ob.bestAskPrice() * ob.bestBidQuantity() + ob.bestBidPrice() * ob.bestAskQuantity())
+            / (ob.bestBidQuantity() + ob.bestAskQuantity());
+        const double midPrice = calculateMidPrice(ob);
         return (microPrice - midPrice) * 100 / midPrice;
     }
 
-    double calculateMicroPriceLogRatio(const OrderBook& orderBook){
+    double calculateMicroPriceLogRatio(const OrderBook &ob){
         const double microPrice =
-            (orderBook.bestAskPrice() * orderBook.bestBidQuantity() + orderBook.bestBidPrice() * orderBook.bestAskQuantity()) / (orderBook.bestBidQuantity() + orderBook.bestAskQuantity());
-        const double midPrice = calculateMidPrice(orderBook);
+            (ob.bestAskPrice() * ob.bestBidQuantity() + ob.bestBidPrice() * ob.bestAskQuantity())
+            / (ob.bestBidQuantity() + ob.bestAskQuantity());
+        const double midPrice = calculateMidPrice(ob);
         return std::log(microPrice / midPrice);
     }
 
-    double calculateBestBidQuantity(const OrderBook& orderBook){
-        return orderBook.bestBidQuantity();
+    double calculateBestBidQuantity(const OrderBook &ob){
+        return ob.bestBidQuantity();
     }
 
-    double calculateBestAskQuantity(const OrderBook& orderBook){
-        return orderBook.bestAskQuantity();
+    double calculateBestAskQuantity(const OrderBook &ob){
+        return ob.bestAskQuantity();
     }
 
-    double calculateBestOrderFlowDiff(const OrderBook& orderBook) {
-        return orderBook.deltaBestBidQuantity() - orderBook.deltaBestAskQuantity();
+    double calculateBestOrderFlowDiff(const OrderBook &ob) {
+        return ob.deltaBestBidQuantity() - ob.deltaBestAskQuantity();
     }
 
-    double calculateBestOrderFlowImbalance(const OrderBook& orderBook) {
-        const double den = std::abs(orderBook.deltaBestBidQuantity()) + std::abs(orderBook.deltaBestAskQuantity());
+    double calculateBestOrderFlowImbalance(const OrderBook &ob) {
+        const double den = std::abs(ob.deltaBestBidQuantity()) + std::abs(ob.deltaBestAskQuantity());
         if (den <= 0.0) return 0.0;
-        return (orderBook.deltaBestBidQuantity() - orderBook.deltaBestAskQuantity()) / den;
+        return (ob.deltaBestBidQuantity() - ob.deltaBestAskQuantity()) / den;
     }
 
-    double calculateBestOrderFlowFisherImbalance(const OrderBook& orderBook) {
-        return finiteAtanh(calculateBestOrderFlowImbalance(orderBook));
+    double calculateBestOrderFlowFisherImbalance(const OrderBook &ob) {
+        return finiteAtanh(calculateBestOrderFlowImbalance(ob));
     }
 
-    void computeBestOFIDeltasCKS(const OrderBook& orderBook, double& dQbid_net, double& dQask_net, double& dQbid_pos, double& dQask_pos){
-        const double pBid  = orderBook.bestBidPrice();
-        const double pAsk  = orderBook.bestAskPrice();
-        const double qBid  = orderBook.bestBidQuantity();
-        const double qAsk  = orderBook.bestAskQuantity();
+    void computeBestOFIDeltasCKS(const OrderBook &ob, double &dQBidNet, double &dQAskNet, double &dQBidPos, double &dQAskPos){
+        const double pBid  = ob.bestBidPrice();
+        const double pAsk  = ob.bestAskPrice();
+        const double qBid  = ob.bestBidQuantity();
+        const double qAsk  = ob.bestAskQuantity();
 
-        const double pBid0 = orderBook.bestBidPrice() - orderBook.deltaBestBidPrice();
-        const double pAsk0 = orderBook.bestAskPrice() - orderBook.deltaBestAskPrice();
-        const double qBid0 = orderBook.bestBidQuantity() - orderBook.deltaBestBidQuantity();
-        const double qAsk0 = orderBook.bestAskQuantity() - orderBook.deltaBestAskQuantity();
+        const double pBid0 = ob.bestBidPrice() - ob.deltaBestBidPrice();
+        const double pAsk0 = ob.bestAskPrice() - ob.deltaBestAskPrice();
+        const double qBid0 = ob.bestBidQuantity() - ob.deltaBestBidQuantity();
+        const double qAsk0 = ob.bestAskQuantity() - ob.deltaBestAskQuantity();
 
-        if (pBid > pBid0)       dQbid_net = +qBid;              // nowy wyższy bid
-        else if (pBid < pBid0)  dQbid_net = -qBid0;             // bid się cofnął
-        else                    dQbid_net = (qBid - qBid0);     // zmiana kolejki
+        if (pBid > pBid0)       dQBidNet = +qBid;
+        else if (pBid < pBid0)  dQBidNet = -qBid0;
+        else                    dQBidNet = qBid - qBid0;
 
-        if (pAsk < pAsk0)       dQask_net = +qAsk;              // nowy niższy ask
-        else if (pAsk > pAsk0)  dQask_net = -qAsk0;             // ask się cofnął
-        else                    dQask_net = (qAsk - qAsk0);     // zmiana kolejki
+        if (pAsk < pAsk0)       dQAskNet = +qAsk;
+        else if (pAsk > pAsk0)  dQAskNet = -qAsk0;
+        else                    dQAskNet = qAsk - qAsk0;
 
-        if (pBid > pBid0)       dQbid_pos = qBid;
-        else if (pBid < pBid0)  dQbid_pos = 0.0;
-        else                    dQbid_pos = std::max(0.0, qBid - qBid0);
+        if (pBid > pBid0)       dQBidPos = qBid;
+        else if (pBid < pBid0)  dQBidPos = 0.0;
+        else                    dQBidPos = std::max(0.0, qBid - qBid0);
 
-        if (pAsk < pAsk0)       dQask_pos = qAsk;
-        else if (pAsk > pAsk0)  dQask_pos = 0.0;
-        else                    dQask_pos = std::max(0.0, qAsk - qAsk0);
+        if (pAsk < pAsk0)       dQAskPos = qAsk;
+        else if (pAsk > pAsk0)  dQAskPos = 0.0;
+        else                    dQAskPos = std::max(0.0, qAsk - qAsk0);
     }
 
-    double calculateBestOrderFlowCKSDiff(const OrderBook& orderBook){
-        double dQbid, dQask, bpos, apos;
-        computeBestOFIDeltasCKS(orderBook, dQbid, dQask, bpos, apos);
-        return dQbid - dQask;
+    double calculateBestOrderFlowCKSDiff(const OrderBook &ob){
+        double dQBid, dQAsk, bPos, aPos;
+        computeBestOFIDeltasCKS(ob, dQBid, dQAsk, bPos, aPos);
+        return dQBid - dQAsk;
     }
 
-    double calculateBestOrderFlowCKSImbalance(const OrderBook& orderBook){
-        double dQbid, dQask, bpos, apos;
-        computeBestOFIDeltasCKS(orderBook, dQbid, dQask, bpos, apos);
-        const double den = std::abs(dQbid) + std::abs(dQask);
+    double calculateBestOrderFlowCKSImbalance(const OrderBook &ob){
+        double dQBid, dQAsk, bPos, aPos;
+        computeBestOFIDeltasCKS(ob, dQBid, dQAsk, bPos, aPos);
+        const double den = std::abs(dQBid) + std::abs(dQAsk);
         if (den <= 0.0) return 0.0;
-        return (dQbid - dQask) / den;
+        return (dQBid - dQAsk) / den;
     }
 
-    double calculateBestOrderFlowCKSFisherImbalance(const OrderBook& orderBook){
-        return finiteAtanh(calculateBestOrderFlowCKSImbalance(orderBook));
+    double calculateBestOrderFlowCKSFisherImbalance(const OrderBook &ob){
+        return finiteAtanh(calculateBestOrderFlowCKSImbalance(ob));
     }
 
-    double calculateOrderFlowDiff(const OrderBook& orderBook) {
-        return orderBook.deltaSumBidQuantity() - orderBook.deltaSumAskQuantity();
+    double calculateOrderFlowDiff(const OrderBook &ob) {
+        return ob.deltaSumBidQuantity() - ob.deltaSumAskQuantity();
     }
 
-    double calculateOrderFlowImbalance(const OrderBook& orderBook) {
-        const double den = std::abs(orderBook.deltaSumBidQuantity()) + std::abs(orderBook.deltaSumAskQuantity());
+    double calculateOrderFlowImbalance(const OrderBook &ob) {
+        const double den = std::abs(ob.deltaSumBidQuantity()) + std::abs(ob.deltaSumAskQuantity());
         if (den <= 0.0) return 0.0;
-        return (orderBook.deltaSumBidQuantity() - orderBook.deltaSumAskQuantity()) / den;
+        return (ob.deltaSumBidQuantity() - ob.deltaSumAskQuantity()) / den;
     }
 
-    double calculateOrderFlowFisherImbalance(const OrderBook& orderBook) {
-        return finiteAtanh(calculateOrderFlowImbalance(orderBook));
+    double calculateOrderFlowFisherImbalance(const OrderBook &ob) {
+        return finiteAtanh(calculateOrderFlowImbalance(ob));
     }
 
-    double calculateQueueCountFlowDelta(const OrderBook& orderBook) {
-        const auto bidQueueCount = static_cast<double>(orderBook.deltaBidCount());
-        const auto askQueueCount = static_cast<double>(orderBook.deltaAskCount());
+    double calculateQueueCountFlowDelta(const OrderBook &ob) {
+        const auto bidQueueCount = static_cast<double>(ob.deltaBidCount());
+        const auto askQueueCount = static_cast<double>(ob.deltaAskCount());
         return bidQueueCount - askQueueCount;
     }
 
-    double calculateQueueCountFlowImbalance(const OrderBook& orderBook) {
-        const auto bidQueueCount = static_cast<double>(orderBook.deltaBidCount());
-        const auto askQueueCount = static_cast<double>(orderBook.deltaAskCount());
+    double calculateQueueCountFlowImbalance(const OrderBook &ob) {
+        const auto bidQueueCount = static_cast<double>(ob.deltaBidCount());
+        const auto askQueueCount = static_cast<double>(ob.deltaAskCount());
         const auto sum = bidQueueCount + askQueueCount;
 
         if (sum <= 0.0) return 0.0;
@@ -176,136 +159,139 @@ namespace SingleVariableCounter {
         return (bidQueueCount - askQueueCount) / sum;
     }
 
-    double calculateQueueCountFlowFisherImbalance(const OrderBook& orderBook) {
-        return finiteAtanh(calculateQueueCountFlowImbalance(orderBook));
+    double calculateQueueCountFlowFisherImbalance(const OrderBook &ob) {
+        return finiteAtanh(calculateQueueCountFlowImbalance(ob));
     }
 
-    double calculateBestVolumeDiff(const OrderBook& orderBook) {
-        const double bestAskQuantity = orderBook.bestAskQuantity();
-        const double bestBidQuantity = orderBook.bestBidQuantity();
+    double calculateBestVolumeDiff(const OrderBook &ob) {
+        const double bestAskQuantity = ob.bestAskQuantity();
+        const double bestBidQuantity = ob.bestBidQuantity();
         return bestBidQuantity - bestAskQuantity;
     }
 
-    double calculateBestVolumeImbalance(const OrderBook& orderBook) {
-        const double bestAskQuantity = orderBook.bestAskQuantity();
-        const double bestBidQuantity = orderBook.bestBidQuantity();
+    double calculateBestVolumeImbalance(const OrderBook &ob) {
+        const double bestAskQuantity = ob.bestAskQuantity();
+        const double bestBidQuantity = ob.bestBidQuantity();
         return (bestBidQuantity - bestAskQuantity) / (bestBidQuantity + bestAskQuantity);
     }
 
-    double calculateBestVolumeFisherImbalance(const OrderBook& orderBook) {
-        return std::atanh(calculateBestVolumeImbalance(orderBook));
+    double calculateBestVolumeFisherImbalance(const OrderBook &ob) {
+        return std::atanh(calculateBestVolumeImbalance(ob));
     }
 
-    double calculateBestVolumeLogRatio(const OrderBook& orderBook) {
-        const double bestAskQuantity = orderBook.bestAskQuantity();
-        const double bestBidQuantity = orderBook.bestBidQuantity();
+    double calculateBestVolumeLogRatio(const OrderBook &ob) {
+        const double bestAskQuantity = ob.bestAskQuantity();
+        const double bestBidQuantity = ob.bestBidQuantity();
         return std::log(bestBidQuantity/bestAskQuantity);
     }
 
-    double calculateBestVolumeSignedLogRatioXVolume(const OrderBook& orderBook) {
-        const double bestBidQuantity = orderBook.bestBidQuantity();
-        const double bestAskQuantity = orderBook.bestAskQuantity();
-        return calculateBestVolumeLogRatio(orderBook) * (bestBidQuantity + bestAskQuantity);
+    double calculateBestVolumeSignedLogRatioXVolume(const OrderBook &ob) {
+        const double bestBidQuantity = ob.bestBidQuantity();
+        const double bestAskQuantity = ob.bestAskQuantity();
+        return calculateBestVolumeLogRatio(ob) * (bestBidQuantity + bestAskQuantity);
     }
 
-    double calculateBestNPriceLevelsVolumeImbalance(const OrderBook& orderBook, const int nPriceLevels) {
-        const double cumulativeSumTopNBidsQuantities = orderBook.cumulativeQuantityOfTopNBids(nPriceLevels);
-        const double cumulativeSumTopNAsksQuantities = orderBook.cumulativeQuantityOfTopNAsks(nPriceLevels);
+    double calculateBestNPriceLevelsVolumeImbalance(const OrderBook &ob, const int n) {
+        const double cumulativeSumTopNBidsQuantities = ob.cumulativeQuantityOfTopNBids(n);
+        const double cumulativeSumTopNAsksQuantities = ob.cumulativeQuantityOfTopNAsks(n);
         return (cumulativeSumTopNBidsQuantities - cumulativeSumTopNAsksQuantities)
             / (cumulativeSumTopNBidsQuantities + cumulativeSumTopNAsksQuantities);
     }
 
-    double calculateBestNPriceLevelsVolumeDiff(const OrderBook& orderBook, const int nPriceLevels) {
-        return orderBook.cumulativeQuantityOfTopNBids(nPriceLevels) - orderBook.cumulativeQuantityOfTopNAsks(nPriceLevels);
+    double calculateBestNPriceLevelsVolumeDiff(const OrderBook &ob, const int n) {
+        return ob.cumulativeQuantityOfTopNBids(n) - ob.cumulativeQuantityOfTopNAsks(n);
     }
 
-    double calculateBestNPriceLevelsVolumeLogRatio(const OrderBook& orderBook, const int nPriceLevels) {
+    double calculateBestNPriceLevelsVolumeLogRatio(const OrderBook &ob, const int n) {
         return std::log(
-            orderBook.cumulativeQuantityOfTopNBids(nPriceLevels) / orderBook.cumulativeQuantityOfTopNAsks(nPriceLevels)
+            ob.cumulativeQuantityOfTopNBids(n) / ob.cumulativeQuantityOfTopNAsks(n)
             );
     }
 
-    double calculateBestNPriceLevelsVolumeLogRatioXVolume(const OrderBook& orderBook, const int nPriceLevels) {
+    double calculateBestNPriceLevelsVolumeLogRatioXVolume(const OrderBook &ob, const int n) {
         const double cumulativeQuantityOfTopNLevels =
-            orderBook.cumulativeQuantityOfTopNBids(nPriceLevels) + orderBook.cumulativeQuantityOfTopNAsks(nPriceLevels);
-        return calculateBestNPriceLevelsVolumeLogRatio(orderBook, nPriceLevels) * cumulativeQuantityOfTopNLevels;
+            ob.cumulativeQuantityOfTopNBids(n) + ob.cumulativeQuantityOfTopNAsks(n);
+        return calculateBestNPriceLevelsVolumeLogRatio(ob, n) * cumulativeQuantityOfTopNLevels;
     }
 
-    double calculateVolumeImbalance(const OrderBook& orderBook) {
-        return (orderBook.sumBidQuantity() - orderBook.sumAskQuantity())
-            / (orderBook.sumBidQuantity() + orderBook.sumAskQuantity());
+    double calculateVolumeImbalance(const OrderBook &ob) {
+        return (ob.sumBidQuantity() - ob.sumAskQuantity())
+            / (ob.sumBidQuantity() + ob.sumAskQuantity());
     }
 
-    double calculateVolumeDiff(const OrderBook& orderBook) {
-        return orderBook.sumBidQuantity() - orderBook.sumAskQuantity();
+    double calculateVolumeDiff(const OrderBook &ob) {
+        return ob.sumBidQuantity() - ob.sumAskQuantity();
     }
 
-    double calculateVolumeLogRatio(const OrderBook& orderBook) {
+    double calculateVolumeLogRatio(const OrderBook &ob) {
         return std::log(
-            orderBook.sumBidQuantity() / orderBook.sumAskQuantity()
+            ob.sumBidQuantity() / ob.sumAskQuantity()
             );
     }
 
-    double calculateVolumeLogRatioXVolume(const OrderBook& orderBook) {
-        return calculateVolumeLogRatio(orderBook) * orderBook.sumTotalAskBidQuantity();
+    double calculateVolumeLogRatioXVolume(const OrderBook &ob) {
+        return calculateVolumeLogRatio(ob) * ob.sumTotalAskBidQuantity();
     }
 
-    double calculateQueueImbalance(const OrderBook& orderBook) {
-        return static_cast<double>(static_cast<int>(orderBook.bidCount()) - static_cast<int>(orderBook.askCount()))
-            / static_cast<double>(static_cast<int>(orderBook.bidCount()) + static_cast<int>(orderBook.askCount()));
+    double calculateQueueImbalance(const OrderBook &ob) {
+        const double bid = static_cast<double>(ob.bidCount());
+        const double ask = static_cast<double>(ob.askCount());
+        const double sum = bid + ask;
+        if (sum == 0.0) [[unlikely]] return 0.0;
+        return (bid - ask) / sum;
     }
 
-    double calculateQueueDiff(const OrderBook& orderBook) {
-        return static_cast<double>(orderBook.bidCount()) - static_cast<double>(orderBook.askCount());
+    double calculateQueueDiff(const OrderBook &ob) {
+        return static_cast<int>(ob.bidCount()) - static_cast<int>(ob.askCount());
     }
 
-    double calculateQueueLogRatio(const OrderBook& orderBook) {
+    double calculateQueueLogRatio(const OrderBook &ob) {
         return std::log(
-            static_cast<double>(orderBook.bidCount()) / static_cast<double>(orderBook.askCount())
+            static_cast<double>(ob.bidCount()) / static_cast<double>(ob.askCount())
             );
     }
 
-    double calculateQueueLogRatioXVolume(const OrderBook& orderBook) {
-        return calculateQueueLogRatio(orderBook) * orderBook.sumTotalAskBidQuantity();
+    double calculateQueueLogRatioXVolume(const OrderBook &ob) {
+        return calculateQueueLogRatio(ob) * ob.sumTotalAskBidQuantity();
     }
 
-    double calculateGap(const OrderBook& orderBook) {
-        const double bestBidPrice = orderBook.bestBidPrice();
-        const double bestAskPrice = orderBook.bestAskPrice();
-        const double secondBidPrice = orderBook.secondBidPrice();
-        const double secondAskPrice = orderBook.secondAskPrice();
+    double calculateGap(const OrderBook &ob) {
+        const double bestBidPrice = ob.bestBidPrice();
+        const double bestAskPrice = ob.bestAskPrice();
+        const double secondBidPrice = ob.secondBidPrice();
+        const double secondAskPrice = ob.secondAskPrice();
         return secondBidPrice + secondAskPrice - bestBidPrice - bestAskPrice;
     }
 
-    bool calculateIsAggressorAsk(const TradeEntry *tradeEntry) {
-        return tradeEntry->isBuyerMarketMaker;
+    bool calculateIsAggressorAsk(const TradeEntry *te) {
+        return te->isBuyerMarketMaker;
     }
 
-    double calculateVwapDeviation(const OrderBook& orderBook) {
-        const double sumBidsAsksQuantity = orderBook.sumAskQuantity() + orderBook.sumBidQuantity();
-        const double vwap = orderBook.sumOfPriceTimesQuantity() / sumBidsAsksQuantity;
-        const double midPrice = calculateMidPrice(orderBook);
+    double calculateVwapDeviation(const OrderBook &ob) {
+        const double sumBidsAsksQuantity = ob.sumAskQuantity() + ob.sumBidQuantity();
+        const double vwap = ob.sumOfPriceTimesQuantity() / sumBidsAsksQuantity;
+        const double midPrice = calculateMidPrice(ob);
         return (vwap - midPrice) / midPrice;
     }
 
-    double calculateVwapLogRatio(const OrderBook& orderBook) {
-        const double sumBidsAsksQuantity = orderBook.sumAskQuantity() + orderBook.sumBidQuantity();
-        const double vwap = orderBook.sumOfPriceTimesQuantity() / sumBidsAsksQuantity;
-        const double midPrice = calculateMidPrice(orderBook);
+    double calculateVwapLogRatio(const OrderBook &ob) {
+        const double sumBidsAsksQuantity = ob.sumAskQuantity() + ob.sumBidQuantity();
+        const double vwap = ob.sumOfPriceTimesQuantity() / sumBidsAsksQuantity;
+        const double midPrice = calculateMidPrice(ob);
         return std::log(midPrice / vwap);
     }
 
-    double calculateSimplifiedSlopeImbalance(const OrderBook& orderBook)
+    double calculateSimplifiedSlopeImbalance(const OrderBook &ob)
     {
         constexpr size_t K = 5;
 
-        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNAsks(K);
-        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNBids(K);
+        const double bestFiveAsksQuantityCumulativeSum = ob.cumulativeQuantityOfTopNAsks(K);
+        const double bestFiveBidsQuantityCumulativeSum = ob.cumulativeQuantityOfTopNBids(K);
 
-        const double bestFifthAskPrice = orderBook.bestNthAskPrice(K);
-        const double bestFifthBidPrice = orderBook.bestNthBidPrice(K);
+        const double bestFifthAskPrice = ob.bestNthAskPrice(K);
+        const double bestFifthBidPrice = ob.bestNthBidPrice(K);
 
-        const double midPrice = calculateMidPrice(orderBook);
+        const double midPrice = calculateMidPrice(ob);
 
         const double bidSlope = bestFiveBidsQuantityCumulativeSum / (midPrice - bestFifthBidPrice);
         const double askSlope = bestFiveAsksQuantityCumulativeSum / (bestFifthAskPrice - midPrice);
@@ -313,17 +299,17 @@ namespace SingleVariableCounter {
         return (bidSlope - askSlope) / (bidSlope + askSlope);
     }
 
-    double calculateSimplifiedSlopeDiff(const OrderBook& orderBook)
+    double calculateSimplifiedSlopeDiff(const OrderBook &ob)
     {
         constexpr size_t K = 5;
 
-        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNAsks(K);
-        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNBids(K);
+        const double bestFiveAsksQuantityCumulativeSum = ob.cumulativeQuantityOfTopNAsks(K);
+        const double bestFiveBidsQuantityCumulativeSum = ob.cumulativeQuantityOfTopNBids(K);
 
-        const double bestFifthAskPrice = orderBook.bestNthAskPrice(K);
-        const double bestFifthBidPrice = orderBook.bestNthBidPrice(K);
+        const double bestFifthAskPrice = ob.bestNthAskPrice(K);
+        const double bestFifthBidPrice = ob.bestNthBidPrice(K);
 
-        const double midPrice = calculateMidPrice(orderBook);
+        const double midPrice = calculateMidPrice(ob);
 
         const double bidSlope = bestFiveBidsQuantityCumulativeSum / (midPrice - bestFifthBidPrice);
         const double askSlope = bestFiveAsksQuantityCumulativeSum / (bestFifthAskPrice - midPrice);
@@ -331,17 +317,17 @@ namespace SingleVariableCounter {
         return bidSlope - askSlope;
     }
 
-    double calculateSimplifiedSlopeLogRatio(const OrderBook& orderBook)
+    double calculateSimplifiedSlopeLogRatio(const OrderBook &ob)
     {
         constexpr size_t K = 5;
 
-        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNAsks(K);
-        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNBids(K);
+        const double bestFiveAsksQuantityCumulativeSum = ob.cumulativeQuantityOfTopNAsks(K);
+        const double bestFiveBidsQuantityCumulativeSum = ob.cumulativeQuantityOfTopNBids(K);
 
-        const double bestFifthAskPrice = orderBook.bestNthAskPrice(K);
-        const double bestFifthBidPrice = orderBook.bestNthBidPrice(K);
+        const double bestFifthAskPrice = ob.bestNthAskPrice(K);
+        const double bestFifthBidPrice = ob.bestNthBidPrice(K);
 
-        const double midPrice = calculateMidPrice(orderBook);
+        const double midPrice = calculateMidPrice(ob);
 
         const double bidSlope = bestFiveBidsQuantityCumulativeSum / (midPrice - bestFifthBidPrice);
         const double askSlope = bestFiveAsksQuantityCumulativeSum / (bestFifthAskPrice - midPrice);
@@ -349,17 +335,17 @@ namespace SingleVariableCounter {
         return std::log(bidSlope/askSlope);
     }
 
-    double calculateBgcSlopeImbalance(const OrderBook& orderBook)
+    double calculateBgcSlopeImbalance(const OrderBook &ob)
     {
         constexpr size_t K = 5;
 
-        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNAsks(K);
-        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNBids(K);
+        const double bestFiveAsksQuantityCumulativeSum = ob.cumulativeQuantityOfTopNAsks(K);
+        const double bestFiveBidsQuantityCumulativeSum = ob.cumulativeQuantityOfTopNBids(K);
 
-        const double bestFifthAskPrice = orderBook.bestNthAskPrice(K);
-        const double bestFifthBidPrice = orderBook.bestNthBidPrice(K);
+        const double bestFifthAskPrice = ob.bestNthAskPrice(K);
+        const double bestFifthBidPrice = ob.bestNthBidPrice(K);
 
-        const double midPrice = calculateMidPrice(orderBook);
+        const double midPrice = calculateMidPrice(ob);
 
         const double bidSlope = (midPrice - bestFifthBidPrice) / bestFiveBidsQuantityCumulativeSum;
         const double askSlope = (bestFifthAskPrice - midPrice) / bestFiveAsksQuantityCumulativeSum;
@@ -367,17 +353,17 @@ namespace SingleVariableCounter {
         return (bidSlope - askSlope) / (bidSlope + askSlope);
     }
 
-    double calculateBgcSlopeDiff(const OrderBook& orderBook)
+    double calculateBgcSlopeDiff(const OrderBook &ob)
     {
         constexpr size_t K = 5;
 
-        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNAsks(K);
-        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNBids(K);
+        const double bestFiveAsksQuantityCumulativeSum = ob.cumulativeQuantityOfTopNAsks(K);
+        const double bestFiveBidsQuantityCumulativeSum = ob.cumulativeQuantityOfTopNBids(K);
 
-        const double bestFifthAskPrice = orderBook.bestNthAskPrice(K);
-        const double bestFifthBidPrice = orderBook.bestNthBidPrice(K);
+        const double bestFifthAskPrice = ob.bestNthAskPrice(K);
+        const double bestFifthBidPrice = ob.bestNthBidPrice(K);
 
-        const double midPrice = calculateMidPrice(orderBook);
+        const double midPrice = calculateMidPrice(ob);
 
         const double bidSlope = (midPrice - bestFifthBidPrice) / bestFiveBidsQuantityCumulativeSum;
         const double askSlope = (bestFifthAskPrice - midPrice) / bestFiveAsksQuantityCumulativeSum;
@@ -385,16 +371,16 @@ namespace SingleVariableCounter {
         return bidSlope - askSlope;
     }
 
-    double calculateBgcSlopeLogRatio(const OrderBook& orderBook) {
+    double calculateBgcSlopeLogRatio(const OrderBook &ob) {
         constexpr size_t K = 5;
 
-        const double bestFiveAsksQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNAsks(K);
-        const double bestFiveBidsQuantityCumulativeSum = orderBook.cumulativeQuantityOfTopNBids(K);
+        const double bestFiveAsksQuantityCumulativeSum = ob.cumulativeQuantityOfTopNAsks(K);
+        const double bestFiveBidsQuantityCumulativeSum = ob.cumulativeQuantityOfTopNBids(K);
 
-        const double bestFifthAskPrice = orderBook.bestNthAskPrice(K);
-        const double bestFifthBidPrice = orderBook.bestNthBidPrice(K);
+        const double bestFifthAskPrice = ob.bestNthAskPrice(K);
+        const double bestFifthBidPrice = ob.bestNthBidPrice(K);
 
-        const double midPrice = calculateMidPrice(orderBook);
+        const double midPrice = calculateMidPrice(ob);
 
         const double bidSlope = (midPrice - bestFifthBidPrice) / bestFiveBidsQuantityCumulativeSum;
         const double askSlope = (bestFifthAskPrice - midPrice) / bestFiveAsksQuantityCumulativeSum;
@@ -402,50 +388,90 @@ namespace SingleVariableCounter {
         return std::log(bidSlope/askSlope);
     }
 
-    double calculateDifferenceDepthCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds){
-        const auto bidDifferenceDepthEntryCount  = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(windowTimeSeconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(windowTimeSeconds));
+    double calculateSinTime24h(const uint64_t timestamp){
+        constexpr double PI = 3.14159265358979323846;
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double frac_of_day = std::fmod(static_cast<double>(timestamp), DAY_US) / DAY_US;
+        return std::sin(2.0 * PI * frac_of_day);
+    }
+
+    double calculateLongSinTime24h(const uint64_t timestamp){
+        constexpr double PI = 3.14159265358979323846;
+        constexpr double PI_2 = 1.57079632679489661923;
+        constexpr double DAY_US = 86'400'000'000.0;
+
+        const double frac_of_day = std::fmod(static_cast<double>(timestamp), DAY_US) / DAY_US;
+
+        return std::sin(PI * frac_of_day - PI_2);
+    }
+
+    double calculateCosTime24h(const uint64_t timestamp){
+        constexpr double PI = 3.14159265358979323846;
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double frac_of_day = std::fmod(static_cast<double>(timestamp), DAY_US) / DAY_US;
+        return std::cos(2.0 * PI * frac_of_day);
+    }
+
+    double calculateIsAsiaTime(const uint64_t timestamp) {
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double seconds_in_day = std::fmod(static_cast<double>(timestamp), DAY_US) / 1e6;
+        const double hours = seconds_in_day / 3600.0;
+        return hours >= 0.0 && hours < 8.0 ? 1.0 : 0.0;
+    }
+
+    double calculateIsEuropeTime(const uint64_t timestamp) {
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double seconds_in_day = std::fmod(static_cast<double>(timestamp), DAY_US) / 1e6;
+        const double hours = seconds_in_day / 3600.0;
+        return hours >= 8.0 && hours < 16.0 ? 1.0 : 0.0;
+    }
+
+    double calculateIsUSATime(const uint64_t timestamp) {
+        constexpr double DAY_US = 86'400'000'000.0;
+        const double seconds_in_day = std::fmod(static_cast<double>(timestamp), DAY_US) / 1e6;
+        const double hours = seconds_in_day / 3600.0;
+        return hours >= 16.0 && hours < 24.0 ? 1.0 : 0.0;
+    }
+
+    double calculateDifferenceDepthCount(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
+        const auto bidDifferenceDepthEntryCount  = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
+        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
         return bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
     }
 
-    int calculateTradeCount(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
-        return buy + sell;
-    }
-
-    double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds){
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(windowTimeSeconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(windowTimeSeconds));
+    double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
+        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
+        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
 
         return bidDifferenceDepthEntryCount - askDifferenceDepthEntryCount;
     }
 
-    double calculateDifferenceDepthCountImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds){
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(windowTimeSeconds));
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(windowTimeSeconds));
+    double calculateDifferenceDepthCountImbalance(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
+        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
+        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
         const double total = bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
 
         if (total == 0.0) return 0.0;
         return (bidDifferenceDepthEntryCount - askDifferenceDepthEntryCount) / total;
     }
 
-    double calculateDifferenceDepthCountFisherImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds){
-        return finiteAtanh(calculateDifferenceDepthCountImbalance(rollingDifferenceDepthStatistics, windowTimeSeconds));
+    double calculateDifferenceDepthCountFisherImbalance(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
+        return finiteAtanh(calculateDifferenceDepthCountImbalance(rollingDifferenceDepthStatistics, seconds));
     }
 
-    double calculateDifferenceDepthCountLogRatio(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds)
+    double calculateDifferenceDepthCountLogRatio(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds)
     {
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(windowTimeSeconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(windowTimeSeconds));
+        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
+        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
 
         constexpr double eps = 1e-12;
         return std::log((bidDifferenceDepthEntryCount + eps) / (askDifferenceDepthEntryCount + eps));
     }
 
-    double calculateDifferenceDepthCountLogRatioXEventCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, const int windowTimeSeconds)
+    double calculateDifferenceDepthCountLogRatioXEventCount(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds)
     {
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(windowTimeSeconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(windowTimeSeconds));
+        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
+        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
         const auto total = bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
 
         constexpr double eps = 1e-12;
@@ -453,13 +479,18 @@ namespace SingleVariableCounter {
         return std::log((bidDifferenceDepthEntryCount + eps) / (askDifferenceDepthEntryCount + eps)) * total;
     }
 
-    int calculateTradeCountDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+    int calculateTradeCount(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getBuySellTradeCount(seconds);
+        return buy + sell;
+    }
+
+    int calculateTradeCountDiff(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getBuySellTradeCount(seconds);
         return buy - sell;
     }
 
-    double calculateTradeCountImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+    double calculateTradeCountImbalance(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getBuySellTradeCount(seconds);
 
         const auto buyD  = static_cast<double>(buy);
         const auto sellD = static_cast<double>(sell);
@@ -470,20 +501,12 @@ namespace SingleVariableCounter {
         return (buyD - sellD) / sum;
     }
 
-    double calculateTradeCountFisherImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
-
-        const auto buyD  = static_cast<double>(buy);
-        const auto sellD = static_cast<double>(sell);
-        const double sum = buyD + sellD;
-
-        if (sum == 0.0) [[unlikely]] return 0.0;
-
-        return finiteAtanh((buyD - sellD) / sum);
+    double calculateTradeCountFisherImbalance(const TradeRoll &tr, const size_t seconds){
+        return finiteAtanh(calculateTradeCountImbalance(tr, seconds));
     }
 
-    double calculateTradeCountLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+    double calculateTradeCountLogRatio(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getBuySellTradeCount(seconds);
 
         const auto buyD  = static_cast<double>(buy);
         const auto sellD = static_cast<double>(sell);
@@ -492,18 +515,18 @@ namespace SingleVariableCounter {
         return std::log((buyD + eps) / (sellD + eps));
     }
 
-    double calculateTradeVolumeSum(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+    double calculateTradeVolumeSum(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getCumBuySellQuantity(seconds);
         return buy + sell;
     }
 
-    double calculateTradeVolumeDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+    double calculateTradeVolumeDiff(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getCumBuySellQuantity(seconds);
         return buy - sell;
     }
 
-    double calculateTradeVolumeImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+    double calculateTradeVolumeImbalance(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getCumBuySellQuantity(seconds);
         const double sum = buy + sell;
 
         if (sum == 0.0) [[unlikely]] return 0.0;
@@ -511,16 +534,24 @@ namespace SingleVariableCounter {
         return (buy - sell) / sum;
     }
 
-    double calculateTradeVolumeLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buy, sell] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
+    double calculateTradeVolumeLogRatio(const TradeRoll &tr, const size_t seconds){
+        const auto [buy, sell] = tr.getCumBuySellQuantity(seconds);
         constexpr double eps = 1e-12;
 
         return std::log((buy + eps) / (sell + eps));
     }
 
-    double calculateAvgTradeSizeDiff(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buyQuantity, sellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
-        const auto [buyCount, sellCount] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+    double calculateBiggestSingleBuyTradeVolume(const TradeRoll &tr, const size_t seconds){
+        return tr.getBiggestBuySell(seconds).buy;
+    }
+
+    double calculateBiggestSingleSellTradeVolume(const TradeRoll &tr, const size_t seconds){
+        return tr.getBiggestBuySell(seconds).sell;
+    }
+
+    double calculateAvgTradeSizeDiff(const TradeRoll &tr, const size_t seconds){
+        const auto [buyQuantity, sellQuantity] = tr.getCumBuySellQuantity(seconds);
+        const auto [buyCount, sellCount] = tr.getBuySellTradeCount(seconds);
 
         if (buyCount == 0 && sellCount == 0) [[unlikely]] return 0.0;
 
@@ -530,9 +561,9 @@ namespace SingleVariableCounter {
         return avgBuyQuantity - avgSellQuantity;
     }
 
-    double calculateAvgTradeSizeImbalance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buyQuantity, sellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
-        const auto [buyCount, sellCount] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+    double calculateAvgTradeSizeImbalance(const TradeRoll &tr, const size_t seconds){
+        const auto [buyQuantity, sellQuantity] = tr.getCumBuySellQuantity(seconds);
+        const auto [buyCount, sellCount] = tr.getBuySellTradeCount(seconds);
 
         if (buyCount == 0 && sellCount == 0) [[unlikely]] return 0.0;
 
@@ -545,9 +576,9 @@ namespace SingleVariableCounter {
         return (avgBuyQuantity - avgSellQuantity) / sum;
     }
 
-    double calculateAvgTradeSizeLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const auto [buyQuantity, sellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
-        const auto [buyCount, sellCount] = rollingTradeStatistics.getBuySellTradeCount(windowTimeSeconds);
+    double calculateAvgTradeSizeLogRatio(const TradeRoll &tr, const size_t seconds){
+        const auto [buyQuantity, sellQuantity] = tr.getCumBuySellQuantity(seconds);
+        const auto [buyCount, sellCount] = tr.getBuySellTradeCount(seconds);
 
         if (buyCount == 0 && sellCount == 0) [[unlikely]] return 0.0;
 
@@ -559,117 +590,63 @@ namespace SingleVariableCounter {
         return std::log((avgBuyQuantity + eps) / (avgSellQuantity + eps));
     }
 
-    double calculateBiggestSingleBuyTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return rollingTradeStatistics.getBiggestBuySell(windowTimeSeconds).buy;
+    double calculatePriceDifference(const TradeRoll &tr, const size_t seconds){
+        return tr.getPriceDifference(seconds);
     }
 
-    double calculateBiggestSingleSellTradeVolume(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return rollingTradeStatistics.getBiggestBuySell(windowTimeSeconds).sell;
-    }
-
-    double calculatePriceDifference(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return rollingTradeStatistics.getPriceDifference(windowTimeSeconds);
-    }
-
-    double calculateRateOfReturn(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds) {
-        const double newestPrice = rollingTradeStatistics.getNewestPrice();
-        const double oldestPrice = rollingTradeStatistics.getOldestPrice(windowTimeSeconds);
+    double calculateRateOfReturn(const TradeRoll &tr, const size_t seconds) {
+        const double newestPrice = tr.getNewestPrice();
+        const double oldestPrice = tr.getOldestPrice(seconds);
 
         if (oldestPrice == 0.0) [[unlikely]] return 0.0;
 
         return (newestPrice - oldestPrice) / oldestPrice;
     }
 
-    double calculateLogReturnRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double oldestPrice = rollingTradeStatistics.getOldestPrice(windowTimeSeconds);
-        const double newestPrice = rollingTradeStatistics.getNewestPrice();
+    double calculateLogReturnRatio(const TradeRoll &tr, const size_t seconds){
+        const double oldestPrice = tr.getOldestPrice(seconds);
+        const double newestPrice = tr.getNewestPrice();
 
         constexpr double eps = 1e-12;
 
         return std::log((newestPrice + eps)/(oldestPrice + eps));
     }
 
-    double calculateLogKylesLambda(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds) {
+    double calculateSMALogRatio(const TradeRoll &tr, const size_t seconds){
         constexpr double eps = 1e-12;
-        const double priceChange = std::abs(rollingTradeStatistics.getPriceDifference(windowTimeSeconds));
-        const auto [cumBuyQuantity, cumSellQuantity] = rollingTradeStatistics.getCumBuySellQuantity(windowTimeSeconds);
-        const double cumQuantityAbsDiff = std::abs(cumBuyQuantity - cumSellQuantity);
-
-        return std::log((priceChange + eps) / (cumQuantityAbsDiff + eps));
-    }
-
-    double calculateDeltaPVT(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return calculateRateOfReturn(rollingTradeStatistics, windowTimeSeconds) * calculateTradeVolumeSum(rollingTradeStatistics, windowTimeSeconds);
-    }
-
-    double calculateSinTime24h(const uint64_t lastTimestampOfReceive){
-        constexpr double PI = 3.14159265358979323846;
-        constexpr double DAY_US = 86'400'000'000.0;
-        const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
-        return std::sin(2.0 * PI * frac_of_day);
-    }
-
-    double calculateLongSinTime24h(const uint64_t lastTimestampOfReceive){
-        constexpr double PI = 3.14159265358979323846;
-        constexpr double PI_2 = 1.57079632679489661923;
-        constexpr double DAY_US = 86'400'000'000.0;
-
-        const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
-
-        return std::sin(PI * frac_of_day - PI_2);
-    }
-
-    double calculateCosTime24h(const uint64_t lastTimestampOfReceive){
-        constexpr double PI = 3.14159265358979323846;
-        constexpr double DAY_US = 86'400'000'000.0;
-        const double frac_of_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / DAY_US;
-        return std::cos(2.0 * PI * frac_of_day);
-    }
-
-    double calculateIsAsiaTime(const uint64_t lastTimestampOfReceive) {
-        constexpr double DAY_US = 86'400'000'000.0;
-        const double seconds_in_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / 1e6;
-        const double hours = seconds_in_day / 3600.0;
-        return hours >= 0.0 && hours < 8.0 ? 1.0 : 0.0;
-    }
-
-    double calculateIsEuropeTime(const uint64_t lastTimestampOfReceive) {
-        constexpr double DAY_US = 86'400'000'000.0;
-        const double seconds_in_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / 1e6;
-        const double hours = seconds_in_day / 3600.0;
-        return hours >= 8.0 && hours < 16.0 ? 1.0 : 0.0;
-    }
-
-    double calculateIsUSATime(const uint64_t lastTimestampOfReceive) {
-        constexpr double DAY_US = 86'400'000'000.0;
-        const double seconds_in_day = std::fmod(static_cast<double>(lastTimestampOfReceive), DAY_US) / 1e6;
-        const double hours = seconds_in_day / 3600.0;
-        return hours >= 16.0 && hours < 24.0 ? 1.0 : 0.0;
-    }
-
-    double calculatePriceDistance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return rollingTradeStatistics.getPriceDistance(windowTimeSeconds);
-    }
-
-    double calculateSMALogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        constexpr double eps = 1e-12;
-        const double sma = rollingTradeStatistics.getSMA(windowTimeSeconds);
-        const double newestPrice = rollingTradeStatistics.getNewestPrice();
+        const double sma = tr.getSMA(seconds);
+        const double newestPrice = tr.getNewestPrice();
 
         return std::log((newestPrice + eps) / (sma + eps));
     }
 
-    double calculateHLC3TLogRatio(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        const double hlc3 = rollingTradeStatistics.getHLC3(windowTimeSeconds);
-        const double newestPrice = rollingTradeStatistics.getNewestPrice();
+    double calculateHLC3TLogRatio(const TradeRoll &tr, const size_t seconds){
+        const double hlc3 = tr.getHLC3(seconds);
+        const double newestPrice = tr.getNewestPrice();
 
         constexpr double eps = 1e-12;
 
         return std::log((newestPrice + eps) / (hlc3 + eps));
     }
 
-    double calculateBollingerBandsDistance(const RollingTradeStatistics& rollingTradeStatistics, const int windowTimeSeconds){
-        return rollingTradeStatistics.getBollingerBandsDistance(windowTimeSeconds);
+    double calculateBollingerBandsDistance(const TradeRoll &tr, const size_t seconds){
+        return tr.getBollingerBandsDistance(seconds);
     }
 
+    double calculatePriceDistance(const TradeRoll &tr, const size_t seconds){
+        return tr.getPriceDistance(seconds);
+    }
+
+    double calculateLogKylesLambda(const TradeRoll &tr, const size_t seconds) {
+        constexpr double eps = 1e-12;
+        const double priceChange = std::abs(tr.getPriceDifference(seconds));
+        const auto [cumBuyQuantity, cumSellQuantity] = tr.getCumBuySellQuantity(seconds);
+        const double cumQuantityAbsDiff = std::abs(cumBuyQuantity - cumSellQuantity);
+
+        return std::log((priceChange + eps) / (cumQuantityAbsDiff + eps));
+    }
+
+    double calculateDeltaPVT(const TradeRoll &tr, const size_t seconds){
+        return calculateRateOfReturn(tr, seconds) * calculateTradeVolumeSum(tr, seconds);
+    }
 }

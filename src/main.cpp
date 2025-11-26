@@ -125,6 +125,13 @@ int main() {
         "bgcSlopeImbalance",
         "bgcSlopeLogRatio",
 
+        "sinTime24h",
+        "longSinTime24h",
+        "cosTime24h",
+        "isAsiaTime",
+        "isEuropeTime",
+        "isUSATime",
+
         "differenceDepthCount1Seconds",
         "differenceDepthCount3Seconds",
         "differenceDepthCount5Seconds",
@@ -132,14 +139,6 @@ int main() {
         "differenceDepthCount15Seconds",
         "differenceDepthCount30Seconds",
         "differenceDepthCount60Seconds",
-
-        "tradeCount1Seconds",
-        "tradeCount3Seconds",
-        "tradeCount5Seconds",
-        "tradeCount10Seconds",
-        "tradeCount15Seconds",
-        "tradeCount30Seconds",
-        "tradeCount60Seconds",
 
         "differenceDepthCountDiff1Seconds",
         "differenceDepthCountDiff3Seconds",
@@ -180,6 +179,14 @@ int main() {
         "differenceDepthCountLogRatioXEventCount15Seconds",
         "differenceDepthCountLogRatioXEventCount30Seconds",
         "differenceDepthCountLogRatioXEventCount60Seconds",
+
+        "tradeCount1Seconds",
+        "tradeCount3Seconds",
+        "tradeCount5Seconds",
+        "tradeCount10Seconds",
+        "tradeCount15Seconds",
+        "tradeCount30Seconds",
+        "tradeCount60Seconds",
 
         "tradeCountDiff1Seconds",
         "tradeCountDiff3Seconds",
@@ -247,6 +254,22 @@ int main() {
         "tradeVolumeLogRatio30Seconds",
         "tradeVolumeLogRatio60Seconds",
 
+        "biggestSingleBuyTradeVolume1Seconds",
+        "biggestSingleBuyTradeVolume3Seconds",
+        "biggestSingleBuyTradeVolume5Seconds",
+        "biggestSingleBuyTradeVolume10Seconds",
+        "biggestSingleBuyTradeVolume15Seconds",
+        "biggestSingleBuyTradeVolume30Seconds",
+        "biggestSingleBuyTradeVolume60Seconds",
+
+        "biggestSingleSellTradeVolume1Seconds",
+        "biggestSingleSellTradeVolume3Seconds",
+        "biggestSingleSellTradeVolume5Seconds",
+        "biggestSingleSellTradeVolume10Seconds",
+        "biggestSingleSellTradeVolume15Seconds",
+        "biggestSingleSellTradeVolume30Seconds",
+        "biggestSingleSellTradeVolume60Seconds",
+
         "avgTradeSizeDiff1Seconds",
         "avgTradeSizeDiff3Seconds",
         "avgTradeSizeDiff5Seconds",
@@ -270,22 +293,6 @@ int main() {
         "avgTradeSizeLogRatio15Seconds",
         "avgTradeSizeLogRatio30Seconds",
         "avgTradeSizeLogRatio60Seconds",
-
-        "biggestSingleBuyTradeVolume1Seconds",
-        "biggestSingleBuyTradeVolume3Seconds",
-        "biggestSingleBuyTradeVolume5Seconds",
-        "biggestSingleBuyTradeVolume10Seconds",
-        "biggestSingleBuyTradeVolume15Seconds",
-        "biggestSingleBuyTradeVolume30Seconds",
-        "biggestSingleBuyTradeVolume60Seconds",
-
-        "biggestSingleSellTradeVolume1Seconds",
-        "biggestSingleSellTradeVolume3Seconds",
-        "biggestSingleSellTradeVolume5Seconds",
-        "biggestSingleSellTradeVolume10Seconds",
-        "biggestSingleSellTradeVolume15Seconds",
-        "biggestSingleSellTradeVolume30Seconds",
-        "biggestSingleSellTradeVolume60Seconds",
 
         "priceDifference1Seconds",
         "priceDifference3Seconds",
@@ -317,6 +324,33 @@ int main() {
         "logReturnRatio600Seconds",
         "logReturnRatio1200Seconds",
 
+        "smaLogRatio3Seconds",
+        "smaLogRatio5Seconds",
+        "smaLogRatio10Seconds",
+        "smaLogRatio15Seconds",
+        "smaLogRatio30Seconds",
+        "smaLogRatio60Seconds",
+        "smaLogRatio300Seconds",
+        "smaLogRatio600Seconds",
+
+        "hlc3tLogRatio300Seconds",
+        "hlc3tLogRatio600Seconds",
+        "hlc3tLogRatio1200Seconds",
+
+        "bollingerBandsDistance300Seconds",
+        "bollingerBandsDistance600Seconds",
+        "bollingerBandsDistance1200Seconds",
+
+        "priceDistance1Seconds",
+        "priceDistance3Seconds",
+        "priceDistance5Seconds",
+        "priceDistance10Seconds",
+        "priceDistance15Seconds",
+        "priceDistance30Seconds",
+        "priceDistance60Seconds",
+        "priceDistance300Seconds",
+        "priceDistance600Seconds",
+
         "logKylesLambda1Seconds",
         "logKylesLambda3Seconds",
         "logKylesLambda5Seconds",
@@ -333,39 +367,6 @@ int main() {
         "deltaPVT30Seconds",
         "deltaPVT60Seconds",
         "deltaPVT600Seconds",
-
-        "sinTime24h",
-        "longSinTime24h",
-        "cosTime24h",
-        "isAsiaTime",
-        "isEuropeTime",
-        "isUSATime",
-
-        "priceDistance1Seconds",
-        "priceDistance3Seconds",
-        "priceDistance5Seconds",
-        "priceDistance10Seconds",
-        "priceDistance15Seconds",
-        "priceDistance30Seconds",
-        "priceDistance60Seconds",
-        "priceDistance300Seconds",
-        "priceDistance600Seconds",
-
-        "smaLogRatio3Seconds",
-        "smaLogRatio5Seconds",
-        "smaLogRatio10Seconds",
-        "smaLogRatio15Seconds",
-        "smaLogRatio30Seconds",
-        "smaLogRatio60Seconds",
-        "smaLogRatio300Seconds",
-        "smaLogRatio600Seconds",
-
-        "hlc3tLogRatio300Seconds",
-        "hlc3tLogRatio600Seconds",
-        "hlc3tLogRatio1200Seconds",
-        "bollingerBandsDistance300Seconds",
-        "bollingerBandsDistance600Seconds",
-        "bollingerBandsDistance1200Seconds"
     };
 
     orderBookSessionSimulator.computeVariables(csvPath, variables);

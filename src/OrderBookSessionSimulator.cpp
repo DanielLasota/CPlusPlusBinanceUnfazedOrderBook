@@ -1,10 +1,10 @@
 #include <chrono>
 #include <iostream>
-#include <pybind11/pybind11.h>
 // #include <windows.h>
+#include <pybind11/pybind11.h>
 
-#include "GlobalMarketState.h"
 #include "DataVectorLoader.h"
+#include "GlobalMarketState.h"
 #include "MarketState.h"
 #include "OrderBookMetrics.h"
 #include "OrderbookSessionSimulator.h"
@@ -30,7 +30,8 @@ py::dict OrderBookSessionSimulator::computeVariables(const std::string &csvPath,
     GlobalMarketState globalMarketState(variables);
     OrderBookMetrics orderBookMetrics(variables, countOrderBookMetricsSize(entries));
 
-    // const auto loopStart = std::chrono::steady_clock::now();
+    // const auto startTs = std::chrono::steady_clock::now();
+
     for (DecodedEntry* p : ptrEntries) {
         globalMarketState.update(p);
         if (std::visit([](auto const& entry){return entry.isLast;}, *p)) {
@@ -40,8 +41,8 @@ py::dict OrderBookSessionSimulator::computeVariables(const std::string &csvPath,
         }
     }
 
-    // const auto loopElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - loopStart).count();
-    // std::cout << "loop elapsed: " << loopElapsed << " ms" << std::endl;
+    // const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTs).count();
+    // std::cout << "elapsed: " << elapsed << " ms" << std::endl;
 
     std::vector<DecodedEntry>().swap(entries);
     std::vector<DecodedEntry*>().swap(ptrEntries);

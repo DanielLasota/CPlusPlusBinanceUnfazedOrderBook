@@ -1,14 +1,14 @@
 #pragma once
 
-#include <variant>
-#include <optional>
-#include <vector>
-#include <unordered_map>
 #include <map>
+#include <optional>
+#include <unordered_map>
+#include <variant>
+#include <vector>
 
 #include "MetricMask.h"
-#include "enums/TradeEntry.h"
 #include "enums/DifferenceDepthEntry.h"
+#include "enums/TradeEntry.h"
 
 using DecodedEntry = std::variant<DifferenceDepthEntry, TradeEntry>;
 

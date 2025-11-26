@@ -303,6 +303,25 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.bgcSlopeLogRatio = SingleVariableCounter::calculateBgcSlopeLogRatio(marketState.orderBook);
     }
 
+    if (mask_ & sinTime24h) {
+        e.sinTime24h = SingleVariableCounter::calculateSinTime24h(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & longSinTime24h) {
+        e.longSinTime24h = SingleVariableCounter::calculateLongSinTime24h(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & cosTime24h) {
+        e.cosTime24h = SingleVariableCounter::calculateCosTime24h(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & isAsiaTime) {
+        e.isAsiaTime = SingleVariableCounter::calculateIsAsiaTime(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & isEuropeTime) {
+        e.isEuropeTime = SingleVariableCounter::calculateIsEuropeTime(marketState.getLastTimestampOfReceive());
+    }
+    if (mask_ & isUSATime) {
+        e.isUSATime = SingleVariableCounter::calculateIsUSATime(marketState.getLastTimestampOfReceive());
+    }
+
     if (mask_ & differenceDepthCount1Seconds) {
         e.differenceDepthCount1Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 1);
     }
@@ -323,28 +342,6 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
     }
     if (mask_ & differenceDepthCount60Seconds) {
         e.differenceDepthCount60Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 60);
-    }
-
-    if (mask_ & tradeCount1Seconds) {
-        e.tradeCount1Seconds = SingleVariableCounter::calculateTradeCount(marketState.rollingTradeStatistics, 1);
-    }
-    if (mask_ & tradeCount3Seconds) {
-        e.tradeCount3Seconds = SingleVariableCounter::calculateTradeCount(marketState.rollingTradeStatistics, 3);
-    }
-    if (mask_ & tradeCount5Seconds) {
-        e.tradeCount5Seconds = SingleVariableCounter::calculateTradeCount(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & tradeCount10Seconds) {
-        e.tradeCount10Seconds = SingleVariableCounter::calculateTradeCount(marketState.rollingTradeStatistics, 10);
-    }
-    if (mask_ & tradeCount15Seconds) {
-        e.tradeCount15Seconds = SingleVariableCounter::calculateTradeCount(marketState.rollingTradeStatistics, 15);
-    }
-    if (mask_ & tradeCount30Seconds) {
-        e.tradeCount30Seconds = SingleVariableCounter::calculateTradeCount(marketState.rollingTradeStatistics, 30);
-    }
-    if (mask_ & tradeCount60Seconds) {
-        e.tradeCount60Seconds = SingleVariableCounter::calculateTradeCount(marketState.rollingTradeStatistics, 60);
     }
 
     if (mask_ & differenceDepthCountDiff1Seconds) {
@@ -457,520 +454,522 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.differenceDepthCountLogRatioXEventCount60Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 60);
     }
 
+    if (mask_ & tradeCount1Seconds) {
+        e.tradeCount1Seconds = SingleVariableCounter::calculateTradeCount(marketState.tradeRoll, 1);
+    }
+    if (mask_ & tradeCount3Seconds) {
+        e.tradeCount3Seconds = SingleVariableCounter::calculateTradeCount(marketState.tradeRoll, 3);
+    }
+    if (mask_ & tradeCount5Seconds) {
+        e.tradeCount5Seconds = SingleVariableCounter::calculateTradeCount(marketState.tradeRoll, 5);
+    }
+    if (mask_ & tradeCount10Seconds) {
+        e.tradeCount10Seconds = SingleVariableCounter::calculateTradeCount(marketState.tradeRoll, 10);
+    }
+    if (mask_ & tradeCount15Seconds) {
+        e.tradeCount15Seconds = SingleVariableCounter::calculateTradeCount(marketState.tradeRoll, 15);
+    }
+    if (mask_ & tradeCount30Seconds) {
+        e.tradeCount30Seconds = SingleVariableCounter::calculateTradeCount(marketState.tradeRoll, 30);
+    }
+    if (mask_ & tradeCount60Seconds) {
+        e.tradeCount60Seconds = SingleVariableCounter::calculateTradeCount(marketState.tradeRoll, 60);
+    }
+
     if (mask_ & tradeCountDiff1Seconds) {
-        e.tradeCountDiff1Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.rollingTradeStatistics, 1);
+        e.tradeCountDiff1Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeCountDiff3Seconds) {
-        e.tradeCountDiff3Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.rollingTradeStatistics, 3);
+        e.tradeCountDiff3Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeCountDiff5Seconds) {
-        e.tradeCountDiff5Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.rollingTradeStatistics, 5);
+        e.tradeCountDiff5Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeCountDiff10Seconds) {
-        e.tradeCountDiff10Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.rollingTradeStatistics, 10);
+        e.tradeCountDiff10Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeCountDiff15Seconds) {
-        e.tradeCountDiff15Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.rollingTradeStatistics, 15);
+        e.tradeCountDiff15Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeCountDiff30Seconds) {
-        e.tradeCountDiff30Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.rollingTradeStatistics, 30);
+        e.tradeCountDiff30Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeCountDiff60Seconds) {
-        e.tradeCountDiff60Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.rollingTradeStatistics, 60);
+        e.tradeCountDiff60Seconds = SingleVariableCounter::calculateTradeCountDiff(marketState.tradeRoll, 60);
     }
 
     if (mask_ & tradeCountImbalance1Seconds) {
-        e.tradeCountImbalance1Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.rollingTradeStatistics, 1);
+        e.tradeCountImbalance1Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeCountImbalance3Seconds) {
-        e.tradeCountImbalance3Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.rollingTradeStatistics, 3);
+        e.tradeCountImbalance3Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeCountImbalance5Seconds) {
-        e.tradeCountImbalance5Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.rollingTradeStatistics, 5);
+        e.tradeCountImbalance5Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeCountImbalance10Seconds) {
-        e.tradeCountImbalance10Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.rollingTradeStatistics, 10);
+        e.tradeCountImbalance10Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeCountImbalance15Seconds) {
-        e.tradeCountImbalance15Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.rollingTradeStatistics, 15);
+        e.tradeCountImbalance15Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeCountImbalance30Seconds) {
-        e.tradeCountImbalance30Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.rollingTradeStatistics, 30);
+        e.tradeCountImbalance30Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeCountImbalance60Seconds) {
-        e.tradeCountImbalance60Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.rollingTradeStatistics, 60);
+        e.tradeCountImbalance60Seconds = SingleVariableCounter::calculateTradeCountImbalance(marketState.tradeRoll, 60);
     }
 
     if (mask_ & tradeCountFisherImbalance1Seconds) {
-        e.tradeCountFisherImbalance1Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.rollingTradeStatistics, 1);
+        e.tradeCountFisherImbalance1Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeCountFisherImbalance3Seconds) {
-        e.tradeCountFisherImbalance3Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.rollingTradeStatistics, 3);
+        e.tradeCountFisherImbalance3Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeCountFisherImbalance5Seconds) {
-        e.tradeCountFisherImbalance5Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.rollingTradeStatistics, 5);
+        e.tradeCountFisherImbalance5Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeCountFisherImbalance10Seconds) {
-        e.tradeCountFisherImbalance10Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.rollingTradeStatistics, 10);
+        e.tradeCountFisherImbalance10Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeCountFisherImbalance15Seconds) {
-        e.tradeCountFisherImbalance15Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.rollingTradeStatistics, 15);
+        e.tradeCountFisherImbalance15Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeCountFisherImbalance30Seconds) {
-        e.tradeCountFisherImbalance30Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.rollingTradeStatistics, 30);
+        e.tradeCountFisherImbalance30Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeCountFisherImbalance60Seconds) {
-        e.tradeCountFisherImbalance60Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.rollingTradeStatistics, 60);
+        e.tradeCountFisherImbalance60Seconds = SingleVariableCounter::calculateTradeCountFisherImbalance(marketState.tradeRoll, 60);
     }
 
     if (mask_ & tradeCountLogRatio1Seconds) {
-        e.tradeCountLogRatio1Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 1);
+        e.tradeCountLogRatio1Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeCountLogRatio3Seconds) {
-        e.tradeCountLogRatio3Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 3);
+        e.tradeCountLogRatio3Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeCountLogRatio5Seconds) {
-        e.tradeCountLogRatio5Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 5);
+        e.tradeCountLogRatio5Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeCountLogRatio10Seconds) {
-        e.tradeCountLogRatio10Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 10);
+        e.tradeCountLogRatio10Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeCountLogRatio15Seconds) {
-        e.tradeCountLogRatio15Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 15);
+        e.tradeCountLogRatio15Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeCountLogRatio30Seconds) {
-        e.tradeCountLogRatio30Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 30);
+        e.tradeCountLogRatio30Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeCountLogRatio60Seconds) {
-        e.tradeCountLogRatio60Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.rollingTradeStatistics, 60);
+        e.tradeCountLogRatio60Seconds = SingleVariableCounter::calculateTradeCountLogRatio(marketState.tradeRoll, 60);
     }
 
     if (mask_ & tradeVolumeSum1Seconds) {
-        e.tradeVolumeSum1Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 1);
+        e.tradeVolumeSum1Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeVolumeSum3Seconds) {
-        e.tradeVolumeSum3Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 3);
+        e.tradeVolumeSum3Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeVolumeSum5Seconds) {
-        e.tradeVolumeSum5Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 5);
+        e.tradeVolumeSum5Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeVolumeSum10Seconds) {
-        e.tradeVolumeSum10Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 10);
+        e.tradeVolumeSum10Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeVolumeSum15Seconds) {
-        e.tradeVolumeSum15Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 15);
+        e.tradeVolumeSum15Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeVolumeSum30Seconds) {
-        e.tradeVolumeSum30Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 30);
+        e.tradeVolumeSum30Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeVolumeSum60Seconds) {
-        e.tradeVolumeSum60Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 60);
+        e.tradeVolumeSum60Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 60);
     }
     if (mask_ & tradeVolumeSum600Seconds) {
-        e.tradeVolumeSum600Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 600);
+        e.tradeVolumeSum600Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 600);
     }
     if (mask_ & tradeVolumeSum1200Seconds) {
-        e.tradeVolumeSum1200Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.rollingTradeStatistics, 1200);
+        e.tradeVolumeSum1200Seconds = SingleVariableCounter::calculateTradeVolumeSum(marketState.tradeRoll, 1200);
     }
 
     if (mask_ & tradeVolumeDiff1Seconds) {
-        e.tradeVolumeDiff1Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 1);
+        e.tradeVolumeDiff1Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeVolumeDiff3Seconds) {
-        e.tradeVolumeDiff3Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 3);
+        e.tradeVolumeDiff3Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeVolumeDiff5Seconds) {
-        e.tradeVolumeDiff5Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 5);
+        e.tradeVolumeDiff5Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeVolumeDiff10Seconds) {
-        e.tradeVolumeDiff10Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 10);
+        e.tradeVolumeDiff10Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeVolumeDiff15Seconds) {
-        e.tradeVolumeDiff15Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 15);
+        e.tradeVolumeDiff15Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeVolumeDiff30Seconds) {
-        e.tradeVolumeDiff30Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 30);
+        e.tradeVolumeDiff30Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeVolumeDiff60Seconds) {
-        e.tradeVolumeDiff60Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.rollingTradeStatistics, 60);
+        e.tradeVolumeDiff60Seconds = SingleVariableCounter::calculateTradeVolumeDiff(marketState.tradeRoll, 60);
     }
 
     if (mask_ & tradeVolumeImbalance1Seconds) {
-        e.tradeVolumeImbalance1Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.rollingTradeStatistics, 1);
+        e.tradeVolumeImbalance1Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeVolumeImbalance3Seconds) {
-        e.tradeVolumeImbalance3Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.rollingTradeStatistics, 3);
+        e.tradeVolumeImbalance3Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeVolumeImbalance5Seconds) {
-        e.tradeVolumeImbalance5Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.rollingTradeStatistics, 5);
+        e.tradeVolumeImbalance5Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeVolumeImbalance10Seconds) {
-        e.tradeVolumeImbalance10Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.rollingTradeStatistics, 10);
+        e.tradeVolumeImbalance10Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeVolumeImbalance15Seconds) {
-        e.tradeVolumeImbalance15Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.rollingTradeStatistics, 15);
+        e.tradeVolumeImbalance15Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeVolumeImbalance30Seconds) {
-        e.tradeVolumeImbalance30Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.rollingTradeStatistics, 30);
+        e.tradeVolumeImbalance30Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeVolumeImbalance60Seconds) {
-        e.tradeVolumeImbalance60Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.rollingTradeStatistics, 60);
+        e.tradeVolumeImbalance60Seconds = SingleVariableCounter::calculateTradeVolumeImbalance(marketState.tradeRoll, 60);
     }
 
     if (mask_ & tradeVolumeLogRatio1Seconds) {
-        e.tradeVolumeLogRatio1Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.rollingTradeStatistics, 1);
+        e.tradeVolumeLogRatio1Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.tradeRoll, 1);
     }
     if (mask_ & tradeVolumeLogRatio3Seconds) {
-        e.tradeVolumeLogRatio3Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.rollingTradeStatistics, 3);
+        e.tradeVolumeLogRatio3Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.tradeRoll, 3);
     }
     if (mask_ & tradeVolumeLogRatio5Seconds) {
-        e.tradeVolumeLogRatio5Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.rollingTradeStatistics, 5);
+        e.tradeVolumeLogRatio5Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.tradeRoll, 5);
     }
     if (mask_ & tradeVolumeLogRatio10Seconds) {
-        e.tradeVolumeLogRatio10Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.rollingTradeStatistics, 10);
+        e.tradeVolumeLogRatio10Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.tradeRoll, 10);
     }
     if (mask_ & tradeVolumeLogRatio15Seconds) {
-        e.tradeVolumeLogRatio15Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.rollingTradeStatistics, 15);
+        e.tradeVolumeLogRatio15Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.tradeRoll, 15);
     }
     if (mask_ & tradeVolumeLogRatio30Seconds) {
-        e.tradeVolumeLogRatio30Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.rollingTradeStatistics, 30);
+        e.tradeVolumeLogRatio30Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.tradeRoll, 30);
     }
     if (mask_ & tradeVolumeLogRatio60Seconds) {
-        e.tradeVolumeLogRatio60Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.rollingTradeStatistics, 60);
-    }
-
-    if (mask_ & avgTradeSizeDiff1Seconds) {
-        e.avgTradeSizeDiff1Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.rollingTradeStatistics, 1);
-    }
-    if (mask_ & avgTradeSizeDiff3Seconds) {
-        e.avgTradeSizeDiff3Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.rollingTradeStatistics, 3);
-    }
-    if (mask_ & avgTradeSizeDiff5Seconds) {
-        e.avgTradeSizeDiff5Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & avgTradeSizeDiff10Seconds) {
-        e.avgTradeSizeDiff10Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.rollingTradeStatistics, 10);
-    }
-    if (mask_ & avgTradeSizeDiff15Seconds) {
-        e.avgTradeSizeDiff15Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.rollingTradeStatistics, 15);
-    }
-    if (mask_ & avgTradeSizeDiff30Seconds) {
-        e.avgTradeSizeDiff30Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.rollingTradeStatistics, 30);
-    }
-    if (mask_ & avgTradeSizeDiff60Seconds) {
-        e.avgTradeSizeDiff60Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.rollingTradeStatistics, 60);
-    }
-
-    if (mask_ & avgTradeSizeImbalance1Seconds) {
-        e.avgTradeSizeImbalance1Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.rollingTradeStatistics, 1);
-    }
-    if (mask_ & avgTradeSizeImbalance3Seconds) {
-        e.avgTradeSizeImbalance3Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.rollingTradeStatistics, 3);
-    }
-    if (mask_ & avgTradeSizeImbalance5Seconds) {
-        e.avgTradeSizeImbalance5Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & avgTradeSizeImbalance10Seconds) {
-        e.avgTradeSizeImbalance10Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.rollingTradeStatistics, 10);
-    }
-    if (mask_ & avgTradeSizeImbalance15Seconds) {
-        e.avgTradeSizeImbalance15Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.rollingTradeStatistics, 15);
-    }
-    if (mask_ & avgTradeSizeImbalance30Seconds) {
-        e.avgTradeSizeImbalance30Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.rollingTradeStatistics, 30);
-    }
-    if (mask_ & avgTradeSizeImbalance60Seconds) {
-        e.avgTradeSizeImbalance60Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.rollingTradeStatistics, 60);
-    }
-
-    if (mask_ & avgTradeSizeLogRatio1Seconds) {
-        e.avgTradeSizeLogRatio1Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.rollingTradeStatistics, 1);
-    }
-    if (mask_ & avgTradeSizeLogRatio3Seconds) {
-        e.avgTradeSizeLogRatio3Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.rollingTradeStatistics, 3);
-    }
-    if (mask_ & avgTradeSizeLogRatio5Seconds) {
-        e.avgTradeSizeLogRatio5Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & avgTradeSizeLogRatio10Seconds) {
-        e.avgTradeSizeLogRatio10Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.rollingTradeStatistics, 10);
-    }
-    if (mask_ & avgTradeSizeLogRatio15Seconds) {
-        e.avgTradeSizeLogRatio15Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.rollingTradeStatistics, 15);
-    }
-    if (mask_ & avgTradeSizeLogRatio30Seconds) {
-        e.avgTradeSizeLogRatio30Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.rollingTradeStatistics, 30);
-    }
-    if (mask_ & avgTradeSizeLogRatio60Seconds) {
-        e.avgTradeSizeLogRatio60Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.rollingTradeStatistics, 60);
+        e.tradeVolumeLogRatio60Seconds = SingleVariableCounter::calculateTradeVolumeLogRatio(marketState.tradeRoll, 60);
     }
 
     if (mask_ & biggestSingleBuyTradeVolume1Seconds) {
-        e.biggestSingleBuyTradeVolume1Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 1);
+        e.biggestSingleBuyTradeVolume1Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.tradeRoll, 1);
     }
     if (mask_ & biggestSingleBuyTradeVolume3Seconds) {
-        e.biggestSingleBuyTradeVolume3Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 3);
+        e.biggestSingleBuyTradeVolume3Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.tradeRoll, 3);
     }
     if (mask_ & biggestSingleBuyTradeVolume5Seconds) {
-        e.biggestSingleBuyTradeVolume5Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 5);
+        e.biggestSingleBuyTradeVolume5Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.tradeRoll, 5);
     }
     if (mask_ & biggestSingleBuyTradeVolume10Seconds) {
-        e.biggestSingleBuyTradeVolume10Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 10);
+        e.biggestSingleBuyTradeVolume10Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.tradeRoll, 10);
     }
     if (mask_ & biggestSingleBuyTradeVolume15Seconds) {
-        e.biggestSingleBuyTradeVolume15Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 15);
+        e.biggestSingleBuyTradeVolume15Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.tradeRoll, 15);
     }
     if (mask_ & biggestSingleBuyTradeVolume30Seconds) {
-        e.biggestSingleBuyTradeVolume30Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 30);
+        e.biggestSingleBuyTradeVolume30Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.tradeRoll, 30);
     }
     if (mask_ & biggestSingleBuyTradeVolume60Seconds) {
-        e.biggestSingleBuyTradeVolume60Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.rollingTradeStatistics, 60);
+        e.biggestSingleBuyTradeVolume60Seconds = SingleVariableCounter::calculateBiggestSingleBuyTradeVolume(marketState.tradeRoll, 60);
     }
 
     if (mask_ & biggestSingleSellTradeVolume1Seconds) {
-        e.biggestSingleSellTradeVolume1Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 1);
+        e.biggestSingleSellTradeVolume1Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.tradeRoll, 1);
     }
     if (mask_ & biggestSingleSellTradeVolume3Seconds) {
-        e.biggestSingleSellTradeVolume3Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 3);
+        e.biggestSingleSellTradeVolume3Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.tradeRoll, 3);
     }
     if (mask_ & biggestSingleSellTradeVolume5Seconds) {
-        e.biggestSingleSellTradeVolume5Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 5);
+        e.biggestSingleSellTradeVolume5Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.tradeRoll, 5);
     }
     if (mask_ & biggestSingleSellTradeVolume10Seconds) {
-        e.biggestSingleSellTradeVolume10Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 10);
+        e.biggestSingleSellTradeVolume10Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.tradeRoll, 10);
     }
     if (mask_ & biggestSingleSellTradeVolume15Seconds) {
-        e.biggestSingleSellTradeVolume15Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 15);
+        e.biggestSingleSellTradeVolume15Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.tradeRoll, 15);
     }
     if (mask_ & biggestSingleSellTradeVolume30Seconds) {
-        e.biggestSingleSellTradeVolume30Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 30);
+        e.biggestSingleSellTradeVolume30Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.tradeRoll, 30);
     }
     if (mask_ & biggestSingleSellTradeVolume60Seconds) {
-        e.biggestSingleSellTradeVolume60Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.rollingTradeStatistics, 60);
+        e.biggestSingleSellTradeVolume60Seconds = SingleVariableCounter::calculateBiggestSingleSellTradeVolume(marketState.tradeRoll, 60);
     }
 
+    if (mask_ & avgTradeSizeDiff1Seconds) {
+        e.avgTradeSizeDiff1Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.tradeRoll, 1);
+    }
+    if (mask_ & avgTradeSizeDiff3Seconds) {
+        e.avgTradeSizeDiff3Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.tradeRoll, 3);
+    }
+    if (mask_ & avgTradeSizeDiff5Seconds) {
+        e.avgTradeSizeDiff5Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.tradeRoll, 5);
+    }
+    if (mask_ & avgTradeSizeDiff10Seconds) {
+        e.avgTradeSizeDiff10Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.tradeRoll, 10);
+    }
+    if (mask_ & avgTradeSizeDiff15Seconds) {
+        e.avgTradeSizeDiff15Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.tradeRoll, 15);
+    }
+    if (mask_ & avgTradeSizeDiff30Seconds) {
+        e.avgTradeSizeDiff30Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.tradeRoll, 30);
+    }
+    if (mask_ & avgTradeSizeDiff60Seconds) {
+        e.avgTradeSizeDiff60Seconds = SingleVariableCounter::calculateAvgTradeSizeDiff(marketState.tradeRoll, 60);
+    }
+
+    if (mask_ & avgTradeSizeImbalance1Seconds) {
+        e.avgTradeSizeImbalance1Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.tradeRoll, 1);
+    }
+    if (mask_ & avgTradeSizeImbalance3Seconds) {
+        e.avgTradeSizeImbalance3Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.tradeRoll, 3);
+    }
+    if (mask_ & avgTradeSizeImbalance5Seconds) {
+        e.avgTradeSizeImbalance5Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.tradeRoll, 5);
+    }
+    if (mask_ & avgTradeSizeImbalance10Seconds) {
+        e.avgTradeSizeImbalance10Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.tradeRoll, 10);
+    }
+    if (mask_ & avgTradeSizeImbalance15Seconds) {
+        e.avgTradeSizeImbalance15Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.tradeRoll, 15);
+    }
+    if (mask_ & avgTradeSizeImbalance30Seconds) {
+        e.avgTradeSizeImbalance30Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.tradeRoll, 30);
+    }
+    if (mask_ & avgTradeSizeImbalance60Seconds) {
+        e.avgTradeSizeImbalance60Seconds = SingleVariableCounter::calculateAvgTradeSizeImbalance(marketState.tradeRoll, 60);
+    }
+
+    if (mask_ & avgTradeSizeLogRatio1Seconds) {
+        e.avgTradeSizeLogRatio1Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.tradeRoll, 1);
+    }
+    if (mask_ & avgTradeSizeLogRatio3Seconds) {
+        e.avgTradeSizeLogRatio3Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.tradeRoll, 3);
+    }
+    if (mask_ & avgTradeSizeLogRatio5Seconds) {
+        e.avgTradeSizeLogRatio5Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.tradeRoll, 5);
+    }
+    if (mask_ & avgTradeSizeLogRatio10Seconds) {
+        e.avgTradeSizeLogRatio10Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.tradeRoll, 10);
+    }
+    if (mask_ & avgTradeSizeLogRatio15Seconds) {
+        e.avgTradeSizeLogRatio15Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.tradeRoll, 15);
+    }
+    if (mask_ & avgTradeSizeLogRatio30Seconds) {
+        e.avgTradeSizeLogRatio30Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.tradeRoll, 30);
+    }
+    if (mask_ & avgTradeSizeLogRatio60Seconds) {
+        e.avgTradeSizeLogRatio60Seconds = SingleVariableCounter::calculateAvgTradeSizeLogRatio(marketState.tradeRoll, 60);
+    }
 
     if (mask_ & priceDifference1Seconds) {
-        e.priceDifference1Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 1);
+        e.priceDifference1Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 1);
     }
     if (mask_ & priceDifference3Seconds) {
-        e.priceDifference3Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 3);
+        e.priceDifference3Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 3);
     }
     if (mask_ & priceDifference5Seconds) {
-        e.priceDifference5Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 5);
+        e.priceDifference5Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 5);
     }
     if (mask_ & priceDifference10Seconds) {
-        e.priceDifference10Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 10);
+        e.priceDifference10Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 10);
     }
     if (mask_ & priceDifference15Seconds) {
-        e.priceDifference15Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 15);
+        e.priceDifference15Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 15);
     }
     if (mask_ & priceDifference30Seconds) {
-        e.priceDifference30Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 30);
+        e.priceDifference30Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 30);
     }
     if (mask_ & priceDifference60Seconds) {
-        e.priceDifference60Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 60);
+        e.priceDifference60Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 60);
     }
     if (mask_ & priceDifference600Seconds) {
-        e.priceDifference600Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 600);
+        e.priceDifference600Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 600);
     }
     if (mask_ & priceDifference1200Seconds) {
-        e.priceDifference1200Seconds = SingleVariableCounter::calculatePriceDifference(marketState.rollingTradeStatistics, 1200);
+        e.priceDifference1200Seconds = SingleVariableCounter::calculatePriceDifference(marketState.tradeRoll, 1200);
     }
 
     if (mask_ & rateOfReturn1Seconds) {
-        e.rateOfReturn1Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 1);
+        e.rateOfReturn1Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 1);
     }
     if (mask_ & rateOfReturn3Seconds) {
-        e.rateOfReturn3Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 3);
+        e.rateOfReturn3Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 3);
     }
     if (mask_ & rateOfReturn5Seconds) {
-        e.rateOfReturn5Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 5);
+        e.rateOfReturn5Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 5);
     }
     if (mask_ & rateOfReturn10Seconds) {
-        e.rateOfReturn10Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 10);
+        e.rateOfReturn10Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 10);
     }
     if (mask_ & rateOfReturn15Seconds) {
-        e.rateOfReturn15Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 15);
+        e.rateOfReturn15Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 15);
     }
     if (mask_ & rateOfReturn30Seconds) {
-        e.rateOfReturn30Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 30);
+        e.rateOfReturn30Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 30);
     }
     if (mask_ & rateOfReturn60Seconds) {
-        e.rateOfReturn60Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 60);
+        e.rateOfReturn60Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 60);
     }
     if (mask_ & rateOfReturn600Seconds) {
-        e.rateOfReturn600Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 600);
+        e.rateOfReturn600Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 600);
     }
     if (mask_ & rateOfReturn1200Seconds) {
-        e.rateOfReturn1200Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.rollingTradeStatistics, 1200);
+        e.rateOfReturn1200Seconds = SingleVariableCounter::calculateRateOfReturn(marketState.tradeRoll, 1200);
     }
 
     if (mask_ & logReturnRatio1Seconds) {
-        e.logReturnRatio1Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 1);
+        e.logReturnRatio1Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 1);
     }
     if (mask_ & logReturnRatio3Seconds) {
-        e.logReturnRatio3Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 3);
+        e.logReturnRatio3Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 3);
     }
     if (mask_ & logReturnRatio5Seconds) {
-        e.logReturnRatio5Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 5);
+        e.logReturnRatio5Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 5);
     }
     if (mask_ & logReturnRatio10Seconds) {
-        e.logReturnRatio10Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 10);
+        e.logReturnRatio10Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 10);
     }
     if (mask_ & logReturnRatio15Seconds) {
-        e.logReturnRatio15Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 15);
+        e.logReturnRatio15Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 15);
     }
     if (mask_ & logReturnRatio30Seconds) {
-        e.logReturnRatio30Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 30);
+        e.logReturnRatio30Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 30);
     }
     if (mask_ & logReturnRatio60Seconds) {
-        e.logReturnRatio60Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 60);
+        e.logReturnRatio60Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 60);
     }
     if (mask_ & logReturnRatio600Seconds) {
-        e.logReturnRatio600Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 600);
+        e.logReturnRatio600Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 600);
     }
     if (mask_ & logReturnRatio1200Seconds) {
-        e.logReturnRatio1200Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.rollingTradeStatistics, 1200);
-    }
-
-    if (mask_ & logKylesLambda1Seconds) {
-        e.logKylesLambda1Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 1);
-    }
-    if (mask_ & logKylesLambda3Seconds) {
-        e.logKylesLambda3Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 3);
-    }
-    if (mask_ & logKylesLambda5Seconds) {
-        e.logKylesLambda5Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & logKylesLambda10Seconds) {
-        e.logKylesLambda10Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 10);
-    }
-    if (mask_ & logKylesLambda15Seconds) {
-        e.logKylesLambda15Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 15);
-    }
-    if (mask_ & logKylesLambda30Seconds) {
-        e.logKylesLambda30Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 30);
-    }
-    if (mask_ & logKylesLambda60Seconds) {
-        e.logKylesLambda60Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.rollingTradeStatistics, 60);
-    }
-
-    if (mask_ & deltaPVT1Seconds) {
-        e.deltaPVT1Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 1);
-    }
-    if (mask_ & deltaPVT3Seconds) {
-        e.deltaPVT3Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 3);
-    }
-    if (mask_ & deltaPVT5Seconds) {
-        e.deltaPVT5Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & deltaPVT10Seconds) {
-        e.deltaPVT10Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 10);
-    }
-    if (mask_ & deltaPVT15Seconds) {
-        e.deltaPVT15Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 15);
-    }
-    if (mask_ & deltaPVT30Seconds) {
-        e.deltaPVT30Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 30);
-    }
-    if (mask_ & deltaPVT60Seconds) {
-        e.deltaPVT60Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 60);
-    }
-    if (mask_ & deltaPVT600Seconds) {
-        e.deltaPVT600Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.rollingTradeStatistics, 600);
-    }
-
-    if (mask_ & sinTime24h) {
-        e.sinTime24h = SingleVariableCounter::calculateSinTime24h(marketState.getLastTimestampOfReceive());
-    }
-    if (mask_ & longSinTime24h) {
-        e.longSinTime24h = SingleVariableCounter::calculateLongSinTime24h(marketState.getLastTimestampOfReceive());
-    }
-    if (mask_ & cosTime24h) {
-        e.cosTime24h = SingleVariableCounter::calculateCosTime24h(marketState.getLastTimestampOfReceive());
-    }
-    if (mask_ & isAsiaTime) {
-        e.isAsiaTime = SingleVariableCounter::calculateIsAsiaTime(marketState.getLastTimestampOfReceive());
-    }
-    if (mask_ & isEuropeTime) {
-        e.isEuropeTime = SingleVariableCounter::calculateIsEuropeTime(marketState.getLastTimestampOfReceive());
-    }
-    if (mask_ & isUSATime) {
-        e.isUSATime = SingleVariableCounter::calculateIsUSATime(marketState.getLastTimestampOfReceive());
-    }
-
-    if (mask_ & priceDistance1Seconds) {
-        e.priceDistance1Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 1);
-    }
-    if (mask_ & priceDistance3Seconds) {
-        e.priceDistance3Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 3);
-    }
-    if (mask_ & priceDistance5Seconds) {
-        e.priceDistance5Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 5);
-    }
-    if (mask_ & priceDistance10Seconds) {
-        e.priceDistance10Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 10);
-    }
-    if (mask_ & priceDistance15Seconds) {
-        e.priceDistance15Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 15);
-    }
-    if (mask_ & priceDistance30Seconds) {
-        e.priceDistance30Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 30);
-    }
-    if (mask_ & priceDistance60Seconds) {
-        e.priceDistance60Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 60);
-    }
-    if (mask_ & priceDistance300Seconds) {
-        e.priceDistance300Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 300);
-    }
-    if (mask_ & priceDistance600Seconds) {
-        e.priceDistance600Seconds = SingleVariableCounter::calculatePriceDistance(marketState.rollingTradeStatistics, 600);
+        e.logReturnRatio1200Seconds = SingleVariableCounter::calculateLogReturnRatio(marketState.tradeRoll, 1200);
     }
 
     if (mask_ & smaLogRatio3Seconds) {
-        e.smaLogRatio3Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 3);
+        e.smaLogRatio3Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 3);
     }
     if (mask_ & smaLogRatio5Seconds) {
-        e.smaLogRatio5Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 5);
+        e.smaLogRatio5Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 5);
     }
     if (mask_ & smaLogRatio10Seconds) {
-        e.smaLogRatio10Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 10);
+        e.smaLogRatio10Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 10);
     }
     if (mask_ & smaLogRatio15Seconds) {
-        e.smaLogRatio15Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 15);
+        e.smaLogRatio15Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 15);
     }
     if (mask_ & smaLogRatio30Seconds) {
-        e.smaLogRatio30Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 30);
+        e.smaLogRatio30Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 30);
     }
     if (mask_ & smaLogRatio60Seconds) {
-        e.smaLogRatio60Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 60);
+        e.smaLogRatio60Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 60);
     }
     if (mask_ & smaLogRatio300Seconds) {
-        e.smaLogRatio300Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 300);
+        e.smaLogRatio300Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 300);
     }
     if (mask_ & smaLogRatio600Seconds) {
-        e.smaLogRatio600Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.rollingTradeStatistics, 600);
+        e.smaLogRatio600Seconds = SingleVariableCounter::calculateSMALogRatio(marketState.tradeRoll, 600);
     }
 
     if (mask_ & hlc3tLogRatio300Seconds) {
-        e.hlc3tLogRatio300Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 300);
+        e.hlc3tLogRatio300Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.tradeRoll, 300);
     }
     if (mask_ & hlc3tLogRatio600Seconds) {
-        e.hlc3tLogRatio600Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 600);
+        e.hlc3tLogRatio600Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.tradeRoll, 600);
     }
     if (mask_ & hlc3tLogRatio1200Seconds) {
-        e.hlc3tLogRatio1200Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.rollingTradeStatistics, 1200);
+        e.hlc3tLogRatio1200Seconds = SingleVariableCounter::calculateHLC3TLogRatio(marketState.tradeRoll, 1200);
     }
 
     if (mask_ & bollingerBandsDistance300Seconds) {
-        e.bollingerBandsDistance300Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.rollingTradeStatistics, 300);
+        e.bollingerBandsDistance300Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.tradeRoll, 300);
     }
     if (mask_ & bollingerBandsDistance600Seconds) {
-        e.bollingerBandsDistance600Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.rollingTradeStatistics, 600);
+        e.bollingerBandsDistance600Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.tradeRoll, 600);
     }
     if (mask_ & bollingerBandsDistance1200Seconds) {
-        e.bollingerBandsDistance1200Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.rollingTradeStatistics, 1200);
+        e.bollingerBandsDistance1200Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.tradeRoll, 1200);
+    }
+
+    if (mask_ & priceDistance1Seconds) {
+        e.priceDistance1Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 1);
+    }
+    if (mask_ & priceDistance3Seconds) {
+        e.priceDistance3Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 3);
+    }
+    if (mask_ & priceDistance5Seconds) {
+        e.priceDistance5Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 5);
+    }
+    if (mask_ & priceDistance10Seconds) {
+        e.priceDistance10Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 10);
+    }
+    if (mask_ & priceDistance15Seconds) {
+        e.priceDistance15Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 15);
+    }
+    if (mask_ & priceDistance30Seconds) {
+        e.priceDistance30Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 30);
+    }
+    if (mask_ & priceDistance60Seconds) {
+        e.priceDistance60Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 60);
+    }
+    if (mask_ & priceDistance300Seconds) {
+        e.priceDistance300Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 300);
+    }
+    if (mask_ & priceDistance600Seconds) {
+        e.priceDistance600Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 600);
+    }
+
+    if (mask_ & logKylesLambda1Seconds) {
+        e.logKylesLambda1Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.tradeRoll, 1);
+    }
+    if (mask_ & logKylesLambda3Seconds) {
+        e.logKylesLambda3Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.tradeRoll, 3);
+    }
+    if (mask_ & logKylesLambda5Seconds) {
+        e.logKylesLambda5Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.tradeRoll, 5);
+    }
+    if (mask_ & logKylesLambda10Seconds) {
+        e.logKylesLambda10Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.tradeRoll, 10);
+    }
+    if (mask_ & logKylesLambda15Seconds) {
+        e.logKylesLambda15Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.tradeRoll, 15);
+    }
+    if (mask_ & logKylesLambda30Seconds) {
+        e.logKylesLambda30Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.tradeRoll, 30);
+    }
+    if (mask_ & logKylesLambda60Seconds) {
+        e.logKylesLambda60Seconds = SingleVariableCounter::calculateLogKylesLambda(marketState.tradeRoll, 60);
+    }
+
+    if (mask_ & deltaPVT1Seconds) {
+        e.deltaPVT1Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 1);
+    }
+    if (mask_ & deltaPVT3Seconds) {
+        e.deltaPVT3Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 3);
+    }
+    if (mask_ & deltaPVT5Seconds) {
+        e.deltaPVT5Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 5);
+    }
+    if (mask_ & deltaPVT10Seconds) {
+        e.deltaPVT10Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 10);
+    }
+    if (mask_ & deltaPVT15Seconds) {
+        e.deltaPVT15Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 15);
+    }
+    if (mask_ & deltaPVT30Seconds) {
+        e.deltaPVT30Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 30);
+    }
+    if (mask_ & deltaPVT60Seconds) {
+        e.deltaPVT60Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 60);
+    }
+    if (mask_ & deltaPVT600Seconds) {
+        e.deltaPVT600Seconds = SingleVariableCounter::calculateDeltaPVT(marketState.tradeRoll, 600);
     }
 
     return e;

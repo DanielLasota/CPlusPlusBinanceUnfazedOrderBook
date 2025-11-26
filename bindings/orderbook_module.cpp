@@ -104,8 +104,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
             py::return_value_policy::reference_internal
         )
         .def_readonly(
-            "rolling_trade_statistics",
-            &MS::rollingTradeStatistics,
+            "trade_roll",
+            &MS::tradeRoll,
             py::return_value_policy::reference_internal
         )
         .def_readonly(
@@ -250,34 +250,33 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
         &SingleVariableCounter::calculateSimplifiedSlopeImbalance,
         py::arg("order_book")
     );
-
     svc.def(
         "calculate_trade_count_imbalance",
         &SingleVariableCounter::calculateTradeCountImbalance,
-        py::arg("rolling_statistics_data"),
+        py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
     svc.def(
         "calculate_trade_volume_diff",
         &SingleVariableCounter::calculateTradeVolumeDiff,
-        py::arg("rolling_statistics_data"),
+        py::arg("trade_roll"),
         py::arg("windowTimeSeconds"));
     svc.def(
         "calculate_price_difference",
         &SingleVariableCounter::calculatePriceDifference,
-        py::arg("rolling_statistics_data"),
+        py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
     svc.def(
         "calculate_rate_of_return",
         &SingleVariableCounter::calculateRateOfReturn,
-        py::arg("rolling_statistics_data"),
+        py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
     svc.def(
         "calculate_difference_depth_count_imbalance",
         &SingleVariableCounter::calculateDifferenceDepthCountImbalance,
-        py::arg("rolling_statistics_data"),
+        py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
 
@@ -395,7 +394,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
             };
         });
 
-    py::class_<RollingTradeStatistics>(m, "RollingTradeStatistics")
+    py::class_<TradeRoll>(m, "TradeRoll")
         .def(py::init<>());
 
     py::class_<RollingDifferenceDepthStatistics>(m, "RollingDifferenceDepthStatistics")

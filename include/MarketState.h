@@ -1,9 +1,9 @@
 #pragma once
 
 #include "OrderBook.h"
-#include "enums/TradeEntry.h"
 #include "RollingDifferenceDepthStatistics.h"
-#include "RollingTradeStatistics.h"
+#include "TradeRoll.h"
+#include "enums/TradeEntry.h"
 
 class MarketState {
 public:
@@ -13,7 +13,7 @@ public:
         : market(market_), symbol(symbol), lastTrade()
     {}
 
-    RollingTradeStatistics rollingTradeStatistics;
+    TradeRoll tradeRoll;
     RollingDifferenceDepthStatistics rollingDifferenceDepthStatistics;
 
     OrderBook orderBook;

@@ -327,136 +327,136 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.isUSATime = SingleVariableCounter::calculateIsUSATime(marketState.getLastTimestampOfReceive());
     }
 
-    if (mask_ & differenceDepthCount1Seconds) {
-        e.differenceDepthCount1Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 1);
+    if (mask_ & depthCount1Seconds) {
+        e.depthCount1Seconds = SingleVariableCounter::calculateDepthCount(marketState.depthRoll, 1);
     }
-    if (mask_ & differenceDepthCount3Seconds) {
-        e.differenceDepthCount3Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 3);
+    if (mask_ & depthCount3Seconds) {
+        e.depthCount3Seconds = SingleVariableCounter::calculateDepthCount(marketState.depthRoll, 3);
     }
-    if (mask_ & differenceDepthCount5Seconds) {
-        e.differenceDepthCount5Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 5);
+    if (mask_ & depthCount5Seconds) {
+        e.depthCount5Seconds = SingleVariableCounter::calculateDepthCount(marketState.depthRoll, 5);
     }
-    if (mask_ & differenceDepthCount10Seconds) {
-        e.differenceDepthCount10Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 10);
+    if (mask_ & depthCount10Seconds) {
+        e.depthCount10Seconds = SingleVariableCounter::calculateDepthCount(marketState.depthRoll, 10);
     }
-    if (mask_ & differenceDepthCount15Seconds) {
-        e.differenceDepthCount15Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 15);
+    if (mask_ & depthCount15Seconds) {
+        e.depthCount15Seconds = SingleVariableCounter::calculateDepthCount(marketState.depthRoll, 15);
     }
-    if (mask_ & differenceDepthCount30Seconds) {
-        e.differenceDepthCount30Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 30);
+    if (mask_ & depthCount30Seconds) {
+        e.depthCount30Seconds = SingleVariableCounter::calculateDepthCount(marketState.depthRoll, 30);
     }
-    if (mask_ & differenceDepthCount60Seconds) {
-        e.differenceDepthCount60Seconds = SingleVariableCounter::calculateDifferenceDepthCount(marketState.rollingDifferenceDepthStatistics, 60);
-    }
-
-    if (mask_ & differenceDepthCountDiff1Seconds) {
-        e.differenceDepthCountDiff1Seconds = SingleVariableCounter::calculateDifferenceDepthCountDiff(marketState.rollingDifferenceDepthStatistics, 1);
-    }
-    if (mask_ & differenceDepthCountDiff3Seconds) {
-        e.differenceDepthCountDiff3Seconds = SingleVariableCounter::calculateDifferenceDepthCountDiff(marketState.rollingDifferenceDepthStatistics, 3);
-    }
-    if (mask_ & differenceDepthCountDiff5Seconds) {
-        e.differenceDepthCountDiff5Seconds = SingleVariableCounter::calculateDifferenceDepthCountDiff(marketState.rollingDifferenceDepthStatistics, 5);
-    }
-    if (mask_ & differenceDepthCountDiff10Seconds) {
-        e.differenceDepthCountDiff10Seconds = SingleVariableCounter::calculateDifferenceDepthCountDiff(marketState.rollingDifferenceDepthStatistics, 10);
-    }
-    if (mask_ & differenceDepthCountDiff15Seconds) {
-        e.differenceDepthCountDiff15Seconds = SingleVariableCounter::calculateDifferenceDepthCountDiff(marketState.rollingDifferenceDepthStatistics, 15);
-    }
-    if (mask_ & differenceDepthCountDiff30Seconds) {
-        e.differenceDepthCountDiff30Seconds = SingleVariableCounter::calculateDifferenceDepthCountDiff(marketState.rollingDifferenceDepthStatistics, 30);
-    }
-    if (mask_ & differenceDepthCountDiff60Seconds) {
-        e.differenceDepthCountDiff60Seconds = SingleVariableCounter::calculateDifferenceDepthCountDiff(marketState.rollingDifferenceDepthStatistics, 60);
+    if (mask_ & depthCount60Seconds) {
+        e.depthCount60Seconds = SingleVariableCounter::calculateDepthCount(marketState.depthRoll, 60);
     }
 
-    if (mask_ & differenceDepthCountImbalance1Seconds) {
-        e.differenceDepthCountImbalance1Seconds = SingleVariableCounter::calculateDifferenceDepthCountImbalance(marketState.rollingDifferenceDepthStatistics, 1);
+    if (mask_ & depthCountDiff1Seconds) {
+        e.depthCountDiff1Seconds = SingleVariableCounter::calculateDepthCountDiff(marketState.depthRoll, 1);
     }
-    if (mask_ & differenceDepthCountImbalance3Seconds) {
-        e.differenceDepthCountImbalance3Seconds = SingleVariableCounter::calculateDifferenceDepthCountImbalance(marketState.rollingDifferenceDepthStatistics, 3);
+    if (mask_ & depthCountDiff3Seconds) {
+        e.depthCountDiff3Seconds = SingleVariableCounter::calculateDepthCountDiff(marketState.depthRoll, 3);
     }
-    if (mask_ & differenceDepthCountImbalance5Seconds) {
-        e.differenceDepthCountImbalance5Seconds = SingleVariableCounter::calculateDifferenceDepthCountImbalance(marketState.rollingDifferenceDepthStatistics, 5);
+    if (mask_ & depthCountDiff5Seconds) {
+        e.depthCountDiff5Seconds = SingleVariableCounter::calculateDepthCountDiff(marketState.depthRoll, 5);
     }
-    if (mask_ & differenceDepthCountImbalance10Seconds) {
-        e.differenceDepthCountImbalance10Seconds = SingleVariableCounter::calculateDifferenceDepthCountImbalance(marketState.rollingDifferenceDepthStatistics, 10);
+    if (mask_ & depthCountDiff10Seconds) {
+        e.depthCountDiff10Seconds = SingleVariableCounter::calculateDepthCountDiff(marketState.depthRoll, 10);
     }
-    if (mask_ & differenceDepthCountImbalance15Seconds) {
-        e.differenceDepthCountImbalance15Seconds = SingleVariableCounter::calculateDifferenceDepthCountImbalance(marketState.rollingDifferenceDepthStatistics, 15);
+    if (mask_ & depthCountDiff15Seconds) {
+        e.depthCountDiff15Seconds = SingleVariableCounter::calculateDepthCountDiff(marketState.depthRoll, 15);
     }
-    if (mask_ & differenceDepthCountImbalance30Seconds) {
-        e.differenceDepthCountImbalance30Seconds = SingleVariableCounter::calculateDifferenceDepthCountImbalance(marketState.rollingDifferenceDepthStatistics, 30);
+    if (mask_ & depthCountDiff30Seconds) {
+        e.depthCountDiff30Seconds = SingleVariableCounter::calculateDepthCountDiff(marketState.depthRoll, 30);
     }
-    if (mask_ & differenceDepthCountImbalance60Seconds) {
-        e.differenceDepthCountImbalance60Seconds = SingleVariableCounter::calculateDifferenceDepthCountImbalance(marketState.rollingDifferenceDepthStatistics, 60);
-    }
-
-    if (mask_ & differenceDepthCountFisherImbalance1Seconds) {
-        e.differenceDepthCountFisherImbalance1Seconds = SingleVariableCounter::calculateDifferenceDepthCountFisherImbalance(marketState.rollingDifferenceDepthStatistics, 1);
-    }
-    if (mask_ & differenceDepthCountFisherImbalance3Seconds) {
-        e.differenceDepthCountFisherImbalance3Seconds = SingleVariableCounter::calculateDifferenceDepthCountFisherImbalance(marketState.rollingDifferenceDepthStatistics, 3);
-    }
-    if (mask_ & differenceDepthCountFisherImbalance5Seconds) {
-        e.differenceDepthCountFisherImbalance5Seconds = SingleVariableCounter::calculateDifferenceDepthCountFisherImbalance(marketState.rollingDifferenceDepthStatistics, 5);
-    }
-    if (mask_ & differenceDepthCountFisherImbalance10Seconds) {
-        e.differenceDepthCountFisherImbalance10Seconds = SingleVariableCounter::calculateDifferenceDepthCountFisherImbalance(marketState.rollingDifferenceDepthStatistics, 10);
-    }
-    if (mask_ & differenceDepthCountFisherImbalance15Seconds) {
-        e.differenceDepthCountFisherImbalance15Seconds = SingleVariableCounter::calculateDifferenceDepthCountFisherImbalance(marketState.rollingDifferenceDepthStatistics, 15);
-    }
-    if (mask_ & differenceDepthCountFisherImbalance30Seconds) {
-        e.differenceDepthCountFisherImbalance30Seconds = SingleVariableCounter::calculateDifferenceDepthCountFisherImbalance(marketState.rollingDifferenceDepthStatistics, 30);
-    }
-    if (mask_ & differenceDepthCountFisherImbalance60Seconds) {
-        e.differenceDepthCountFisherImbalance60Seconds = SingleVariableCounter::calculateDifferenceDepthCountFisherImbalance(marketState.rollingDifferenceDepthStatistics, 60);
+    if (mask_ & depthCountDiff60Seconds) {
+        e.depthCountDiff60Seconds = SingleVariableCounter::calculateDepthCountDiff(marketState.depthRoll, 60);
     }
 
-    if (mask_ & differenceDepthCountLogRatio1Seconds) {
-        e.differenceDepthCountLogRatio1Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatio(marketState.rollingDifferenceDepthStatistics, 1);
+    if (mask_ & depthCountImbalance1Seconds) {
+        e.depthCountImbalance1Seconds = SingleVariableCounter::calculateDepthCountImbalance(marketState.depthRoll, 1);
     }
-    if (mask_ & differenceDepthCountLogRatio3Seconds) {
-        e.differenceDepthCountLogRatio3Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatio(marketState.rollingDifferenceDepthStatistics, 3);
+    if (mask_ & depthCountImbalance3Seconds) {
+        e.depthCountImbalance3Seconds = SingleVariableCounter::calculateDepthCountImbalance(marketState.depthRoll, 3);
     }
-    if (mask_ & differenceDepthCountLogRatio5Seconds) {
-        e.differenceDepthCountLogRatio5Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatio(marketState.rollingDifferenceDepthStatistics, 5);
+    if (mask_ & depthCountImbalance5Seconds) {
+        e.depthCountImbalance5Seconds = SingleVariableCounter::calculateDepthCountImbalance(marketState.depthRoll, 5);
     }
-    if (mask_ & differenceDepthCountLogRatio10Seconds) {
-        e.differenceDepthCountLogRatio10Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatio(marketState.rollingDifferenceDepthStatistics, 10);
+    if (mask_ & depthCountImbalance10Seconds) {
+        e.depthCountImbalance10Seconds = SingleVariableCounter::calculateDepthCountImbalance(marketState.depthRoll, 10);
     }
-    if (mask_ & differenceDepthCountLogRatio15Seconds) {
-        e.differenceDepthCountLogRatio15Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatio(marketState.rollingDifferenceDepthStatistics, 15);
+    if (mask_ & depthCountImbalance15Seconds) {
+        e.depthCountImbalance15Seconds = SingleVariableCounter::calculateDepthCountImbalance(marketState.depthRoll, 15);
     }
-    if (mask_ & differenceDepthCountLogRatio30Seconds) {
-        e.differenceDepthCountLogRatio30Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatio(marketState.rollingDifferenceDepthStatistics, 30);
+    if (mask_ & depthCountImbalance30Seconds) {
+        e.depthCountImbalance30Seconds = SingleVariableCounter::calculateDepthCountImbalance(marketState.depthRoll, 30);
     }
-    if (mask_ & differenceDepthCountLogRatio60Seconds) {
-        e.differenceDepthCountLogRatio60Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatio(marketState.rollingDifferenceDepthStatistics, 60);
+    if (mask_ & depthCountImbalance60Seconds) {
+        e.depthCountImbalance60Seconds = SingleVariableCounter::calculateDepthCountImbalance(marketState.depthRoll, 60);
     }
 
-    if (mask_ & differenceDepthCountLogRatioXEventCount1Seconds) {
-        e.differenceDepthCountLogRatioXEventCount1Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 1);
+    if (mask_ & depthCountFisherImbalance1Seconds) {
+        e.depthCountFisherImbalance1Seconds = SingleVariableCounter::calculateDepthCountFisherImbalance(marketState.depthRoll, 1);
     }
-    if (mask_ & differenceDepthCountLogRatioXEventCount3Seconds) {
-        e.differenceDepthCountLogRatioXEventCount3Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 3);
+    if (mask_ & depthCountFisherImbalance3Seconds) {
+        e.depthCountFisherImbalance3Seconds = SingleVariableCounter::calculateDepthCountFisherImbalance(marketState.depthRoll, 3);
     }
-    if (mask_ & differenceDepthCountLogRatioXEventCount5Seconds) {
-        e.differenceDepthCountLogRatioXEventCount5Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 5);
+    if (mask_ & depthCountFisherImbalance5Seconds) {
+        e.depthCountFisherImbalance5Seconds = SingleVariableCounter::calculateDepthCountFisherImbalance(marketState.depthRoll, 5);
     }
-    if (mask_ & differenceDepthCountLogRatioXEventCount10Seconds) {
-        e.differenceDepthCountLogRatioXEventCount10Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 10);
+    if (mask_ & depthCountFisherImbalance10Seconds) {
+        e.depthCountFisherImbalance10Seconds = SingleVariableCounter::calculateDepthCountFisherImbalance(marketState.depthRoll, 10);
     }
-    if (mask_ & differenceDepthCountLogRatioXEventCount15Seconds) {
-        e.differenceDepthCountLogRatioXEventCount15Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 15);
+    if (mask_ & depthCountFisherImbalance15Seconds) {
+        e.depthCountFisherImbalance15Seconds = SingleVariableCounter::calculateDepthCountFisherImbalance(marketState.depthRoll, 15);
     }
-    if (mask_ & differenceDepthCountLogRatioXEventCount30Seconds) {
-        e.differenceDepthCountLogRatioXEventCount30Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 30);
+    if (mask_ & depthCountFisherImbalance30Seconds) {
+        e.depthCountFisherImbalance30Seconds = SingleVariableCounter::calculateDepthCountFisherImbalance(marketState.depthRoll, 30);
     }
-    if (mask_ & differenceDepthCountLogRatioXEventCount60Seconds) {
-        e.differenceDepthCountLogRatioXEventCount60Seconds = SingleVariableCounter::calculateDifferenceDepthCountLogRatioXEventCount(marketState.rollingDifferenceDepthStatistics, 60);
+    if (mask_ & depthCountFisherImbalance60Seconds) {
+        e.depthCountFisherImbalance60Seconds = SingleVariableCounter::calculateDepthCountFisherImbalance(marketState.depthRoll, 60);
+    }
+
+    if (mask_ & depthCountLogRatio1Seconds) {
+        e.depthCountLogRatio1Seconds = SingleVariableCounter::calculateDepthCountLogRatio(marketState.depthRoll, 1);
+    }
+    if (mask_ & depthCountLogRatio3Seconds) {
+        e.depthCountLogRatio3Seconds = SingleVariableCounter::calculateDepthCountLogRatio(marketState.depthRoll, 3);
+    }
+    if (mask_ & depthCountLogRatio5Seconds) {
+        e.depthCountLogRatio5Seconds = SingleVariableCounter::calculateDepthCountLogRatio(marketState.depthRoll, 5);
+    }
+    if (mask_ & depthCountLogRatio10Seconds) {
+        e.depthCountLogRatio10Seconds = SingleVariableCounter::calculateDepthCountLogRatio(marketState.depthRoll, 10);
+    }
+    if (mask_ & depthCountLogRatio15Seconds) {
+        e.depthCountLogRatio15Seconds = SingleVariableCounter::calculateDepthCountLogRatio(marketState.depthRoll, 15);
+    }
+    if (mask_ & depthCountLogRatio30Seconds) {
+        e.depthCountLogRatio30Seconds = SingleVariableCounter::calculateDepthCountLogRatio(marketState.depthRoll, 30);
+    }
+    if (mask_ & depthCountLogRatio60Seconds) {
+        e.depthCountLogRatio60Seconds = SingleVariableCounter::calculateDepthCountLogRatio(marketState.depthRoll, 60);
+    }
+
+    if (mask_ & depthCountLogRatioXEventCount1Seconds) {
+        e.depthCountLogRatioXEventCount1Seconds = SingleVariableCounter::calculateDepthCountLogRatioXEventCount(marketState.depthRoll, 1);
+    }
+    if (mask_ & depthCountLogRatioXEventCount3Seconds) {
+        e.depthCountLogRatioXEventCount3Seconds = SingleVariableCounter::calculateDepthCountLogRatioXEventCount(marketState.depthRoll, 3);
+    }
+    if (mask_ & depthCountLogRatioXEventCount5Seconds) {
+        e.depthCountLogRatioXEventCount5Seconds = SingleVariableCounter::calculateDepthCountLogRatioXEventCount(marketState.depthRoll, 5);
+    }
+    if (mask_ & depthCountLogRatioXEventCount10Seconds) {
+        e.depthCountLogRatioXEventCount10Seconds = SingleVariableCounter::calculateDepthCountLogRatioXEventCount(marketState.depthRoll, 10);
+    }
+    if (mask_ & depthCountLogRatioXEventCount15Seconds) {
+        e.depthCountLogRatioXEventCount15Seconds = SingleVariableCounter::calculateDepthCountLogRatioXEventCount(marketState.depthRoll, 15);
+    }
+    if (mask_ & depthCountLogRatioXEventCount30Seconds) {
+        e.depthCountLogRatioXEventCount30Seconds = SingleVariableCounter::calculateDepthCountLogRatioXEventCount(marketState.depthRoll, 30);
+    }
+    if (mask_ & depthCountLogRatioXEventCount60Seconds) {
+        e.depthCountLogRatioXEventCount60Seconds = SingleVariableCounter::calculateDepthCountLogRatioXEventCount(marketState.depthRoll, 60);
     }
 
     if (mask_ & tradeCount1Seconds) {

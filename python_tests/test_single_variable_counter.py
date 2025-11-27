@@ -306,10 +306,10 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
 
-        assert svc.calculate_difference_depth_count_imbalance(market_state.rolling_difference_depth_statistics, 1) == 1.0
-        assert svc.calculate_difference_depth_count_imbalance(market_state.rolling_difference_depth_statistics, 3) == 0.0
-        assert svc.calculate_difference_depth_count_imbalance(market_state.rolling_difference_depth_statistics, 5) == 0.0
-        assert svc.calculate_difference_depth_count_imbalance(market_state.rolling_difference_depth_statistics, 10) == -0.2
-        assert svc.calculate_difference_depth_count_imbalance(market_state.rolling_difference_depth_statistics, 15) == -0.3333333333333333
-        assert svc.calculate_difference_depth_count_imbalance(market_state.rolling_difference_depth_statistics, 30) == 0.1111111111111111
-        assert svc.calculate_difference_depth_count_imbalance(market_state.rolling_difference_depth_statistics, 60) == 0.2727272727272727
+        assert svc.calculate_difference_depth_count_imbalance(market_state.depth_roll, 1) == 1.0
+        assert svc.calculate_difference_depth_count_imbalance(market_state.depth_roll, 3) == 0.0
+        assert svc.calculate_difference_depth_count_imbalance(market_state.depth_roll, 5) == 0.3333333333333333
+        assert svc.calculate_difference_depth_count_imbalance(market_state.depth_roll, 10) == -0.2
+        assert svc.calculate_difference_depth_count_imbalance(market_state.depth_roll, 15) == -0.3333333333333333
+        assert svc.calculate_difference_depth_count_imbalance(market_state.depth_roll, 30) == -0.14285714285714285
+        assert svc.calculate_difference_depth_count_imbalance(market_state.depth_roll, 60) == 0.2

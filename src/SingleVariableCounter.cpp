@@ -2,8 +2,8 @@
 #include <cmath>
 
 #include "SingleVariableCounter.h"
+#include "DepthRoll.h"
 #include "OrderBook.h"
-#include "RollingDifferenceDepthStatistics.h"
 #include "TradeRoll.h"
 
 inline double finiteAtanh(double x) {
@@ -74,9 +74,8 @@ namespace SingleVariableCounter {
     }
 
     double calculateBestOrderFlowImbalance(const OrderBook &ob) {
-        const double den = std::abs(ob.deltaBestBidQuantity()) + std::abs(ob.deltaBestAskQuantity());
-        if (den <= 0.0) return 0.0;
-        return (ob.deltaBestBidQuantity() - ob.deltaBestAskQuantity()) / den;
+        const double sum = std::abs(ob.deltaBestBidQuantity()) + std::abs(ob.deltaBestAskQuantity());
+        return sum == 0.0 ? 0.0 : (ob.deltaBestBidQuantity() - ob.deltaBestAskQuantity()) / sum;
     }
 
     double calculateBestOrderFlowFisherImbalance(const OrderBook &ob) {
@@ -120,9 +119,8 @@ namespace SingleVariableCounter {
     double calculateBestOrderFlowCKSImbalance(const OrderBook &ob){
         double dQBid, dQAsk, bPos, aPos;
         computeBestOFIDeltasCKS(ob, dQBid, dQAsk, bPos, aPos);
-        const double den = std::abs(dQBid) + std::abs(dQAsk);
-        if (den <= 0.0) return 0.0;
-        return (dQBid - dQAsk) / den;
+        const double sum = std::abs(dQBid) + std::abs(dQAsk);
+        return sum == 0.0 ? 0.0 : (dQBid - dQAsk) / sum;
     }
 
     double calculateBestOrderFlowCKSFisherImbalance(const OrderBook &ob){
@@ -134,9 +132,8 @@ namespace SingleVariableCounter {
     }
 
     double calculateOrderFlowImbalance(const OrderBook &ob) {
-        const double den = std::abs(ob.deltaSumBidQuantity()) + std::abs(ob.deltaSumAskQuantity());
-        if (den <= 0.0) return 0.0;
-        return (ob.deltaSumBidQuantity() - ob.deltaSumAskQuantity()) / den;
+        const double sum = std::abs(ob.deltaSumBidQuantity()) + std::abs(ob.deltaSumAskQuantity());
+        return sum == 0.0 ? 0.0 : (ob.deltaSumBidQuantity() - ob.deltaSumAskQuantity()) / sum;
     }
 
     double calculateOrderFlowFisherImbalance(const OrderBook &ob) {
@@ -148,13 +145,8 @@ namespace SingleVariableCounter {
     }
 
     double calculateQueueCountFlowImbalance(const OrderBook &ob) {
-        const auto bidQueueCount = static_cast<double>(ob.deltaBidCount());
-        const auto askQueueCount = static_cast<double>(ob.deltaAskCount());
-        const auto sum = bidQueueCount + askQueueCount;
-
-        if (sum <= 0.0) return 0.0;
-
-        return (bidQueueCount - askQueueCount) / sum;
+        const double sum = ob.deltaBidCount() + ob.deltaAskCount();
+        return sum == 0.0 ? 0.0 : static_cast<double>(ob.deltaBidCount() - ob.deltaAskCount()) / sum;
     }
 
     double calculateQueueCountFlowFisherImbalance(const OrderBook &ob) {
@@ -420,50 +412,37 @@ namespace SingleVariableCounter {
         return hours >= 16.0 && hours < 24.0 ? 1.0 : 0.0;
     }
 
-    double calculateDifferenceDepthCount(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
-        const auto bidDifferenceDepthEntryCount  = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
-        return bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
+    int calculateDepthCount(const DepthRoll& dr, const size_t seconds){
+        const auto [bid, ask] = dr.getBidAskCount(seconds);
+        return bid + ask;
     }
 
-    double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
-
-        return bidDifferenceDepthEntryCount - askDifferenceDepthEntryCount;
+    int calculateDepthCountDiff(const DepthRoll& dr, const size_t seconds){
+        const auto [bid, ask] = dr.getBidAskCount(seconds);
+        return bid - ask;
     }
 
-    double calculateDifferenceDepthCountImbalance(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
-        const double total = bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
-
-        if (total == 0.0) return 0.0;
-        return (bidDifferenceDepthEntryCount - askDifferenceDepthEntryCount) / total;
+    double calculateDepthCountImbalance(const DepthRoll &dr, const size_t seconds){
+        const auto [bid, ask] = dr.getBidAskCount(seconds);
+        const double sum = bid + ask;
+        return sum == 0.0 ? 0.0 : static_cast<double>(bid - ask) / sum;
     }
 
-    double calculateDifferenceDepthCountFisherImbalance(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds){
-        return finiteAtanh(calculateDifferenceDepthCountImbalance(rollingDifferenceDepthStatistics, seconds));
+    double calculateDepthCountFisherImbalance(const DepthRoll &dr, const size_t seconds){
+        return finiteAtanh(calculateDepthCountImbalance(dr, seconds));
     }
 
-    double calculateDifferenceDepthCountLogRatio(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds)
-    {
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
-
+    double calculateDepthCountLogRatio(const DepthRoll &dr, const size_t seconds) {
+        const auto [bid, ask] = dr.getBidAskCount(seconds);
         constexpr double eps = 1e-12;
-        return std::log((bidDifferenceDepthEntryCount + eps) / (askDifferenceDepthEntryCount + eps));
+        return std::log((bid + eps) / (ask + eps));
     }
 
-    double calculateDifferenceDepthCountLogRatioXEventCount(const RollingDifferenceDepthStatistics &rollingDifferenceDepthStatistics, const size_t seconds)
-    {
-        const auto bidDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.bidDifferenceDepthEntryCount(seconds));
-        const auto askDifferenceDepthEntryCount = static_cast<double>(rollingDifferenceDepthStatistics.askDifferenceDepthEntryCount(seconds));
-        const auto total = bidDifferenceDepthEntryCount + askDifferenceDepthEntryCount;
-
+    double calculateDepthCountLogRatioXEventCount(const DepthRoll &dr, const size_t seconds) {
+        const auto [bid, ask] = dr.getBidAskCount(seconds);
+        const auto sum = bid + ask;
         constexpr double eps = 1e-12;
-
-        return std::log((bidDifferenceDepthEntryCount + eps) / (askDifferenceDepthEntryCount + eps)) * total;
+        return std::log((bid + eps) / (ask + eps)) * sum;
     }
 
     int calculateTradeCount(const TradeRoll &tr, const size_t seconds){
@@ -478,14 +457,8 @@ namespace SingleVariableCounter {
 
     double calculateTradeCountImbalance(const TradeRoll &tr, const size_t seconds){
         const auto [buy, sell] = tr.getBuySellTradeCount(seconds);
-
-        const auto buyD  = static_cast<double>(buy);
-        const auto sellD = static_cast<double>(sell);
-        const double sum = buyD + sellD;
-
-        if (sum == 0.0) [[unlikely]] return 0.0;
-
-        return (buyD - sellD) / sum;
+        const double sum = buy + sell;
+        return sum == 0.0 ? 0.0 : static_cast<double>(buy - sell) / sum;
     }
 
     double calculateTradeCountFisherImbalance(const TradeRoll &tr, const size_t seconds){
@@ -515,10 +488,7 @@ namespace SingleVariableCounter {
     double calculateTradeVolumeImbalance(const TradeRoll &tr, const size_t seconds){
         const auto [buy, sell] = tr.getCumBuySellQuantity(seconds);
         const double sum = buy + sell;
-
-        if (sum == 0.0) [[unlikely]] return 0.0;
-
-        return (buy - sell) / sum;
+        return sum == 0.0 ? 0.0 : (buy - sell) / sum;
     }
 
     double calculateTradeVolumeLogRatio(const TradeRoll &tr, const size_t seconds){
@@ -558,9 +528,8 @@ namespace SingleVariableCounter {
         const double avgSellQuantity = sellCount > 0 ? sellQuantity / static_cast<double>(sellCount) : 0.0;
 
         const double sum = buyQuantity + sellQuantity;
-        if (sum == 0.0) [[unlikely]] return 0.0;
 
-        return (avgBuyQuantity - avgSellQuantity) / sum;
+        return sum == 0.0 ? 0.0 : (avgBuyQuantity - avgSellQuantity) / sum;
     }
 
     double calculateAvgTradeSizeLogRatio(const TradeRoll &tr, const size_t seconds){

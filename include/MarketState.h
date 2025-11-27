@@ -1,7 +1,7 @@
 #pragma once
 
+#include "DepthRoll.h"
 #include "OrderBook.h"
-#include "RollingDifferenceDepthStatistics.h"
 #include "TradeRoll.h"
 #include "enums/TradeEntry.h"
 
@@ -14,7 +14,8 @@ public:
     {}
 
     TradeRoll tradeRoll;
-    RollingDifferenceDepthStatistics rollingDifferenceDepthStatistics;
+
+    DepthRoll depthRoll;
 
     OrderBook orderBook;
 
@@ -24,13 +25,13 @@ public:
 
     void updateTradeRegistry(uint64_t timestampOfReceive, double price, double quantity, bool isBuyerMM);
 
-    bool getHasLastTrade() const { return hasLastTrade; }
-
     uint64_t getLastTimestampOfReceive() const { return lastTimestampOfReceive; }
 
     Market getMarket() const { return market; }
 
     Symbol getSymbol() const { return symbol; }
+
+    bool getHasLastTrade() const { return hasLastTrade; }
 
     StreamType getLastStreamType() const { return lastStreamType; }
 

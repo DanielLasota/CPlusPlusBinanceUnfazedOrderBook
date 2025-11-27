@@ -1,8 +1,8 @@
 #include <variant>
 
 #include "MarketState.h"
-#include "enums/TradeEntry.h"
 #include "SingleVariableCounter.h"
+#include "enums/TradeEntry.h"
 
 void MarketState::update(DecodedEntry* entry) {
 
@@ -12,7 +12,7 @@ void MarketState::update(DecodedEntry* entry) {
 
     if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
         orderBook.update(differenceDepthEntry);
-        rollingDifferenceDepthStatistics.update(*differenceDepthEntry);
+        depthRoll.update(*differenceDepthEntry);
         lastStreamType = StreamType::DIFFERENCE_DEPTH_STREAM;
     }
 

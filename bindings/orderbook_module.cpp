@@ -109,8 +109,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
             py::return_value_policy::reference_internal
         )
         .def_readonly(
-            "rolling_difference_depth_statistics",
-            &MS::rollingDifferenceDepthStatistics,
+            "depth_roll",
+            &MS::depthRoll,
             py::return_value_policy::reference_internal
         )
         .def("update",
@@ -275,7 +275,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
     );
     svc.def(
         "calculate_difference_depth_count_imbalance",
-        &SingleVariableCounter::calculateDifferenceDepthCountImbalance,
+        &SingleVariableCounter::calculateDepthCountImbalance,
         py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
@@ -397,20 +397,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
     py::class_<TradeRoll>(m, "TradeRoll")
         .def(py::init<>());
 
-    py::class_<RollingDifferenceDepthStatistics>(m, "RollingDifferenceDepthStatistics")
-        .def(py::init<>())
-        .def(
-            "update",
-            &RollingDifferenceDepthStatistics::update,
-            py::arg("depth_entry")
-        )
-        .def("bid_difference_depth_entry_count",
-             &RollingDifferenceDepthStatistics::bidDifferenceDepthEntryCount,
-             py::arg("windowTimeSeconds"))
-        .def("ask_difference_depth_entry_count",
-             &RollingDifferenceDepthStatistics::askDifferenceDepthEntryCount,
-             py::arg("windowTimeSeconds")
-        );
+    py::class_<DepthRoll>(m, "DepthRoll")
+        .def(py::init<>());
 
     py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
 

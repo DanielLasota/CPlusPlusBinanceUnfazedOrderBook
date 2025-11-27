@@ -1,7 +1,7 @@
 #pragma once
 
+#include "DepthRoll.h"
 #include "OrderBook.h"
-#include "RollingDifferenceDepthStatistics.h"
 #include "TradeRoll.h"
 #include "enums/TradeEntry.h"
 
@@ -74,12 +74,12 @@ namespace SingleVariableCounter {
     double calculateIsEuropeTime(uint64_t timestamp);
     double calculateIsUSATime(uint64_t timestamp);
 
-    double calculateDifferenceDepthCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
-    double calculateDifferenceDepthCountDiff(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
-    double calculateDifferenceDepthCountImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
-    double calculateDifferenceDepthCountFisherImbalance(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
-    double calculateDifferenceDepthCountLogRatio(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
-    double calculateDifferenceDepthCountLogRatioXEventCount(const RollingDifferenceDepthStatistics& rollingDifferenceDepthStatistics, size_t seconds);
+    int calculateDepthCount(const DepthRoll& dr, size_t seconds);
+    int calculateDepthCountDiff(const DepthRoll& dr, size_t seconds);
+    double calculateDepthCountImbalance(const DepthRoll& dr, size_t seconds);
+    double calculateDepthCountFisherImbalance(const DepthRoll& dr, size_t seconds);
+    double calculateDepthCountLogRatio(const DepthRoll& dr, size_t seconds);
+    double calculateDepthCountLogRatioXEventCount(const DepthRoll& dr, size_t seconds);
 
     int calculateTradeCount(const TradeRoll &tr, size_t seconds);
     int calculateTradeCountDiff(const TradeRoll &tr, size_t seconds);

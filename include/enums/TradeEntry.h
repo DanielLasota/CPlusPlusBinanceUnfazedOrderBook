@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "symbol.h"
+#include "Symbol.h"
 #include "enums/Market.h"
 
 struct TradeEntry {

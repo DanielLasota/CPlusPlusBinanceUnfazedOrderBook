@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "enums/symbol.h"
+#include "enums/Symbol.h"
 #include "enums/Market.h"
 
 struct DifferenceDepthEntry {

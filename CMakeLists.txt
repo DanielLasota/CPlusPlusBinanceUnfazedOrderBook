@@ -1,20 +1,19 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.20)
+project(CPlusPlusBinanceUnfazedOrderBook LANGUAGES CXX)
 
-project(CPlusPlusBinanceUnfazedOrderBook)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CXX_STANDARD 26)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 add_subdirectory(pybind11)
 
-include_directories(
-        ${CMAKE_SOURCE_DIR}/include
-        ${CMAKE_SOURCE_DIR}/include/enums
-        ${CMAKE_SOURCE_DIR}/include/detail
-)
+# =========================
+# 1) CORE LIB (orderbook_core)
+# =========================
 
-set(SOURCES
-        bindings/orderbook_module.cpp
-#        src/main.cpp
+set(SRC_CORE
         src/OrderBook.cpp
         src/OrderBookSessionSimulator.cpp
         src/MarketState.cpp
@@ -28,91 +27,62 @@ set(SOURCES
         src/GlobalMarketState.cpp
         src/TradeRoll.cpp
         src/DepthRoll.cpp
-#        test/TestSingleVariableCounter.cpp
-#        test/TestOrderBook.cpp
 )
 
-pybind11_add_module(cpp_binance_orderbook ${SOURCES})
+add_library(orderbook_core STATIC ${SRC_CORE})
 
-set_target_properties(cpp_binance_orderbook PROPERTIES SUFFIX ".pyd")
-
-add_executable(
-        test_trade_roll
-        test/TestTradeRoll.cpp
-        include/TradeRoll.h
-        src/TradeRoll.cpp
+target_include_directories(orderbook_core PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include
+        ${Python3_INCLUDE_DIRS}
 )
 
-add_executable(
-        test_depth_roll
-        test/TestDepthRoll.cpp
-        include/DepthRoll.h
-        src/DepthRoll.cpp
+target_compile_options(orderbook_core PRIVATE
+        -O3
+        -march=raptorlake
+        -mtune=raptorlake
+        -fstrict-aliasing
+        -mdaz-ftz
+        -pthread
 )
 
-#1
+# =========================
+# 2) EXECUTABLE (main)
+# =========================
 
-#-std=c++20
-#-O3
-#-march=native
-#-pthread
-#-IC:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\pybind11\include
-#-IC:\Users\daniel\AppData\Local\Programs\Python\Python311\include
-#-LC:\Users\daniel\AppData\Local\Programs\Python\Python311\libs
-#-IC:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\include
-#-lpython311
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\AssetParameters.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\DataVectorLoader.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\EntryDecoder.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBook.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookSessionSimulator.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\SingleVariableCounter.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\MarketState.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\CSVHeader.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetrics.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetricsCalculator.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\GlobalMarketState.cpp
+add_executable(main src/main.cpp)
 
+target_link_libraries(main PRIVATE
+        orderbook_core
+        Python3::Python
+)
 
+target_compile_options(main PRIVATE
+        -O3
+        -march=raptorlake
+        -mtune=raptorlake
+        -fstrict-aliasing
+        -mdaz-ftz
+        -pthread
+)
 
+# =========================
+# 3) PYBIND11 MODULE (pybind11_module)
+# =========================
 
+pybind11_add_module(pybind11_module bindings/orderbook_module.cpp)
 
-#2
-#-std=c++20
-#-O3
+target_link_libraries(pybind11_module PRIVATE
+        orderbook_core
+        Python3::Python
+)
+target_include_directories(pybind11_module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-#-march=raptorlake
-#-mtune=raptorlake
-#-mdaz-ftz
-#-mprefer-vector-width=256
-
-#-ffast-math
-#-fno-trapping-math
-#-ffp-contract=fast
-#-fassociative-math
-#-freciprocal-math
-#-funroll-loops
-#-fprefetch-loop-arrays
-#-fomit-frame-pointer
-#-fdata-sections
-#-ffunction-sections
-#-Wl,--gc-sections
-
-#-pthread
-#-IC:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\pybind11\include
-#-IC:\Users\daniel\AppData\Local\Programs\Python\Python311\include
-#-LC:\Users\daniel\AppData\Local\Programs\Python\Python311\libs
-#-IC:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\include
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\AssetParameters.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\DataVectorLoader.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\EntryDecoder.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBook.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookSessionSimulator.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\SingleVariableCounter.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\MarketState.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\CSVHeader.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetrics.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\OrderBookMetricsCalculator.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\GlobalMarketState.cpp
-#C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\src\RollingStatisticsData.cpp
-#-lpython311
+target_compile_options(pybind11_module PRIVATE
+        -O3
+        -march=raptorlake
+        -mtune=raptorlake
+        -fstrict-aliasing
+        -mdaz-ftz
+        -pthread
+)

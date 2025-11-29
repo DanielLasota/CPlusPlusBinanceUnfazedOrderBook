@@ -6,9 +6,9 @@
 int main() {
     py::scoped_interpreter guard{};
     OrderBookSessionSimulator orderBookSessionSimulator;
-    std::string csvPath = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-10-14.csv";
+    const std::string csvPath = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-10-14.csv";
 
-    std::vector<std::string> variables {
+    const std::vector<std::string> variables {
         "timestampOfReceive",
         "market",
         "symbol",

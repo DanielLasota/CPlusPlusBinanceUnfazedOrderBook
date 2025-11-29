@@ -3,7 +3,7 @@
 #include <variant>
 #include "enums/DifferenceDepthEntry.h"
 #include "enums/TradeEntry.h"
-#include "enums/symbol.h"
+#include "enums/Symbol.h"
 #include "enums/Market.h"
 
 using DecodedEntry = std::variant<DifferenceDepthEntry, TradeEntry>;

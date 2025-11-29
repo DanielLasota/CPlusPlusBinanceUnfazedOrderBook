@@ -6,8 +6,8 @@
 
 #include "SingleVariableCounter.h"
 #include "MarketState.h"
-#include "TradeEntry.h"
-#include "DifferenceDepthEntry.h"
+#include "enums/TradeEntry.h"
+#include "enums/DifferenceDepthEntry.h"
 #include "GlobalMarketState.h"
 #include "OrderBook.h"
 #include "OrderBookMetricsEntry.h"
@@ -421,7 +421,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
                  };
                 #define METRIC(name, ctype) append_field(entry.name, #name);
                 #include "detail/metrics_list.def"
-                #undef METRIC return oss.str();
+                #undef METRIC
+                return oss.str();
              }
         );
 

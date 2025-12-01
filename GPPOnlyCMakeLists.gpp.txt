@@ -1,0 +1,63 @@
+cmake_minimum_required(VERSION 3.20)
+project(CPlusPlusBinanceUnfazedOrderBook LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+add_subdirectory(pybind11)
+
+set(FLAGS_GPP
+        -O3
+        -march=raptorlake
+        -mtune=raptorlake
+        -fstrict-aliasing
+        -mdaz-ftz
+        -pthread
+)
+
+# =========================
+# 1) CORE LIB (orderbook_core)
+# =========================
+
+set(SRC_CORE
+        src/OrderBook.cpp
+        src/OrderBookSessionSimulator.cpp
+        src/MarketState.cpp
+        src/SingleVariableCounter.cpp
+        src/DataVectorLoader.cpp
+        src/AssetParameters.cpp
+        src/EntryDecoder.cpp
+        src/CSVHeader.cpp
+        src/OrderBookMetrics.cpp
+        src/OrderBookMetricsCalculator.cpp
+        src/GlobalMarketState.cpp
+        src/TradeRoll.cpp
+        src/DepthRoll.cpp
+)
+
+add_library(orderbook_core STATIC ${SRC_CORE})
+target_include_directories(orderbook_core PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include
+        ${Python3_INCLUDE_DIRS}
+)
+target_compile_options(orderbook_core PRIVATE ${FLAGS_GPP})
+
+# =========================
+# 2) EXECUTABLE (main)
+# =========================
+
+add_executable(main src/main.cpp)
+target_link_libraries(main PRIVATE orderbook_core Python3::Python)
+target_compile_options(main PRIVATE ${FLAGS_GPP})
+
+# =========================
+# 3) PYBIND11 MODULE (pybind11_module)
+# =========================
+
+pybind11_add_module(pybind11_module bindings/orderbook_module.cpp)
+target_link_libraries(pybind11_module PRIVATE orderbook_core Python3::Python)
+target_include_directories(pybind11_module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_options(pybind11_module PRIVATE ${FLAGS_GPP})

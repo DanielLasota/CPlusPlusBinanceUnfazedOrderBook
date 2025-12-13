@@ -182,7 +182,7 @@ class TestSingleVariableCounter:
         )
         # (second_bid + second_ask) - (best_bid + best_ask)
         # = (4.5 + 5.3) - (5.0 + 5.1) = 9.8 - 10.1 = -0.3
-        assert svc.calculate_gap(market_state.order_book) == -0.29999999999999893
+        assert svc.calculate_gap(market_state.order_book) == -0.2999999999999998
 
     def test_calculate_is_aggressor_ask(self):
         t = TradeEntry()

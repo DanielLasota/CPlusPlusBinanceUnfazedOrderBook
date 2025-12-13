@@ -1,21 +1,3 @@
-import sys
-import os
-import ctypes
-sys.path.insert(0, "../../cmake-build-release")
-os.add_dll_directory(os.path.dirname(__file__))
-
-def check_dll(dll_name):
-    try:
-        lib = ctypes.CDLL(dll_name)
-        # print(f"{dll_name} załadowany poprawnie.")
-    except Exception as e:
-        print(f"Nie udało się załadować {dll_name}: {e}")
-
-dll_list = ["libwinpthread-1.dll", "python311.dll", "msvcrt.dll", "kernel32.dll"]
-
-for dll in dll_list:
-    check_dll(dll)
-
 import cpp_binance_orderbook
 
 
@@ -26,22 +8,359 @@ def orderbook_callback(x):
 if __name__ == '__main__':
 
     orderbook_session_simulator = cpp_binance_orderbook.OrderBookSessionSimulator()
-    print(os.getcwd())
-    csv_path = "./sample_csvs/binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
+    csv_path = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-12-01.csv"
 
     variables = [
         "timestampOfReceive",
         "market",
         "symbol",
+        "streamType",
         "bestAskPrice",
         "bestBidPrice",
         "midPrice",
+
+        "microPriceDiff",
+        "microPriceImbalance",
+        "microPriceFisherImbalance",
+        "microPriceDeviation",
+        "microPriceLogRatio",
+
+        "bestBidQuantity",
+        "bestAskQuantity",
+
+        "bestOrderFlowDiff",
+        "bestOrderFlowImbalance",
+        "bestOrderFlowFisherImbalance",
+        "bestOrderFlowCKSDiff",
+        "bestOrderFlowCKSImbalance",
+        "bestOrderFlowCKSFisherImbalance",
+        "orderFlowDiff",
+        "orderFlowImbalance",
+        "orderFlowFisherImbalance",
+        "queueCountFlowDiff",
+        "queueCountFlowImbalance",
+        "queueCountFlowFisherImbalance",
+
+        "bestVolumeDiff",
         "bestVolumeImbalance",
-        "queueImbalance",
+        "bestVolumeFisherImbalance",
+        "bestVolumeLogRatio",
+        "bestVolumeSignedLogRatioXVolume",
+
+        "bestTwoVolumeDiff",
+        "bestThreeVolumeDiff",
+        "bestFiveVolumeDiff",
+        "bestTenVolumeDiff",
+        "bestFifteenVolumeDiff",
+        "bestTwentyVolumeDiff",
+        "bestThirtyVolumeDiff",
+        "bestFiftyVolumeDiff",
+        "bestHundredVolumeDiff",
+        "bestThreeHundredVolumeDiff",
+        "bestFiveHundredVolumeDiff",
+        "bestSevenHundredVolumeDiff",
+        "bestThousandVolumeDiff",
+
+        "bestTwoVolumeImbalance",
+        "bestThreeVolumeImbalance",
+        "bestFiveVolumeImbalance",
+        "bestTenVolumeImbalance",
+        "bestFifteenVolumeImbalance",
+        "bestTwentyVolumeImbalance",
+        "bestThirtyVolumeImbalance",
+        "bestFiftyVolumeImbalance",
+        "bestHundredVolumeImbalance",
+        "bestThreeHundredVolumeImbalance",
+        "bestFiveHundredVolumeImbalance",
+        "bestSevenHundredVolumeImbalance",
+        "bestThousandVolumeImbalance",
+
+        "bestTwoVolumeLogRatio",
+        "bestThreeVolumeLogRatio",
+        "bestFiveVolumeLogRatio",
+        "bestTenVolumeLogRatio",
+        "bestFifteenVolumeLogRatio",
+        "bestTwentyVolumeLogRatio",
+        "bestThirtyVolumeLogRatio",
+        "bestFiftyVolumeLogRatio",
+        "bestHundredVolumeLogRatio",
+        "bestThreeHundredVolumeLogRatio",
+        "bestFiveHundredVolumeLogRatio",
+        "bestSevenHundredVolumeLogRatio",
+        "bestThousandVolumeLogRatio",
+
+        "bestFiveVolumeLogRatioXVolume",
+        "bestFiftyVolumeLogRatioXVolume",
+        "bestHundredVolumeLogRatioXVolume",
+        "bestFiveHundredVolumeLogRatioXVolume",
+        "bestThousandVolumeLogRatioXVolume",
+
+        "volumeDiff",
         "volumeImbalance",
+        "volumeLogRatio",
+        "volumeLogRatioXVolume",
+
+        "queueDiff",
+        "queueImbalance",
+        "queueLogRatio",
+        "queueLogRatioXVolume",
+
         "gap",
-        "isAggressorAsk"
+        "isAggressorAsk",
+
+        "vwapDeviation",
+        "vwapLogRatio",
+
+        "simplifiedSlopeDiff",
+        "simplifiedSlopeImbalance",
+        "simplifiedSlopeLogRatio",
+        "bgcSlopeDiff",
+        "bgcSlopeImbalance",
+        "bgcSlopeLogRatio",
+
+        "sinTime24h",
+        "longSinTime24h",
+        "cosTime24h",
+        "isAsiaTime",
+        "isEuropeTime",
+        "isUSATime",
+
+        "depthCount1Seconds",
+        "depthCount3Seconds",
+        "depthCount5Seconds",
+        "depthCount10Seconds",
+        "depthCount15Seconds",
+        "depthCount30Seconds",
+        "depthCount60Seconds",
+
+        "depthCountDiff1Seconds",
+        "depthCountDiff3Seconds",
+        "depthCountDiff5Seconds",
+        "depthCountDiff10Seconds",
+        "depthCountDiff15Seconds",
+        "depthCountDiff30Seconds",
+        "depthCountDiff60Seconds",
+
+        "depthCountImbalance1Seconds",
+        "depthCountImbalance3Seconds",
+        "depthCountImbalance5Seconds",
+        "depthCountImbalance10Seconds",
+        "depthCountImbalance15Seconds",
+        "depthCountImbalance30Seconds",
+        "depthCountImbalance60Seconds",
+
+        "depthCountFisherImbalance1Seconds",
+        "depthCountFisherImbalance3Seconds",
+        "depthCountFisherImbalance5Seconds",
+        "depthCountFisherImbalance10Seconds",
+        "depthCountFisherImbalance15Seconds",
+        "depthCountFisherImbalance30Seconds",
+        "depthCountFisherImbalance60Seconds",
+
+        "depthCountLogRatio1Seconds",
+        "depthCountLogRatio3Seconds",
+        "depthCountLogRatio5Seconds",
+        "depthCountLogRatio10Seconds",
+        "depthCountLogRatio15Seconds",
+        "depthCountLogRatio30Seconds",
+        "depthCountLogRatio60Seconds",
+
+        "depthCountLogRatioXEventCount1Seconds",
+        "depthCountLogRatioXEventCount3Seconds",
+        "depthCountLogRatioXEventCount5Seconds",
+        "depthCountLogRatioXEventCount10Seconds",
+        "depthCountLogRatioXEventCount15Seconds",
+        "depthCountLogRatioXEventCount30Seconds",
+        "depthCountLogRatioXEventCount60Seconds",
+
+        "tradeCount1Seconds",
+        "tradeCount3Seconds",
+        "tradeCount5Seconds",
+        "tradeCount10Seconds",
+        "tradeCount15Seconds",
+        "tradeCount30Seconds",
+        "tradeCount60Seconds",
+
+        "tradeCountDiff1Seconds",
+        "tradeCountDiff3Seconds",
+        "tradeCountDiff5Seconds",
+        "tradeCountDiff10Seconds",
+        "tradeCountDiff15Seconds",
+        "tradeCountDiff30Seconds",
+        "tradeCountDiff60Seconds",
+
+        "tradeCountImbalance1Seconds",
+        "tradeCountImbalance3Seconds",
+        "tradeCountImbalance5Seconds",
+        "tradeCountImbalance10Seconds",
+        "tradeCountImbalance15Seconds",
+        "tradeCountImbalance30Seconds",
+        "tradeCountImbalance60Seconds",
+
+        "tradeCountFisherImbalance1Seconds",
+        "tradeCountFisherImbalance3Seconds",
+        "tradeCountFisherImbalance5Seconds",
+        "tradeCountFisherImbalance10Seconds",
+        "tradeCountFisherImbalance15Seconds",
+        "tradeCountFisherImbalance30Seconds",
+        "tradeCountFisherImbalance60Seconds",
+
+        "tradeCountLogRatio1Seconds",
+        "tradeCountLogRatio3Seconds",
+        "tradeCountLogRatio5Seconds",
+        "tradeCountLogRatio10Seconds",
+        "tradeCountLogRatio15Seconds",
+        "tradeCountLogRatio30Seconds",
+        "tradeCountLogRatio60Seconds",
+
+        "tradeVolumeSum1Seconds",
+        "tradeVolumeSum3Seconds",
+        "tradeVolumeSum5Seconds",
+        "tradeVolumeSum10Seconds",
+        "tradeVolumeSum15Seconds",
+        "tradeVolumeSum30Seconds",
+        "tradeVolumeSum60Seconds",
+        "tradeVolumeSum600Seconds",
+        "tradeVolumeSum1200Seconds",
+
+        "tradeVolumeDiff1Seconds",
+        "tradeVolumeDiff3Seconds",
+        "tradeVolumeDiff5Seconds",
+        "tradeVolumeDiff10Seconds",
+        "tradeVolumeDiff15Seconds",
+        "tradeVolumeDiff30Seconds",
+        "tradeVolumeDiff60Seconds",
+
+        "tradeVolumeImbalance1Seconds",
+        "tradeVolumeImbalance3Seconds",
+        "tradeVolumeImbalance5Seconds",
+        "tradeVolumeImbalance10Seconds",
+        "tradeVolumeImbalance15Seconds",
+        "tradeVolumeImbalance30Seconds",
+        "tradeVolumeImbalance60Seconds",
+
+        "tradeVolumeLogRatio1Seconds",
+        "tradeVolumeLogRatio3Seconds",
+        "tradeVolumeLogRatio5Seconds",
+        "tradeVolumeLogRatio10Seconds",
+        "tradeVolumeLogRatio15Seconds",
+        "tradeVolumeLogRatio30Seconds",
+        "tradeVolumeLogRatio60Seconds",
+
+        "biggestSingleBuyTradeVolume1Seconds",
+        "biggestSingleBuyTradeVolume3Seconds",
+        "biggestSingleBuyTradeVolume5Seconds",
+        "biggestSingleBuyTradeVolume10Seconds",
+        "biggestSingleBuyTradeVolume15Seconds",
+        "biggestSingleBuyTradeVolume30Seconds",
+        "biggestSingleBuyTradeVolume60Seconds",
+
+        "biggestSingleSellTradeVolume1Seconds",
+        "biggestSingleSellTradeVolume3Seconds",
+        "biggestSingleSellTradeVolume5Seconds",
+        "biggestSingleSellTradeVolume10Seconds",
+        "biggestSingleSellTradeVolume15Seconds",
+        "biggestSingleSellTradeVolume30Seconds",
+        "biggestSingleSellTradeVolume60Seconds",
+
+        "avgTradeSizeDiff1Seconds",
+        "avgTradeSizeDiff3Seconds",
+        "avgTradeSizeDiff5Seconds",
+        "avgTradeSizeDiff10Seconds",
+        "avgTradeSizeDiff15Seconds",
+        "avgTradeSizeDiff30Seconds",
+        "avgTradeSizeDiff60Seconds",
+
+        "avgTradeSizeImbalance1Seconds",
+        "avgTradeSizeImbalance3Seconds",
+        "avgTradeSizeImbalance5Seconds",
+        "avgTradeSizeImbalance10Seconds",
+        "avgTradeSizeImbalance15Seconds",
+        "avgTradeSizeImbalance30Seconds",
+        "avgTradeSizeImbalance60Seconds",
+
+        "avgTradeSizeLogRatio1Seconds",
+        "avgTradeSizeLogRatio3Seconds",
+        "avgTradeSizeLogRatio5Seconds",
+        "avgTradeSizeLogRatio10Seconds",
+        "avgTradeSizeLogRatio15Seconds",
+        "avgTradeSizeLogRatio30Seconds",
+        "avgTradeSizeLogRatio60Seconds",
+
+        "priceDifference1Seconds",
+        "priceDifference3Seconds",
+        "priceDifference5Seconds",
+        "priceDifference10Seconds",
+        "priceDifference15Seconds",
+        "priceDifference30Seconds",
+        "priceDifference60Seconds",
+        "priceDifference600Seconds",
+        "priceDifference1200Seconds",
+
+        "rateOfReturn1Seconds",
+        "rateOfReturn3Seconds",
+        "rateOfReturn5Seconds",
+        "rateOfReturn10Seconds",
+        "rateOfReturn15Seconds",
+        "rateOfReturn30Seconds",
+        "rateOfReturn60Seconds",
+        "rateOfReturn600Seconds",
+        "rateOfReturn1200Seconds",
+
+        "logReturnRatio1Seconds",
+        "logReturnRatio3Seconds",
+        "logReturnRatio5Seconds",
+        "logReturnRatio10Seconds",
+        "logReturnRatio15Seconds",
+        "logReturnRatio30Seconds",
+        "logReturnRatio60Seconds",
+        "logReturnRatio600Seconds",
+        "logReturnRatio1200Seconds",
+
+        "smaLogRatio3Seconds",
+        "smaLogRatio5Seconds",
+        "smaLogRatio10Seconds",
+        "smaLogRatio15Seconds",
+        "smaLogRatio30Seconds",
+        "smaLogRatio60Seconds",
+        "smaLogRatio300Seconds",
+        "smaLogRatio600Seconds",
+
+        "hlc3tLogRatio300Seconds",
+        "hlc3tLogRatio600Seconds",
+        "hlc3tLogRatio1200Seconds",
+
+        "bollingerBandsDistance300Seconds",
+        "bollingerBandsDistance600Seconds",
+        "bollingerBandsDistance1200Seconds",
+
+        "priceDistance1Seconds",
+        "priceDistance3Seconds",
+        "priceDistance5Seconds",
+        "priceDistance10Seconds",
+        "priceDistance15Seconds",
+        "priceDistance30Seconds",
+        "priceDistance60Seconds",
+        "priceDistance300Seconds",
+        "priceDistance600Seconds",
+
+        "logKylesLambda1Seconds",
+        "logKylesLambda3Seconds",
+        "logKylesLambda5Seconds",
+        "logKylesLambda10Seconds",
+        "logKylesLambda15Seconds",
+        "logKylesLambda30Seconds",
+        "logKylesLambda60Seconds",
+
+        "deltaPVT1Seconds",
+        "deltaPVT3Seconds",
+        "deltaPVT5Seconds",
+        "deltaPVT10Seconds",
+        "deltaPVT15Seconds",
+        "deltaPVT30Seconds",
+        "deltaPVT60Seconds",
+        "deltaPVT600Seconds",
     ]
 
-    variables = orderbook_snapshot = orderbook_session_simulator.compute_variables(csv_path=csv_path, variables=variables)
+    result = orderbook_session_simulator.compute_variables(csv_path=csv_path, variables=variables)
 

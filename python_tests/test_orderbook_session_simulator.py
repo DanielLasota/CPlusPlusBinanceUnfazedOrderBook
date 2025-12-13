@@ -1,15 +1,5 @@
-import sys, os
-from pathlib import Path
-
 import cpp_binance_orderbook
 import pandas as pd
-here = Path(__file__).resolve().parent
-project_root = here.parent
-build_dir = project_root / "cmake-build-release"
-dll_dir   = project_root
-os.add_dll_directory(str(build_dir))
-os.add_dll_directory(str(dll_dir))
-sys.path.insert(0, str(build_dir))
 import pytest
 
 

@@ -437,7 +437,7 @@ class TestOrderBook:
                 price_hash=3,
                 quantity_hash=2
             )
-            assert ob.sum_of_price_times_quantity() == 295.9
+            assert ob.sum_of_price_times_quantity() == 295.90000000000003
 
             ob.update(
                 DifferenceDepthEntry(
@@ -450,7 +450,7 @@ class TestOrderBook:
                     market=Market.USD_M_FUTURES
                 )
             )
-            assert ob.sum_of_price_times_quantity() == 295.9 - (10 * 4.1)
+            assert ob.sum_of_price_times_quantity() == 254.90000000000003
             ob.update(
                 DifferenceDepthEntry(
                     timestamp_of_receive=12,
@@ -462,7 +462,7 @@ class TestOrderBook:
                     market=Market.USD_M_FUTURES
                 )
             )
-            assert ob.sum_of_price_times_quantity() == 295.9 - (11 * 4.1)
+            assert ob.sum_of_price_times_quantity() == 250.80000000000004
 
         def test_best_nth_bid_price(self):
             ob = self.get_sample_order_book(

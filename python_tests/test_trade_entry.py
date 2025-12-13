@@ -4,7 +4,6 @@ from cpp_binance_orderbook import TradeEntry, Market, Symbol
 class TestTradeEntry:
 
     def test_given_default_trade_entry_when_to_list_then_list_matches_all_fields(self):
-        # default case
         e = TradeEntry()
         expected = [
             0,    # timestamp_of_receive

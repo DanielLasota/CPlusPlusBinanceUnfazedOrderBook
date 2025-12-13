@@ -1,3 +1,16 @@
 [build-system]
-requires = ["setuptools>=65", "wheel", "pybind11>=2.10.0"]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "cpp_binance_orderbook"
+version = "0.0.3"
+
+[tool.scikit-build]
+cmake.version = ">=3.20"
+cmake.build-type = 'Release'
+cmake.args = [
+    "-G", "Ninja",
+    "-DCMAKE_CXX_COMPILER=icx",
+    "-DCMAKE_BUILD_TYPE=Release",
+]

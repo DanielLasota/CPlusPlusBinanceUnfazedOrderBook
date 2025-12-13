@@ -1,15 +1,17 @@
 ################################################################################
 # Env Variables to be set for intel C++ Compiler:
 #   System:
-#       path: C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\bin
-#       LIB: C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\lib
-#       INCLUDE: C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\include
+#       path =       C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\bin
+#       LIB =        C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\lib
+#       INCLUDE =    C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\include
 ################################################################################
 cmake_minimum_required(VERSION 3.20)
 project(CPlusPlusBinanceUnfazedOrderBook LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+#set(CMAKE_CXX_FLAGS_RELEASE "/O3 /DNDEBUG /Qxhost /fp:fast" CACHE STRING "" FORCE)
+#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 add_subdirectory(pybind11)
@@ -69,13 +71,20 @@ target_compile_options(orderbook_core PRIVATE ${FLAGS_INTEL})
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE orderbook_core Python3::Python)
 target_compile_options(main PRIVATE ${FLAGS_INTEL})
-#target_compile_definitions(main PRIVATE BUILD_FLAGS="${FLAGS_INTEL}")
 
 # =========================
 # 3) PYBIND11 MODULE (pybind11_module)
 # =========================
 
-pybind11_add_module(pybind11_module bindings/orderbook_module.cpp)
-target_link_libraries(pybind11_module PRIVATE orderbook_core Python3::Python)
-target_include_directories(pybind11_module PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_compile_options(pybind11_module PRIVATE ${FLAGS_INTEL})
+pybind11_add_module(cpp_binance_orderbook bindings/orderbook_module.cpp)
+target_link_libraries(cpp_binance_orderbook PRIVATE orderbook_core Python3::Python)
+target_include_directories(cpp_binance_orderbook PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_options(cpp_binance_orderbook PRIVATE ${FLAGS_INTEL})
+install(TARGETS cpp_binance_orderbook DESTINATION .)
+set(INTEL_LIBMMD "C:/Program Files (x86)/Intel/oneAPI/compiler/2025.3/bin/libmmd.dll")
+install(FILES "${INTEL_LIBMMD}" DESTINATION .)
+
+message(STATUS "#########################################")
+message(STATUS "C++ compiler ID: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "C++ compiler:   ${CMAKE_CXX_COMPILER}")
+message(STATUS "#########################################")

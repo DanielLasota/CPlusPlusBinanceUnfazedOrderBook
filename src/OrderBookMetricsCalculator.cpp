@@ -902,6 +902,50 @@ std::optional<OrderBookMetricsEntry> OrderBookMetricsCalculator::countMarketStat
         e.bollingerBandsDistance1200Seconds = SingleVariableCounter::calculateBollingerBandsDistance(marketState.tradeRoll, 1200);
     }
 
+    if (mask_ & rfwmaLogRatio5Seconds1i) {
+        e.rfwmaLogRatio5Seconds1i = SingleVariableCounter::calculateRFWMALogRatio(marketState.tradeRoll, 5, 1);
+    }
+    if (mask_ & rfwmaLogRatio30Seconds1i) {
+        e.rfwmaLogRatio30Seconds1i = SingleVariableCounter::calculateRFWMALogRatio(marketState.tradeRoll, 30, 1);
+    }
+    if (mask_ & rfwmaLogRatio60Seconds1i) {
+        e.rfwmaLogRatio60Seconds1i = SingleVariableCounter::calculateRFWMALogRatio(marketState.tradeRoll, 60, 1);
+    }
+    if (mask_ & rfwmaLogRatio120Seconds2i) {
+        e.rfwmaLogRatio120Seconds2i = SingleVariableCounter::calculateRFWMALogRatio(marketState.tradeRoll, 120, 2);
+    }
+    if (mask_ & rfwmaLogRatio120Seconds10i) {
+        e.rfwmaLogRatio120Seconds10i = SingleVariableCounter::calculateRFWMALogRatio(marketState.tradeRoll, 120, 10);
+    }
+    if (mask_ & rfwmaLogRatio300Seconds5i) {
+        e.rfwmaLogRatio300Seconds5i = SingleVariableCounter::calculateRFWMALogRatio(marketState.tradeRoll, 300, 5);
+    }
+    if (mask_ & rfwmaLogRatio600Seconds10i) {
+        e.rfwmaLogRatio600Seconds10i = SingleVariableCounter::calculateRFWMALogRatio(marketState.tradeRoll, 600, 10);
+    }
+
+    if (mask_ & fwmaLogRatio5Seconds1i) {
+        e.fwmaLogRatio5Seconds1i = SingleVariableCounter::calculateFWMALogRatio(marketState.tradeRoll, 5, 1);
+    }
+    if (mask_ & fwmaLogRatio30Seconds1i) {
+        e.fwmaLogRatio30Seconds1i = SingleVariableCounter::calculateFWMALogRatio(marketState.tradeRoll, 30, 1);
+    }
+    if (mask_ & fwmaLogRatio60Seconds1i) {
+        e.fwmaLogRatio60Seconds1i = SingleVariableCounter::calculateFWMALogRatio(marketState.tradeRoll, 60, 1);
+    }
+    if (mask_ & fwmaLogRatio120Seconds2i) {
+        e.fwmaLogRatio120Seconds2i = SingleVariableCounter::calculateFWMALogRatio(marketState.tradeRoll, 120, 2);
+    }
+    if (mask_ & fwmaLogRatio120Seconds10i) {
+        e.fwmaLogRatio120Seconds10i = SingleVariableCounter::calculateFWMALogRatio(marketState.tradeRoll, 120, 10);
+    }
+    if (mask_ & fwmaLogRatio300Seconds5i) {
+        e.fwmaLogRatio300Seconds5i = SingleVariableCounter::calculateFWMALogRatio(marketState.tradeRoll, 300, 5);
+    }
+    if (mask_ & fwmaLogRatio600Seconds10i) {
+        e.fwmaLogRatio600Seconds10i = SingleVariableCounter::calculateFWMALogRatio(marketState.tradeRoll, 600, 10);
+    }
+
     if (mask_ & priceDistance1Seconds) {
         e.priceDistance1Seconds = SingleVariableCounter::calculatePriceDistance(marketState.tradeRoll, 1);
     }

@@ -1,5 +1,7 @@
-#include <cassert>
 #include <array>
+#include <cassert>
+#include <iomanip>
+#include <iostream>
 
 #include "../include/TradeRoll.h"
 
@@ -837,9 +839,9 @@ void testGetHLC3(){
     {
         TradeRoll tr;
         feed(tr, baseTradeArrayDuringRolling);
-        assert(tr.getHLC3(1) == 115130.66666666667);
-        assert(tr.getHLC3(5) == 115126.66666666667);
-        assert(tr.getHLC3(M) == 115122.0);
+        assert(approxEqual(tr.getHLC3(1), 115130.66666666667));
+        assert(approxEqual(tr.getHLC3(5), 115126.66666666667));
+        assert(approxEqual(tr.getHLC3(M), 115122.0));
     }
 
     {
@@ -903,7 +905,7 @@ void testGetBollingerBandsDistance(){
         TradeRoll tr;
         feed(tr, diffLargerThan1sArray);
         assert(approxEqual(tr.getBollingerBandsDistance(1), 0.0));
-        assert(approxEqual(tr.getBollingerBandsDistance(5), 0.915512891));
+        assert(approxEqual(tr.getBollingerBandsDistance(5), 0.915514180));
         assert(approxEqual(tr.getBollingerBandsDistance(M), 0.794215743));
     }
 
@@ -911,7 +913,7 @@ void testGetBollingerBandsDistance(){
         TradeRoll tr;
         feed(tr, deltaEqualMaxBuckets);
         assert(approxEqual(tr.getBollingerBandsDistance(1), 0.0));
-        assert(approxEqual(tr.getBollingerBandsDistance(5), 2.000000001));
+        assert(approxEqual(tr.getBollingerBandsDistance(5), 2.000000003));
         assert(approxEqual(tr.getBollingerBandsDistance(M), 2.645751314));
     }
 
@@ -924,8 +926,251 @@ void testGetBollingerBandsDistance(){
     }
 }
 
+void testGetRFWMA(){
+    {
+        TradeRoll tr;
+
+        assert(tr.getRFWMA(1, 1) == 0.0);
+        assert(tr.getRFWMA(5, 1) == 0.0);
+        assert(tr.getRFWMA(M, 1) == 0.0);
+
+        assert(tr.getRFWMA(1, 2) == 0.0);
+        assert(tr.getRFWMA(5, 2) == 0.0);
+        assert(tr.getRFWMA(M, 2) == 0.0);
+
+        assert(tr.getRFWMA(1, 7) == 0.0);
+        assert(tr.getRFWMA(5, 7) == 0.0);
+        assert(tr.getRFWMA(M, 7) == 0.0);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, oneTradeArray);
+
+        assert(tr.getRFWMA(1, 1) == 115100.0);
+        assert(tr.getRFWMA(5, 1) == 9591.6666666666661);
+        assert(tr.getRFWMA(M, 1) == 5755.0);
+
+        assert(tr.getRFWMA(1, 2) == 115100.00);
+        assert(tr.getRFWMA(5, 2) == 28775.0);
+        assert(tr.getRFWMA(M, 2) == 16442.8571428571413);
+
+        assert(tr.getRFWMA(1, 7) == 115100.00);
+        assert(tr.getRFWMA(5, 7) == 115100.00);
+        assert(tr.getRFWMA(M, 7) == 57550.0);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, baseTradeArray);
+        assert(tr.getRFWMA(1, 1) == 115118.0);
+        assert(tr.getRFWMA(5, 1) == 115108.83333333333);
+        assert(tr.getRFWMA(M, 1) == 115106.1);
+
+        assert(tr.getRFWMA(1, 2) == 115118.0);
+        assert(tr.getRFWMA(5, 2) == 115111.0);
+        assert(tr.getRFWMA(M, 2) == 65777.71428571429);
+
+        assert(tr.getRFWMA(1, 7) == 115118.0);
+        assert(tr.getRFWMA(5, 7) == 115118.0);
+        assert(tr.getRFWMA(M, 7) == 57559.0);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, baseTradeArrayDuringRolling);
+        assert(tr.getRFWMA(1, 1) == 115131.0);
+        assert(tr.getRFWMA(5, 1) == 115120.83333333333);
+        assert(tr.getRFWMA(8, 1) == 115120.9);
+
+        assert(tr.getRFWMA(1, 2) == 115131.0);
+        assert(tr.getRFWMA(5, 2) == 115121.5);
+        assert(tr.getRFWMA(8, 2) == 115120.85714285714);
+
+        assert(tr.getRFWMA(1, 7) == 115131.0);
+        assert(tr.getRFWMA(5, 7) == 115131.0);
+        assert(tr.getRFWMA(8, 7) == 115117.5);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, diffLargerThan1sArray);
+
+        assert(tr.getRFWMA(1, 1) == 115133.11);
+        assert(tr.getRFWMA(5, 1) == 115132.0208333333285);
+        assert(tr.getRFWMA(M, 1) == 115131.6125);
+
+        assert(tr.getRFWMA(1, 2) == 115133.11);
+        assert(tr.getRFWMA(5, 2) == 115131.95);
+        assert(tr.getRFWMA(M, 2) == 115131.54285714286);
+
+        assert(tr.getRFWMA(1, 7) == 115133.11);
+        assert(tr.getRFWMA(5, 7) == 115133.11);
+        assert(tr.getRFWMA(M, 7) == 115129.055);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, deltaEqualMaxBuckets);
+
+        assert(tr.getRFWMA(1, 1) == 115199.97);
+        assert(tr.getRFWMA(5, 1) == 115138.6816666666564);
+        assert(tr.getRFWMA(8, 1) == 115136.4530000000086);
+
+        assert(tr.getRFWMA(1, 2) == 115199.97);
+        assert(tr.getRFWMA(5, 2) == 115149.82500000001);
+        assert(tr.getRFWMA(8, 2) == 115142.66142857143);
+
+        assert(tr.getRFWMA(1, 7) == 115199.97);
+        assert(tr.getRFWMA(5, 7) == 115199.97);
+        assert(tr.getRFWMA(8, 7) == 115166.5400000000081);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, deltaLargerThanMaxBuckets);
+
+        assert(tr.getRFWMA(1, 1) == 115777.03);
+        assert(tr.getRFWMA(5, 1) == 115453.545);
+        assert(tr.getRFWMA(8, 1) == 115325.371);
+
+        assert(tr.getRFWMA(1, 2) == 115777.03);
+        assert(tr.getRFWMA(5, 2) == 115427.47750000001);
+        assert(tr.getRFWMA(8, 2) == 115301.3199999999924);
+
+        assert(tr.getRFWMA(1, 7) == 115777.03);
+        assert(tr.getRFWMA(5, 7) == 115777.03);
+        assert(tr.getRFWMA(8, 7) == 115455.07);
+    }
+}
+
+void testGetFWMA(){
+    {
+        TradeRoll tr;
+
+        assert(tr.getFWMA(1, 1) == 0.0);
+        assert(tr.getFWMA(5, 1) == 0.0);
+        assert(tr.getFWMA(M, 1) == 0.0);
+
+        assert(tr.getFWMA(1, 2) == 0.0);
+        assert(tr.getFWMA(5, 2) == 0.0);
+        assert(tr.getFWMA(M, 2) == 0.0);
+
+        assert(tr.getFWMA(1, 7) == 0.0);
+        assert(tr.getFWMA(5, 7) == 0.0);
+        assert(tr.getFWMA(M, 7) == 0.0);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, oneTradeArray);
+
+        assert(tr.getFWMA(1, 1) == 115100.0);
+        assert(tr.getFWMA(5, 1) == 47958.333333333336);
+        assert(tr.getFWMA(M, 1) == 46040.0);
+
+        assert(tr.getFWMA(1, 2) == 115100.00);
+        assert(tr.getFWMA(5, 2) == 57550.0);
+        assert(tr.getFWMA(M, 2) == 49328.57142857143);
+
+        assert(tr.getFWMA(1, 7) == 115100.00);
+        assert(tr.getFWMA(5, 7) == 115100.00);
+        assert(tr.getFWMA(M, 7) == 57550.0);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, baseTradeArray);
+
+        assert(tr.getFWMA(1, 1) == 115118.0);
+        assert(tr.getFWMA(5, 1) == 115116.66666666667);
+        assert(tr.getFWMA(M, 1) == 115116.1);
+
+        assert(tr.getFWMA(1, 2) == 115118.0);
+        assert(tr.getFWMA(5, 2) == 115114.75);
+        assert(tr.getFWMA(M, 2) == 98671.0);
+
+        assert(tr.getFWMA(1, 7) == 115118.0);
+        assert(tr.getFWMA(5, 7) == 115118.0);
+        assert(tr.getFWMA(M, 7) == 57559.0);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, baseTradeArrayDuringRolling);
+
+        assert(tr.getFWMA(1, 1) == 115131.0);
+        assert(tr.getFWMA(5, 1) == 115125.66666666667);
+        assert(tr.getFWMA(M, 1) == 115125.65);
+
+        assert(tr.getFWMA(1, 2) == 115131.0);
+        assert(tr.getFWMA(5, 2) == 115124.75);
+        assert(tr.getFWMA(M, 2) == 115124.14285714286);
+
+        assert(tr.getFWMA(1, 7) == 115131.0);
+        assert(tr.getFWMA(5, 7) == 115131.0);
+        assert(tr.getFWMA(M, 7) == 115117.5);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, diffLargerThan1sArray);
+
+        assert(tr.getFWMA(1, 1) == 115133.11);
+        assert(tr.getFWMA(5, 1) == 115132.72416666667);
+        assert(tr.getFWMA(M, 1) == 115132.6890000000130);
+
+        assert(tr.getFWMA(1, 2) == 115133.11);
+        assert(tr.getFWMA(5, 2) == 115132.47750000001);
+        assert(tr.getFWMA(M, 2) == 115132.38714285714);
+
+        assert(tr.getFWMA(1, 7) == 115133.11);
+        assert(tr.getFWMA(5, 7) == 115133.11);
+        assert(tr.getFWMA(M, 7) == 115129.055);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, deltaEqualMaxBuckets);
+
+        assert(tr.getFWMA(1, 1) == 115199.97);
+        assert(tr.getFWMA(5, 1) == 115160.96833333334);
+        assert(tr.getFWMA(M, 1) == 115159.854);
+
+        assert(tr.getFWMA(1, 2) == 115199.97);
+        assert(tr.getFWMA(5, 2) == 115166.5399999999936);
+        assert(tr.getFWMA(M, 2) == 115161.7642857142782);
+
+        assert(tr.getFWMA(1, 7) == 115199.97);
+        assert(tr.getFWMA(5, 7) == 115199.97);
+        assert(tr.getFWMA(M, 7) == 115166.54000000001);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, deltaLargerThanMaxBuckets);
+
+        assert(tr.getFWMA(1, 1) == 115777.03);
+        assert(tr.getFWMA(5, 1) == 115668.1849999999977);
+        assert(tr.getFWMA(M, 1) == 115657.45300000001);
+
+        assert(tr.getFWMA(1, 2) == 115777.03);
+        assert(tr.getFWMA(5, 2) == 115588.4574999999895);
+        assert(tr.getFWMA(M, 2) == 115561.5185714285617);
+
+        assert(tr.getFWMA(1, 7) == 115777.03);
+        assert(tr.getFWMA(5, 7) == 115777.03);
+        assert(tr.getFWMA(M, 7) == 115455.07);
+    }
+}
+
 int main() {
-	// tests below workz only with MAX_BUCKETS = 8 set in TradeRoll.h
+    /*
+    * tests below workz only with:
+    * MAX_BUCKETS = 8 set in TradeRoll.h
+    * TradeRoll::getFWMA::MAX_FWMA_SAMPLES set to 6
+    */
+
     // std::cout << std::fixed << std::setprecision(13);
 
     testBaseCase();
@@ -940,6 +1185,10 @@ int main() {
     testGetSMA();
     testGetHLC3();
     testGetBollingerBandsDistance();
+    testGetRFWMA();
+    testGetFWMA();
+
+    std::cout << "All tests passed!" << std::endl;
 
     return 0;
 }

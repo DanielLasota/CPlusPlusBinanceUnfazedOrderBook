@@ -28,3 +28,37 @@ if __name__ == '__main__':
 ![Control-V](https://github.com/user-attachments/assets/a90a5dfc-88c9-4625-8c7e-5456468b6a41)
  
 ![Control-V (1)](https://github.com/user-attachments/assets/afe41fee-8f34-4493-aabb-be7d6e8f25e7)
+
+## Tutorial:
+
+### Add feature
+
+```text
+    include/detail/metrics_list.def
+    
+    SingleVariableCounter.h
+    SingleVariableCounter.cpp
+    
+    OrderBookMetricsCalculator.cpp
+```
+
+### install python package with intel c++ compiler
+```text
+    1. install intel c++
+    
+    2. set system env variables:
+        ################################################################################
+        # Env Variables to be set for intel C++ Compiler:
+        #   System:
+        #       path =       C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\bin
+        #       LIB =        C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\lib
+        #       INCLUDE =    C:\Program Files (x86)\Intel\oneAPI\compiler\2025.3\include
+        ################################################################################
+        
+    3. (.venv) PS C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook> .\python_build_intel.bat   
+    
+    4. (.venv) PS C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook> pip uninstall cpp_binance_orderbook 
+    
+    5. (.venv) PS C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook> pip install --upgrade C:\Users\daniel\CLionProjects\CPlusPlusBinanceUnfazedOrderBook\dist\cpp_binance_orderbook-0.0.3-cp311-cp311-win_amd64.whl
+
+```

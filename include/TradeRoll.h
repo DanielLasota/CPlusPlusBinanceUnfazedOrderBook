@@ -38,6 +38,8 @@ public:
     [[nodiscard]] double getSMA(size_t seconds) const;
     [[nodiscard]] double getHLC3(size_t seconds) const;
     [[nodiscard]] double getBollingerBandsDistance(size_t seconds) const;
+    [[nodiscard]] double getRFWMA(size_t seconds, size_t interval) const;
+    [[nodiscard]] double getFWMA(size_t seconds, size_t interval) const;
 
 private:
     static constexpr uint64_t BUCKET_SIZE_SECONDS = 1;

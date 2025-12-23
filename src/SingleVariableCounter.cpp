@@ -589,6 +589,24 @@ namespace SingleVariableCounter {
         return tr.getBollingerBandsDistance(seconds);
     }
 
+    double calculateRFWMALogRatio(const TradeRoll& tr, const size_t seconds, const size_t interval) {
+        const double rfwma = tr.getRFWMA(seconds, interval);
+        const double newestPrice = tr.getNewestPrice();
+
+        constexpr double eps = 1e-12;
+
+        return std::log((newestPrice + eps) / (rfwma + eps));
+    }
+
+    double calculateFWMALogRatio(const TradeRoll& tr, const size_t seconds, const size_t interval) {
+        const double fwma = tr.getFWMA(seconds, interval);
+        const double newestPrice = tr.getNewestPrice();
+
+        constexpr double eps = 1e-12;
+
+        return std::log((newestPrice + eps) / (fwma + eps));
+    }
+
     double calculatePriceDistance(const TradeRoll &tr, const size_t seconds){
         return tr.getPriceDistance(seconds);
     }

@@ -88,3 +88,15 @@ message(STATUS "#########################################")
 message(STATUS "C++ compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "C++ compiler:   ${CMAKE_CXX_COMPILER}")
 message(STATUS "#########################################")
+
+# =========================
+# 4) TESTS, C++
+# =========================
+
+add_executable(TestDepthRoll test/TestDepthRoll.cpp)
+target_link_libraries(TestDepthRoll PRIVATE orderbook_core)
+target_compile_options(TestDepthRoll PRIVATE ${FLAGS_INTEL})
+
+add_executable(TestTradeRoll test/TestTradeRoll.cpp)
+target_link_libraries(TestTradeRoll PRIVATE orderbook_core)
+target_compile_options(TestTradeRoll PRIVATE ${FLAGS_INTEL})

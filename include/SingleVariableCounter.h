@@ -106,6 +106,8 @@ namespace SingleVariableCounter {
     double calculateSMALogRatio(const TradeRoll &tr, size_t seconds);
     double calculateHLC3TLogRatio(const TradeRoll &tr, size_t seconds);
     double calculateBollingerBandsDistance(const TradeRoll &tr, size_t seconds);
+    double calculateRFWMALogRatio(const TradeRoll &tr, size_t seconds, size_t interval);
+    double calculateFWMALogRatio(const TradeRoll &tr, size_t seconds, size_t interval);
 
     double calculatePriceDistance(const TradeRoll &tr, size_t seconds);
     double calculateLogKylesLambda(const TradeRoll &tr, size_t seconds);

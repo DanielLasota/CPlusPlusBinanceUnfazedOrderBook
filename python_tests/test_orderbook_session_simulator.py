@@ -341,6 +341,22 @@ ALL_ORDERBOOK_VARIABLES = [
     "bollingerBandsDistance600Seconds",
     "bollingerBandsDistance1200Seconds",
 
+    "rfwmaLogRatio5Seconds1i",
+    "rfwmaLogRatio30Seconds1i",
+    "rfwmaLogRatio60Seconds1i",
+    "rfwmaLogRatio120Seconds2i",
+    "rfwmaLogRatio120Seconds10i",
+    "rfwmaLogRatio300Seconds5i",
+    "rfwmaLogRatio600Seconds10i",
+
+    "fwmaLogRatio5Seconds1i",
+    "fwmaLogRatio30Seconds1i",
+    "fwmaLogRatio60Seconds1i",
+    "fwmaLogRatio120Seconds2i",
+    "fwmaLogRatio120Seconds10i",
+    "fwmaLogRatio300Seconds5i",
+    "fwmaLogRatio600Seconds10i",
+
     "priceDistance1Seconds",
     "priceDistance3Seconds",
     "priceDistance5Seconds",

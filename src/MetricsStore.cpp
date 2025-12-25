@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-#include <cstring>
 #include <memory>
 #include <functional>
 #include <unordered_set>
@@ -10,7 +9,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
-#include "OrderBookMetrics.h"
+#include "MetricsStore.h"
 
 namespace py = pybind11;
 
@@ -33,7 +32,7 @@ static py::array_t<T> vector_to_numpy(const std::vector<T>& vec) {
 namespace {
     struct ColumnBase {
         std::string name;
-        virtual void push(const OrderBookMetricsEntry& e) = 0;
+        virtual void push(const MetricsEntry& e) = 0;
         virtual py::object to_numpy() = 0;
         virtual ~ColumnBase() = default;
     };
@@ -41,11 +40,11 @@ namespace {
     template <class MemberT, class OutT = MemberT>
     struct MemberColumn : ColumnBase {
         OutT (*convert_)(MemberT);
-        MemberT OrderBookMetricsEntry::* ptr;
+        MemberT MetricsEntry::* ptr;
         std::vector<OutT> data;
 
         MemberColumn(std::string nm,
-                     MemberT OrderBookMetricsEntry::* p,
+                     MemberT MetricsEntry::* p,
                      size_t reserve,
                      OutT (*conv)(MemberT) = +[](MemberT x)-> OutT { return static_cast<OutT>(x); }) {
             name = std::move(nm);
@@ -54,25 +53,25 @@ namespace {
             data.reserve(reserve);
         }
 
-        void push(const OrderBookMetricsEntry& e) override { data.push_back(convert_(e.*ptr)); }
+        void push(const MetricsEntry& e) override { data.push_back(convert_(e.*ptr)); }
 
         py::object to_numpy() override { return vector_to_numpy<OutT>(data); }
     };
 }
 
-py::dict OrderBookMetrics::convertToNumpyArrays() const {
+py::dict MetricsStore::toNp() const {
     const size_t n = entries_.size();
     py::dict result;
 
     std::unordered_set<std::string_view> wanted;
-    wanted.reserve(variables_.size() * 2);
-    for (auto const& v : variables_) wanted.insert(v);
+    wanted.reserve(features_.size() * 2);
+    for (auto const& v : features_) wanted.insert(v);
 
     std::vector<std::unique_ptr<ColumnBase>> cols;
-    cols.reserve(variables_.size());
+    cols.reserve(features_.size());
 
     auto add_if = [&](std::string_view key, auto member_ptr) {
-        using MemberT = std::remove_reference_t<decltype(std::declval<OrderBookMetricsEntry>().*member_ptr)>;
+        using MemberT = std::remove_reference_t<decltype(std::declval<MetricsEntry>().*member_ptr)>;
 
         if (!wanted.count(key)) return;
 
@@ -107,10 +106,10 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
                 std::string(key), member_ptr, n
             ));
         }
-        else { static_assert(sizeof(MemberT) == 0, "Unsupported field type in OrderBookMetricsEntry"); }
+        else { static_assert(sizeof(MemberT) == 0, "Unsupported field type in MetricsEntry"); }
     };
 
-    #define METRIC(name, ctype) add_if(#name, &OrderBookMetricsEntry::name);
+    #define METRIC(name, ctype) add_if(#name, &MetricsEntry::name);
     #include "detail/metrics_list.def"
     #undef METRIC
 
@@ -121,28 +120,28 @@ py::dict OrderBookMetrics::convertToNumpyArrays() const {
     return result;
 }
 
-void OrderBookMetrics::toCSV(const std::string& path) const {
+void MetricsStore::toCSV(const std::string& path) const {
     std::ofstream file(path);
     if (!file.is_open()) {
         std::cerr << "Cannot open file: " << path << std::endl;
         return;
     }
 
-    for (size_t i = 0; i < variables_.size(); ++i) {
-        file << variables_[i];
-        if (i + 1 < variables_.size()) file << ",";
+    for (size_t i = 0; i < features_.size(); ++i) {
+        file << features_[i];
+        if (i + 1 < features_.size()) file << ",";
     }
     file << "\n";
 
     struct ColW {
-        std::function<void(const OrderBookMetricsEntry&, std::ostream&)> write;
+        std::function<void(const MetricsEntry&, std::ostream&)> write;
     };
     std::vector<ColW> writers;
-    writers.reserve(variables_.size());
+    writers.reserve(features_.size());
 
     auto add_writer = [&](std::string_view key, auto member_ptr) {
-        using MemberT = std::remove_reference_t<decltype(std::declval<OrderBookMetricsEntry>().*member_ptr)>;
-        for (auto const& v : variables_) {
+        using MemberT = std::remove_reference_t<decltype(std::declval<MetricsEntry>().*member_ptr)>;
+        for (auto const& v : features_) {
             if (v == key) {
                 if constexpr (std::is_same_v<MemberT, bool>) {
                     writers.push_back(ColW{
@@ -164,7 +163,7 @@ void OrderBookMetrics::toCSV(const std::string& path) const {
         }
     };
 
-    #define METRIC(name, ctype) add_writer(#name, &OrderBookMetricsEntry::name);
+    #define METRIC(name, ctype) add_writer(#name, &MetricsEntry::name);
     #include "detail/metrics_list.def"
     #undef METRIC
 

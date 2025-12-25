@@ -6,7 +6,7 @@ import pytest
 """
 MarketState.cpp:
 ...
-    std::optional<OrderBookMetricsEntry> MarketState::countOrderBookMetrics(MetricMask mask) const {
+    std::optional<MetricsEntry> MarketState::countOrderBookMetrics(MetricMask mask) const {
 
         if (orderBook.bids.size() < 2 || orderBook.asks.size() < 2 || !hasLastTrade)
             return std::nullopt;
@@ -400,18 +400,18 @@ for computeBacktest & computeVariables:
     equals the sum of IsLast in the returned output
 """
 
-class TestOrderBookSessionSimulator:
+class TestSimulator:
 
     def test_init(self):
         ...
 
-    class TestOrderBookSessionSimulatorComputeFinalDepthSnapshot:
-        def test_given_root_difference_depth_csv_when_computing_final_snapshot_then_snapshot_is_equal_to_next_day_original_binance_depth_snapshot(self):
-            from cpp_binance_orderbook import OrderBookSessionSimulator
-            difference_depth_csv = 'csv/test_positive_binance_difference_depth_stream_usd_m_futures_trxusdt_09-04-2025_3_cols_till_next_day_firsts.csv'
-            oss = OrderBookSessionSimulator()
+    class TestComputeFinalOB:
 
-            final_depth_snapshot_from_orderbook_after_09_04: cpp_binance_orderbook.OrderBook = oss.compute_final_depth_snapshot(csv_path=difference_depth_csv)
+        def test_given_root_difference_depth_csv_when_computing_final_snapshot_then_snapshot_is_equal_to_next_day_original_binance_depth_snapshot(self):
+            from cpp_binance_orderbook import compute_final_ob
+            difference_depth_csv = 'csv/test_positive_binance_difference_depth_stream_usd_m_futures_trxusdt_09-04-2025_3_cols_till_next_day_firsts.csv'
+
+            final_depth_snapshot_from_orderbook_after_09_04: cpp_binance_orderbook.OrderBook = compute_final_ob(csv_path=difference_depth_csv)
             final_depth_snapshot_from_cpp_orderbook_after_09_04_df = pd.DataFrame([
                 {var: getattr(entry, var) for var in ['is_ask', 'price', 'quantity']}
                 for entry in final_depth_snapshot_from_orderbook_after_09_04.bids()[:1000] + final_depth_snapshot_from_orderbook_after_09_04.asks()[:1000]
@@ -431,11 +431,10 @@ class TestOrderBookSessionSimulator:
             assert records1 == records2
 
         def test_given_root_difference_depth_csv_when_computing_final_snapshot_then_price_levels_are_sorted_correctly(self):
-            from cpp_binance_orderbook import OrderBookSessionSimulator
+            from cpp_binance_orderbook import compute_final_ob
             difference_depth_csv = 'csv/test_positive_binance_difference_depth_stream_usd_m_futures_trxusdt_09-04-2025_3_cols_till_next_day_firsts.csv'
-            oss = OrderBookSessionSimulator()
 
-            final_depth_snapshot_after_09_04: cpp_binance_orderbook.OrderBook = oss.compute_final_depth_snapshot(csv_path=difference_depth_csv)
+            final_depth_snapshot_after_09_04: cpp_binance_orderbook.OrderBook = compute_final_ob(csv_path=difference_depth_csv)
 
             bid_prices = [entry.price for entry in final_depth_snapshot_after_09_04.bids()]
             ask_prices = [entry.price for entry in final_depth_snapshot_after_09_04.asks()]
@@ -462,10 +461,9 @@ class TestOrderBookSessionSimulator:
             )
 
         def test_given_order_book_with_orders_when_compute_final_depth_snapshot_then_snapshot_contains_all_levels(self):
-            from cpp_binance_orderbook import OrderBookSessionSimulator
+            from cpp_binance_orderbook import compute_final_ob
             first_depth_snapshot_root_csv_10_04_path = 'csv/test_positive_binance_depth_snapshot_usd_m_futures_trxusdt_10-04-2025_first_snapshot.csv'
-            oss = OrderBookSessionSimulator()
-            order_book = oss.compute_final_depth_snapshot(first_depth_snapshot_root_csv_10_04_path)
+            order_book = compute_final_ob(first_depth_snapshot_root_csv_10_04_path)
 
             order_book_df = pd.DataFrame([
                 {var: getattr(entry, var) for var in ['is_ask', 'price', 'quantity']}
@@ -474,35 +472,31 @@ class TestOrderBookSessionSimulator:
 
             assert order_book_df.shape[0] == 2000
 
-    class TestOrderBookSessionSimulatorComputeVariablesNumPy:
+    class TestCompute:
 
         def test_given_single_pair_merged_csv_when_passing_bad_variable_name_then_exception_is_raised(self):
-            import cpp_binance_orderbook
-
-            oss = cpp_binance_orderbook.OrderBookSessionSimulator()
+            from cpp_binance_orderbook import compute
 
             csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
 
             bad_variables_list = ['bestBidPrice', 'bestAskPrice', 'midPrice', 'gap', 'crap']
 
             with pytest.raises(ValueError) as excinfo:
-                metrics_dict = oss.compute_variables(
+                metrics_dict = compute(
                     csv_path=csv_path,
-                    variables=bad_variables_list
+                    features=bad_variables_list
                 )
             assert str(excinfo.value) == "Unknown variable name: crap"
 
         def test_given_single_pair_merged_csv_when_returning_variables_list_then_len_is_equal_to_is_last_column_sum(self):
 
-            import cpp_binance_orderbook
+            from cpp_binance_orderbook import compute
 
             csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
 
-            oss = cpp_binance_orderbook.OrderBookSessionSimulator()
-
-            metrics_dict = oss.compute_variables(
+            metrics_dict = compute(
                 csv_path=csv_path,
-                variables=ALL_ORDERBOOK_VARIABLES
+                features=ALL_ORDERBOOK_VARIABLES
             )
             metrics_df = pd.DataFrame(metrics_dict)
             sheer_df = pd.read_csv(csv_path, comment='#')
@@ -512,13 +506,11 @@ class TestOrderBookSessionSimulator:
             assert (metrics_df['timestampOfReceive'] == sheer_df[sheer_df['IsLast'] == 1]['TimestampOfReceiveUS'].iloc[2:].reset_index(drop=True)).all()
 
         def test_given_single_pair_merged_csv_is_returned_variables_list_of_selected_variables(self):
-            import cpp_binance_orderbook
+            from cpp_binance_orderbook import compute
 
-            oss = cpp_binance_orderbook.OrderBookSessionSimulator()
-
-            metrics_dict = oss.compute_variables(
+            metrics_dict = compute(
                 "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv",
-                variables=ALL_ORDERBOOK_VARIABLES
+                features=ALL_ORDERBOOK_VARIABLES
             )
             df = pd.DataFrame(metrics_dict)
 
@@ -526,44 +518,41 @@ class TestOrderBookSessionSimulator:
             for col in df.columns:
                 assert not df[col].isnull().all(), f"Column `{col}` contains only NaN values"
 
-    class TestOrderBookSessionSimulatorComputeBacktestNumPy:
+    class TestBacktest:
 
         def test_given_single_pair_merged_csv_when_passing_bad_variable_name_then_exception_is_raised(self):
-            import cpp_binance_orderbook
+            from cpp_binance_orderbook import backtest
 
             csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
-
-            oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
             bad_variables_list = ['bestBidPrice', 'bestAskPrice', 'midPrice', 'gap', 'crap']
 
             with pytest.raises(ValueError) as excinfo:
-                metrics = oss.compute_backtest(
+                metrics = backtest(
                     csv_path=csv_path,
-                    variables=bad_variables_list
+                    features=bad_variables_list
                 )
             assert str(excinfo.value) == "Unknown variable name: crap"
 
         def test_given_single_pair_merged_csv_when_python_callback_then_count_of_callbacks_is_equal_to_is_last_column_sum(self):
 
-            import cpp_binance_orderbook
+            from cpp_binance_orderbook import backtest
 
             csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
-            oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
             callback_entries_list = []
 
-            def python_callback(orderbook_entry_metrics: cpp_binance_orderbook.OrderBookMetricsEntry):
+            def python_callback(orderbook_entry_metrics: cpp_binance_orderbook.MetricsEntry):
                 record = {
                     var: getattr(orderbook_entry_metrics, var)
                     for var in ALL_ORDERBOOK_VARIABLES
                 }
                 callback_entries_list.append(record)
 
-            oss.compute_backtest(
+            backtest(
                 csv_path=csv_path,
-                variables=ALL_ORDERBOOK_VARIABLES,
-                python_callback=python_callback
+                features=ALL_ORDERBOOK_VARIABLES,
+                callback=python_callback
             )
             metrics_df = pd.DataFrame(callback_entries_list)
 
@@ -574,24 +563,23 @@ class TestOrderBookSessionSimulator:
             assert (metrics_df['timestampOfReceive'] == sheer_df[sheer_df['IsLast'] == 1]['TimestampOfReceiveUS'].iloc[2:].reset_index(drop=True)).all()
 
         def test_given_single_pair_merged_csv_when_python_callback_then_callback_variables_sum_is_equal_to_selected_variables(self):
-            import cpp_binance_orderbook
+            from cpp_binance_orderbook import backtest
 
             csv_path = "csv/test_positive_binance_merged_depth_snapshot_difference_depth_stream_trade_stream_usd_m_futures_trxusdt_14-04-2025.csv"
-            oss = cpp_binance_orderbook.OrderBookSessionSimulator()
 
             callback_entries_list = []
 
-            def python_callback(orderbook_entry_metrics: cpp_binance_orderbook.OrderBookMetricsEntry):
+            def python_callback(orderbook_entry_metrics: cpp_binance_orderbook.MetricsEntry):
                 record = {
                     var: getattr(orderbook_entry_metrics, var)
                     for var in ALL_ORDERBOOK_VARIABLES
                 }
                 callback_entries_list.append(record)
 
-            oss.compute_backtest(
+            backtest(
                 csv_path=csv_path,
-                variables=ALL_ORDERBOOK_VARIABLES,
-                python_callback=python_callback
+                features=ALL_ORDERBOOK_VARIABLES,
+                callback=python_callback
             )
 
             df = pd.DataFrame(callback_entries_list)

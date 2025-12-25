@@ -1,7 +1,7 @@
+#include <filesystem>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include <iostream>
-#include <filesystem>
 
 #include "enums/AssetParameters.h"
 #include "EntryDecoder.h"

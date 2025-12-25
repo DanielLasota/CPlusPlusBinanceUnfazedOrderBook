@@ -2,8 +2,8 @@
 
 #include <cstdint>
 
-#include "enums/Symbol.h"
 #include "enums/Market.h"
+#include "enums/Symbol.h"
 
 struct DifferenceDepthEntry {
     uint64_t timestampOfReceive;

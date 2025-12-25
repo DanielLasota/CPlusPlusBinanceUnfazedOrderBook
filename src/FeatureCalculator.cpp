@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "SingleVariableCounter.h"
+#include "FeatureCalculator.h"
 #include "DepthRoll.h"
 #include "OrderBook.h"
 #include "TradeRoll.h"
@@ -12,7 +12,7 @@ inline double finiteAtanh(double x) {
     return std::atanh(x);
 }
 
-namespace SingleVariableCounter {
+namespace FeatureCalculator {
 
     double calculateBestAskPrice(const OrderBook &ob) {
         return ob.bestAskPrice();

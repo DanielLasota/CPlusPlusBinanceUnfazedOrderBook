@@ -4,16 +4,16 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "SingleVariableCounter.h"
-#include "MarketState.h"
-#include "enums/TradeEntry.h"
-#include "enums/DifferenceDepthEntry.h"
+#include "FeatureCalculator.h"
 #include "GlobalMarketState.h"
+#include "MarketState.h"
+#include "MetricsCalculator.h"
+#include "MetricsEntry.h"
 #include "OrderBook.h"
-#include "OrderBookMetricsEntry.h"
-#include "OrderBookSessionSimulator.h"
-#include "OrderBookMetricsCalculator.h"
+#include "Simulator.h"
+#include "enums/DifferenceDepthEntry.h"
 #include "enums/Market.h"
+#include "enums/TradeEntry.h"
 
 namespace py = pybind11;
 using MS = MarketState;
@@ -29,25 +29,23 @@ static py::int_ parse_mask_py(const std::vector<std::string>& vars)
     return pyint.cast<py::int_>();
 }
 
-PYBIND11_MODULE(cpp_binance_orderbook, m)
-{
-    py::class_<OrderBookSessionSimulator>(m, "OrderBookSessionSimulator")
-        .def(py::init<>())
-        .def(
-            "compute_variables",
-            &OrderBookSessionSimulator::computeVariables,
+PYBIND11_MODULE(cpp_binance_orderbook, m) {
+
+        m.def(
+            "compute",
+            &Simulator::compute,
             py::arg("csv_path"),
-            py::arg("variables"))
-        .def(
-            "compute_backtest",
-            &OrderBookSessionSimulator::computeBacktest,
+            py::arg("features"));
+        m.def(
+            "backtest",
+            &Simulator::backtest,
             py::arg("csv_path"),
-            py::arg("variables"),
-            py::arg("python_callback") = py::none()
-        )
-        .def(
-            "compute_final_depth_snapshot",
-            &OrderBookSessionSimulator::computeFinalDepthSnapshot,
+            py::arg("features"),
+            py::arg("callback") = py::none()
+        );
+        m.def(
+            "compute_final_ob",
+            &Simulator::computeFinalOB,
             py::arg("csv_path")
         );
 
@@ -58,7 +56,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
         )
         .def(
             py::init<const std::vector<std::string>&>(),
-            py::arg("variables")
+            py::arg("features")
         )
         .def(
             "update",
@@ -66,13 +64,13 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
             py::arg("entry")
         )
         .def(
-            "count_market_state_metrics_by_entry",
-            &GlobalMarketState::countMarketStateMetricsByEntry,
+            "calc_metrics_entry",
+            &GlobalMarketState::calcMetricsEntry,
             py::arg("entry")
         )
         .def(
-            "count_market_state_metrics",
-            &GlobalMarketState::countMarketStateMetrics,
+            "calc_metrics_entry_from_ap",
+            &GlobalMarketState::calcMetricsEntryFromAp,
             py::arg("symbol"),
             py::arg("market")
         )
@@ -195,87 +193,87 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
     );
 
 
-    auto svc = m.def_submodule("single_variable_counter");
-    svc.def(
+    auto fc = m.def_submodule("feature_calculator");
+    fc.def(
         "calculate_best_ask_price",
-        &SingleVariableCounter::calculateBestAskPrice,
+        &FeatureCalculator::calculateBestAskPrice,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_best_bid_price",
-        &SingleVariableCounter::calculateBestBidPrice,
+        &FeatureCalculator::calculateBestBidPrice,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_mid_price",
-        &SingleVariableCounter::calculateMidPrice,
+        &FeatureCalculator::calculateMidPrice,
         py::arg("order_book"));
-    svc.def(
+    fc.def(
         "calculate_best_volume_imbalance",
-        &SingleVariableCounter::calculateBestVolumeImbalance,
+        &FeatureCalculator::calculateBestVolumeImbalance,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_best_n_price_levels_volume_imbalance",
-        &SingleVariableCounter::calculateBestNPriceLevelsVolumeImbalance,
+        &FeatureCalculator::calculateBestNPriceLevelsVolumeImbalance,
         py::arg("order_book"),
         py::arg("nPriceLevels")
     );
-    svc.def(
+    fc.def(
         "calculate_volume_imbalance",
-        &SingleVariableCounter::calculateVolumeImbalance,
+        &FeatureCalculator::calculateVolumeImbalance,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_queue_imbalance",
-        &SingleVariableCounter::calculateQueueImbalance,
+        &FeatureCalculator::calculateQueueImbalance,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_gap",
-        &SingleVariableCounter::calculateGap,
+        &FeatureCalculator::calculateGap,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_vwap_deviation",
-        &SingleVariableCounter::calculateVwapDeviation,
+        &FeatureCalculator::calculateVwapDeviation,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_is_aggressor_ask",
-        [](const TradeEntry& t) { return SingleVariableCounter::calculateIsAggressorAsk(&t); },
+        [](const TradeEntry& t) { return FeatureCalculator::calculateIsAggressorAsk(&t); },
         py::arg("trade_entry"));
-    svc.def(
+    fc.def(
         "calculate_simplified_slope_imbalance",
-        &SingleVariableCounter::calculateSimplifiedSlopeImbalance,
+        &FeatureCalculator::calculateSimplifiedSlopeImbalance,
         py::arg("order_book")
     );
-    svc.def(
+    fc.def(
         "calculate_trade_count_imbalance",
-        &SingleVariableCounter::calculateTradeCountImbalance,
+        &FeatureCalculator::calculateTradeCountImbalance,
         py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
-    svc.def(
+    fc.def(
         "calculate_trade_volume_diff",
-        &SingleVariableCounter::calculateTradeVolumeDiff,
+        &FeatureCalculator::calculateTradeVolumeDiff,
         py::arg("trade_roll"),
         py::arg("windowTimeSeconds"));
-    svc.def(
+    fc.def(
         "calculate_price_difference",
-        &SingleVariableCounter::calculatePriceDifference,
+        &FeatureCalculator::calculatePriceDifference,
         py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
-    svc.def(
+    fc.def(
         "calculate_rate_of_return",
-        &SingleVariableCounter::calculateRateOfReturn,
+        &FeatureCalculator::calculateRateOfReturn,
         py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
-    svc.def(
+    fc.def(
         "calculate_difference_depth_count_imbalance",
-        &SingleVariableCounter::calculateDepthCountImbalance,
+        &FeatureCalculator::calculateDepthCountImbalance,
         py::arg("trade_roll"),
         py::arg("windowTimeSeconds")
     );
@@ -400,14 +398,14 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
     py::class_<DepthRoll>(m, "DepthRoll")
         .def(py::init<>());
 
-    py::class_<OrderBookMetricsEntry>(m, "OrderBookMetricsEntry")
+    py::class_<MetricsEntry>(m, "MetricsEntry")
 
-#define METRIC(name, ctype) .def_readonly(#name, &OrderBookMetricsEntry::name)
+#define METRIC(name, ctype) .def_readonly(#name, &MetricsEntry::name)
 #include "detail/metrics_list.def"
 
 
 #undef METRIC
-        .def("__str__", [](const OrderBookMetricsEntry& entry)
+        .def("__str__", [](const MetricsEntry& entry)
              {
                  std::ostringstream oss;
                  auto append_field = [&](auto const& field, const char* nm)
@@ -428,12 +426,12 @@ PYBIND11_MODULE(cpp_binance_orderbook, m)
 
     m.def("parse_mask", &parse_mask_py, py::arg("variables"));
 
-    py::class_<OrderBookMetricsCalculator>(m, "OrderBookMetricsCalculator")
+    py::class_<MetricsCalculator>(m, "MetricsCalculator")
         .def(py::init<MetricMask>(), py::arg("mask"))
         .def(py::init<const std::vector<std::string>&>(), py::arg("variables"))
         .def(
-            "count_market_state_metrics",
-            &OrderBookMetricsCalculator::countMarketStateMetrics,
+            "calc",
+            &MetricsCalculator::calc,
             py::arg("market_state")
         );
 

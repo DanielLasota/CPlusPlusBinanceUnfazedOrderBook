@@ -7,12 +7,12 @@
 #include <string>
 
 #include "CSVHeader.h"
-#include "DataVectorLoader.h"
+#include "CSVReader.h"
 #include "enums/AssetParameters.h"
 #include "EntryDecoder.h"
 #include "mmap_win.h"
 
-inline std::vector<std::string_view> split_sv_by_newline(std::string_view sv) {
+inline std::vector<std::string_view> splitSVByNewLine(std::string_view sv) {
     std::vector<std::string_view> out;
     size_t start = 0;
 
@@ -28,7 +28,7 @@ inline std::vector<std::string_view> split_sv_by_newline(std::string_view sv) {
     return out;
 }
 
-std::vector<std::string> DataVectorLoader::splitLine(const std::string &line, char delimiter) {
+std::vector<std::string> CSVReader::splitLine(const std::string &line, char delimiter) {
     std::vector<std::string> tokens;
     std::istringstream tokenStream(line);
     std::string token;
@@ -38,15 +38,15 @@ std::vector<std::string> DataVectorLoader::splitLine(const std::string &line, ch
     return tokens;
 }
 
-std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersCSV(const std::string &csvPath) {
+std::vector<XEvent> CSVReader::readSingleAssetCSV(const std::string &csvPath) {
     AssetParameters assetParameters = AssetParameters::decodeAssetParametersFromSingleCSVName(csvPath);
 
     MMapData mm = mmap_file(csvPath);
     std::string_view file_view(mm.data, mm.size);
 
-    auto lines = split_sv_by_newline(file_view);
+    auto lines = splitSVByNewLine(file_view);
 
-    std::vector<DecodedEntry> entries;
+    std::vector<XEvent> entries;
     entries.reserve(lines.size());
 
     bool headerSkipped = false;
@@ -57,7 +57,7 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersC
             continue; // skip header
         }
         try {
-            DecodedEntry entry = EntryDecoder::decodeSingleAssetParameterEntry(assetParameters, line_sv);
+            XEvent entry = EntryDecoder::decodeSingleAssetParameterEntry(assetParameters, line_sv);
             entries.push_back(std::move(entry));
         } catch (const std::exception &e) {
             std::cerr << "Error processing the line: " << std::string(line_sv) << " - " << e.what() << std::endl;
@@ -68,13 +68,11 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromSingleAssetParametersC
     return entries;
 }
 
-std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCSV(const std::string &csvPath) {
-    // const auto start = std::chrono::steady_clock::now();
-
+std::vector<XEvent> CSVReader::readMultiAssetCSV(const std::string &csvPath) {
     MMapData mm = mmap_file(csvPath);
     const std::string_view file_view(mm.data, mm.size);
 
-    const auto lines = split_sv_by_newline(file_view);
+    const auto lines = splitSVByNewLine(file_view);
 
     std::string_view headerLine;
     size_t headerIdx = 0;
@@ -90,14 +88,14 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
     const std::vector<std::string_view> headerTokens = splitLineSV(headerLine, ',');
     const ColMap colMap = buildColMap(headerTokens);
 
-    std::vector<DecodedEntry> entries;
+    std::vector<XEvent> entries;
     entries.reserve(lines.size());
 
     for (size_t i = headerIdx + 1; i < lines.size(); ++i) {
         auto& line_sv = lines[i];
         if (line_sv.empty() || line_sv[0] == '#') continue;
         try {
-            DecodedEntry entry = EntryDecoder::decodeMultiAssetParameterEntry(line_sv, colMap);
+            XEvent entry = EntryDecoder::decodeMultiAssetParameterEntry(line_sv, colMap);
             entries.push_back(std::move(entry));
         }
         catch (const std::exception &e) {
@@ -106,7 +104,5 @@ std::vector<DecodedEntry> DataVectorLoader::getEntriesFromMultiAssetParametersCS
     }
 
     munmap_file(mm);
-    // const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
-    // std::cout << "getEntriesFromMultiAssetParametersCSV elapsed: " << elapsed << " ms" << std::endl;
     return entries;
 }

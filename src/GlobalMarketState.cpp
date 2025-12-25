@@ -1,50 +1,48 @@
-#include <iostream>
-
 #include "GlobalMarketState.h"
 
 GlobalMarketState::GlobalMarketState(const MetricMask& mask)
-    : mask_(mask), calculator_(mask) {}
+    : mask(mask), calculator(mask) {}
 
 GlobalMarketState::GlobalMarketState(const std::vector<std::string>& variables)
     : GlobalMarketState(parseMask(variables)) {}
 
-void GlobalMarketState::update(DecodedEntry* entry) {
+void GlobalMarketState::update(XEvent* entry) {
     AssetKey key{*entry};
-    auto [it, inserted] = marketStates_.try_emplace(key, key.market, key.symbol);
+    auto [it, inserted] = marketStates.try_emplace(key, key.market, key.symbol);
     it->second.update(entry);
 }
 
-std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetricsByEntry(const DecodedEntry* entry) {
-    const AssetKey key{*entry};
-    return calculator_.countMarketStateMetrics(marketStates_[key]);
+std::optional<MetricsEntry> GlobalMarketState::calcMetricsEntry(const XEvent* e) {
+    const AssetKey key{*e};
+    return calculator.calc(marketStates[key]);
 }
 
-std::optional<OrderBookMetricsEntry> GlobalMarketState::countMarketStateMetrics(const Symbol symbol, const Market& market) {
+std::optional<MetricsEntry> GlobalMarketState::calcMetricsEntryFromAp(const Symbol symbol, const Market& market) {
     const AssetKey key{ market, symbol };
-    const auto it = marketStates_.find(key);
-    if (it == marketStates_.end()) {
+    const auto it = marketStates.find(key);
+    if (it == marketStates.end()) {
         throw std::runtime_error("no specified market");
     }
-    return calculator_.countMarketStateMetrics(it->second);
+    return calculator.calc(it->second);
 }
 
 MarketState& GlobalMarketState::getMarketState(const Symbol symbol, const Market& market) {
     const AssetKey key{ market, symbol };
-    const auto it = marketStates_.find(key);
-    if (it == marketStates_.end()) {
+    const auto it = marketStates.find(key);
+    if (it == marketStates.end()) {
         throw std::runtime_error("no specified market");
     }
     return it->second;
 }
 
 size_t GlobalMarketState::getMarketStateCount() const {
-    return marketStates_.size();
+    return marketStates.size();
 }
 
 std::vector<std::pair<Symbol, Market>> GlobalMarketState::getMarketStateList() const {
     std::vector<std::pair<Symbol, Market>> out;
-    out.reserve(marketStates_.size());
-    for (auto const& kv : marketStates_) {
+    out.reserve(marketStates.size());
+    for (auto const& kv : marketStates) {
         out.emplace_back(kv.first.symbol, kv.first.market);
     }
     return out;

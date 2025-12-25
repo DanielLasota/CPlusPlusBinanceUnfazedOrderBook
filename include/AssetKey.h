@@ -6,7 +6,7 @@
 #include "enums/Symbol.h"
 #include "enums/Market.h"
 
-using DecodedEntry = std::variant<DifferenceDepthEntry, TradeEntry>;
+using XEvent = std::variant<DifferenceDepthEntry, TradeEntry>;
 
 struct AssetKey {
     Market market;
@@ -16,7 +16,7 @@ struct AssetKey {
       : market(m), symbol(s)
     {}
 
-    explicit AssetKey(const DecodedEntry &d) noexcept {
+    explicit AssetKey(const XEvent &d) noexcept {
         if (const auto dd = std::get_if<DifferenceDepthEntry>(&d)) {
             market = dd->market;
             symbol = dd->symbol;

@@ -5,7 +5,7 @@
 #include "TradeRoll.h"
 #include "enums/TradeEntry.h"
 
-namespace SingleVariableCounter {
+namespace FeatureCalculator {
 
     double calculateBestAskPrice(const OrderBook &ob);
     double calculateBestBidPrice(const OrderBook &ob);

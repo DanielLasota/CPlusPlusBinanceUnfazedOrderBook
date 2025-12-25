@@ -8,7 +8,7 @@ from cpp_binance_orderbook import (
     Market,
     DifferenceDepthEntry,
     TradeEntry,
-    OrderBookMetricsEntry,
+    MetricsEntry,
     Symbol
 )
 
@@ -1176,7 +1176,7 @@ class TestGlobalMarketState:
             gms = GlobalMarketState(variables)
 
             with pytest.raises(RuntimeError, match="no specified market"):
-                x = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
+                x = gms.calc_metrics_entry_from_ap(Symbol.TRXUSDT, Market.SPOT)
 
         def test_given_non_empty_orderbook_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
             variables = [
@@ -1225,10 +1225,10 @@ class TestGlobalMarketState:
                 for entry in order_list:
                     gms.update(entry)
 
-            x1 = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
-            x2 = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
-            x3 = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
-            x4 = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
+            x1 = gms.calc_metrics_entry_from_ap(Symbol.TRXUSDT, Market.SPOT)
+            x2 = gms.calc_metrics_entry_from_ap(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3 = gms.calc_metrics_entry_from_ap(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4 = gms.calc_metrics_entry_from_ap(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             assert x1 is None
             assert x2 is None
@@ -1297,10 +1297,10 @@ class TestGlobalMarketState:
             )
             gms.update(dogeusdt_trade)
 
-            x1 = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
-            x2 = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
-            x3 = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
-            x4 = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
+            x1 = gms.calc_metrics_entry_from_ap(Symbol.TRXUSDT, Market.SPOT)
+            x2 = gms.calc_metrics_entry_from_ap(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3 = gms.calc_metrics_entry_from_ap(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4 = gms.calc_metrics_entry_from_ap(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
             assert x1 is None
             assert x2 is None
             assert x3 is None
@@ -1401,10 +1401,10 @@ class TestGlobalMarketState:
             )
             gms.update(dogeusdt_trade)
 
-            x1 = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
-            x2 = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
-            x3 = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
-            x4 = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
+            x1 = gms.calc_metrics_entry_from_ap(Symbol.TRXUSDT, Market.SPOT)
+            x2 = gms.calc_metrics_entry_from_ap(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3 = gms.calc_metrics_entry_from_ap(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4 = gms.calc_metrics_entry_from_ap(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             assert x1 is None
             assert x2 is None
@@ -1527,10 +1527,10 @@ class TestGlobalMarketState:
             # print(ms_dogeusdt.last_trade)
             # print()
 
-            x1: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.TRXUSDT, Market.SPOT)
-            x2: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.BTCUSDT, Market.USD_M_FUTURES)
-            x3: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
-            x4: OrderBookMetricsEntry = gms.count_market_state_metrics(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
+            x1: MetricsEntry = gms.calc_metrics_entry_from_ap(Symbol.TRXUSDT, Market.SPOT)
+            x2: MetricsEntry = gms.calc_metrics_entry_from_ap(Symbol.BTCUSDT, Market.USD_M_FUTURES)
+            x3: MetricsEntry = gms.calc_metrics_entry_from_ap(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
+            x4: MetricsEntry = gms.calc_metrics_entry_from_ap(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
             # === x1 (TRXUSDT) ===
             assert x1.timestampOfReceive == 20

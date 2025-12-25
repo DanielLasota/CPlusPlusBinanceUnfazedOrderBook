@@ -20,7 +20,7 @@
     throw std::runtime_error(std::string("parse_double failed for '") + std::string(sv) + "'");
 }
 
-DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters &params, std::string_view line) {
+XEvent EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters &params, std::string_view line) {
     auto tokens = splitLineSV(line, ',');
 
     switch (params.streamType) {
@@ -139,7 +139,7 @@ DecodedEntry EntryDecoder::decodeSingleAssetParameterEntry(const AssetParameters
     }
 }
 
-DecodedEntry EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line, const ColMap& h) {
+XEvent EntryDecoder::decodeMultiAssetParameterEntry(std::string_view line, const ColMap& h) {
     auto tokens = splitLineSV(line, ',');
 
     StreamType streamType = parseStreamType(tokens.at(h.at(COL_StreamType))[0]);

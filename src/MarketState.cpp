@@ -1,10 +1,10 @@
 #include <variant>
 
 #include "MarketState.h"
-#include "SingleVariableCounter.h"
+#include "FeatureCalculator.h"
 #include "enums/TradeEntry.h"
 
-void MarketState::update(DecodedEntry* entry) {
+void MarketState::update(XEvent* entry) {
 
     std::visit([this](auto const& e){
         this->lastTimestampOfReceive = e.timestampOfReceive;

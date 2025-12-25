@@ -1,4 +1,4 @@
-import cpp_binance_orderbook
+from cpp_binance_orderbook import compute
 
 
 def orderbook_callback(x):
@@ -7,7 +7,6 @@ def orderbook_callback(x):
 
 if __name__ == '__main__':
 
-    orderbook_session_simulator = cpp_binance_orderbook.OrderBookSessionSimulator()
     csv_path = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-12-01.csv"
 
     variables = [
@@ -378,4 +377,4 @@ if __name__ == '__main__':
         "deltaPVT600Seconds",
     ]
 
-    result = orderbook_session_simulator.compute_variables(csv_path=csv_path, variables=variables)
+    result = compute(csv_path=csv_path, features=variables)

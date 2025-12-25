@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream>
 
 #include "TradeRoll.h"
 
@@ -28,28 +27,28 @@ void TradeRoll::update(const TradeEntry &trade) {
     newestPrice = trade.price;
     currentBucketId = getBucketId(timestampOfReceiveS);
 
-    Bucket &bucket = buckets[currentBucketId];
-    bucket.startTimeSeconds = timestampOfReceiveS;
+    Bucket &b = buckets[currentBucketId];
+    b.startTimeSeconds = timestampOfReceiveS;
 
-    if (!bucket.hasData){
-        bucket.hasData = true;
-        bucket.openPrice = trade.price;
-        bucket.highestPrice = trade.price;
-        bucket.lowestPrice = trade.price;
+    if (!b.hasData){
+        b.hasData = true;
+        b.openPrice = trade.price;
+        b.highestPrice = trade.price;
+        b.lowestPrice = trade.price;
     }
 
-    bucket.closePrice = trade.price;
-    bucket.highestPrice = std::max(bucket.highestPrice, trade.price);
-    bucket.lowestPrice = std::min(bucket.lowestPrice, trade.price);
+    b.closePrice = trade.price;
+    b.highestPrice = std::max(b.highestPrice, trade.price);
+    b.lowestPrice = std::min(b.lowestPrice, trade.price);
 
     if (!trade.isBuyerMarketMaker) {
-        ++bucket.buyCount;
-        bucket.cumBuyQuantity += trade.quantity;
-        bucket.biggestBuyQuantity = std::max(bucket.biggestBuyQuantity, trade.quantity);
+        ++b.buyCount;
+        b.cumBuyQuantity += trade.quantity;
+        b.biggestBuyQuantity = std::max(b.biggestBuyQuantity, trade.quantity);
     } else {
-        ++bucket.sellCount;
-        bucket.cumSellQuantity += trade.quantity;
-        bucket.biggestSellQuantity = std::max(bucket.biggestSellQuantity, trade.quantity);
+        ++b.sellCount;
+        b.cumSellQuantity += trade.quantity;
+        b.biggestSellQuantity = std::max(b.biggestSellQuantity, trade.quantity);
     }
 }
 
@@ -169,8 +168,8 @@ double TradeRoll::getSMA(const size_t seconds) const {
     double sumPrices = 0.0;
 
     for (size_t i = 0; i < seconds; ++i) {
-        const Bucket &bucket = buckets[currentBucketId - i & MASK];
-        sumPrices += bucket.closePrice;
+        const Bucket &b = buckets[currentBucketId - i & MASK];
+        sumPrices += b.closePrice;
     }
 
     return sumPrices / static_cast<double>(seconds);

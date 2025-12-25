@@ -19,17 +19,17 @@ void DepthRoll::update(const DifferenceDepthEntry &depthEntry) {
     newestPrice = depthEntry.price;
     currentBucketId = getBucketId(timestampOfReceiveS);
 
-    Bucket &bucket = buckets[currentBucketId];
-    bucket.startTimeSeconds = timestampOfReceiveS;
+    Bucket &b = buckets[currentBucketId];
+    b.startTimeSeconds = timestampOfReceiveS;
 
-    if (!bucket.hasData){
-        bucket.hasData = true;
+    if (!b.hasData){
+        b.hasData = true;
     }
 
     if (!depthEntry.isAsk) {
-        ++bucket.bidCount;
+        ++b.bidCount;
     } else {
-        ++bucket.askCount;
+        ++b.askCount;
     }
 }
 
@@ -61,7 +61,7 @@ double DepthRoll::getNewestPrice() const {
     return newestPrice;
 }
 
-DepthRoll::BidAskCount DepthRoll::getBidAskCount(const int seconds) const {
+DepthRoll::BidAskCount DepthRoll::getBidAskCount(const size_t seconds) const {
     int buy = 0;
     int sell = 0;
 

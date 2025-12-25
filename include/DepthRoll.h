@@ -15,7 +15,7 @@ public:
 
     [[nodiscard]] uint64_t getNewestDepthEntryTimestamp() const;
     [[nodiscard]] double getNewestPrice() const;
-    [[nodiscard]] BidAskCount getBidAskCount(int seconds) const;
+    [[nodiscard]] BidAskCount getBidAskCount(size_t seconds) const;
 
 private:
     static constexpr uint64_t BUCKET_SIZE_SECONDS = 1;

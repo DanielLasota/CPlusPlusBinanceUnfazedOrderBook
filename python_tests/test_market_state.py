@@ -2,7 +2,7 @@ from cpp_binance_orderbook import (
     MarketState,
     DifferenceDepthEntry,
     TradeEntry,
-    OrderBookMetricsCalculator
+    MetricsCalculator
 )
 
 
@@ -687,8 +687,8 @@ class TestMarketState:
             ]
 
             ms = MarketState()
-            obmc = OrderBookMetricsCalculator(variables)
-            variables = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            variables = mc.calc(ms)
 
             assert variables is None
 
@@ -721,8 +721,8 @@ class TestMarketState:
                 e.is_ask = False
                 ms.update(e)
 
-            obmc = OrderBookMetricsCalculator(variables)
-            result = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            result = mc.calc(ms)
             assert result is None
 
         def test_given_empty_orderbook_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
@@ -746,8 +746,8 @@ class TestMarketState:
             t.is_buyer_market_maker = True
             ms.update(t)
 
-            obmc = OrderBookMetricsCalculator(variables)
-            result = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            result = mc.calc(ms)
             assert result is None
 
         def test_given_orderbook_with_one_order_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
@@ -786,8 +786,8 @@ class TestMarketState:
             t.is_buyer_market_maker = False
             ms.update(t)
 
-            obmc = OrderBookMetricsCalculator(variables)
-            result = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            result = mc.calc(ms)
             assert result is None
 
         def test_given_non_empty_market_state_when_count_order_book_metrics_then_returns_correct_order_book_metrics_entry(self):
@@ -830,8 +830,8 @@ class TestMarketState:
             t.is_buyer_market_maker = True
             ms.update(t)
 
-            obmc = OrderBookMetricsCalculator(variables)
-            entry = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            entry = mc.calc(ms)
             assert entry is not None
 
             # sprawdź wszystkie pola
@@ -865,8 +865,8 @@ class TestMarketState:
                 "gap"
             ]
             ms = MarketState()
-            obmc = OrderBookMetricsCalculator(variables)
-            result = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            result = mc.calc(ms)
             assert result is None
 
         def test_given_non_empty_orderbook_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
@@ -888,8 +888,8 @@ class TestMarketState:
             for price, qty in [(9.0, 1), (8.0, 2)]:
                 ms.update_orderbook(2, price, qty, False)
             # nie było jeszcze żadnego trade
-            obmc = OrderBookMetricsCalculator(variables)
-            result = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            result = mc.calc(ms)
             assert result is None
 
         def test_given_empty_orderbook_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
@@ -907,8 +907,8 @@ class TestMarketState:
             ms = MarketState()
             # tylko trade, zero poziomów w orderbooku
             ms.update_trade_registry(100, 5.0, 1.5, True)
-            obmc = OrderBookMetricsCalculator(variables)
-            result = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            result = mc.calc(ms)
             assert result is None
 
         def test_given_orderbook_with_one_order_non_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):
@@ -929,8 +929,8 @@ class TestMarketState:
             ms.update_orderbook(2,  9.0, 3.0, False)
             # jeden trade
             ms.update_trade_registry(200, 9.5, 1.0, False)
-            obmc = OrderBookMetricsCalculator(variables)
-            result = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            result = mc.calc(ms)
             assert result is None
 
         def test_given_non_empty_market_state_when_count_order_book_metrics_then_returns_correct_order_book_metrics_entry(self):
@@ -956,8 +956,8 @@ class TestMarketState:
             trade_ts = 100
             ms.update_trade_registry(trade_ts, 7.7, 0.5, True)
 
-            obmc = OrderBookMetricsCalculator(variables)
-            entry = obmc.count_market_state_metrics(ms)
+            mc = MetricsCalculator(variables)
+            entry = mc.calc(ms)
             assert entry is not None
 
             assert entry.bestAskPrice == 10.0

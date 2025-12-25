@@ -19,7 +19,7 @@ public:
 
     OrderBook orderBook;
 
-    void update(DecodedEntry* entry);
+    void update(XEvent* entry);
 
     void updateOrderBook(uint64_t timestampOfReceive, double price, double quantity, bool isAsk);
 

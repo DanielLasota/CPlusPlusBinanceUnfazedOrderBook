@@ -1,13 +1,13 @@
 #pragma once
 
-#include <unordered_map>
-#include <string>
 #include <optional>
+#include <string>
+#include <unordered_map>
 
-#include "MetricMask.h"
-#include "OrderBookMetricsCalculator.h"
-#include "MarketState.h"
 #include "AssetKey.h"
+#include "MarketState.h"
+#include "MetricMask.h"
+#include "MetricsCalculator.h"
 
 class GlobalMarketState {
 public:
@@ -15,20 +15,20 @@ public:
 
     explicit GlobalMarketState(const std::vector<std::string>& variables);
 
-    void update(DecodedEntry* entry);
+    void update(XEvent* entry);
 
-    std::optional<OrderBookMetricsEntry> countMarketStateMetricsByEntry(const DecodedEntry* entry);
+    std::optional<MetricsEntry> calcMetricsEntry(const XEvent* e);
 
-    std::optional<OrderBookMetricsEntry> countMarketStateMetrics(Symbol symbol, const Market& market);
+    std::optional<MetricsEntry> calcMetricsEntryFromAp(Symbol symbol, const Market& market);
 
     MarketState& getMarketState(Symbol symbol, const Market& market);
 
-    size_t getMarketStateCount() const;
+    [[nodiscard]] size_t getMarketStateCount() const;
 
-    std::vector<std::pair<Symbol, Market>> getMarketStateList() const;
+    [[nodiscard]] std::vector<std::pair<Symbol, Market>> getMarketStateList() const;
 
 private:
-    MetricMask mask_;
-    OrderBookMetricsCalculator calculator_;
-    std::unordered_map<AssetKey, MarketState, AssetKeyHash> marketStates_;
+    MetricMask mask;
+    MetricsCalculator calculator;
+    std::unordered_map<AssetKey, MarketState, AssetKeyHash> marketStates;
 };

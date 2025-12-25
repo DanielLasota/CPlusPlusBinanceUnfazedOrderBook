@@ -43,15 +43,15 @@ set(FLAGS_INTEL_NUCLEAR
 
 set(SRC_CORE
         src/OrderBook.cpp
-        src/OrderBookSessionSimulator.cpp
+        src/Simulator.cpp
         src/MarketState.cpp
-        src/SingleVariableCounter.cpp
-        src/DataVectorLoader.cpp
+        src/FeatureCalculator.cpp
+        src/CSVReader.cpp
         src/AssetParameters.cpp
         src/EntryDecoder.cpp
         src/CSVHeader.cpp
-        src/OrderBookMetrics.cpp
-        src/OrderBookMetricsCalculator.cpp
+        src/MetricsStore.cpp
+        src/MetricsCalculator.cpp
         src/GlobalMarketState.cpp
         src/TradeRoll.cpp
         src/DepthRoll.cpp

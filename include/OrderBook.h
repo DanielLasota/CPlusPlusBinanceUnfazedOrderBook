@@ -8,9 +8,6 @@
 
 #include "MetricMask.h"
 #include "enums/DifferenceDepthEntry.h"
-#include "enums/TradeEntry.h"
-
-using DecodedEntry = std::variant<DifferenceDepthEntry, TradeEntry>;
 
 struct PriceSide {
     double price;

@@ -1,13 +1,11 @@
 #include <pybind11/embed.h>
 
-#include "../include/OrderBookSessionSimulator.h"
+#include "../include/Simulator.h"
 
 int main() {
     py::scoped_interpreter guard{};
-    OrderBookSessionSimulator orderBookSessionSimulator;
-    const std::string csvPath = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-12-01.csv";
 
-    const std::vector<std::string> variables {
+    const std::vector<std::string> features {
         "timestampOfReceive",
         "market",
         "symbol",
@@ -375,7 +373,7 @@ int main() {
         "deltaPVT600Seconds",
     };
 
-    orderBookSessionSimulator.computeVariables(csvPath, variables);
+    Simulator::compute("D:/merged_csvs/binance_merged_btcusdt_spot_2025-12-01.csv", features);
 
     return 0;
 }

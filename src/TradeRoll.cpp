@@ -77,6 +77,30 @@ size_t TradeRoll::getBucketId(const uint64_t timestampS) {
     return timestampS & MASK;
 }
 
+// void TradeRoll::pprint(const bool skipEmpty) const {
+//     std::cout << "CurrentBucketId: " << currentBucketId << "\n";
+//
+//     const size_t oldestIdx = currentBucketId + 1 & MASK;
+//
+//     for (size_t i = 0; i < MAX_BUCKETS; ++i) {
+//         const size_t idx = (oldestIdx + i) & MASK;
+//         const Bucket& b = buckets[idx];
+//
+//         if (skipEmpty && !b.hasData) continue;
+//
+//         std::cout
+//             << "Bucket[" << idx << "] "
+//             << "start=" << b.startTimeSeconds << "s | "
+//             << " data=" << b.hasData
+//             << " o=" << b.openPrice
+//             << " h=" << b.highestPrice
+//             << " l=" << b.lowestPrice
+//             << " c=" << b.closePrice
+//             << " buyCount=" << b.buyCount
+//             << " sellCount=" << b.sellCount
+//             << "\n";
+//     }
+// }
 
 uint64_t TradeRoll::getLastTradeTimestamp() const {
     return lastTradeTimestampUS;
@@ -292,4 +316,124 @@ double TradeRoll::getFWMA(const size_t seconds, const size_t interval) const {
     }
 
     return weightedSum / fibSum[finalSampleCount-1];
+}
+
+TradeRoll::TValCoef TradeRoll::getTrendCoefAndTValue(const size_t secondsId) const {
+    static constexpr std::array<size_t, 21> _len_x = {
+        5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368
+    };
+
+    static constexpr std::array<double, 21> _inv_len_x = {
+        1./5, 1./8, 1./13, 1./21, 1./34, 1./55, 1./89, 1./144, 1./233, 1./377, 1./610, 1./987, 1./1597, 1./2584,
+        1./4181, 1./6765, 1./10946, 1./17711, 1./28657, 1./46368
+    };
+
+    static constexpr std::array<double, 21> _ssx = {
+        10, 42, 182, 770, 3272, 13860, 58740, 248820, 1054092, 4465188, 18915032, 80125318, 339416798, 1437792510,
+        6090588130, 25800145030, 109291171632, 462964831560, 1961150506728, 8307566858472
+    };
+
+    static constexpr std::array<double, 21> _inv_ssx = {
+        1./10, 1./42, 1./182, 1./770, 1./3272, 1./13860, 1./58740, 1./248820, 1./1054092, 1./4465188, 1./18915032,
+        1./80125318, 1./339416798, 1./1437792510, 1./6090588130, 1./25800145030, 1./109291171632, 1./462964831560,
+        1./1961150506728, 1./8307566858472,
+    };
+
+    static constexpr std::array<double, 21> _mean_x = {
+        2.0, 3.5, 6.0, 10.0, 16.5, 27.0, 44.0, 71.5, 116.0, 188.0, 304.5, 493.0, 798.0, 1291.5, 2090.0, 3382.0,
+        5472.5, 8855.0, 14328.0, 23183.5,
+    };
+
+    static constexpr std::array<double, 21> _inv_n_minus_2 = {
+        1./3, 1./6, 1./11, 1./19, 1./32, 1./53, 1./87, 1./142, 1./231, 1./375, 1./608, 1./985, 1./1595, 1./2582,
+        1./4179, 1./6763, 1./10944, 1./17709, 1./28655, 1./46366
+    };
+
+    const size_t len_x = _len_x[secondsId];
+    const double inv_len_x = _inv_len_x[secondsId];
+    const double mean_x = _mean_x[secondsId];
+    const double ssx = _ssx[secondsId];
+    const double inv_ssx = _inv_ssx[secondsId];
+    const double inv_n_minus_2 = _inv_n_minus_2[secondsId];
+
+    double sum_xy = 0.0;
+    double sum_y = 0.0;
+    double sum_y2 = 0.0;
+
+    double x = 0.0;
+    for (size_t i = 0; i < len_x; i++) {
+        const size_t idx = currentBucketId - len_x + i + 1 & MASK;
+        const Bucket &b = buckets[idx];
+
+        sum_y += b.closePrice;
+        sum_xy += x * b.closePrice;
+        sum_y2 += b.closePrice * b.closePrice;
+        x += 1.0;
+    }
+
+    const double sscp = sum_xy - mean_x * sum_y;
+    const double ssy = sum_y2 - sum_y * sum_y * inv_len_x;
+    const double s2yx = (ssy - sscp * sscp * inv_ssx) * inv_n_minus_2;
+
+    if (!(s2yx > 0.0))
+        return {std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
+
+    const double b1 = sscp * inv_ssx;
+    const double tVal = b1 * std::sqrt(ssx / s2yx);
+
+    return {tVal, b1};
+}
+
+TradeRoll::CVal TradeRoll::getCVal() const {
+    double bestTVal = 0.0;
+    double bestCoef = 0.0;
+    size_t bestTrendLength = 0;
+    double maxAbsTVal = 0.0;
+
+    auto consider = [&](const size_t secondsId, const size_t trendLen) {
+        auto [tVal, coef] = getTrendCoefAndTValue(secondsId);
+        if (!std::isnan(tVal)) {
+            const double absTVal = std::abs(tVal);
+            if (absTVal > maxAbsTVal) {
+                maxAbsTVal = absTVal;
+                bestTVal = tVal;
+                bestCoef = coef;
+                bestTrendLength = trendLen;
+            }
+        }
+    };
+
+    consider(0, 5);
+    consider(1, 8);
+    consider(2, 13);
+    consider(3, 21);
+    consider(4, 34);
+    consider(5, 55);
+    consider(6, 89);
+
+    consider(7, 144);
+    consider(8, 233);
+    consider(9, 377);
+    consider(10, 610);
+    consider(11, 987);
+
+    consider(12, 1597);
+    consider(13, 2584);
+    consider(14, 4181);
+    consider(15, 6765);
+    consider(16, 10946);
+
+    // consider(17, 17711);
+    // consider(18, 28657);
+    // consider(19, 46368);
+
+    if (maxAbsTVal == 0.0) {
+        return {
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN(),
+            0
+        };
+    }
+
+    return {bestTVal, bestCoef, bestTrendLength};
 }

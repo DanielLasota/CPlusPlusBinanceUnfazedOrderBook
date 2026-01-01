@@ -349,6 +349,26 @@ if __name__ == '__main__':
         "fwmaLogRatio300Seconds5i",
         "fwmaLogRatio600Seconds10i",
 
+        "trendTVal5Seconds",
+        "trendTVal8Seconds",
+        "trendTVal13Seconds",
+        "trendTVal21Seconds",
+        "trendTVal89Seconds",
+        "trendTVal144Seconds",
+        "trendTVal987Seconds",
+
+        "trendCoef5Seconds",
+        "trendCoef8Seconds",
+        "trendCoef13Seconds",
+        "trendCoef21Seconds",
+        "trendCoef89Seconds",
+        "trendCoef144Seconds",
+        "trendCoef987Seconds",
+
+        "cValBestTVal",
+        "cValBestCoef",
+        "cValBestTrendLength",
+
         "priceDistance1Seconds",
         "priceDistance3Seconds",
         "priceDistance5Seconds",

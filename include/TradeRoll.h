@@ -24,6 +24,17 @@ public:
         double sell;
     };
 
+    struct TValCoef {
+        double tVal;
+        double coef;
+    };
+
+    struct CVal {
+        double bestTVal;
+        double bestCoef;
+        size_t bestTrendLength;
+    };
+
     [[nodiscard]] uint64_t getLastTradeTimestamp() const;
     [[nodiscard]] double getNewestPrice() const;
     [[nodiscard]] BuySellCount getBuySellTradeCount(size_t seconds) const;
@@ -39,16 +50,20 @@ public:
     [[nodiscard]] double getBollingerBandsDistance(size_t seconds) const;
     [[nodiscard]] double getRFWMA(size_t seconds, size_t interval) const;
     [[nodiscard]] double getFWMA(size_t seconds, size_t interval) const;
+    [[nodiscard]] CVal getCVal() const;
+    [[nodiscard]] TValCoef getTrendCoefAndTValue(size_t secondsId) const;
+
+    // void pprint(bool skipEmpty = true) const;
 
 private:
     static constexpr uint64_t BUCKET_SIZE_SECONDS = 1;
-    static constexpr size_t MAX_BUCKETS = 1024;
+    static constexpr size_t MAX_BUCKETS = 16384;
     static constexpr size_t MASK = MAX_BUCKETS - 1;
 
     static_assert(MAX_BUCKETS != 0);
     static_assert((MAX_BUCKETS &MAX_BUCKETS - 1) == 0);
     static_assert((MAX_BUCKETS &MASK) == 0);
-    static_assert(MAX_BUCKETS == 1024);
+    static_assert(MAX_BUCKETS == 16384);
 
     struct Bucket {
         uint64_t startTimeSeconds = 0;

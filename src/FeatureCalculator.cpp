@@ -607,6 +607,14 @@ namespace FeatureCalculator {
         return std::log((newestPrice + eps) / (fwma + eps));
     }
 
+    TradeRoll::TValCoef calculateTrendCoefAndTVal(const TradeRoll& tr, const size_t secondsId) {
+        return tr.getTrendCoefAndTValue(secondsId);
+    }
+
+    TradeRoll::CVal calculateCVal(const TradeRoll& tr) {
+        return tr.getCVal();
+    }
+
     double calculatePriceDistance(const TradeRoll &tr, const size_t seconds){
         return tr.getPriceDistance(seconds);
     }

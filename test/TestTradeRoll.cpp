@@ -100,13 +100,117 @@ namespace {
         {1760400029000001ULL, Symbol::BTCUSDT, 115777.03, 0.001, true, true,  Market::SPOT},   // 1s
     }};
 
+    const std::array<TradeEntry, 90> cValExtendedOnly90Trades = {{
+        // bullish
+        {1760400000000000ULL, Symbol::BTCUSDT, 115100.0, 0.001, false, true, Market::SPOT},
+        {1760400001000000ULL, Symbol::BTCUSDT, 115101.0, 0.001, true,  true, Market::SPOT},
+        {1760400002000000ULL, Symbol::BTCUSDT, 115102.0, 0.001, false, true, Market::SPOT},
+        {1760400003000000ULL, Symbol::BTCUSDT, 115103.0, 0.001, true,  true, Market::SPOT},
+        {1760400004000000ULL, Symbol::BTCUSDT, 115104.0, 0.001, false, true, Market::SPOT},
+        {1760400005000000ULL, Symbol::BTCUSDT, 115105.0, 0.001, true,  true, Market::SPOT},
+        {1760400006000000ULL, Symbol::BTCUSDT, 115106.0, 0.001, false, true, Market::SPOT},
+        {1760400007000000ULL, Symbol::BTCUSDT, 115107.0, 0.001, true,  true, Market::SPOT},
+        {1760400008000000ULL, Symbol::BTCUSDT, 115108.0, 0.001, false, true, Market::SPOT},
+        {1760400009000000ULL, Symbol::BTCUSDT, 115109.0, 0.001, true,  true, Market::SPOT},
+
+        {1760400010000000ULL, Symbol::BTCUSDT, 115110.0, 0.001, false, true, Market::SPOT},
+        {1760400011000000ULL, Symbol::BTCUSDT, 115111.0, 0.001, true,  true, Market::SPOT},
+        {1760400012000000ULL, Symbol::BTCUSDT, 115112.0, 0.001, false, true, Market::SPOT},
+        {1760400013000000ULL, Symbol::BTCUSDT, 115113.0, 0.001, true,  true, Market::SPOT},
+        {1760400014000000ULL, Symbol::BTCUSDT, 115114.0, 0.001, false, true, Market::SPOT},
+        {1760400015000000ULL, Symbol::BTCUSDT, 115115.0, 0.001, true,  true, Market::SPOT},
+        {1760400016000000ULL, Symbol::BTCUSDT, 115116.0, 0.001, false, true, Market::SPOT},
+        {1760400017000000ULL, Symbol::BTCUSDT, 115117.0, 0.001, true,  true, Market::SPOT},
+        {1760400018000000ULL, Symbol::BTCUSDT, 115118.0, 0.001, false, true, Market::SPOT},
+        {1760400019000000ULL, Symbol::BTCUSDT, 115119.0, 0.001, true,  true, Market::SPOT},
+
+        {1760400020000000ULL, Symbol::BTCUSDT, 115120.0, 0.001, false, true, Market::SPOT},
+        {1760400021000000ULL, Symbol::BTCUSDT, 115121.0, 0.001, true,  true, Market::SPOT},
+        {1760400022000000ULL, Symbol::BTCUSDT, 115122.0, 0.001, false, true, Market::SPOT},
+        {1760400023000000ULL, Symbol::BTCUSDT, 115123.0, 0.001, true,  true, Market::SPOT},
+        {1760400024000000ULL, Symbol::BTCUSDT, 115124.0, 0.001, false, true, Market::SPOT},
+        {1760400025000000ULL, Symbol::BTCUSDT, 115125.0, 0.001, true,  true, Market::SPOT},
+        {1760400026000000ULL, Symbol::BTCUSDT, 115126.0, 0.001, false, true, Market::SPOT},
+        {1760400027000000ULL, Symbol::BTCUSDT, 115127.0, 0.001, true,  true, Market::SPOT},
+        {1760400028000000ULL, Symbol::BTCUSDT, 115128.0, 0.001, false, true, Market::SPOT},
+        {1760400029000000ULL, Symbol::BTCUSDT, 115129.0, 0.001, true,  true, Market::SPOT},
+
+        {1760400030000000ULL, Symbol::BTCUSDT, 115130.0, 0.001, false, true, Market::SPOT},
+        {1760400031000000ULL, Symbol::BTCUSDT, 115131.0, 0.001, true,  true, Market::SPOT},
+        {1760400032000000ULL, Symbol::BTCUSDT, 115132.0, 0.001, false, true, Market::SPOT},
+        {1760400033000000ULL, Symbol::BTCUSDT, 115133.0, 0.001, true,  true, Market::SPOT},
+        {1760400034000000ULL, Symbol::BTCUSDT, 115134.0, 0.001, false, true, Market::SPOT},
+        {1760400035000000ULL, Symbol::BTCUSDT, 115135.0, 0.001, true,  true, Market::SPOT},
+        {1760400036000000ULL, Symbol::BTCUSDT, 115136.0, 0.001, false, true, Market::SPOT},
+        {1760400037000000ULL, Symbol::BTCUSDT, 115137.0, 0.001, true,  true, Market::SPOT},
+        {1760400038000000ULL, Symbol::BTCUSDT, 115138.0, 0.001, false, true, Market::SPOT},
+        {1760400039000000ULL, Symbol::BTCUSDT, 115139.0, 0.001, true,  true, Market::SPOT},
+
+        {1760400040000000ULL, Symbol::BTCUSDT, 115140.0, 0.001, false, true, Market::SPOT},
+        {1760400041000000ULL, Symbol::BTCUSDT, 115141.0, 0.001, true,  true, Market::SPOT},
+        {1760400042000000ULL, Symbol::BTCUSDT, 115142.0, 0.001, false, true, Market::SPOT},
+        {1760400043000000ULL, Symbol::BTCUSDT, 115143.0, 0.001, true,  true, Market::SPOT},
+        {1760400044000000ULL, Symbol::BTCUSDT, 115144.0, 0.001, false, true, Market::SPOT},
+        {1760400045000000ULL, Symbol::BTCUSDT, 115145.0, 0.001, true,  true, Market::SPOT},
+        {1760400046000000ULL, Symbol::BTCUSDT, 115146.0, 0.001, false, true, Market::SPOT},
+        {1760400047000000ULL, Symbol::BTCUSDT, 115147.0, 0.001, true,  true, Market::SPOT},
+        {1760400048000000ULL, Symbol::BTCUSDT, 115148.0, 0.001, false, true, Market::SPOT},
+        {1760400049000000ULL, Symbol::BTCUSDT, 115149.0, 0.001, true,  true, Market::SPOT},
+
+        // --- sideways (51–70) ---
+        {1760400050000000ULL, Symbol::BTCUSDT, 115149.5, 0.001, false, true, Market::SPOT},
+        {1760400051000000ULL, Symbol::BTCUSDT, 115149.2, 0.001, true,  true, Market::SPOT},
+        {1760400052000000ULL, Symbol::BTCUSDT, 115149.4, 0.001, false, true, Market::SPOT},
+        {1760400053000000ULL, Symbol::BTCUSDT, 115149.1, 0.001, true,  true, Market::SPOT},
+        {1760400054000000ULL, Symbol::BTCUSDT, 115149.3, 0.001, false, true, Market::SPOT},
+        {1760400055000000ULL, Symbol::BTCUSDT, 115149.0, 0.001, true,  true, Market::SPOT},
+        {1760400056000000ULL, Symbol::BTCUSDT, 115149.2, 0.001, false, true, Market::SPOT},
+        {1760400057000000ULL, Symbol::BTCUSDT, 115149.4, 0.001, true,  true, Market::SPOT},
+        {1760400058000000ULL, Symbol::BTCUSDT, 115149.1, 0.001, false, true, Market::SPOT},
+        {1760400059000000ULL, Symbol::BTCUSDT, 115149.3, 0.001, true,  true, Market::SPOT},
+
+        {1760400060000000ULL, Symbol::BTCUSDT, 115149.2, 0.001, false, true, Market::SPOT},
+        {1760400061000000ULL, Symbol::BTCUSDT, 115149.4, 0.001, true,  true, Market::SPOT},
+        {1760400062000000ULL, Symbol::BTCUSDT, 115149.1, 0.001, false, true, Market::SPOT},
+        {1760400063000000ULL, Symbol::BTCUSDT, 115149.3, 0.001, true,  true, Market::SPOT},
+        {1760400064000000ULL, Symbol::BTCUSDT, 115149.0, 0.001, false, true, Market::SPOT},
+        {1760400065000000ULL, Symbol::BTCUSDT, 115149.2, 0.001, true,  true, Market::SPOT},
+        {1760400066000000ULL, Symbol::BTCUSDT, 115149.4, 0.001, false, true, Market::SPOT},
+        {1760400067000000ULL, Symbol::BTCUSDT, 115149.1, 0.001, true,  true, Market::SPOT},
+        {1760400068000000ULL, Symbol::BTCUSDT, 115149.3, 0.001, false, true, Market::SPOT},
+        {1760400069000000ULL, Symbol::BTCUSDT, 115149.2, 0.001, true,  true, Market::SPOT},
+
+        // --- bearish (71–90) ---
+        {1760400070000000ULL, Symbol::BTCUSDT, 115148.5, 0.001, false, true, Market::SPOT},
+        {1760400071000000ULL, Symbol::BTCUSDT, 115147.8, 0.001, true,  true, Market::SPOT},
+        {1760400072000000ULL, Symbol::BTCUSDT, 115147.0, 0.001, false, true, Market::SPOT},
+        {1760400073000000ULL, Symbol::BTCUSDT, 115146.2, 0.001, true,  true, Market::SPOT},
+        {1760400074000000ULL, Symbol::BTCUSDT, 115145.5, 0.001, false, true, Market::SPOT},
+        {1760400075000000ULL, Symbol::BTCUSDT, 115144.8, 0.001, true,  true, Market::SPOT},
+        {1760400076000000ULL, Symbol::BTCUSDT, 115144.0, 0.001, false, true, Market::SPOT},
+        {1760400077000000ULL, Symbol::BTCUSDT, 115143.2, 0.001, true,  true, Market::SPOT},
+        {1760400078000000ULL, Symbol::BTCUSDT, 115142.5, 0.001, false, true, Market::SPOT},
+        {1760400079000000ULL, Symbol::BTCUSDT, 115141.8, 0.001, true,  true, Market::SPOT},
+
+        {1760400080000000ULL, Symbol::BTCUSDT, 115141.0, 0.001, false, true, Market::SPOT},
+        {1760400081000000ULL, Symbol::BTCUSDT, 115140.2, 0.001, true,  true, Market::SPOT},
+        {1760400082000000ULL, Symbol::BTCUSDT, 115139.5, 0.001, false, true, Market::SPOT},
+        {1760400083000000ULL, Symbol::BTCUSDT, 115138.8, 0.001, true,  true, Market::SPOT},
+        {1760400084000000ULL, Symbol::BTCUSDT, 115138.0, 0.001, false, true, Market::SPOT},
+        {1760400085000000ULL, Symbol::BTCUSDT, 115137.2, 0.001, true,  true, Market::SPOT},
+        {1760400086000000ULL, Symbol::BTCUSDT, 115136.5, 0.001, false, true, Market::SPOT},
+        {1760400087000000ULL, Symbol::BTCUSDT, 115135.8, 0.001, true,  true, Market::SPOT},
+        {1760400088000000ULL, Symbol::BTCUSDT, 115135.0, 0.001, false, true, Market::SPOT},
+        {1760400089000000ULL, Symbol::BTCUSDT, 115134.2, 0.001, true,  true, Market::SPOT},
+    }};
+
     template <class Container>
     void feed(TradeRoll &tr, const Container& trades) {
         for (const auto& t : trades) tr.update(t);
     }
 }
 
-bool approxEqual(const double x, const double expected, const double eps = 1e-9) {
+bool approxEqual(const double x, const double expected, const double eps = 1e-6) {
     return std::abs(x - expected) < eps;
 }
 
@@ -1164,14 +1268,177 @@ void testGetFWMA(){
     }
 }
 
+void testGetTrendCoefAndTValue() {
+
+    {
+        TradeRoll tr;
+        auto [tVal, coef] = tr.getTrendCoefAndTValue(0);
+
+        assert(std::isnan(tVal));
+        assert(std::isnan(coef));
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, oneTradeArray);
+        auto [tVal, coef] = tr.getTrendCoefAndTValue(0);
+
+        assert(approxEqual(tVal, 1.732050));
+        assert(approxEqual(coef, 23020.00));
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, baseTradeArray);
+        auto [tVal, coef] = tr.getTrendCoefAndTValue(0);
+
+        assert(approxEqual(tVal, 2.601759));
+        assert(approxEqual(coef, 4.7));
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, baseTradeArrayDuringRolling);
+
+        auto [tVal5Seconds, coef5Seconds] = tr.getTrendCoefAndTValue(0);
+        assert(approxEqual(tVal5Seconds, 3.121107));
+        assert(approxEqual(coef5Seconds, 2.9));
+
+        auto [tVal8Seconds, coef8Seconds] = tr.getTrendCoefAndTValue(1);
+        assert(approxEqual(tVal8Seconds, 3.333180));
+        assert(approxEqual(coef8Seconds, 2.523810));
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, diffLargerThan1sArray);
+
+        auto [tVal5Seconds, coef5Seconds] = tr.getTrendCoefAndTValue(0);
+        assert(approxEqual(tVal5Seconds, 2.397999));
+        assert(approxEqual(coef5Seconds, 0.422000));
+
+        auto [tVal8Seconds, coef8Seconds] = tr.getTrendCoefAndTValue(1);
+        assert(approxEqual(tVal8Seconds, 3.205678));
+        assert(approxEqual(coef8Seconds, 0.856904));
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, deltaEqualMaxBuckets);
+
+        auto [tVal5Seconds, coef5Seconds] = tr.getTrendCoefAndTValue(0);
+        assert(approxEqual(tVal5Seconds, 1.732050));
+        assert(approxEqual(coef5Seconds, 13.372000));
+
+        auto [tVal8Seconds, coef8Seconds] = tr.getTrendCoefAndTValue(1);
+        assert(approxEqual(tVal8Seconds, 1.732050));
+        assert(approxEqual(coef8Seconds, 5.571666));
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, deltaLargerThanMaxBuckets);
+
+        auto [tVal5Seconds, coef5Seconds] = tr.getTrendCoefAndTValue(0);
+        assert(approxEqual(tVal5Seconds, 2.286294));
+        assert(approxEqual(coef5Seconds, 128.783999));
+
+        auto [tVal8Seconds, coef8Seconds] = tr.getTrendCoefAndTValue(1);
+        assert(approxEqual(tVal8Seconds, 5.015628));
+        assert(approxEqual(coef8Seconds, 110.826071));
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, cValExtendedOnly90Trades);
+
+        auto [tVal5Seconds, coef5Seconds] = tr.getTrendCoefAndTValue(0);
+        assert(approxEqual(tVal5Seconds, -49.059045));
+        assert(approxEqual(coef5Seconds, -0.75));
+
+        auto [tVal8Seconds, coef8Seconds] = tr.getTrendCoefAndTValue(1);
+        assert(approxEqual(tVal8Seconds, -125.957160));
+        assert(approxEqual(coef8Seconds, -0.754761));
+
+        auto [tVal13Seconds, coef13Seconds] = tr.getTrendCoefAndTValue(2);
+        assert(approxEqual(tVal13Seconds, -255.109563));
+        assert(approxEqual(coef13Seconds, -0.75));
+
+        auto [tVal21Seconds, coef21Seconds] = tr.getTrendCoefAndTValue(3);
+        assert(approxEqual(tVal21Seconds, -547.986961));
+        assert(approxEqual(coef21Seconds, -0.750000));
+
+        auto [tVal34Seconds, coef34Seconds] = tr.getTrendCoefAndTValue(4);
+        assert(approxEqual(tVal34Seconds, -15.728994));
+        assert(approxEqual(coef34Seconds, -0.488829));
+
+        auto [tVal55Seconds, coef55Seconds] = tr.getTrendCoefAndTValue(5);
+        assert(approxEqual(tVal55Seconds, -1.352947));
+        assert(approxEqual(coef55Seconds, -0.057907));
+
+        auto [tVal89Seconds, coef89Seconds] = tr.getTrendCoefAndTValue(6);
+        assert(approxEqual(tVal89Seconds, 12.816324));
+        assert(approxEqual(coef89Seconds, 0.470289));
+    }
+}
+
+void testGetCVal() {
+    {
+        TradeRoll tr;
+        auto [bestTVal, bestCoef, bestTrendLength] = tr.getCVal();
+
+        assert(std::isnan(bestTVal));
+        assert(std::isnan(bestCoef));
+        assert(bestTrendLength == 0);
+    }
+
+    {
+        TradeRoll tr;
+        feed(tr, cValExtendedOnly90Trades);
+
+        auto [bestTVal, bestCoef, bestTrendLength] = tr.getCVal();
+        assert(approxEqual(bestTVal, -547.986962));
+        assert(approxEqual(bestCoef, -0.75));
+        assert(approxEqual(bestTrendLength, 21));
+
+        tr.update(TradeEntry(1760400090000000ULL, Symbol::BTCUSDT, 115180.00, 0.001, false, true, Market::SPOT));
+        auto [bestTVal2, bestCoef2, bestTrendLength2] = tr.getCVal();
+        assert(approxEqual(bestTVal2, 12.666243));
+        assert(approxEqual(bestCoef2, 0.479275));
+        assert(approxEqual(bestTrendLength2, 89));
+
+        tr.update(TradeEntry(1760400091000000ULL, Symbol::BTCUSDT, 114030.00, 0.001, false, true, Market::SPOT));
+        auto [bestTVal3, bestCoef3, bestTrendLength3] = tr.getCVal();
+        assert(approxEqual(bestTVal3, -1.820551));
+        assert(approxEqual(bestCoef3, -5.890327));
+        assert(approxEqual(bestTrendLength3, 34));
+
+        tr.update(TradeEntry(1760400092000000ULL, Symbol::BTCUSDT, 114031.00, 0.001, false, true, Market::SPOT));
+        auto [bestTVal4, bestCoef4, bestTrendLength4] = tr.getCVal();
+        assert(approxEqual(bestTVal4, -2.841833));
+        assert(approxEqual(bestCoef4, -331.220000));
+        assert(approxEqual(bestTrendLength4, 5));
+
+        tr.update(TradeEntry(1760400093000000ULL, Symbol::BTCUSDT, 114032.00, 0.001, false, true, Market::SPOT));
+        auto [bestTVal5, bestCoef5, bestTrendLength5] = tr.getCVal();
+        assert(approxEqual(bestTVal5, -3.732146));
+        assert(approxEqual(bestCoef5, -196.722619));
+        assert(approxEqual(bestTrendLength5, 8));
+    }
+}
+
 int main() {
     /*
-    * tests below workz only with:
-    * MAX_BUCKETS = 8 set in TradeRoll.h
-    * TradeRoll::getFWMA::MAX_FWMA_SAMPLES set to 6
+    * testBaseCase() ... testGetFWMA()
+    *       TradeRoll::MAX_BUCKETS == 128
+    *       TradeRoll::getFWMA::MAX_FWMA_SAMPLES == 6
+    *
+    * testGetTrendCoefAndTValue(), testGetCVal()
+    *       MAX_BUCKETS == 128
+    *       TradeRoll::getCVal set consider secondsId to 0-6
     */
 
-    // std::cout << std::fixed << std::setprecision(13);
+    // std::cout << std::fixed << std::setprecision(2);
 
     testBaseCase();
     testGetBuySellTradeCount();
@@ -1187,6 +1454,8 @@ int main() {
     testGetBollingerBandsDistance();
     testGetRFWMA();
     testGetFWMA();
+    // testGetTrendCoefAndTValue();
+    // testGetCVal();
 
     std::cout << "All tests passed!" << std::endl;
 

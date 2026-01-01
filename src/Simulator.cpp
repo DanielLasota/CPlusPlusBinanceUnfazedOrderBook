@@ -1,6 +1,6 @@
 #include <chrono>
 #include <iostream>
-#include <windows.h>
+// #include <windows.h>
 #include <pybind11/pybind11.h>
 
 #include "Simulator.h"
@@ -10,7 +10,7 @@
 #include "MetricsStore.h"
 
 py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::string> &features) {
-    SetThreadAffinityMask(GetCurrentThread(), 0x0000FFFF);
+    // SetThreadAffinityMask(GetCurrentThread(), 0x0000FFFF);
 
     std::vector<XEvent> entries = CSVReader::readMultiAssetCSV(csvPath);
     std::vector<XEvent*> ptrEntries;
@@ -20,7 +20,7 @@ py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::s
     GlobalMarketState globalMarketState(features);
     MetricsStore metricsStore(features, countMetricsSize(entries));
 
-    const auto startTs = std::chrono::steady_clock::now();
+    // const auto startTs = std::chrono::steady_clock::now();
 
     for (XEvent* p : ptrEntries) {
         globalMarketState.update(p);
@@ -31,8 +31,8 @@ py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::s
         }
     }
 
-    const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTs).count();
-    std::cout << "elapsed: " << elapsed << " ms" << std::endl;
+    // const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTs).count();
+    // std::cout << "elapsed: " << elapsed << " ms" << std::endl;
 
     std::vector<XEvent>().swap(entries);
     std::vector<XEvent*>().swap(ptrEntries);

@@ -109,6 +109,9 @@ namespace FeatureCalculator {
     double calculateRFWMALogRatio(const TradeRoll &tr, size_t seconds, size_t interval);
     double calculateFWMALogRatio(const TradeRoll &tr, size_t seconds, size_t interval);
 
+    TradeRoll::TValCoef calculateTrendCoefAndTVal(const TradeRoll &tr, size_t secondsId);
+    TradeRoll::CVal calculateCVal(const TradeRoll &tr);
+
     double calculatePriceDistance(const TradeRoll &tr, size_t seconds);
     double calculateLogKylesLambda(const TradeRoll &tr, size_t seconds);
     double calculateDeltaPVT(const TradeRoll &tr, size_t seconds);

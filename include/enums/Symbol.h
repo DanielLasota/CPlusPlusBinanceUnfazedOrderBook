@@ -1,10 +1,9 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <string_view>
-#include <ostream>
-#include <cstdint>
 
 enum class Symbol : uint16_t {
     UNKNOWN,

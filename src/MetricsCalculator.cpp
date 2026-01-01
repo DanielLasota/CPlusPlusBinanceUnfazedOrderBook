@@ -948,6 +948,49 @@ std::optional<MetricsEntry> MetricsCalculator::calc(const MarketState& marketSta
         e.fwmaLogRatio600Seconds10i = FC::calculateFWMALogRatio(marketState.tradeRoll, 600, 10);
     }
 
+    if (mask & trendTVal5Seconds || mask & trendCoef5Seconds) {
+        const auto [tVal, coef] = FC::calculateTrendCoefAndTVal(marketState.tradeRoll, 0);
+        if (mask & trendTVal5Seconds) {e.trendTVal5Seconds = tVal;}
+        if (mask & trendCoef5Seconds) {e.trendCoef5Seconds = coef;}
+    }
+    if (mask & trendTVal8Seconds || mask & trendCoef8Seconds) {
+        const auto [tVal, coef] = FC::calculateTrendCoefAndTVal(marketState.tradeRoll, 1);
+        if (mask & trendTVal8Seconds) {e.trendTVal8Seconds = tVal;}
+        if (mask & trendCoef8Seconds) {e.trendCoef8Seconds = coef;}
+    }
+    if (mask & trendTVal13Seconds || mask & trendCoef13Seconds) {
+        const auto [tVal, coef] = FC::calculateTrendCoefAndTVal(marketState.tradeRoll, 2);
+        if (mask & trendTVal13Seconds) {e.trendTVal13Seconds = tVal;}
+        if (mask & trendCoef13Seconds) {e.trendCoef13Seconds = coef;}
+    }
+    if (mask & trendTVal21Seconds || mask & trendCoef21Seconds) {
+        const auto [tVal, coef] = FC::calculateTrendCoefAndTVal(marketState.tradeRoll, 3);
+        if (mask & trendTVal21Seconds) {e.trendTVal21Seconds = tVal;}
+        if (mask & trendCoef21Seconds) {e.trendCoef21Seconds = coef;}
+    }
+    if (mask & trendTVal89Seconds || mask & trendCoef89Seconds) {
+        const auto [tVal, coef] = FC::calculateTrendCoefAndTVal(marketState.tradeRoll, 6);
+        if (mask & trendTVal89Seconds) {e.trendTVal89Seconds = tVal;}
+        if (mask & trendCoef89Seconds) {e.trendCoef89Seconds = coef;}
+    }
+    if (mask & trendTVal144Seconds || mask & trendCoef144Seconds) {
+        const auto [tVal, coef] = FC::calculateTrendCoefAndTVal(marketState.tradeRoll, 7);
+        if (mask & trendTVal144Seconds) {e.trendTVal144Seconds = tVal;}
+        if (mask & trendCoef144Seconds) {e.trendCoef144Seconds = coef;}
+    }
+    if (mask & trendTVal987Seconds || mask & trendCoef987Seconds) {
+        const auto [tVal, coef] = FC::calculateTrendCoefAndTVal(marketState.tradeRoll, 11);
+        if (mask & trendTVal987Seconds) {e.trendTVal987Seconds = tVal;}
+        if (mask & trendCoef987Seconds) {e.trendCoef987Seconds = coef;}
+    }
+
+    if (mask & cValBestTVal || mask & cValBestCoef || mask & cValBestTrendLength) {
+        const auto [bestTVal, bestCoef, bestTrendLen] = FC::calculateCVal(marketState.tradeRoll);
+        if (mask & cValBestTVal) e.cValBestTVal = bestTVal;
+        if (mask & cValBestCoef) e.cValBestCoef = bestCoef;
+        if (mask & cValBestTrendLength) e.cValBestTrendLength = bestTrendLen;
+    }
+
     if (mask & priceDistance1Seconds) {
         e.priceDistance1Seconds = FC::calculatePriceDistance(marketState.tradeRoll, 1);
     }

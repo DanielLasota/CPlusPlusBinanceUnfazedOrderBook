@@ -77,31 +77,6 @@ size_t TradeRoll::getBucketId(const uint64_t timestampS) {
     return timestampS & MASK;
 }
 
-// void TradeRoll::pprint(const bool skipEmpty) const {
-//     std::cout << "CurrentBucketId: " << currentBucketId << "\n";
-//
-//     const size_t oldestIdx = currentBucketId + 1 & MASK;
-//
-//     for (size_t i = 0; i < MAX_BUCKETS; ++i) {
-//         const size_t idx = (oldestIdx + i) & MASK;
-//         const Bucket& b = buckets[idx];
-//
-//         if (skipEmpty && !b.hasData) continue;
-//
-//         std::cout
-//             << "Bucket[" << idx << "] "
-//             << "start=" << b.startTimeSeconds << "s | "
-//             << " data=" << b.hasData
-//             << " o=" << b.openPrice
-//             << " h=" << b.highestPrice
-//             << " l=" << b.lowestPrice
-//             << " c=" << b.closePrice
-//             << " buyCount=" << b.buyCount
-//             << " sellCount=" << b.sellCount
-//             << "\n";
-//     }
-// }
-
 uint64_t TradeRoll::getLastTradeTimestamp() const {
     return lastTradeTimestampUS;
 }
@@ -350,6 +325,11 @@ TradeRoll::TValCoef TradeRoll::getTrendCoefAndTValue(const size_t secondsId) con
     };
 
     const size_t len_x = _len_x[secondsId];
+
+    if (buckets[currentBucketId - len_x + 1 & MASK].closePrice == 0) {
+        return {std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
+    }
+
     const double inv_len_x = _inv_len_x[secondsId];
     const double mean_x = _mean_x[secondsId];
     const double ssx = _ssx[secondsId];

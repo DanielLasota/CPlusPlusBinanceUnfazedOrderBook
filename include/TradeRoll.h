@@ -53,17 +53,13 @@ public:
     [[nodiscard]] CVal getCVal() const;
     [[nodiscard]] TValCoef getTrendCoefAndTValue(size_t secondsId) const;
 
-    // void pprint(bool skipEmpty = true) const;
-
 private:
     static constexpr uint64_t BUCKET_SIZE_SECONDS = 1;
     static constexpr size_t MAX_BUCKETS = 16384;
     static constexpr size_t MASK = MAX_BUCKETS - 1;
 
-    static_assert(MAX_BUCKETS != 0);
     static_assert((MAX_BUCKETS &MAX_BUCKETS - 1) == 0);
     static_assert((MAX_BUCKETS &MASK) == 0);
-    static_assert(MAX_BUCKETS == 16384);
 
     struct Bucket {
         uint64_t startTimeSeconds = 0;

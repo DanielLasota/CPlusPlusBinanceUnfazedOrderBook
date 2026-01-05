@@ -1283,8 +1283,8 @@ void testGetTrendCoefAndTValue() {
         feed(tr, oneTradeArray);
         auto [tVal, coef] = tr.getTrendCoefAndTValue(0);
 
-        assert(approxEqual(tVal, 1.732050));
-        assert(approxEqual(coef, 23020.00));
+        assert(std::isnan(tVal));
+        assert(std::isnan(coef));
     }
 
     {
@@ -1430,12 +1430,12 @@ void testGetCVal() {
 int main() {
     /*
     * testBaseCase() ... testGetFWMA()
-    *       TradeRoll::MAX_BUCKETS == 128
+    *       TradeRoll::MAX_BUCKETS == 8
     *       TradeRoll::getFWMA::MAX_FWMA_SAMPLES == 6
     *
     * testGetTrendCoefAndTValue(), testGetCVal()
-    *       MAX_BUCKETS == 128
-    *       TradeRoll::getCVal set consider secondsId to 0-6
+    *       MAX_BUCKETS == 8192
+    *       TradeRoll::getCVal set consider secondsId to 0-15 with 0 with 15
     */
 
     // std::cout << std::fixed << std::setprecision(2);

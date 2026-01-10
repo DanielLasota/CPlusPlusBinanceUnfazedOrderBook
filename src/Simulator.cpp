@@ -13,20 +13,21 @@ py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::s
     // SetThreadAffinityMask(GetCurrentThread(), 0x0000FFFF);
 
     std::vector<XEvent> entries = CSVReader::readMultiAssetCSV(csvPath);
-    std::vector<XEvent*> ptrEntries;
-    ptrEntries.reserve(entries.size());
-    for (XEvent &e: entries) { ptrEntries.push_back(&e);}
+    std::vector<XEvent*> pEntries;
+    pEntries.reserve(entries.size());
+    for (XEvent &e: entries) { pEntries.push_back(&e);}
 
-    GlobalMarketState globalMarketState(features);
-    MetricsStore metricsStore(features, countMetricsSize(entries));
+    GlobalMarketState gms(features);
+    MetricsStore store(features, countMetricsSize(entries));
 
     const auto startTs = std::chrono::steady_clock::now();
 
-    for (XEvent* p : ptrEntries) {
-        globalMarketState.update(p);
-        if (std::visit([](auto const& entry){return entry.isLast;}, *p)) {
-            if (std::optional<MetricsEntry> e = globalMarketState.calcMetricsEntry(p)){
-                metricsStore.update(*e);
+    for (auto *p: pEntries) {
+        gms.update(p);
+
+        if (std::visit([](auto const& e) { return e.isLast; }, *p)) {
+            if (std::optional<MetricsEntry> me = gms.calcMetricsEntry(p)) {
+                store.update(*me);
             }
         }
     }
@@ -35,53 +36,51 @@ py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::s
     std::cout << "elapsed: " << elapsed << " ms" << std::endl;
 
     std::vector<XEvent>().swap(entries);
-    std::vector<XEvent*>().swap(ptrEntries);
+    std::vector<XEvent*>().swap(pEntries);
 
     // metricsStore.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
-    return metricsStore.toNp();
+    return store.toNp();
 }
 
 py::dict Simulator::backtest(const std::string& csvPath, const std::vector<std::string> &features, const pybind11::object &callback) {
 
     std::vector<XEvent> entries = CSVReader::readMultiAssetCSV(csvPath);
-    std::vector<XEvent*> ptrEntries;
+    std::vector<XEvent*> pEntries;
+    pEntries.reserve(entries.size());
+    for (auto &e : entries) { pEntries.push_back(&e); }
 
-    ptrEntries.reserve(entries.size());
-    for (auto &entry : entries) { ptrEntries.push_back(&entry); }
-    const size_t metricsSize = countMetricsSize(entries);
+    GlobalMarketState gms(features);
+    MetricsStore store(features, countMetricsSize(entries));
 
-    GlobalMarketState globalMarketState(features);
-    MetricsStore metricsStore(features, metricsSize);
+    for (auto *p: pEntries) {
+        gms.update(p);
 
-    for (auto* p : ptrEntries) {
-        globalMarketState.update(p);
-
-        if (std::visit([](auto const& entry){return entry.isLast;}, *p)) {
-            if (std::optional<MetricsEntry> e = globalMarketState.calcMetricsEntry(p)) {
-                metricsStore.update(*e);
-                callback(*e );
+        if (std::visit([](auto const& entry){ return entry.isLast; }, *p)) {
+            if (std::optional<MetricsEntry> me = gms.calcMetricsEntry(p)) {
+                store.update(*me);
+                callback(*me );
             }
         }
     }
 
     std::vector<XEvent>().swap(entries);
-    std::vector<XEvent*>().swap(ptrEntries);
+    std::vector<XEvent*>().swap(pEntries);
 
-    return metricsStore.toNp();
+    return store.toNp();
 }
 
 OrderBook Simulator::computeFinalOB(const std::string &csvPath) {
     try {
         std::vector<XEvent> entries = CSVReader::readSingleAssetCSV(csvPath);
-        std::vector<XEvent*> ptrEntries;
-        ptrEntries.reserve(entries.size());
-        MarketState marketState;
+        std::vector<XEvent*> pEntries;
+        pEntries.reserve(entries.size());
+        MarketState ms;
 
-        for (auto &entry : entries) { ptrEntries.push_back(&entry); }
+        for (auto &entry : entries) { pEntries.push_back(&entry); }
 
-        for (auto* entryPtr: ptrEntries) { marketState.update(entryPtr); }
+        for (auto* entryPtr: pEntries) { ms.update(entryPtr); }
 
-        return std::move(marketState.orderBook);
+        return std::move(ms.ob);
 
     } catch (const std::exception &e) {
         std::cerr << "Exception: " << e.what() << std::endl;

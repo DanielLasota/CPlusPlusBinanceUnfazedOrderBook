@@ -1,13 +1,13 @@
 #pragma once
 
+#include <array>
 #include <bitset>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
-#include <array>
 #include <unordered_map>
 #include <vector>
-#include <stdexcept>
-#include <sstream>
 
 enum : size_t {
     #define METRIC(name, ctype) METRIC_INDEX_##name,

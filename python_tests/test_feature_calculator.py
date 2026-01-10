@@ -8,7 +8,7 @@ from cpp_binance_orderbook import (
     feature_calculator as fc
 )
 
-class TestSingleVariableCounter:
+class TestFeatureCalculator:
 
     @staticmethod
     def get_sample_order_book(
@@ -105,7 +105,7 @@ class TestSingleVariableCounter:
             price_hash=3,
             quantity_hash=2.1799
         )
-        assert fc.calculate_best_ask_price(market_state.order_book) == 5.1
+        assert fc.calculate_best_ask_price(market_state.ob) == 5.1
 
     def test_calculate_best_bid_price(self):
         market_state = self.get_sample_order_book(
@@ -114,7 +114,7 @@ class TestSingleVariableCounter:
             price_hash=3,
             quantity_hash=2.1799
         )
-        assert fc.calculate_best_bid_price(market_state.order_book) == 5.0
+        assert fc.calculate_best_bid_price(market_state.ob) == 5.0
 
     def test_calculate_mid_price(self):
         market_state = self.get_sample_order_book(
@@ -123,7 +123,7 @@ class TestSingleVariableCounter:
             price_hash=3,
             quantity_hash=2.1799
         )
-        assert fc.calculate_mid_price(market_state.order_book) == 5.05
+        assert fc.calculate_mid_price(market_state.ob) == 5.05
 
 
     def test_calculate_best_volume_imbalance(self):
@@ -134,7 +134,7 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
         # (10.1799 - 3.1799)/(10.1799 + 3.1799) = 0.53846153846 ~= 0.54
-        assert fc.calculate_best_volume_imbalance(market_state.order_book) == 0.5239599395200527
+        assert fc.calculate_best_volume_imbalance(market_state.ob) == 0.5239599395200527
 
     def test_best_n_price_levels_volume_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -145,13 +145,13 @@ class TestSingleVariableCounter:
         )
 
         # 19.3598 - 7.3598 / 19.3598 + 7.3598 = 12 / 26.7196 ~= 0.45
-        assert fc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 2) == 0.4491085195886166
+        assert fc.calculate_best_n_price_levels_volume_imbalance(market_state.ob, 2) == 0.4491085195886166
 
         # 29.5397 - 11.5397 / 29.5397 + 11.5397 = 18 / 41.0794 ~= 0.44
-        assert fc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 3) == 0.43817582535285327
+        assert fc.calculate_best_n_price_levels_volume_imbalance(market_state.ob, 3) == 0.43817582535285327
 
         # 45.8995 - 19.8995 / 45.8995 + 19.8995 = 26 / 65.7990 ~= 0.40
-        assert fc.calculate_best_n_price_levels_volume_imbalance(market_state.order_book, 5) == 0.39514278332497454
+        assert fc.calculate_best_n_price_levels_volume_imbalance(market_state.ob, 5) == 0.39514278332497454
 
     def test_calculate_volume_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -161,7 +161,7 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
         # (50.0794 - 19.8995) / (50.0794 + 19.8995)
-        assert fc.calculate_volume_imbalance(market_state.order_book) == 0.43127142610129626
+        assert fc.calculate_volume_imbalance(market_state.ob) == 0.43127142610129626
 
     def test_calculate_queue_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -171,7 +171,7 @@ class TestSingleVariableCounter:
             quantity_hash=2.1799
         )
         # (6-5)/(6+5) = 1/11 ~= 0.09
-        assert fc.calculate_queue_imbalance(market_state.order_book) == 0.09090909090909091
+        assert fc.calculate_queue_imbalance(market_state.ob) == 0.09090909090909091
 
     def test_calculate_gap(self):
         market_state = self.get_sample_order_book(
@@ -182,7 +182,7 @@ class TestSingleVariableCounter:
         )
         # (second_bid + second_ask) - (best_bid + best_ask)
         # = (4.5 + 5.3) - (5.0 + 5.1) = 9.8 - 10.1 = -0.3
-        assert fc.calculate_gap(market_state.order_book) == -0.2999999999999998
+        assert fc.calculate_gap(market_state.ob) == -0.2999999999999998
 
     def test_calculate_is_aggressor_ask(self):
         t = TradeEntry()
@@ -209,7 +209,7 @@ class TestSingleVariableCounter:
         # = 213.00052
 
         # Razem: 117.59609 + 213.00052 = 330.59661
-        assert fc.calculate_vwap_deviation(market_state.order_book) == -0.06450836970108521
+        assert fc.calculate_vwap_deviation(market_state.ob) == -0.06450836970108521
 
     def test_calculate_simplified_slope_imbalance(self):
         market_state = self.get_sample_order_book(
@@ -223,7 +223,7 @@ class TestSingleVariableCounter:
         # bestFiveAsksQuantityCumulativeSum / (bestFifthAskPrice - midPrice);
         # (bidSlope - askSlope) / (bidSlope + askSlope)
         # 43.7138 - 9.7076 / 43.7138 + 9.7076 = 34.0062 / 53.4214 ~= 0.64
-        assert fc.calculate_simplified_slope_imbalance(market_state.order_book) == 0.6365813262114586
+        assert fc.calculate_simplified_slope_imbalance(market_state.ob) == 0.6365813262114586
 
 
     def test_calculate_trade_count_imbalance_n_seconds(self):

@@ -15,7 +15,7 @@ public:
 
     explicit GlobalMarketState(const std::vector<std::string>& variables);
 
-    void update(XEvent* entry);
+    void update(XEvent* e);
 
     std::optional<MetricsEntry> calcMetricsEntry(const XEvent* e);
 

@@ -14,7 +14,7 @@ public:
     explicit MetricsCalculator(const std::vector<std::string>& variables)
         : MetricsCalculator(parseMask(variables)) {}
 
-    [[nodiscard]] std::optional<MetricsEntry> calc(const MarketState& marketState) const;
+    [[nodiscard]] std::optional<MetricsEntry> calc(const MarketState& ms) const;
 
 private:
     MetricMask mask;

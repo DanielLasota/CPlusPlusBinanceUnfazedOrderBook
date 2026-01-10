@@ -97,8 +97,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
     py::class_<MS>(m, "MarketState")
         .def(py::init<>())
         .def_readonly(
-            "order_book",
-            &MS::orderBook,
+            "ob",
+            &MS::ob,
             py::return_value_policy::reference_internal
         )
         .def_readonly(
@@ -145,7 +145,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             &MS::getLastTimestampOfReceive
         )
         .def("print",
-             [](MS& self) { self.orderBook.print(); }
+             [](MS& self) { self.ob.print(); }
         )
         .def_property_readonly(
             "symbol",

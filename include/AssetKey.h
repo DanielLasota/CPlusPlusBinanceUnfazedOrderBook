@@ -2,9 +2,9 @@
 
 #include <variant>
 #include "enums/DifferenceDepthEntry.h"
-#include "enums/TradeEntry.h"
-#include "enums/Symbol.h"
 #include "enums/Market.h"
+#include "enums/Symbol.h"
+#include "enums/TradeEntry.h"
 
 using XEvent = std::variant<DifferenceDepthEntry, TradeEntry>;
 

@@ -1,13 +1,13 @@
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <memory>
-#include <functional>
-#include <unordered_set>
 #include <string_view>
 #include <type_traits>
+#include <unordered_set>
 #include <vector>
-#include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
 
 #include "MetricsStore.h"
 

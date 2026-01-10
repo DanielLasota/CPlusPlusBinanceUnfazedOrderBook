@@ -44,8 +44,8 @@ class TestMarketState:
                 e.is_ask              = False
                 ms.update(e)
 
-            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 2),
@@ -96,8 +96,8 @@ class TestMarketState:
                 e.is_ask              = False
                 ms.update(e)
 
-            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 2),
@@ -118,8 +118,8 @@ class TestMarketState:
 
             ### end of ms preparation
 
-            original_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            original_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            original_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            original_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             for i, (price, qty) in enumerate(original_asks, start=1):
                 e = DifferenceDepthEntry()
@@ -136,8 +136,8 @@ class TestMarketState:
                 e.is_ask               = False
                 ms.update(e)
 
-            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             # 4) ręcznie zdefiniuj oczekiwane wartości:
             #    - wszystkie asks: qty wzrosło o 1
@@ -192,8 +192,8 @@ class TestMarketState:
                 e.is_ask              = False
                 ms.update(e)
 
-            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 2),
@@ -214,11 +214,11 @@ class TestMarketState:
 
             ### end of ms preparation
 
-            original_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            original_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            original_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            original_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
-            best_ask, best_bid = ms.order_book.asks()[0], ms.order_book.bids()[0]
-            third_best_ask, third_best_bid = ms.order_book.asks()[2], ms.order_book.bids()[2]
+            best_ask, best_bid = ms.ob.asks()[0], ms.ob.bids()[0]
+            third_best_ask, third_best_bid = ms.ob.asks()[2], ms.ob.bids()[2]
 
             for old_order in [best_ask, best_bid, third_best_ask, third_best_bid]:
                 new_order = DifferenceDepthEntry()
@@ -228,8 +228,8 @@ class TestMarketState:
                 new_order.is_ask = old_order.is_ask
                 ms.update(new_order)
 
-            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             # ręcznie wypisujemy, co powinno zostać
             expected_asks = [
@@ -278,8 +278,8 @@ class TestMarketState:
                 e.is_ask              = False
                 ms.update(e)
 
-            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 2),
@@ -345,8 +345,8 @@ class TestMarketState:
                 e.is_ask              = False
                 ms.update(e)
 
-            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 2),
@@ -426,8 +426,8 @@ class TestMarketState:
                 ms.update(e)
                 assert ms.last_timestamp_of_receive == e.timestamp_of_receive
 
-            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 2),
@@ -500,8 +500,8 @@ class TestMarketState:
             ]:
                 ms.update_orderbook(timestamp_of_receive, price, qty, False)
 
-            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            actual_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            actual_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 2),
@@ -542,8 +542,8 @@ class TestMarketState:
             ]:
                 ms.update_orderbook(timestamp_of_receive, price, qty, False)
 
-            original_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            original_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            original_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            original_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             # update existing levels
             for i, (price, qty) in enumerate(original_asks, start=1):
@@ -551,8 +551,8 @@ class TestMarketState:
             for i, (price, qty) in enumerate(original_bids, start=1):
                 ms.update_orderbook(200 + i, price, max(qty - 1, 0), False)
 
-            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (10.0, 3),
@@ -592,15 +592,15 @@ class TestMarketState:
             ]:
                 ms.update_orderbook(timestamp_of_receive, price, qty, False)
 
-            best_ask, best_bid = ms.order_book.asks()[0], ms.order_book.bids()[0]
-            third_best_ask, third_best_bid = ms.order_book.asks()[2], ms.order_book.bids()[2]
+            best_ask, best_bid = ms.ob.asks()[0], ms.ob.bids()[0]
+            third_best_ask, third_best_bid = ms.ob.asks()[2], ms.ob.bids()[2]
 
             # remove some levels by zero quantity
             for old in [best_ask, best_bid, third_best_ask, third_best_bid]:
                 ms.update_orderbook(11, old.price, 0, old.is_ask)
 
-            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.order_book.asks()]
-            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.order_book.bids()]
+            post_update_asks = [(lvl.price, lvl.quantity) for lvl in ms.ob.asks()]
+            post_update_bids = [(lvl.price, lvl.quantity) for lvl in ms.ob.bids()]
 
             expected_asks = [
                 (11.0, 1),

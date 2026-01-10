@@ -33,7 +33,7 @@ public:
 
     void update(DifferenceDepthEntry* entryPtr);
 
-    void printOrderBook() const;
+    void print() const;
 
     int askCount() const { return askCount_; }
     int bidCount() const { return bidCount_; }

@@ -244,7 +244,7 @@ void OrderBook::update(DifferenceDepthEntry* e) {
     }
 }
 
-void OrderBook::printOrderBook() const {
+void OrderBook::print() const {
     // std::cout << std::fixed << std::setprecision(5);
     std::cout << "ORDERBOOK:\n";
     std::cout << "  Asks (lowest→highest):\n";

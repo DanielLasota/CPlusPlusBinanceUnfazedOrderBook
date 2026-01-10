@@ -29,6 +29,6 @@ public:
 
 private:
     MetricMask mask;
-    MetricsCalculator calculator;
+    MetricsCalculator metricsCalculator;
     std::unordered_map<AssetKey, MarketState, AssetKeyHash> marketStates;
 };

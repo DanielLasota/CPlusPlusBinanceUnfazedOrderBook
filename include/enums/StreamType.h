@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
 enum class StreamType {
     UNKNOWN,

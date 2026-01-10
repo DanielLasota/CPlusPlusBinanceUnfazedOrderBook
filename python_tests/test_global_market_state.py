@@ -110,72 +110,72 @@ class TestGlobalMarketState:
             ms_adausdt = gms.get_market_state(Symbol.ADAUSDT, Market.COIN_M_FUTURES)
             ms_dogeusdt = gms.get_market_state(Symbol.DOGEUSDT, Market.USD_M_FUTURES)
 
-            actual_trxusdt = [*reversed(ms_trxusdt.order_book.asks()), *ms_trxusdt.order_book.bids()]
+            actual_trxusdt = [*reversed(ms_trxusdt.ob.asks()), *ms_trxusdt.ob.bids()]
             expected_trxusdt = sorted(sample_trxusdt_spot_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_trxusdt, expected_trxusdt):
                 assert a.to_list() == e.to_list()
             del sample_trxusdt_spot_order_list
-            assert ms_trxusdt.order_book.ask_count() == 5
-            assert ms_trxusdt.order_book.bid_count() == 5
-            assert ms_trxusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 1])
-            assert ms_trxusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 0])
-            assert ms_trxusdt.order_book.best_ask_price() == 12.34589
-            assert ms_trxusdt.order_book.best_bid_price() == 12.24589
-            assert ms_trxusdt.order_book.best_ask_quantity() == 1.0
-            assert ms_trxusdt.order_book.best_bid_quantity() == 3.0
-            assert ms_trxusdt.order_book.second_ask_price() == 12.54589
-            assert ms_trxusdt.order_book.second_bid_price() == 11.74589
+            assert ms_trxusdt.ob.ask_count() == 5
+            assert ms_trxusdt.ob.bid_count() == 5
+            assert ms_trxusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 1])
+            assert ms_trxusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 0])
+            assert ms_trxusdt.ob.best_ask_price() == 12.34589
+            assert ms_trxusdt.ob.best_bid_price() == 12.24589
+            assert ms_trxusdt.ob.best_ask_quantity() == 1.0
+            assert ms_trxusdt.ob.best_bid_quantity() == 3.0
+            assert ms_trxusdt.ob.second_ask_price() == 12.54589
+            assert ms_trxusdt.ob.second_bid_price() == 11.74589
             assert ms_trxusdt.last_timestamp_of_receive == 10.0
 
-            actual_btcusdt = [*reversed(ms_btcusdt.order_book.asks()), *ms_btcusdt.order_book.bids()]
+            actual_btcusdt = [*reversed(ms_btcusdt.ob.asks()), *ms_btcusdt.ob.bids()]
             expected_btcusdt = sorted(sample_btcusdt_usd_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_btcusdt, expected_btcusdt):
                 assert a.to_list() == e.to_list()
             del sample_btcusdt_usd_m_futures_order_list
-            assert ms_btcusdt.order_book.ask_count() == 5
-            assert ms_btcusdt.order_book.bid_count() == 5
-            assert ms_btcusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 1])
-            assert ms_btcusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 0])
-            assert ms_btcusdt.order_book.best_ask_price() == 22.1
-            assert ms_btcusdt.order_book.best_bid_price() == 22.0
-            assert ms_btcusdt.order_book.best_ask_quantity() == 11.0
-            assert ms_btcusdt.order_book.best_bid_quantity() == 13.0
-            assert ms_btcusdt.order_book.second_ask_price() == 22.3
-            assert ms_btcusdt.order_book.second_bid_price() == 21.5
+            assert ms_btcusdt.ob.ask_count() == 5
+            assert ms_btcusdt.ob.bid_count() == 5
+            assert ms_btcusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 1])
+            assert ms_btcusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 0])
+            assert ms_btcusdt.ob.best_ask_price() == 22.1
+            assert ms_btcusdt.ob.best_bid_price() == 22.0
+            assert ms_btcusdt.ob.best_ask_quantity() == 11.0
+            assert ms_btcusdt.ob.best_bid_quantity() == 13.0
+            assert ms_btcusdt.ob.second_ask_price() == 22.3
+            assert ms_btcusdt.ob.second_bid_price() == 21.5
             assert ms_btcusdt.last_timestamp_of_receive == 10.0
 
-            actual_adausdt = [*reversed(ms_adausdt.order_book.asks()), *ms_adausdt.order_book.bids()]
+            actual_adausdt = [*reversed(ms_adausdt.ob.asks()), *ms_adausdt.ob.bids()]
             expected_adausdt = sorted(sample_adausdt_usd_coin_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_adausdt, expected_adausdt):
                 assert a.to_list() == e.to_list()
             del sample_adausdt_usd_coin_m_futures_order_list
-            assert ms_adausdt.order_book.ask_count() == 5
-            assert ms_adausdt.order_book.bid_count() == 5
-            assert ms_adausdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 1])
-            assert ms_adausdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 0])
-            assert ms_adausdt.order_book.best_ask_price() == 32.1
-            assert ms_adausdt.order_book.best_bid_price() == 32.0
-            assert ms_adausdt.order_book.best_ask_quantity() == 21.0
-            assert ms_adausdt.order_book.best_bid_quantity() == 23.0
-            assert ms_adausdt.order_book.second_ask_price() == 32.3
-            assert ms_adausdt.order_book.second_bid_price() == 31.5
+            assert ms_adausdt.ob.ask_count() == 5
+            assert ms_adausdt.ob.bid_count() == 5
+            assert ms_adausdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 1])
+            assert ms_adausdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 0])
+            assert ms_adausdt.ob.best_ask_price() == 32.1
+            assert ms_adausdt.ob.best_bid_price() == 32.0
+            assert ms_adausdt.ob.best_ask_quantity() == 21.0
+            assert ms_adausdt.ob.best_bid_quantity() == 23.0
+            assert ms_adausdt.ob.second_ask_price() == 32.3
+            assert ms_adausdt.ob.second_bid_price() == 31.5
             assert ms_adausdt.last_timestamp_of_receive == 10.0
 
-            actual_dogeusdt = [*reversed(ms_dogeusdt.order_book.asks()), *ms_dogeusdt.order_book.bids()]
+            actual_dogeusdt = [*reversed(ms_dogeusdt.ob.asks()), *ms_dogeusdt.ob.bids()]
             expected_dogeusdt = sorted(sample_dogeusdt_usd_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_dogeusdt, expected_dogeusdt):
                 assert a.to_list() == e.to_list()
             del sample_dogeusdt_usd_m_futures_order_list
-            assert ms_dogeusdt.order_book.ask_count() == 5
-            assert ms_dogeusdt.order_book.bid_count() == 5
-            assert ms_dogeusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 1])
-            assert ms_dogeusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 0])
-            assert ms_dogeusdt.order_book.best_ask_price() == 42.1
-            assert ms_dogeusdt.order_book.best_bid_price() == 42.0
-            assert ms_dogeusdt.order_book.best_ask_quantity() == 31.0
-            assert ms_dogeusdt.order_book.best_bid_quantity() == 33.0
-            assert ms_dogeusdt.order_book.second_ask_price() == 42.3
-            assert ms_dogeusdt.order_book.second_bid_price() == 41.5
+            assert ms_dogeusdt.ob.ask_count() == 5
+            assert ms_dogeusdt.ob.bid_count() == 5
+            assert ms_dogeusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 1])
+            assert ms_dogeusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 0])
+            assert ms_dogeusdt.ob.best_ask_price() == 42.1
+            assert ms_dogeusdt.ob.best_bid_price() == 42.0
+            assert ms_dogeusdt.ob.best_ask_quantity() == 31.0
+            assert ms_dogeusdt.ob.best_bid_quantity() == 33.0
+            assert ms_dogeusdt.ob.second_ask_price() == 42.3
+            assert ms_dogeusdt.ob.second_bid_price() == 41.5
             assert ms_dogeusdt.last_timestamp_of_receive == 10.0
 
             assert gms.get_market_state_count() == 4
@@ -282,21 +282,21 @@ class TestGlobalMarketState:
                 sample_trxusdt_spot_order_list.remove(to_remove)
             sample_trxusdt_spot_order_list.append(new_bid_trxusdt)
 
-            actual_trxusdt = [*reversed(ms_trxusdt.order_book.asks()), *ms_trxusdt.order_book.bids()]
+            actual_trxusdt = [*reversed(ms_trxusdt.ob.asks()), *ms_trxusdt.ob.bids()]
             expected_trxusdt = sorted(sample_trxusdt_spot_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_trxusdt, expected_trxusdt):
                 assert a.to_list() == e.to_list()
             del sample_trxusdt_spot_order_list
-            assert ms_trxusdt.order_book.ask_count() == 5
-            assert ms_trxusdt.order_book.bid_count() == 5
-            assert ms_trxusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 1])
-            assert ms_trxusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 0])
-            assert ms_trxusdt.order_book.best_ask_price() == 12.34589
-            assert ms_trxusdt.order_book.best_bid_price() == 12.24589
-            assert ms_trxusdt.order_book.best_ask_quantity() == 1.0
-            assert ms_trxusdt.order_book.best_bid_quantity() == 3.0
-            assert ms_trxusdt.order_book.second_ask_price() == 12.54589
-            assert ms_trxusdt.order_book.second_bid_price() == 11.74589
+            assert ms_trxusdt.ob.ask_count() == 5
+            assert ms_trxusdt.ob.bid_count() == 5
+            assert ms_trxusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 1])
+            assert ms_trxusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 0])
+            assert ms_trxusdt.ob.best_ask_price() == 12.34589
+            assert ms_trxusdt.ob.best_bid_price() == 12.24589
+            assert ms_trxusdt.ob.best_ask_quantity() == 1.0
+            assert ms_trxusdt.ob.best_bid_quantity() == 3.0
+            assert ms_trxusdt.ob.second_ask_price() == 12.54589
+            assert ms_trxusdt.ob.second_bid_price() == 11.74589
             assert ms_trxusdt.last_timestamp_of_receive == 22
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -343,21 +343,21 @@ class TestGlobalMarketState:
                 sample_btcusdt_usd_m_futures_order_list.remove(to_remove)
             sample_btcusdt_usd_m_futures_order_list.append(new_bid_btcusdt)
 
-            actual_btcusdt = [*reversed(ms_btcusdt.order_book.asks()), *ms_btcusdt.order_book.bids()]
+            actual_btcusdt = [*reversed(ms_btcusdt.ob.asks()), *ms_btcusdt.ob.bids()]
             expected_btcusdt = sorted(sample_btcusdt_usd_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_btcusdt, expected_btcusdt):
                 assert a.to_list() == e.to_list()
             del sample_btcusdt_usd_m_futures_order_list
-            assert ms_btcusdt.order_book.ask_count() == 5
-            assert ms_btcusdt.order_book.bid_count() == 5
-            assert ms_btcusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 1])
-            assert ms_btcusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 0])
-            assert ms_btcusdt.order_book.best_ask_price() == 22.1
-            assert ms_btcusdt.order_book.best_bid_price() == 22.0
-            assert ms_btcusdt.order_book.best_ask_quantity() == 11.0
-            assert ms_btcusdt.order_book.best_bid_quantity() == 1.0
-            assert ms_btcusdt.order_book.second_ask_price() == 22.3
-            assert ms_btcusdt.order_book.second_bid_price() == 21.5
+            assert ms_btcusdt.ob.ask_count() == 5
+            assert ms_btcusdt.ob.bid_count() == 5
+            assert ms_btcusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 1])
+            assert ms_btcusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 0])
+            assert ms_btcusdt.ob.best_ask_price() == 22.1
+            assert ms_btcusdt.ob.best_bid_price() == 22.0
+            assert ms_btcusdt.ob.best_ask_quantity() == 11.0
+            assert ms_btcusdt.ob.best_bid_quantity() == 1.0
+            assert ms_btcusdt.ob.second_ask_price() == 22.3
+            assert ms_btcusdt.ob.second_bid_price() == 21.5
             assert ms_btcusdt.last_timestamp_of_receive == 24
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -404,21 +404,21 @@ class TestGlobalMarketState:
                 sample_adausdt_usd_coin_m_futures_order_list.remove(to_remove)
             sample_adausdt_usd_coin_m_futures_order_list.append(new_bid_adausdt)
 
-            actual_adausdt = [*reversed(ms_adausdt.order_book.asks()), *ms_adausdt.order_book.bids()]
+            actual_adausdt = [*reversed(ms_adausdt.ob.asks()), *ms_adausdt.ob.bids()]
             expected_adausdt = sorted(sample_adausdt_usd_coin_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_adausdt, expected_adausdt):
                 assert a.to_list() == e.to_list()
             del sample_adausdt_usd_coin_m_futures_order_list
-            assert ms_adausdt.order_book.ask_count() == 5
-            assert ms_adausdt.order_book.bid_count() == 5
-            assert ms_adausdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 1])
-            assert ms_adausdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 0])
-            assert ms_adausdt.order_book.best_ask_price() == 32.1
-            assert ms_adausdt.order_book.best_bid_price() == 32.0
-            assert ms_adausdt.order_book.best_ask_quantity() == 21.0
-            assert ms_adausdt.order_book.best_bid_quantity() == 23.0
-            assert ms_adausdt.order_book.second_ask_price() == 32.3
-            assert ms_adausdt.order_book.second_bid_price() == 31.5
+            assert ms_adausdt.ob.ask_count() == 5
+            assert ms_adausdt.ob.bid_count() == 5
+            assert ms_adausdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 1])
+            assert ms_adausdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 0])
+            assert ms_adausdt.ob.best_ask_price() == 32.1
+            assert ms_adausdt.ob.best_bid_price() == 32.0
+            assert ms_adausdt.ob.best_ask_quantity() == 21.0
+            assert ms_adausdt.ob.best_bid_quantity() == 23.0
+            assert ms_adausdt.ob.second_ask_price() == 32.3
+            assert ms_adausdt.ob.second_bid_price() == 31.5
             assert ms_adausdt.last_timestamp_of_receive == 26
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -465,21 +465,21 @@ class TestGlobalMarketState:
                 sample_dogeusdt_usd_m_futures_order_list.remove(to_remove)
             sample_dogeusdt_usd_m_futures_order_list.append(new_bid_dogeusdt)
 
-            actual_dogeusdt = [*reversed(ms_dogeusdt.order_book.asks()), *ms_dogeusdt.order_book.bids()]
+            actual_dogeusdt = [*reversed(ms_dogeusdt.ob.asks()), *ms_dogeusdt.ob.bids()]
             expected_dogeusdt = sorted(sample_dogeusdt_usd_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_dogeusdt, expected_dogeusdt):
                 assert a.to_list() == e.to_list()
             del sample_dogeusdt_usd_m_futures_order_list
-            assert ms_dogeusdt.order_book.ask_count() == 5
-            assert ms_dogeusdt.order_book.bid_count() == 5
-            assert ms_dogeusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 1])
-            assert ms_dogeusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 0])
-            assert ms_dogeusdt.order_book.best_ask_price() == 42.1
-            assert ms_dogeusdt.order_book.best_bid_price() == 42.0
-            assert ms_dogeusdt.order_book.best_ask_quantity() == 3.0
-            assert ms_dogeusdt.order_book.best_bid_quantity() == 1.0
-            assert ms_dogeusdt.order_book.second_ask_price() == 42.3
-            assert ms_dogeusdt.order_book.second_bid_price() == 41.5
+            assert ms_dogeusdt.ob.ask_count() == 5
+            assert ms_dogeusdt.ob.bid_count() == 5
+            assert ms_dogeusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 1])
+            assert ms_dogeusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 0])
+            assert ms_dogeusdt.ob.best_ask_price() == 42.1
+            assert ms_dogeusdt.ob.best_bid_price() == 42.0
+            assert ms_dogeusdt.ob.best_ask_quantity() == 3.0
+            assert ms_dogeusdt.ob.best_bid_quantity() == 1.0
+            assert ms_dogeusdt.ob.second_ask_price() == 42.3
+            assert ms_dogeusdt.ob.second_bid_price() == 41.5
             assert ms_dogeusdt.last_timestamp_of_receive == 28
 
             assert gms.get_market_state_count() == 4
@@ -584,21 +584,21 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_trxusdt_spot_order_list.remove(to_remove)
 
-            actual_trxusdt = [*reversed(ms_trxusdt.order_book.asks()), *ms_trxusdt.order_book.bids()]
+            actual_trxusdt = [*reversed(ms_trxusdt.ob.asks()), *ms_trxusdt.ob.bids()]
             expected_trxusdt = sorted(sample_trxusdt_spot_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_trxusdt, expected_trxusdt):
                 assert a.to_list() == e.to_list()
             del sample_trxusdt_spot_order_list
-            assert ms_trxusdt.order_book.ask_count() == 4
-            assert ms_trxusdt.order_book.bid_count() == 4
-            assert ms_trxusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 1])
-            assert ms_trxusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 0])
-            assert ms_trxusdt.order_book.best_ask_price() == 12.34589
-            assert ms_trxusdt.order_book.best_bid_price() == 12.24589
-            assert ms_trxusdt.order_book.best_ask_quantity() == 1.0
-            assert ms_trxusdt.order_book.best_bid_quantity() == 3.0
-            assert ms_trxusdt.order_book.second_ask_price() == 12.74589
-            assert ms_trxusdt.order_book.second_bid_price() == 11.74589
+            assert ms_trxusdt.ob.ask_count() == 4
+            assert ms_trxusdt.ob.bid_count() == 4
+            assert ms_trxusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 1])
+            assert ms_trxusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_trxusdt if x.is_ask == 0])
+            assert ms_trxusdt.ob.best_ask_price() == 12.34589
+            assert ms_trxusdt.ob.best_bid_price() == 12.24589
+            assert ms_trxusdt.ob.best_ask_quantity() == 1.0
+            assert ms_trxusdt.ob.best_bid_quantity() == 3.0
+            assert ms_trxusdt.ob.second_ask_price() == 12.74589
+            assert ms_trxusdt.ob.second_bid_price() == 11.74589
             assert ms_trxusdt.last_timestamp_of_receive == 22
 
             # -------------------------------------------------------- #
@@ -642,21 +642,21 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_btcusdt_usd_m_futures_order_list.remove(to_remove)
 
-            actual_btcusdt = [*reversed(ms_btcusdt.order_book.asks()), *ms_btcusdt.order_book.bids()]
+            actual_btcusdt = [*reversed(ms_btcusdt.ob.asks()), *ms_btcusdt.ob.bids()]
             expected_btcusdt = sorted(sample_btcusdt_usd_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_btcusdt, expected_btcusdt):
                 assert a.to_list() == e.to_list()
             del sample_btcusdt_usd_m_futures_order_list
-            assert ms_btcusdt.order_book.ask_count() == 4
-            assert ms_btcusdt.order_book.bid_count() == 4
-            assert ms_btcusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 1])
-            assert ms_btcusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 0])
-            assert ms_btcusdt.order_book.best_ask_price() == 22.1
-            assert ms_btcusdt.order_book.best_bid_price() == 21.5
-            assert ms_btcusdt.order_book.best_ask_quantity() == 11.0
-            assert ms_btcusdt.order_book.best_bid_quantity() == 17.0
-            assert ms_btcusdt.order_book.second_ask_price() == 22.5
-            assert ms_btcusdt.order_book.second_bid_price() == 21.1
+            assert ms_btcusdt.ob.ask_count() == 4
+            assert ms_btcusdt.ob.bid_count() == 4
+            assert ms_btcusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 1])
+            assert ms_btcusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_btcusdt if x.is_ask == 0])
+            assert ms_btcusdt.ob.best_ask_price() == 22.1
+            assert ms_btcusdt.ob.best_bid_price() == 21.5
+            assert ms_btcusdt.ob.best_ask_quantity() == 11.0
+            assert ms_btcusdt.ob.best_bid_quantity() == 17.0
+            assert ms_btcusdt.ob.second_ask_price() == 22.5
+            assert ms_btcusdt.ob.second_bid_price() == 21.1
             assert ms_btcusdt.last_timestamp_of_receive == 24
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -699,21 +699,21 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_adausdt_usd_coin_m_futures_order_list.remove(to_remove)
 
-            actual_adausdt = [*reversed(ms_adausdt.order_book.asks()), *ms_adausdt.order_book.bids()]
+            actual_adausdt = [*reversed(ms_adausdt.ob.asks()), *ms_adausdt.ob.bids()]
             expected_adausdt = sorted(sample_adausdt_usd_coin_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_adausdt, expected_adausdt):
                 assert a.to_list() == e.to_list()
             del sample_adausdt_usd_coin_m_futures_order_list
-            assert ms_adausdt.order_book.ask_count() == 4
-            assert ms_adausdt.order_book.bid_count() == 4
-            assert ms_adausdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 1])
-            assert ms_adausdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 0])
-            assert ms_adausdt.order_book.best_ask_price() == 32.1
-            assert ms_adausdt.order_book.best_bid_price() == 32.0
-            assert ms_adausdt.order_book.best_ask_quantity() == 21.0
-            assert ms_adausdt.order_book.best_bid_quantity() == 23.0
-            assert ms_adausdt.order_book.second_ask_price() == 32.3
-            assert ms_adausdt.order_book.second_bid_price() == 31.5
+            assert ms_adausdt.ob.ask_count() == 4
+            assert ms_adausdt.ob.bid_count() == 4
+            assert ms_adausdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 1])
+            assert ms_adausdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_adausdt if x.is_ask == 0])
+            assert ms_adausdt.ob.best_ask_price() == 32.1
+            assert ms_adausdt.ob.best_bid_price() == 32.0
+            assert ms_adausdt.ob.best_ask_quantity() == 21.0
+            assert ms_adausdt.ob.best_bid_quantity() == 23.0
+            assert ms_adausdt.ob.second_ask_price() == 32.3
+            assert ms_adausdt.ob.second_bid_price() == 31.5
             assert ms_adausdt.last_timestamp_of_receive == 26
             # -------------------------------------------------------- #
             # -------------------------------------------------------- #
@@ -756,21 +756,21 @@ class TestGlobalMarketState:
             if to_remove is not None:
                 sample_dogeusdt_usd_m_futures_order_list.remove(to_remove)
 
-            actual_dogeusdt = [*reversed(ms_dogeusdt.order_book.asks()), *ms_dogeusdt.order_book.bids()]
+            actual_dogeusdt = [*reversed(ms_dogeusdt.ob.asks()), *ms_dogeusdt.ob.bids()]
             expected_dogeusdt = sorted(sample_dogeusdt_usd_m_futures_order_list, key=lambda x: x.price, reverse=True)
             for a, e in zip(actual_dogeusdt, expected_dogeusdt):
                 assert a.to_list() == e.to_list()
             del sample_dogeusdt_usd_m_futures_order_list
-            assert ms_dogeusdt.order_book.ask_count() == 4
-            assert ms_dogeusdt.order_book.bid_count() == 4
-            assert ms_dogeusdt.order_book.sum_ask_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 1])
-            assert ms_dogeusdt.order_book.sum_bid_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 0])
-            assert ms_dogeusdt.order_book.best_ask_price() == 42.3
-            assert ms_dogeusdt.order_book.best_bid_price() == 41.5
-            assert ms_dogeusdt.order_book.best_ask_quantity() == 32.0
-            assert ms_dogeusdt.order_book.best_bid_quantity() == 37.0
-            assert ms_dogeusdt.order_book.second_ask_price() == 42.5
-            assert ms_dogeusdt.order_book.second_bid_price() == 41.1
+            assert ms_dogeusdt.ob.ask_count() == 4
+            assert ms_dogeusdt.ob.bid_count() == 4
+            assert ms_dogeusdt.ob.sum_ask_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 1])
+            assert ms_dogeusdt.ob.sum_bid_quantity() == sum([x.quantity for x in expected_dogeusdt if x.is_ask == 0])
+            assert ms_dogeusdt.ob.best_ask_price() == 42.3
+            assert ms_dogeusdt.ob.best_bid_price() == 41.5
+            assert ms_dogeusdt.ob.best_ask_quantity() == 32.0
+            assert ms_dogeusdt.ob.best_bid_quantity() == 37.0
+            assert ms_dogeusdt.ob.second_ask_price() == 42.5
+            assert ms_dogeusdt.ob.second_bid_price() == 41.1
             assert ms_dogeusdt.last_timestamp_of_receive ==28
 
             assert gms.get_market_state_count() == 4

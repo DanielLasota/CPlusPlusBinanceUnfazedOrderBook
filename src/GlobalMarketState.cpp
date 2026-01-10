@@ -6,10 +6,10 @@ GlobalMarketState::GlobalMarketState(const MetricMask& mask)
 GlobalMarketState::GlobalMarketState(const std::vector<std::string>& variables)
     : GlobalMarketState(parseMask(variables)) {}
 
-void GlobalMarketState::update(XEvent* entry) {
-    AssetKey key{*entry};
+void GlobalMarketState::update(XEvent *e) {
+    AssetKey key{*e};
     auto [it, inserted] = marketStates.try_emplace(key, key.market, key.symbol);
-    it->second.update(entry);
+    it->second.update(e);
 }
 
 std::optional<MetricsEntry> GlobalMarketState::calcMetricsEntry(const XEvent* e) {
@@ -36,7 +36,7 @@ size_t GlobalMarketState::getMarketStateCount() const { return marketStates.size
 std::vector<std::pair<Symbol, Market>> GlobalMarketState::getMarketStateList() const {
     std::vector<std::pair<Symbol, Market>> out;
     out.reserve(marketStates.size());
-    for (auto const& kv : marketStates) {
+    for (auto const &kv : marketStates) {
         out.emplace_back(kv.first.symbol, kv.first.market);
     }
     return out;

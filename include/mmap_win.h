@@ -1,8 +1,8 @@
 #pragma once
 
-#include <windows.h>
-#include <string>
 #include <stdexcept>
+#include <string>
+#include <windows.h>
 
 struct MMapData {
     char* data = nullptr;

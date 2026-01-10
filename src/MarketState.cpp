@@ -11,7 +11,7 @@ void MarketState::update(XEvent* entry) {
     }, *entry);
 
     if (auto* differenceDepthEntry = std::get_if<DifferenceDepthEntry>(entry)) {
-        orderBook.update(differenceDepthEntry);
+        ob.update(differenceDepthEntry);
         depthRoll.update(*differenceDepthEntry);
         lastStreamType = StreamType::DIFFERENCE_DEPTH_STREAM;
     }
@@ -32,7 +32,7 @@ void MarketState::updateOrderBook(const uint64_t timestampOfReceive, const doubl
     e.price              = price;
     e.quantity           = quantity;
     e.isAsk              = isAsk;
-    orderBook.update(&e);
+    ob.update(&e);
 }
 
 void MarketState::updateTradeRegistry(const uint64_t timestampOfReceive, const double price, const double quantity, const bool isBuyerMM) {

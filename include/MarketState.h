@@ -17,7 +17,7 @@ public:
 
     DepthRoll depthRoll;
 
-    OrderBook orderBook;
+    OrderBook ob;
 
     void update(XEvent* entry);
 

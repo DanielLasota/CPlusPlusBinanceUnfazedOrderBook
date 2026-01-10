@@ -1,16 +1,16 @@
 #include <algorithm>
+#include <filesystem>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include <iostream>
-#include <filesystem>
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "CSVHeader.h"
 #include "CSVReader.h"
-#include "enums/AssetParameters.h"
+#include "CSVHeader.h"
 #include "EntryDecoder.h"
 #include "mmap_win.h"
+#include "enums/AssetParameters.h"
 
 inline std::vector<std::string_view> splitSVByNewLine(std::string_view sv) {
     std::vector<std::string_view> out;

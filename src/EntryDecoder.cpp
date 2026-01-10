@@ -1,5 +1,5 @@
-#include <stdexcept>
 #include <charconv>
+#include <stdexcept>
 #include <vector>
 
 #include "EntryDecoder.h"

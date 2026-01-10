@@ -144,8 +144,8 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
             "last_timestamp_of_receive",
             &MS::getLastTimestampOfReceive
         )
-        .def("print_order_book",
-             [](MS& self) { self.orderBook.printOrderBook(); }
+        .def("print",
+             [](MS& self) { self.orderBook.print(); }
         )
         .def_property_readonly(
             "symbol",
@@ -158,7 +158,7 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     py::class_<OrderBook>(m, "OrderBook")
         .def(py::init<>())
-        .def("print_order_book", &OrderBook::printOrderBook)
+        .def("print", &OrderBook::print)
         .def("asks", &OrderBook::getAsks)
         .def("bids", &OrderBook::getBids)
         .def("ask_count", &OrderBook::askCount)

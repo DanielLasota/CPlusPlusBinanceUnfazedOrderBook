@@ -55,6 +55,7 @@ set(SRC_CORE
         src/GlobalMarketState.cpp
         src/TradeRoll.cpp
         src/DepthRoll.cpp
+        src/Resampler.cpp
 )
 add_library(orderbook_core STATIC ${SRC_CORE})
 target_include_directories(orderbook_core PUBLIC

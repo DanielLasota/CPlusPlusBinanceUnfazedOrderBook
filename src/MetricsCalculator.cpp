@@ -13,7 +13,7 @@ std::optional<MetricsEntry> MetricsCalculator::calc(const MarketState &ms) const
         return std::nullopt;
     }
 
-    MetricsEntry e;
+    MetricsEntry e{};
     if (mask & timestampOfReceive) {
         e.timestampOfReceive = ms.getLastTimestampOfReceive();
     }

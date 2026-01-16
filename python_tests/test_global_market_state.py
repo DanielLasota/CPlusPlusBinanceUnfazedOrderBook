@@ -1175,7 +1175,7 @@ class TestGlobalMarketState:
             ]
             gms = GlobalMarketState(variables)
 
-            with pytest.raises(RuntimeError, match="no specified market"):
+            with pytest.raises(RuntimeError, match="no market specified"):
                 x = gms.calc_metrics_entry_from_ap(Symbol.TRXUSDT, Market.SPOT)
 
         def test_given_non_empty_orderbook_empty_trade_registry_when_count_order_book_metrics_then_returns_none(self):

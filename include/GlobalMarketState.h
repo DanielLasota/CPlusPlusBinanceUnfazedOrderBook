@@ -8,12 +8,13 @@
 #include "MarketState.h"
 #include "MetricMask.h"
 #include "MetricsCalculator.h"
+#include "Resampler.h"
 
 class GlobalMarketState {
 public:
-    explicit GlobalMarketState(const MetricMask& mask);
+    explicit GlobalMarketState(const MetricMask& mask, const ResampleConfig& resampleCfg);
 
-    explicit GlobalMarketState(const std::vector<std::string>& variables);
+    explicit GlobalMarketState(const std::vector<std::string>& variables, const ResampleConfig& resampleCfg);
 
     void update(XEvent* e);
 
@@ -30,5 +31,8 @@ public:
 private:
     MetricMask mask;
     MetricsCalculator metricsCalculator;
+    ResampleConfig resampleCfg;
+
     std::unordered_map<AssetKey, MarketState, AssetKeyHash> marketStates;
+    std::unordered_map<AssetKey, Resampler, AssetKeyHash> resamplers;
 };

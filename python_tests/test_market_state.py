@@ -849,7 +849,7 @@ class TestMarketState:
             # gap = (secondBid + secondAsk) - (bestBid + bestAsk) = (8+11)-(9+10)=19-19=0
             assert entry.gap == 0.0
             # isAggressorAsk == True
-            assert entry.isAggressorAsk is True
+            assert entry.isAggressorAsk == 1.0
             # timestampOfReceive == trade_ts
             assert entry.timestampOfReceive == trade_ts
 
@@ -967,5 +967,5 @@ class TestMarketState:
             assert entry.queueImbalance == 0.0
             assert entry.volumeImbalance == (3.0 - 2.0) / 5.0
             assert entry.gap == 0.0
-            assert entry.isAggressorAsk is True
+            assert entry.isAggressorAsk == 1.0
             assert entry.timestampOfReceive == trade_ts

@@ -242,8 +242,8 @@ namespace FeatureCalculator {
         return secondBidPrice + secondAskPrice - bestBidPrice - bestAskPrice;
     }
 
-    bool calculateIsAggressorAsk(const TradeEntry *te) {
-        return te->isBuyerMarketMaker;
+    bool calculateIsAggressorAsk(const TradeEntry *e) {
+        return e->isBuyerMarketMaker;
     }
 
     double calculateVwapDeviation(const OrderBook &ob) {

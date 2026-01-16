@@ -57,7 +57,7 @@ namespace FeatureCalculator {
     double calculateQueueLogRatioXVolume(const OrderBook &ob);
 
     double calculateGap(const OrderBook &ob);
-    bool calculateIsAggressorAsk(const TradeEntry *te);
+    bool calculateIsAggressorAsk(const TradeEntry *e);
     double calculateVwapDeviation(const OrderBook &ob);
     double calculateVwapLogRatio(const OrderBook &ob);
     double calculateSimplifiedSlopeImbalance(const OrderBook &ob);

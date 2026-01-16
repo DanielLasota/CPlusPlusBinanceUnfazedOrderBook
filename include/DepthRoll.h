@@ -22,10 +22,8 @@ private:
     static constexpr size_t MAX_BUCKETS = 64;
     static constexpr size_t MASK = MAX_BUCKETS - 1;
 
-    static_assert(MAX_BUCKETS != 0);
     static_assert((MAX_BUCKETS &MAX_BUCKETS - 1) == 0);
     static_assert((MAX_BUCKETS &MASK) == 0);
-    static_assert(MAX_BUCKETS == 64);
 
     struct Bucket {
         uint64_t startTimeSeconds = 0;

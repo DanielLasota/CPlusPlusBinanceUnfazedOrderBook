@@ -9,7 +9,11 @@
 #include "MarketState.h"
 #include "MetricsStore.h"
 
-py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::string> &features) {
+py::dict Simulator::compute(
+    const std::string& csvPath,
+    const std::vector<std::string>& features,
+    const ResampleConfig resampleCfg
+) {
     // SetThreadAffinityMask(GetCurrentThread(), 0x0000FFFF);
 
     std::vector<XEvent> entries = CSVReader::readMultiAssetCSV(csvPath);
@@ -17,7 +21,7 @@ py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::s
     pEntries.reserve(entries.size());
     for (XEvent &e: entries) { pEntries.push_back(&e);}
 
-    GlobalMarketState gms(features);
+    GlobalMarketState gms(features, resampleCfg);
     MetricsStore store(features, countMetricsSize(entries));
 
     const auto startTs = std::chrono::steady_clock::now();
@@ -38,18 +42,22 @@ py::dict Simulator::compute(const std::string &csvPath, const std::vector<std::s
     std::vector<XEvent>().swap(entries);
     std::vector<XEvent*>().swap(pEntries);
 
-    // metricsStore.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
+    // store.toCSV("C:/Users/daniel/Documents/orderBookMetrics/sample.csv");
     return store.toNp();
 }
 
-py::dict Simulator::backtest(const std::string& csvPath, const std::vector<std::string> &features, const pybind11::object &callback) {
-
+py::dict Simulator::backtest(
+    const std::string& csvPath,
+    const std::vector<std::string> &features,
+    const ResampleConfig resampleCfg,
+    const pybind11::object &callback
+) {
     std::vector<XEvent> entries = CSVReader::readMultiAssetCSV(csvPath);
     std::vector<XEvent*> pEntries;
     pEntries.reserve(entries.size());
     for (auto &e : entries) { pEntries.push_back(&e); }
 
-    GlobalMarketState gms(features);
+    GlobalMarketState gms(features, resampleCfg);
     MetricsStore store(features, countMetricsSize(entries));
 
     for (auto *p: pEntries) {

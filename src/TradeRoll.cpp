@@ -294,32 +294,32 @@ double TradeRoll::getFWMA(const size_t seconds, const size_t interval) const {
 }
 
 TradeRoll::TValCoef TradeRoll::getTrendCoefAndTValue(const size_t secondsId) const {
-    static constexpr std::array<size_t, 21> _len_x = {
+    static constexpr std::array<size_t, 20> _len_x = {
         5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368
     };
 
-    static constexpr std::array<double, 21> _inv_len_x = {
+    static constexpr std::array<double, 20> _inv_len_x = {
         1./5, 1./8, 1./13, 1./21, 1./34, 1./55, 1./89, 1./144, 1./233, 1./377, 1./610, 1./987, 1./1597, 1./2584,
         1./4181, 1./6765, 1./10946, 1./17711, 1./28657, 1./46368
     };
 
-    static constexpr std::array<double, 21> _ssx = {
+    static constexpr std::array<double, 20> _ssx = {
         10, 42, 182, 770, 3272, 13860, 58740, 248820, 1054092, 4465188, 18915032, 80125318, 339416798, 1437792510,
         6090588130, 25800145030, 109291171632, 462964831560, 1961150506728, 8307566858472
     };
 
-    static constexpr std::array<double, 21> _inv_ssx = {
+    static constexpr std::array<double, 20> _inv_ssx = {
         1./10, 1./42, 1./182, 1./770, 1./3272, 1./13860, 1./58740, 1./248820, 1./1054092, 1./4465188, 1./18915032,
         1./80125318, 1./339416798, 1./1437792510, 1./6090588130, 1./25800145030, 1./109291171632, 1./462964831560,
         1./1961150506728, 1./8307566858472,
     };
 
-    static constexpr std::array<double, 21> _mean_x = {
+    static constexpr std::array<double, 20> _mean_x = {
         2.0, 3.5, 6.0, 10.0, 16.5, 27.0, 44.0, 71.5, 116.0, 188.0, 304.5, 493.0, 798.0, 1291.5, 2090.0, 3382.0,
         5472.5, 8855.0, 14328.0, 23183.5,
     };
 
-    static constexpr std::array<double, 21> _inv_n_minus_2 = {
+    static constexpr std::array<double, 20> _inv_n_minus_2 = {
         1./3, 1./6, 1./11, 1./19, 1./32, 1./53, 1./87, 1./142, 1./231, 1./375, 1./608, 1./985, 1./1595, 1./2582,
         1./4179, 1./6763, 1./10944, 1./17709, 1./28655, 1./46366
     };

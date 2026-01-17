@@ -101,3 +101,7 @@ target_compile_options(TestDepthRoll PRIVATE ${FLAGS_INTEL})
 add_executable(TestTradeRoll test/TestTradeRoll.cpp)
 target_link_libraries(TestTradeRoll PRIVATE orderbook_core)
 target_compile_options(TestTradeRoll PRIVATE ${FLAGS_INTEL})
+
+add_executable(TestResampler test/TestResampler.cpp)
+target_link_libraries(TestResampler PRIVATE orderbook_core)
+target_compile_options(TestResampler PRIVATE ${FLAGS_INTEL})

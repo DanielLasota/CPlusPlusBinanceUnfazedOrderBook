@@ -1,12 +1,11 @@
 #pragma once
 
-#include <variant>
 #include "enums/DifferenceDepthEntry.h"
 #include "enums/Market.h"
 #include "enums/Symbol.h"
 #include "enums/TradeEntry.h"
+#include "enums/XEvent.h"
 
-using XEvent = std::variant<DifferenceDepthEntry, TradeEntry>;
 
 struct AssetKey {
     Market market;

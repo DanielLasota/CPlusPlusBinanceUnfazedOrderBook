@@ -36,29 +36,29 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
         .value("HLC3", ResampleMethod::HLC3)
         .export_values();
 
-    py::class_<ResampleConfig>(m, "ResampleConfig")
+    py::class_<ResampleCfg>(m, "ResampleCfg")
     .def(py::init<>())
     .def(
         py::init<size_t, ResampleMethod>(),
         py::arg("resolution_us") = 0,
         py::arg("method") = ResampleMethod::NONE
     )
-    .def_readonly("resolution_us", &ResampleConfig::resolutionUs)
-    .def_readonly("method", &ResampleConfig::method);
+    .def_readonly("resolution_us", &ResampleCfg::resolutionUs)
+    .def_readonly("method", &ResampleCfg::method);
 
     m.def(
         "compute",
         &Simulator::compute,
         py::arg("csv_path"),
         py::arg("features"),
-        py::arg("resample_config") = ResampleConfig()
+        py::arg("resample_cfg") = ResampleCfg()
     );
     m.def(
         "backtest",
         &Simulator::backtest,
         py::arg("csv_path"),
         py::arg("features"),
-        py::arg("resample_config") = ResampleConfig(),
+        py::arg("resample_cfg") = ResampleCfg(),
         py::arg("callback") = py::none()
     );
     m.def(
@@ -69,14 +69,14 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     py::class_<GlobalMarketState>(m, "GlobalMarketState")
         .def(
-            py::init<MetricMask, const ResampleConfig>(),
+            py::init<const MetricMask&, const ResampleCfg&>(),
             py::arg("mask"),
-            py::arg("resample_config") = ResampleConfig()
+            py::arg("resample_cfg") = ResampleCfg()
         )
         .def(
-            py::init<const std::vector<std::string>, const ResampleConfig>(),
+            py::init<const std::vector<std::string>&, const ResampleCfg&>(),
             py::arg("features"),
-            py::arg("resample_config") = ResampleConfig()
+            py::arg("resample_cfg") = ResampleCfg()
         )
         .def(
             "update",

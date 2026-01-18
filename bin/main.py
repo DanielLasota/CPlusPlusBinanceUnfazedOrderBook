@@ -1,4 +1,4 @@
-from cpp_binance_orderbook import compute, ResampleConfig, ResampleMethod
+from cpp_binance_orderbook import compute, ResampleCfg, ResampleMethod
 
 
 def orderbook_callback(x):
@@ -400,5 +400,5 @@ if __name__ == '__main__':
     result = compute(
         csv_path=csv_path,
         features=features,
-        resample_config=ResampleConfig(1_000_000, ResampleMethod.MEAN)
+        resample_cfg=ResampleCfg(1_000_000, ResampleMethod.MEAN)
     )

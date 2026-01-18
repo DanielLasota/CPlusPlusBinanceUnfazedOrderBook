@@ -14,12 +14,12 @@ class GlobalMarketState {
 public:
     explicit GlobalMarketState(
         const MetricMask& mask,
-        const ResampleConfig &resampleCfg
+        const ResampleCfg& resampleCfg
     );
 
     explicit GlobalMarketState(
         const std::vector<std::string>& variables,
-        const ResampleConfig &resampleCfg
+        const ResampleCfg &resampleCfg
     );
 
     void update(XEvent* e);
@@ -37,7 +37,7 @@ public:
 private:
     MetricMask mask;
     MetricsCalculator metricsCalculator;
-    ResampleConfig resampleCfg;
+    ResampleCfg resampleCfg;
 
     std::unordered_map<AssetKey, MarketState, AssetKeyHash> marketStates;
     std::unordered_map<AssetKey, Resampler, AssetKeyHash> resamplers;

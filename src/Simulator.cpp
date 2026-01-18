@@ -12,7 +12,7 @@
 py::dict Simulator::compute(
     const std::string& csvPath,
     const std::vector<std::string>& features,
-    const ResampleConfig resampleCfg
+    const ResampleCfg& resampleCfg
 ) {
     // SetThreadAffinityMask(GetCurrentThread(), 0x0000FFFF);
 
@@ -48,8 +48,8 @@ py::dict Simulator::compute(
 
 py::dict Simulator::backtest(
     const std::string& csvPath,
-    const std::vector<std::string> &features,
-    const ResampleConfig resampleCfg,
+    const std::vector<std::string>& features,
+    const ResampleCfg& resampleCfg,
     const pybind11::object &callback
 ) {
     std::vector<XEvent> entries = CSVReader::readMultiAssetCSV(csvPath);

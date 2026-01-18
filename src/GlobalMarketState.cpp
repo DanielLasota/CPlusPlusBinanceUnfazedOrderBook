@@ -2,7 +2,7 @@
 
 GlobalMarketState::GlobalMarketState(
     const MetricMask& mask,
-    const ResampleConfig& resampleCfg
+    const ResampleCfg& resampleCfg
 ):
     mask(mask),
     metricsCalculator(mask),
@@ -11,7 +11,7 @@ GlobalMarketState::GlobalMarketState(
 
 GlobalMarketState::GlobalMarketState(
     const std::vector<std::string>& variables,
-    const ResampleConfig& resampleCfg
+    const ResampleCfg& resampleCfg
 ):
     GlobalMarketState(parseMask(variables), resampleCfg) {}
 

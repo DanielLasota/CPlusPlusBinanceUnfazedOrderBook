@@ -12,9 +12,15 @@
 
 class GlobalMarketState {
 public:
-    explicit GlobalMarketState(const MetricMask& mask, const ResampleConfig& resampleCfg);
+    explicit GlobalMarketState(
+        const MetricMask& mask,
+        const ResampleConfig &resampleCfg
+    );
 
-    explicit GlobalMarketState(const std::vector<std::string>& variables, const ResampleConfig& resampleCfg);
+    explicit GlobalMarketState(
+        const std::vector<std::string>& variables,
+        const ResampleConfig &resampleCfg
+    );
 
     void update(XEvent* e);
 

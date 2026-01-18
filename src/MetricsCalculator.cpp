@@ -988,7 +988,7 @@ std::optional<MetricsEntry> MetricsCalculator::calc(const MarketState &ms) const
         const auto [bestTVal, bestCoef, bestTrendLen] = FC::calculateCVal(ms.tradeRoll);
         if (mask & cValBestTVal) e.cValBestTVal = bestTVal;
         if (mask & cValBestCoef) e.cValBestCoef = bestCoef;
-        if (mask & cValBestTrendLength) e.cValBestTrendLength = bestTrendLen;
+        if (mask & cValBestTrendLength) e.cValBestTrendLength = static_cast<double>(bestTrendLen);
     }
 
     if (mask & priceDistance1Seconds) {

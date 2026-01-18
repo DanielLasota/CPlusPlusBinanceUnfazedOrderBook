@@ -18,19 +18,6 @@
 namespace py = pybind11;
 using MS = MarketState;
 
-static ResampleMethod parse_resample_method(const std::string& s) {
-    if (s == "none") return ResampleMethod::NONE;
-    if (s == "last") return ResampleMethod::LAST;
-    if (s == "mean") return ResampleMethod::MEAN;
-    if (s == "hlc3") return ResampleMethod::HLC3;
-
-    throw std::runtime_error("Unknown resample_method: '" + s);
-}
-
-static ResampleConfig make_resample_cfg(const uint64_t us, const std::string& methodStr) {
-    return ResampleConfig{us, parse_resample_method(methodStr)};
-}
-
 static py::int_ parse_mask_py(const std::vector<std::string>& vars) {
     const MetricMask m = parseMask(vars);
     std::string bits = m.to_string();
@@ -42,37 +29,36 @@ static py::int_ parse_mask_py(const std::vector<std::string>& vars) {
 }
 
 PYBIND11_MODULE(cpp_binance_orderbook, m) {
+    py::enum_<ResampleMethod>(m, "ResampleMethod")
+        .value("NONE", ResampleMethod::NONE)
+        .value("LAST", ResampleMethod::LAST)
+        .value("MEAN", ResampleMethod::MEAN)
+        .value("HLC3", ResampleMethod::HLC3)
+        .export_values();
+
+    py::class_<ResampleConfig>(m, "ResampleConfig")
+    .def(py::init<>())
+    .def(
+        py::init<size_t, ResampleMethod>(),
+        py::arg("resolution_us") = 0,
+        py::arg("method") = ResampleMethod::NONE
+    )
+    .def_readonly("resolution_us", &ResampleConfig::resolutionUs)
+    .def_readonly("method", &ResampleConfig::method);
 
     m.def(
         "compute",
-        [](const std::string& csvPath,
-           const std::vector<std::string>& features,
-           const uint64_t resample_resolution_us,
-           const std::string& resample_method)
-        {
-            const ResampleConfig resampleCfg = make_resample_cfg(resample_resolution_us, resample_method);
-            return Simulator::compute(csvPath, features, resampleCfg);
-        },
+        &Simulator::compute,
         py::arg("csv_path"),
         py::arg("features"),
-        py::arg("resample_resolution_us") = 0,
-        py::arg("resample_method") = "none"
+        py::arg("resample_config") = ResampleConfig()
     );
     m.def(
         "backtest",
-        [](const std::string& csvPath,
-           const std::vector<std::string>& features,
-           const uint64_t resample_resolution_us,
-           const std::string& resample_method,
-           const py::object& callback)
-        {
-            const ResampleConfig resampleCfg = make_resample_cfg(resample_resolution_us, resample_method);
-            return Simulator::backtest(csvPath, features, resampleCfg, callback);
-        },
+        &Simulator::backtest,
         py::arg("csv_path"),
         py::arg("features"),
-        py::arg("resample_resolution_us") = 0,
-        py::arg("resample_method") = "none",
+        py::arg("resample_config") = ResampleConfig(),
         py::arg("callback") = py::none()
     );
     m.def(
@@ -83,30 +69,14 @@ PYBIND11_MODULE(cpp_binance_orderbook, m) {
 
     py::class_<GlobalMarketState>(m, "GlobalMarketState")
         .def(
-            py::init([](
-                const MetricMask& mask,
-                const uint64_t resample_resolution_us,
-                const std::string& resample_method
-                ) {
-                    const ResampleConfig resampleCfg = make_resample_cfg(resample_resolution_us, resample_method);
-                    return GlobalMarketState(mask, resampleCfg);
-                }),
+            py::init<MetricMask, const ResampleConfig>(),
             py::arg("mask"),
-            py::arg("resample_resolution_us") = 0,
-            py::arg("resample_method") = "none"
+            py::arg("resample_config") = ResampleConfig()
         )
         .def(
-            py::init([](
-                const std::vector<std::string>& features,
-                const uint64_t resample_resolution_us,
-                const std::string& resample_method
-            ) {
-                    const ResampleConfig resampleCfg = make_resample_cfg(resample_resolution_us, resample_method);
-                    return GlobalMarketState(features, resampleCfg);
-                }),
+            py::init<const std::vector<std::string>, const ResampleConfig>(),
             py::arg("features"),
-            py::arg("resample_resolution_us") = 0,
-            py::arg("resample_method") = "none"
+            py::arg("resample_config") = ResampleConfig()
         )
         .def(
             "update",

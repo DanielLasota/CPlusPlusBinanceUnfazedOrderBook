@@ -1,12 +1,19 @@
 #include "GlobalMarketState.h"
 
-GlobalMarketState::GlobalMarketState(const MetricMask& mask, const ResampleConfig& resampleCfg)
-    : mask(mask)
-    , metricsCalculator(mask)
-    , resampleCfg(resampleCfg) {}
+GlobalMarketState::GlobalMarketState(
+    const MetricMask& mask,
+    const ResampleConfig& resampleCfg
+):
+    mask(mask),
+    metricsCalculator(mask),
+    resampleCfg(resampleCfg)
+    {}
 
-GlobalMarketState::GlobalMarketState(const std::vector<std::string>& variables, const ResampleConfig& resampleCfg)
-    : GlobalMarketState(parseMask(variables), resampleCfg) {}
+GlobalMarketState::GlobalMarketState(
+    const std::vector<std::string>& variables,
+    const ResampleConfig& resampleCfg
+):
+    GlobalMarketState(parseMask(variables), resampleCfg) {}
 
 void GlobalMarketState::update(XEvent* e) {
     const AssetKey key{*e};

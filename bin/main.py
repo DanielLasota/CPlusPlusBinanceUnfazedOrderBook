@@ -1,4 +1,4 @@
-from cpp_binance_orderbook import compute
+from cpp_binance_orderbook import compute, ResampleConfig, ResampleMethod
 
 
 def orderbook_callback(x):
@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     csv_path = "D:/merged_csvs/binance_merged_btcusdt_spot_2025-12-01.csv"
 
-    variables = [
+    features = [
         "timestampOfReceive",
         "market",
         "symbol",
@@ -397,4 +397,8 @@ if __name__ == '__main__':
         "deltaPVT600Seconds",
     ]
 
-    result = compute(csv_path=csv_path, features=variables)
+    result = compute(
+        csv_path=csv_path,
+        features=features,
+        resample_config=ResampleConfig(1_000_000, ResampleMethod.MEAN)
+    )

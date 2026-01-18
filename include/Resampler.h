@@ -4,17 +4,17 @@
 #include <optional>
 
 #include "MetricsEntry.h"
-#include "ResampleConfig.h"
+#include "ResampleCfg.h"
 
 class Resampler {
 public:
 
-    explicit Resampler(const ResampleConfig &cfg): cfg(cfg) {}
+    explicit Resampler(const ResampleCfg &cfg): cfg(cfg) {}
 
     std::optional<MetricsEntry> update(const MetricsEntry &me);
 
 private:
-    ResampleConfig cfg;
+    ResampleCfg cfg;
 
     bool hasPrev{false};
     uint64_t prevTsId{};

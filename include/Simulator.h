@@ -4,7 +4,7 @@
 #include <pybind11/pybind11.h>
 
 #include "OrderBook.h"
-#include "ResampleConfig.h"
+#include "ResampleCfg.h"
 #include "enums/XEvent.h"
 
 namespace py = pybind11;
@@ -16,13 +16,13 @@ public:
     static py::dict compute(
         const std::string& csvPath,
         const std::vector<std::string>& features,
-        ResampleConfig resampleCfg = {}
+        const ResampleCfg& resampleCfg = {}
     );
 
     static py::dict backtest(
         const std::string& csvPath,
         const std::vector<std::string>& features,
-        ResampleConfig resampleCfg = {},
+        const ResampleCfg& resampleCfg = {},
         const py::object& callback = py::none()
     );
 

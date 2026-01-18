@@ -396,7 +396,7 @@ int main() {
     Simulator::compute(
         "D:/merged_csvs/binance_merged_btcusdt_spot_2025-12-01.csv",
         features,
-        ResampleConfig{1'000'000, ResampleMethod::MEAN}
+        ResampleCfg{1'000'000, ResampleMethod::MEAN}
     );
 
     return 0;
